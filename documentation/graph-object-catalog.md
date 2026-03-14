@@ -27,14 +27,14 @@
 
 | Tier | Count | Benchmarkable | Objects |
 |------|-------|---------------|---------|
-| Tier 1 — First-Class Node | 52 | Yes | See sections 3.1 through 3.7 |
-| Tier 2 — Registry Node | 9 | Yes | See section 4 |
+| Tier 1 — First-Class Node | 54 | Yes | See sections 3.1 through 3.7 |
+| Tier 2 — Registry Node | 11 | Yes | See section 4 |
 | Tier 3 — Value Object | 4 | No (scored via parent) | See section 5 |
-| **Total** | **65** | **61** | |
+| **Total** | **69** | **65** | |
 
 ---
 
-## 3. Tier 1 — First-Class Nodes (52)
+## 3. Tier 1 — First-Class Nodes (54)
 
 ### 3.1 Strategic & Governance (8)
 
@@ -611,7 +611,7 @@
 
 ---
 
-### 3.4 Requirement & Design (9)
+### 3.4 Requirement & Design (10)
 
 ---
 
@@ -694,6 +694,36 @@
 | `VALIDATES_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
 | `VALIDATES_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
 | `REFERENCES_ERROR_CODE` | OUTGOING | ErrorCode (T2) | N:1 | No | OPTIONAL | `[PLANNED]` |
+
+---
+
+### QualityConstraint
+
+**Tier**: 1 (First-Class Node)
+**Category**: Requirement & Design
+**Purpose**: Artifact-bound non-functional requirement with measurable threshold. Bound to Screen, ApiContract, DataEntity, or ApplicationComponent. Verified via SATISFIED_BY → TestCase (distinct from VERIFIED_BY which proves functional correctness).
+**Implementation Status**: `[PLANNED]`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `constraintId` | String | Yes | Stable identifier | Pattern: `QC-{artifact}-{seq}` |
+| `name` | String | Yes | Short label | e.g., "Page load time" |
+| `constraintType` | String | Yes | Quality dimension | Enum: PERFORMANCE, ACCESSIBILITY, SECURITY, RELIABILITY, USABILITY |
+| `metric` | String | Yes | Measurable metric | e.g., "LCP", "WCAG level", "p99 latency" |
+| `threshold` | String | Yes | Pass/fail threshold | e.g., "< 2000ms", "AAA", "< 500ms" |
+| `measurementMethod` | String | No | How to measure | e.g., "Lighthouse", "axe-core", "k6 load test" |
+| `priority` | String | No | Priority level | Enum: CRITICAL, HIGH, MEDIUM, LOW |
+| `status` | String | Yes | Lifecycle status | Universal status enum |
+| `sourceRefs` | List | No | Provenance links | |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `HAS_QUALITY_CONSTRAINT` | INCOMING | Screen, ApiContract, DataEntity, ApplicationComponent | N:M | Yes | BLOCKING | `[PLANNED]` |
+| `SATISFIED_BY` | OUTGOING | TestCase | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
 
@@ -889,7 +919,7 @@
 
 ---
 
-### 3.5 Engineering (8)
+### 3.5 Engineering (9)
 
 ---
 
@@ -1113,6 +1143,55 @@
 | `VERIFIES_CRITERION` | OUTGOING | AcceptanceCriterion | N:M | No | OPTIONAL | `[PLANNED]` |
 | `TESTS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
 | `TESTS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
+| `LOCATED_IN` | OUTGOING | CodeAsset | N:1 | No | OPTIONAL | `[PLANNED]` |
+
+**Agent-ready enrichment (7 attributes):** TestCase is enriched with execution metadata to enable agents to locate and run verification tests. These attributes are added by the agent-ready information model spec:
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `testFilePath` | String | No | Relative file path from component modulePath | |
+| `testClassName` | String | No | Fully qualified class or describe block | |
+| `testMethodName` | String | No | Method or it() block | |
+| `testFramework` | String | No | Test framework | Enum: JUNIT5, VITEST, PLAYWRIGHT, JEST, CYPRESS |
+| `suiteName` | String | No | Logical grouping | |
+| `tags` | List | No | Categorization tags | |
+| `testCommand` | String | No | Override command to run this test | Fallback: `ApplicationComponent.testCommand` |
+
+---
+
+### CodeAsset
+
+**Tier**: 1 (First-Class Node)
+**Category**: Engineering
+**Purpose**: File-level code targeting for agent-safe implementation. Curated subset of repo files that are explicit targets of stories, tasks, or tests. Not an exhaustive model of every file in the repo.
+**Implementation Status**: `[PLANNED]`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `assetId` | String | Yes | Stable identifier | Pattern: `CA-{component}-{seq}` |
+| `filePath` | String | Yes | Relative file path from component modulePath | Must resolve: `Application.repoPath + ApplicationComponent.modulePath + CodeAsset.filePath` |
+| `fileType` | String | Yes | Source classification | Enum: SOURCE, TEST, CONFIG, MIGRATION, TEMPLATE, STYLE, SPEC |
+| `language` | String | No | Programming language | e.g., JAVA, TYPESCRIPT, SCSS, SQL |
+| `className` | String | No | Primary class or export name | |
+| `moduleName` | String | No | Logical module grouping | |
+| `layerTag` | String | No | Architecture layer | Enum: DOMAIN, SERVICE, CONTROLLER, DTO, CONFIG, COMPONENT, DIRECTIVE, PIPE, STORE, TEST, MIGRATION |
+| `description` | String | No | Purpose note | |
+| `lastKnownHash` | String | No | Git blob SHA for drift detection | |
+| `status` | String | Yes | Lifecycle status | Universal status enum |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `HAS_CODE_ASSET` | INCOMING | ApplicationComponent | N:1 | Yes | BLOCKING | `[PLANNED]` |
+| `ASSET_FOR_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
+| `ASSET_FOR_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
+| `ASSET_FOR_ENTITY` | OUTGOING | DataEntity | N:M | No | OPTIONAL | `[PLANNED]` |
+| `ASSET_FOR_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[PLANNED]` |
+| `LOCATED_IN` | INCOMING | TestCase | N:1 | No | OPTIONAL | `[PLANNED]` |
+| `IMPLEMENTS` | INCOMING | Task | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
 
@@ -1618,7 +1697,7 @@
 
 ---
 
-## 4. Tier 2 — Registry Nodes (9)
+## 4. Tier 2 — Registry Nodes (11)
 
 ---
 
@@ -1837,9 +1916,70 @@
 
 ---
 
+### ImportSnapshot
+
+**Tier**: 2 (Registry)
+**Category**: Cross-cutting
+**Purpose**: Append-only audit record for batch imports into the graph. Captures what was imported, when, from where, and whether it succeeded. One snapshot per import operation.
+**Implementation Status**: `[PLANNED]`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `snapshotId` | String | Yes | Stable identifier | Pattern: `IMP-{YYYYMMDD}-{seq}` |
+| `sourceType` | String | Yes | Import source classification | Enum: GIT_DOC, JIRA_SYNC, MANUAL_ENTRY |
+| `sourcePath` | String | No | Path or URL of source | e.g., `docs/requirements/story-inventory.md` |
+| `importedAt` | Instant | Yes | Import timestamp | ISO 8601 |
+| `importedBy` | String | Yes | Actor who triggered import | User ID or system identifier |
+| `result` | String | Yes | Import outcome | Enum: SUCCESS, PARTIAL, FAILED, CONFLICTED |
+| `itemCount` | Integer | No | Number of items processed | |
+| `errorSummary` | String | No | Error details for non-SUCCESS results | |
+| `contentHash` | String | No | SHA-256 hash for drift detection | Pattern: `sha256:{hex}` |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `IMPORTED_BY` | INCOMING | Importable T1 nodes | N:M | No | OPTIONAL | `[PLANNED]` |
+
+**Note:** The IMPORTED_BY edge is modeled on source T1 nodes (outgoing from the importable entity, incoming to ImportSnapshot), not on ImportSnapshot itself. This follows the convention that the entity being described carries its own provenance edge.
+
+---
+
+### CodingConvention
+
+**Tier**: 2 (Registry — Hybrid)
+**Category**: Cross-cutting
+**Purpose**: Queryable metadata for coding conventions. Structured categories stored in graph (conventionCode, category, enforcement, scope); detailed rules via docRef pointing to Markdown files in Git. This hybrid approach keeps the graph lightweight while enabling "which conventions apply to this component?" queries.
+**Implementation Status**: `[PLANNED]`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `conventionCode` | String | Yes | Stable identifier | Pattern: `CONV-{category}-{seq}` |
+| `name` | String | Yes | Convention display name | |
+| `category` | String | Yes | Convention category | Enum: NAMING, STRUCTURE, DEPENDENCY_INJECTION, ERROR_HANDLING, TESTING, LOGGING, SECURITY, PERFORMANCE |
+| `enforcement` | String | Yes | Enforcement level | Enum: MANDATORY, RECOMMENDED, ADVISORY |
+| `scope` | String | Yes | Applicability scope | Enum: GLOBAL, BACKEND, FRONTEND, SERVICE, COMPONENT |
+| `docRef` | String | Yes | Relative path to convention Markdown file | e.g., `docs/conventions/naming.md` |
+| `summary` | String | No | One-line summary of the convention | |
+| `activeStatus` | String | No | Registry lifecycle | Enum: ACTIVE, DEPRECATED |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `GOVERNED_BY_CONVENTION` | INCOMING | Application, ApplicationComponent, CodeAsset | N:M | No | OPTIONAL | `[PLANNED]` |
+
+**Note:** The GOVERNED_BY_CONVENTION edge is modeled on source entities (Application, ApplicationComponent, CodeAsset → CodingConvention), not on CodingConvention itself. All bindings are materialized as explicit edges — no implicit attribute matching.
+
+---
+
 ## 5. Tier 3 — Value Objects (4)
 
-Tier 3 objects inherit identity and lifecycle from their parent. They are not independently queryable and are not counted in the 61 benchmarkable nodes. Their attributes are scored as part of their parent's attribute depth.
+Tier 3 objects inherit identity and lifecycle from their parent. They are not independently queryable and are not counted in the 65 benchmarkable nodes. Their attributes are scored as part of their parent's attribute depth.
 
 ---
 
@@ -2023,13 +2163,29 @@ Complete registry of all modeled relationships with implementation status.
 | `ASSIGNED_TO` | Task | Organization | N:1 | OPTIONAL | `[PLANNED]` |
 | `HAS_CAPABILITY` | BusinessDomain | BusinessCapability | 1:N | BLOCKING | `[PLANNED]` |
 | `REALIZED_BY_PROCESS` | BusinessCapability | BusinessProcess | 1:N | OPTIONAL | `[PLANNED]` |
+| `HAS_CODE_ASSET` | ApplicationComponent | CodeAsset | 1:N | BLOCKING | `[PLANNED]` — agent-ready Phase 1 |
+| `LOCATED_IN` | TestCase | CodeAsset | N:1 | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
+| `ASSET_FOR_SCREEN` | CodeAsset | Screen | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
+| `ASSET_FOR_API` | CodeAsset | ApiContract | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
+| `ASSET_FOR_ENTITY` | CodeAsset | DataEntity | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
+| `ASSET_FOR_RULE` | CodeAsset | Rule | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
+| `IMPORTED_BY` | Importable T1 | ImportSnapshot (T2) | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
+| `IMPLEMENTS` | Task | CodeAsset | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 (extends existing IMPLEMENTS targets) |
+| `HAS_QUALITY_CONSTRAINT` | Screen, ApiContract, DataEntity, ApplicationComponent | QualityConstraint | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 2 |
+| `SATISFIED_BY` | QualityConstraint | TestCase | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 2 |
+| `GOVERNED_BY_CONVENTION` | Application, ApplicationComponent, CodeAsset | CodingConvention (T2) | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 2 |
 
 ### 6.4 Deprecated Edges
 
 | Relationship | Replaced By | Notes |
 |-------------|-------------|-------|
-| `IMPLEMENTS_STORY` | `DELIVERS` | Direction reversed: was Screen→UserStory, now UserStory→Screen (via `DELIVERS`). `storyRefs` string field on Screen remains until edge migration. |
-| `ON_SCREEN` (Interaction→Screen) | `HAS_INTERACTION` (Screen→Interaction) | Direction reversed. Screen now owns the relationship to its Interactions via `HAS_INTERACTION`. Existing `[EDGE]` in code must be migrated. |
+| `USES_SCREEN` (UserStory→Screen) | `DELIVERS` (UserStory→Screen) | Verb normalization to four-verb model |
+| `REQUIRES_API` (UserStory→ApiContract) | `DELIVERS` (UserStory→ApiContract) | Verb normalization to four-verb model |
+| `ON_SCREEN` (Interaction→Screen) | `HAS_INTERACTION` (Screen→Interaction) | Direction reversed. Screen now owns the relationship to its Interactions. Existing `[EDGE]` in code must be migrated. |
+| `IMPLEMENTS_STORY` (Screen→UserStory) | `DELIVERS` (UserStory→Screen) | Direction reversed: was Screen→UserStory, now UserStory→Screen. `storyRefs` string field on Screen remains until edge migration. |
+| `DEPLOYS` (Application→Deployment) | `HOSTS` + `DEPLOYED_ON` | Directional fix. Deployment hosts components and is deployed on infrastructure. |
+| `DETECTED_BY_BENCHMARK` (Gap→computed) | `detectedBy` property on Gap | Not a real edge — replaced by enum property (BENCHMARK_ENGINE, HUMAN_REVIEW, CI_GATE) |
+| `HAS_STEP` (BusinessProcess→ProcessActivity) | `HAS_FLOW_NODE` | Semantic correction for BPMN alignment. **Note:** Journey `HAS_STEP` is NOT deprecated. JourneyStep `USES_SCREEN` is NOT deprecated. |
 
 ### 6.5 Implementation Pack — Computed Traversal Query
 
@@ -2147,7 +2303,24 @@ graph LR
     TK -->|IMPLEMENTS| AP
 ```
 
-### 7.6 Implementation Status Map
+### 7.6 Agent-Ready Traversal Spine (Code Targeting)
+
+```mermaid
+graph LR
+    US[UserStory] -->|DELIVERS| ART["Screen / ApiContract / DataEntity / Rule"]
+    ART -->|"SUPPORTS_SCREEN / EXPOSES / OWNS_DATA_ENTITY / ENFORCES_RULE (IN)"| COMP[ApplicationComponent]
+    COMP -->|HAS_CODE_ASSET| CA[CodeAsset]
+    CA -->|"ASSET_FOR_*"| ART
+    TC[TestCase] -->|LOCATED_IN| CA
+    TK[Task] -->|IMPLEMENTS| CA
+    COMP -->|GOVERNED_BY_CONVENTION| CCN["CodingConvention T2"]
+    ART_Q["Screen / ApiContract / DataEntity"] -->|HAS_QUALITY_CONSTRAINT| QC[QualityConstraint]
+    QC -->|SATISFIED_BY| TC
+```
+
+This spine enables: "Given a UserStory, which code files need to change, which conventions apply, and which test files verify them?"
+
+### 7.7 Implementation Status Map
 
 ```mermaid
 graph TD
@@ -2214,17 +2387,21 @@ Those fields should enrich the graph but should not replace domain-native object
 
 | Metric | Count |
 |--------|-------|
-| Total model elements | 65 |
-| Tier 1 (first-class nodes) | 52 |
-| Tier 2 (registry nodes) | 9 |
+| Total model elements | 69 |
+| Tier 1 (first-class nodes) | 54 |
+| Tier 2 (registry nodes) | 11 |
 | Tier 3 (value objects) | 4 |
-| Benchmarkable (T1 + T2) | 61 |
-| Total relationship types | 79 |
+| Benchmarkable (T1 + T2) | 65 |
+| Total relationship types | 90 |
 | Existing graph edges | 9 |
 | String-encoded relationships | 9 |
-| Planned relationships | 58+ |
+| Planned relationships | 72+ |
 | Implemented entities | 11 |
 | Entities needing reshape | 2 (Role, Gap) |
-| Planned entities | 50+ |
+| Planned entities | 56+ |
 | Architecture/EA objects | 12 |
-| Delivery & Execution objects (new) | 4 |
+| Delivery & Execution objects | 4 |
+| Agent-ready Phase 1 new edges | 8 |
+| Agent-ready Phase 2 new edges | 3 |
+
+**Agent-ready extension note:** Phase 1: 87 edges (79 base + 8 new). Full: 90 edges (87 + 3 Phase 2). See `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` for phased breakdown.

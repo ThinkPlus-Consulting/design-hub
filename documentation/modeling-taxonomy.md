@@ -5,7 +5,7 @@
 
 **Related documents:**
 
-- `graph-object-catalog.md` (uses this taxonomy to classify all 65 model elements)
+- `graph-object-catalog.md` (uses this taxonomy to classify all 69 model elements)
 - `implementation-readiness-graph-model.md` (uses tier rules to scope readiness and completenessScore)
 - `vision-benchmark.md` (uses tier rules to scope what is benchmarkable)
 - `product-vision.md`
@@ -69,13 +69,13 @@ graph TD
 | Tier 2 | Yes | Own attribute depth scored independently | Relationships scored where applicable |
 | Tier 3 | No | Attributes scored as part of parent object's depth | No independent relationship scoring |
 
-**Benchmarkable total: 61 (52 Tier 1 + 9 Tier 2)**
+**Benchmarkable total: 65 (54 Tier 1 + 11 Tier 2)**
 
 ---
 
 ## 3. Tier Assignments
 
-### 3.1 Tier 1 — First-Class Nodes (52)
+### 3.1 Tier 1 — First-Class Nodes (54)
 
 #### Strategic & Governance (8)
 
@@ -111,13 +111,14 @@ graph TD
 | `UserStory` | Deliverable requirement unit with four-verb edge model (REALIZES, DELIVERS, HAS_TASK, VERIFIED_BY) |
 | `Task` | Standalone execution unit. Carries taskType (FRONTEND, BACKEND, API, DATA, TEST, DEVOPS, UX, DOCUMENTATION), priority, estimate. Links to UserStory via HAS_TASK, to artifacts via IMPLEMENTS. |
 
-#### Requirement & Design (9)
+#### Requirement & Design (10)
 
 | Object | Purpose |
 |--------|---------|
 | `AcceptanceCriterion` | Verifiable story condition |
 | `Rule` | Business rule or domain rule |
 | `ValidationRule` | Explicit validation behavior |
+| `QualityConstraint` | Artifact-bound non-functional requirement with measurable threshold (e.g., "page load < 2s", "WCAG AAA"). Bound to Screen, ApiContract, DataEntity, or ApplicationComponent. Verified via SATISFIED_BY → TestCase. |
 | `EdgeCase` | Non-happy-path scenario |
 | `ExceptionCase` | Failure or exceptional path |
 | `Screen` | Navigable UI surface or always-present surface |
@@ -125,7 +126,7 @@ graph TD
 | `Interaction` | User or system action on a surface |
 | `Transition` | Screen-to-screen or state transition |
 
-#### Engineering (8)
+#### Engineering (9)
 
 | Object | Purpose |
 |--------|---------|
@@ -137,6 +138,7 @@ graph TD
 | `DataField` | Field inside a data entity |
 | `Integration` | Cross-system or cross-service integration point |
 | `TestCase` | Verifiable test scenario linked to acceptance criteria |
+| `CodeAsset` | File-level code targeting for agent-safe implementation. Curated subset of repo files that are explicit targets of stories, tasks, or tests. |
 
 #### Architecture & EA (12)
 
@@ -166,9 +168,9 @@ graph TD
 | `Gap` | Structural incompleteness detectable by benchmark engine |
 | `Message` | User-visible confirmation, warning, info, or error text |
 
-**Category verification:** 8 + 7 + 4 + 9 + 8 + 12 + 4 = 52
+**Category verification:** 8 + 7 + 4 + 10 + 9 + 12 + 4 = 54
 
-### 3.2 Tier 2 — Registry Nodes (9)
+### 3.2 Tier 2 — Registry Nodes (11)
 
 | Object | Family | Rationale |
 |--------|--------|-----------|
@@ -181,6 +183,8 @@ graph TD
 | `Event` | Engineering | Named domain events. Referenced by Integration. No independent lifecycle. |
 | `Locale` | Cross-cutting / Localization | Controlled language codes (en, ar). Required for i18n graph model. |
 | `TranslationKey` | Cross-cutting / Localization | Registry of translatable strings linking Locale to UI elements. |
+| `ImportSnapshot` | Cross-cutting | Append-only audit record for batch imports into the graph. Captures sourceType (GIT_DOC, JIRA_SYNC, MANUAL_ENTRY), result, contentHash. Linked via IMPORTED_BY from importable T1 nodes. |
+| `CodingConvention` | Cross-cutting | Queryable metadata for coding conventions. Structured categories in graph (conventionCode, category, enforcement, scope); detailed rules via docRef pointing to Markdown files in Git. Linked via GOVERNED_BY_CONVENTION from Application, ApplicationComponent, CodeAsset. |
 
 ### 3.3 Tier 3 — Value Objects (4)
 
@@ -191,7 +195,9 @@ graph TD
 | `EntryMode` | Embedded in Touchpoint. Channel + mechanism pair. The `channelId` reference resolves via parent Touchpoint's edge to Channel (T2). |
 | `ContentElement` | Embedded in Screen. Ordered content inventory. Not independently queried. |
 
-**Totals: 52 + 9 + 4 = 65 model elements**
+**Totals: 54 + 11 + 4 = 69 model elements**
+
+**Agent-ready extension note:** Counts above reflect the full agent-ready extension (Phase 1 + Phase 2). Phase 1 intermediate: 53 T1 / 10 T2 = 67 total / 63 benchmarkable. See `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` for phased breakdown.
 
 ---
 
@@ -211,7 +217,7 @@ Channel traversal is modeled as `Touchpoint -[DELIVERED_VIA_CHANNEL]-> Channel`.
 
 ### 4.3 General Rule
 
-Tier 3 objects are NOT counted in the 61 benchmarkable nodes. Their attributes are scored as part of the parent object's attribute depth. If a Tier 3 object's embedded structure blocks a queryability test from scoring GREEN, that test scores AMBER and the promotion question is flagged in gap recommendations.
+Tier 3 objects are NOT counted in the 65 benchmarkable nodes. Their attributes are scored as part of the parent object's attribute depth. If a Tier 3 object's embedded structure blocks a queryability test from scoring GREEN, that test scores AMBER and the promotion question is flagged in gap recommendations.
 
 ---
 
@@ -237,9 +243,9 @@ The current 11 implemented entities do not map 1:1 to the target model. This tab
 
 The following target objects have no current code entity and are scored as `[PLANNED]`:
 
-**Tier 1 (43 planned):** BusinessObjective, Decision, Assumption, Constraint, SourceReference, Finding, Bug, Risk, Persona, Topic, Epic, Feature, Task, AcceptanceCriterion, Rule, ValidationRule, EdgeCase, ExceptionCase, ScreenState, Transition, ApiContract, RequestSchema, ResponseSchema, ErrorContract, DataEntity, DataField, Integration, TestCase, ExternalArtifact, OpenQuestion, Message, BusinessCapability, BusinessProcess, ProcessActivity, ProcessGateway, ProcessEvent, Organization, Application, ApplicationComponent, BusinessObject, InformationFlow, Deployment, InfrastructureNode
+**Tier 1 (45 planned):** BusinessObjective, Decision, Assumption, Constraint, SourceReference, Finding, Bug, Risk, Persona, Topic, Epic, Feature, Task, AcceptanceCriterion, Rule, ValidationRule, QualityConstraint, EdgeCase, ExceptionCase, ScreenState, Transition, ApiContract, RequestSchema, ResponseSchema, ErrorContract, DataEntity, DataField, Integration, TestCase, CodeAsset, ExternalArtifact, OpenQuestion, Message, BusinessCapability, BusinessProcess, ProcessActivity, ProcessGateway, ProcessEvent, Organization, Application, ApplicationComponent, BusinessObject, InformationFlow, Deployment, InfrastructureNode
 
-**Tier 2 (9 planned):** BusinessDomain, Channel, Permission, ErrorCode, ConfirmationDialog, Enum, Event, Locale, TranslationKey
+**Tier 2 (11 planned):** BusinessDomain, Channel, Permission, ErrorCode, ConfirmationDialog, Enum, Event, Locale, TranslationKey, ImportSnapshot, CodingConvention
 
 ---
 
@@ -403,6 +409,10 @@ The object families (Product/UX, Architecture/EA, Delivery/Execution) are connec
 | `DEPLOYS` (Application→Deployment) | `HOSTS` + `DEPLOYED_ON` | Directional fix |
 | `DETECTED_BY_BENCHMARK` (Gap→computed) | `detectedBy` property on Gap | Not a real edge |
 | `HAS_STEP` (BusinessProcess→ProcessActivity) | `HAS_FLOW_NODE` | Semantic correction for BPMN alignment (Journey `HAS_STEP` is unchanged) |
+| `USES_SCREEN` (UserStory→Screen) | `DELIVERS` (UserStory→Screen) | Verb normalization to four-verb model |
+| `REQUIRES_API` (UserStory→ApiContract) | `DELIVERS` (UserStory→ApiContract) | Verb normalization to four-verb model |
+
+**Agent-ready extension note:** The 7 deprecated edges above were identified across the meta-model revision and agent-ready spec. See `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` section 10 for the full deprecation list.
 
 ---
 
@@ -410,7 +420,7 @@ The object families (Product/UX, Architecture/EA, Delivery/Execution) are connec
 
 ```mermaid
 graph TD
-    subgraph T1["Tier 1 — First-Class Nodes — 52"]
+    subgraph T1["Tier 1 — First-Class Nodes — 54"]
         subgraph T1_Strat["Strategic & Governance — 8"]
             BO[BusinessObjective]
             DE[Decision]
@@ -436,10 +446,11 @@ graph TD
             US[UserStory]
             TSK[Task]
         end
-        subgraph T1_Req["Requirement & Design — 9"]
+        subgraph T1_Req["Requirement & Design — 10"]
             AC[AcceptanceCriterion]
             RU[Rule]
             VL[ValidationRule]
+            QC[QualityConstraint]
             EC[EdgeCase]
             EX[ExceptionCase]
             SC[Screen]
@@ -447,7 +458,7 @@ graph TD
             IN[Interaction]
             TR[Transition]
         end
-        subgraph T1_Eng["Engineering — 8"]
+        subgraph T1_Eng["Engineering — 9"]
             AP[ApiContract]
             RQ[RequestSchema]
             RS[ResponseSchema]
@@ -456,6 +467,7 @@ graph TD
             DF[DataField]
             IG[Integration]
             TC[TestCase]
+            CA[CodeAsset]
         end
         subgraph T1_Arch["Architecture & EA — 12"]
             BCA[BusinessCapability]
@@ -479,7 +491,7 @@ graph TD
         end
     end
 
-    subgraph T2["Tier 2 — Registry Nodes — 9"]
+    subgraph T2["Tier 2 — Registry Nodes — 11"]
         BDM[BusinessDomain]
         CH[Channel]
         PM[Permission]
@@ -489,6 +501,8 @@ graph TD
         EV[Event]
         LO[Locale]
         TK[TranslationKey]
+        IMS[ImportSnapshot]
+        CCN[CodingConvention]
     end
 
     subgraph T3["Tier 3 — Value Objects — 4"]
@@ -590,7 +604,20 @@ graph LR
     ORG[Organization] -->|OWNS| APP
 ```
 
-### 12.6 Reverse Traversal
+### 12.6 Agent-Ready Traversal Spine (Code Targeting)
+
+```mermaid
+graph LR
+    US[UserStory] -->|DELIVERS| ART["Screen / ApiContract / DataEntity / Rule"]
+    ART -->|"SUPPORTS_SCREEN / EXPOSES / OWNS_DATA_ENTITY / ENFORCES_RULE (IN)"| COMP[ApplicationComponent]
+    COMP -->|HAS_CODE_ASSET| CA[CodeAsset]
+    CA -->|"ASSET_FOR_SCREEN / ASSET_FOR_API / ASSET_FOR_ENTITY / ASSET_FOR_RULE"| ART
+    TC[TestCase] -->|LOCATED_IN| CA
+```
+
+This spine enables: "Given a UserStory, which code files need to change, and which test files verify them?"
+
+### 12.7 Reverse Traversal
 
 ```mermaid
 graph RL
