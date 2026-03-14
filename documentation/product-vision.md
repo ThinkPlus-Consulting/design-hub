@@ -4,7 +4,7 @@
 
 **Related documents:**
 
-- `modeling-taxonomy.md` (3-tier classification: 52 T1 + 9 T2 + 4 T3 = 65 model elements)
+- `modeling-taxonomy.md` (3-tier classification: 54 T1 + 11 T2 + 4 T3 = 69 model elements, 65 agent-ready benchmarkable)
 - `graph-object-catalog.md` (full per-object specifications with attributes and relationships)
 - `vision-benchmark.md` (8-dimension scoring with queryability test suite)
 - `implementation-readiness-graph-model.md` (status, readiness, completenessScore governance)
@@ -38,7 +38,7 @@ It connects:
 - **what is still missing** (findings, bugs, gaps, open questions, risks)
 - **where it is tracked** (external artifacts in Azure DevOps, Jira)
 
-The graph model spans 65 elements across 3 tiers (52 first-class nodes, 9 registries, 4 value objects) with 61 benchmarkable objects and 79 edge types. See `modeling-taxonomy.md` for classification rules.
+The graph model spans 69 elements across 3 tiers (54 first-class nodes, 11 registries, 4 value objects) with 65 agent-ready benchmarkable objects and 90 edge types. See `modeling-taxonomy.md` for classification rules and `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` for the agent-ready extension.
 
 ---
 
@@ -218,8 +218,10 @@ The product must be able to answer these traversal queries via graph edge walks,
 | 9 | Which Jira tickets track story S? | `ExternalArtifact -[REPRESENTS]-> UserStory` |
 | 10 | Which confirmation dialogs can interaction I trigger? | `Interaction -[TRIGGERS_CONFIRMATION]-> ConfirmationDialog` |
 | 11 | Can story S resolve to a complete Implementation Pack? | `UserStory -[DELIVERS]-> deliverable <-[SUPPORTS_SCREEN\|EXPOSES\|OWNS_DATA_ENTITY\|ENFORCES_RULE]- ApplicationComponent` (plus transitive via HAS_MESSAGE for Message) |
+| 12 | Which code files need to change for story S? | `UserStory → DELIVERS → artifact → owning ApplicationComponent → HAS_CODE_ASSET → CodeAsset` |
+| 13 | Which coding conventions apply to component C? | `ApplicationComponent ← GOVERNED_BY_CONVENTION ← CodingConvention` with scope resolution |
 
-**Current state (from `vision-benchmark.md`):** 0/14 GREEN, 2/14 AMBER, 12/14 RED (includes 3 BPMN process queries). Target for 1.0: >= 5 queries at GREEN or AMBER.
+**Current state (from `vision-benchmark.md`):** 0/17 GREEN, 2/17 AMBER, 15/17 RED (includes 3 BPMN process queries and 3 agent-ready code-targeting queries). Target for 1.0: >= 5 queries at GREEN or AMBER.
 
 ---
 
@@ -325,9 +327,9 @@ Current state from `vision-benchmark.md`:
 | Implementation completeness | **RED** (13.1%) |
 | Attribute depth | **AMBER** (~53%) |
 | Relationship coverage | **RED** (20.5%) |
-| Queryability | **RED** (0/14 GREEN) |
+| Queryability | **RED** (0/17 GREEN) |
 | Source traceability | **RED** |
 | Delivery-tool interoperability | **RED** |
 | UX implementation support | **AMBER** |
 
-The documentation model is fully specified (61 benchmarkable objects across 52 T1 + 9 T2, with 79 edge types). Implementation requires creating 53 planned entities, migrating 9 string references to graph edges, and adopting the universal status enum.
+The documentation model is fully specified (65 agent-ready benchmarkable objects across 54 T1 + 11 T2, with 90 edge types). Implementation requires creating the remaining planned entities, migrating 9 string references to graph edges, and adopting the universal status enum.

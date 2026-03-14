@@ -6,7 +6,7 @@
 **Related documents:**
 
 - `modeling-taxonomy.md` (tier classification rules, string-to-edge migration map)
-- `graph-object-catalog.md` (full 65-element specification with relationship registry)
+- `graph-object-catalog.md` (full 69-element specification with relationship registry — 65 agent-ready benchmarkable)
 - `implementation-readiness-graph-model.md` (status, readiness, and completeness governance)
 - `product-vision.md` (product thesis, users, outcomes, north-star queries)
 - `azure-jira-benchmark.md` (Azure DevOps and Jira field and relationship analysis)
@@ -65,6 +65,8 @@ This benchmark scores two separate baselines because they measure different conc
 | **Total** | **61** | **61** | **100%** |
 
 **Score: GREEN** — All 61 benchmarkable nodes are documented with typed attributes and relationship tables in the catalog.
+
+**Agent-ready benchmarkable:** 65 (base 61 + CodeAsset, ImportSnapshot, QualityConstraint, CodingConvention). This count includes all objects an agent needs to resolve for safe implementation. Phase 1 intermediate: 63 (base 61 + CodeAsset, ImportSnapshot). See `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` for phased breakdown.
 
 **Note:** Tier 3 value objects (4) are documented as part of their parent objects and are not independently scored.
 
@@ -164,8 +166,11 @@ Tier 3 value objects (not counted in 61):
 | 9 | Which Jira tickets track story S? | `ExternalArtifact -[REPRESENTS]-> UserStory` | No ExternalArtifact entity | RED |
 | 10 | Which confirmation dialogs can interaction I trigger? | `Interaction -[TRIGGERS_CONFIRMATION]-> ConfirmationDialog` | `confirmationCode` string on Interaction — `[STRING_REF]`; no ConfirmationDialog entity | RED |
 | 14 | Can story S resolve to a complete Implementation Pack? | `UserStory -[DELIVERS]-> deliverable <-[SUPPORTS_SCREEN\|EXPOSES\|OWNS_DATA_ENTITY\|ENFORCES_RULE]- ApplicationComponent` (transitive: Message via HAS_MESSAGE→Screen→SUPPORTS_SCREEN) | `[PLANNED]` — no ApplicationComponent execution metadata populated | RED |
+| 15 | Which code files implement screen S? | `Screen <-[SUPPORTS_SCREEN]- ApplicationComponent -[HAS_CODE_ASSET]-> CodeAsset -[ASSET_FOR_SCREEN]-> Screen` | `[PLANNED]` — no CodeAsset entity | RED |
+| 16 | Which test file verifies test case TC? | `TestCase -[LOCATED_IN]-> CodeAsset` | `[PLANNED]` — no LOCATED_IN edge | RED |
+| 17 | Which conventions govern component C? | `ApplicationComponent <-[GOVERNED_BY_CONVENTION]- CodingConvention` | `[PLANNED]` — no CodingConvention entity | RED |
 
-**Note on query numbering:** product-vision.md uses query numbers 1-11 (10 original + 1 new). vision-benchmark.md uses query numbers 1-14 (13 original including 3 BPMN queries #11-13 + 1 new as #14). The numbering diverges because the benchmark includes BPMN-specific queries not in the north-star list.
+**Note on query numbering:** product-vision.md uses query numbers 1-13 (10 original + 1 Implementation Pack + 2 agent-ready). vision-benchmark.md uses query numbers 1-17 (10 original + 3 BPMN #11-13 + 1 Implementation Pack #14 + 3 agent-ready code-targeting #15-17). The numbering diverges because the benchmark includes BPMN-specific queries not in the north-star list.
 
 **Summary:**
 
@@ -173,9 +178,9 @@ Tier 3 value objects (not counted in 61):
 |-------|-------|---------|
 | GREEN | 0 | — |
 | AMBER | 2 | #4 (permission), #6 (stories) — partial edge walk, partial string ref |
-| RED | 12 | #1, #2, #3, #5, #7, #8, #9, #10, #11, #12, #13, #14 |
+| RED | 15 | #1, #2, #3, #5, #7, #8, #9, #10, #11, #12, #13, #14, #15, #16, #17 |
 
-**Score: RED** — Zero queries can execute as full edge walks. Two have partial coverage (one hop is an edge, another is a string ref). Twelve queries cannot execute at all because target entities or edges do not exist. Queries #11-#13 cover BPMN process traversal (activities, gateways, events). Query #14 covers Implementation Pack resolution for agent readiness.
+**Score: RED** — Zero queries can execute as full edge walks. Two have partial coverage (one hop is an edge, another is a string ref). Fifteen queries cannot execute at all because target entities or edges do not exist. Queries #11-#13 cover BPMN process traversal. Query #14 covers Implementation Pack resolution. Queries #15-#17 cover agent-ready code-targeting (code files, test file location, convention governance).
 
 **AMBER scoring rationale:**
 
@@ -273,12 +278,12 @@ Tier 3 value objects (not counted in 61):
 | 2 | Implementation completeness | **RED** | 8/61 entities exist (13.1%), 53 planned |
 | 3 | Attribute depth | **AMBER** | ~53% average depth on implemented entities; universal status migration pending |
 | 4 | Relationship coverage | **RED** | 9/44+ edges exist (20.5%); 9 are string refs; 26+ planned |
-| 5 | Queryability | **RED** | 0/14 GREEN, 2/14 AMBER, 12/14 RED |
+| 5 | Queryability | **RED** | 0/17 GREEN, 2/17 AMBER, 15/17 RED |
 | 6 | Source traceability | **RED** | SourceReference entity does not exist |
 | 7 | Delivery-tool interoperability | **RED** | ExternalArtifact entity does not exist |
 | 8 | UX implementation support | **AMBER** | Screen API resolves stories[] and roles[] via lookup maps; graph model still string-backed; filtering and registries missing |
 
-**Overall assessment:** Documentation is complete (the model is fully specified), but implementation lags significantly. The graph is currently a partial skeleton — 11 entities (8 benchmarkable + 3 T3 value objects) with 9 real edges and 9 string-encoded relationships — operating in a 65-element (52 T1 + 9 T2 + 4 T3), 79-relationship target model. The Screen API projection layer partially compensates by resolving stories and roles at the application level, but the graph model itself remains string-backed for those relationships.
+**Overall assessment:** Documentation is complete (the model is fully specified), but implementation lags significantly. The graph is currently a partial skeleton — 11 entities (8 benchmarkable + 3 T3 value objects) with 9 real edges and 9 string-encoded relationships — operating in a 69-element (54 T1 + 11 T2 + 4 T3), 90-relationship target model (65 agent-ready benchmarkable). The Screen API projection layer partially compensates by resolving stories and roles at the application level, but the graph model itself remains string-backed for those relationships.
 
 ---
 
@@ -474,8 +479,8 @@ RETURN pe.eventId, pe.eventType, pe.name
 | Score | Count | % | Queries |
 |-------|-------|---|---------|
 | GREEN | 0 | 0% | — |
-| AMBER | 2 | 14% | #4 (permissions), #6 (stories) |
-| RED | 12 | 86% | #1, #2, #3, #5, #7, #8, #9, #10, #11 (process traversal), #12 (gateway routing), #13 (event triggering), #14 (Implementation Pack resolution) |
+| AMBER | 2 | 12% | #4 (permissions), #6 (stories) |
+| RED | 15 | 88% | #1, #2, #3, #5, #7, #8, #9, #10, #11 (process traversal), #12 (gateway routing), #13 (event triggering), #14 (Implementation Pack resolution), #15 (code file resolution), #16 (test file location), #17 (convention governance) |
 
 ---
 
@@ -534,6 +539,10 @@ RETURN pe.eventId, pe.eventType, pe.name
 | Event | T2 | Yes | — | `[PLANNED]` | — | — | RED | No code entity |
 | Locale | T2 | Yes | — | `[PLANNED]` | — | — | RED | No code entity |
 | TranslationKey | T2 | Yes | — | `[PLANNED]` | — | — | RED | No code entity |
+| CodeAsset | T1 | Yes | 0% | `[PLANNED]` | — | 0/7 edges | RED | Agent-ready extension — no code entity |
+| QualityConstraint | T1 | Yes | 0% | `[PLANNED]` | — | 0/2 edges | RED | Agent-ready extension — no code entity |
+| ImportSnapshot | T2 | Yes | 0% | `[PLANNED]` | — | 0/1 edges | RED | Agent-ready extension — no code entity |
+| CodingConvention | T2 | Yes | 0% | `[PLANNED]` | — | 0/1 edges | RED | Agent-ready extension — no code entity |
 
 ---
 
@@ -771,7 +780,7 @@ This benchmark should be re-scored when:
 | Dimension | Target Score |
 |-----------|-------------|
 | Documentation completeness | GREEN (maintain) |
-| Implementation completeness | AMBER (>50% of 61 entities) |
+| Implementation completeness | AMBER (>50% of 65 agent-ready benchmarkable entities) |
 | Attribute depth | GREEN (>80% average depth) |
 | Relationship coverage | AMBER (>50% as edges, 0 BLOCKING string refs) |
 | Queryability | AMBER (>50% queries at GREEN or AMBER) |

@@ -211,6 +211,9 @@ The following scenarios should be treated as mandatory:
 8. Critical token-backed UI elements render the approved theme values.
 9. Process Flow View renders BusinessProcess flow nodes (ProcessActivity, ProcessGateway, ProcessEvent) and their `FLOWS_TO` sequence edges faithfully from graph-backed data.
 10. Implementation Pack resolution: a UserStory with DELIVERS edges resolves through deliverable→ApplicationComponent to yield frameworkFamily, modulePath, and effective testCommand. Dead-end deliverables (e.g., Message without HAS_MESSAGE→Screen→SUPPORTS_SCREEN) are flagged.
+11. CodeAsset LOCATED_IN resolution: TestCase → LOCATED_IN → CodeAsset resolves to a valid file path (Application.repoPath + ApplicationComponent.modulePath + CodeAsset.filePath).
+12. Import drift detection: ImportSnapshot.contentHash matches current Git doc content hash. Mismatch indicates doc-to-graph drift requiring re-import.
+13. Convention governance: ApplicationComponent GOVERNED_BY_CONVENTION edges resolve to valid CodingConvention nodes with accessible docRef files.
 
 ## Drift Gates
 
@@ -223,6 +226,9 @@ Design drift should be measured on these gates:
 - `token drift`: rendered values bypass canonical design tokens
 - `text drift`: hardcoded UI strings appear outside translation files
 - `RTL drift`: Arabic layout breaks or direction is not applied
+- `code-asset drift`: CodeAsset filePath resolves to a non-existent file (Application.repoPath + ApplicationComponent.modulePath + CodeAsset.filePath)
+- `import drift`: ImportSnapshot.contentHash mismatches current Git doc content, indicating stale graph data
+- `convention drift`: CodingConvention.docRef points to a missing or moved Markdown file
 
 ## CI Policy
 

@@ -4,7 +4,7 @@
 
 **Related documents:**
 
-- `modeling-taxonomy.md` (3-tier classification: 52 T1 + 9 T2 + 4 T3 = 65 model elements)
+- `modeling-taxonomy.md` (3-tier classification: 54 T1 + 11 T2 + 4 T3 = 69 model elements, 65 agent-ready benchmarkable)
 - `graph-object-catalog.md` (full per-object specifications with attributes and relationships)
 - `product-vision.md` (traversal spine, north-star queries, canonical views)
 - `vision-benchmark.md` (8-dimension scoring with queryability test suite)
@@ -35,7 +35,7 @@ Design Hub should ingest canonical requirement and design sources, normalize the
 
 ### 1.2 Artifact registry and graph model
 
-The platform should maintain a first-class graph object registry covering 61 benchmarkable nodes (52 T1 + 9 T2) rather than a flat record list.
+The platform should maintain a first-class graph object registry covering 65 agent-ready benchmarkable nodes (52 T1 + 9 T2) rather than a flat record list.
 
 **Primary capabilities:**
 
@@ -141,6 +141,24 @@ The platform should include strict design verification so rendered UI stays alig
 | Localization and RTL verification | `[PLANNED]` — requires B2 (i18n) first |
 | Graph-to-UI drift detection | `[PLANNED]` |
 
+### 1.9 Code targeting (agent-ready extension)
+
+Agents must be able to resolve from a UserStory to the exact code files and test files that need to change. This capability is the bridge between the delivery model and the filesystem.
+
+**Objects:** CodeAsset (T1), ImportSnapshot (T2)
+**Edges:** HAS_CODE_ASSET, LOCATED_IN, ASSET_FOR_SCREEN, ASSET_FOR_API, ASSET_FOR_ENTITY, ASSET_FOR_RULE, IMPORTED_BY, IMPLEMENTS→CodeAsset
+**Enables:** Agent can resolve from UserStory to exact code files and test files
+**Status:** `[PLANNED]`
+
+### 1.10 Convention compliance (agent-ready extension)
+
+Agents must be able to discover which coding standards and quality thresholds apply to their work before generating or modifying code.
+
+**Objects:** CodingConvention (T2 Hybrid), QualityConstraint (T1)
+**Edges:** GOVERNED_BY_CONVENTION, HAS_QUALITY_CONSTRAINT, SATISFIED_BY
+**Enables:** Agent can discover which coding standards and quality thresholds apply to its work
+**Status:** `[PLANNED]`
+
 ---
 
 ## 2. Capability-to-Artifact Mapping
@@ -174,7 +192,7 @@ graph TD
 
     C1 -->|produces| SR[SourceReference]
     C1 -->|produces| BO[BusinessObjective]
-    C2 -->|manages| ALL["61 benchmarkable nodes"]
+    C2 -->|manages| ALL["65 agent-ready benchmarkable nodes"]
     C3 -->|traverses| PE[Persona] & JO[Journey] & JS[JourneyStep]
     C4 -->|traverses| SC[Screen] & IN[Interaction] & TR[Transition]
     C5 -->|traverses| US[UserStory] & BG[Bug] & FI[Finding]
@@ -720,7 +738,7 @@ ORDER BY bo.name, f.name, us.title
 
 #### 4.3.2 Benchmark View
 
-**Purpose**: Show attribute and relationship parity scores, queryability test results, and drift indicators across all 61 benchmarkable nodes.
+**Purpose**: Show attribute and relationship parity scores, queryability test results, and drift indicators across all 65 agent-ready benchmarkable nodes.
 
 **Primary axis**: Computed diagnostic
 
@@ -728,7 +746,7 @@ ORDER BY bo.name, f.name, us.title
 
 **Default entry query**: Aggregation query across all entity types computing attribute depth, relationship coverage, and completenessScore.
 
-**Core linked objects**: All 61 benchmarkable nodes (diagnostic metadata)
+**Core linked objects**: All 65 agent-ready benchmarkable nodes (diagnostic metadata)
 
 **Grouping options**: by tier (T1/T2), by category, by implementation status
 

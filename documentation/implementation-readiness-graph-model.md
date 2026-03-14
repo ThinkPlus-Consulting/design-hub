@@ -11,7 +11,7 @@
 
 - `README.md`
 - `modeling-taxonomy.md` (tier classification, current-to-target mapping)
-- `graph-object-catalog.md` (full 65-element specification, relationship registry)
+- `graph-object-catalog.md` (full 69-element specification, relationship registry — 65 agent-ready benchmarkable)
 - `vision-benchmark.md` (8-dimension scoring, queryability tests, gap prioritization)
 - `product-vision.md`
 - `feature-capability-map.md`
@@ -35,7 +35,7 @@ The graph must support traversal in both directions. A user or agent should be a
 
 ## 2. First-Class Artifact Types
 
-See `modeling-taxonomy.md` for the full 3-tier classification (52 T1 + 9 T2 + 4 T3 = 65 model elements) and `graph-object-catalog.md` for per-object specifications.
+See `modeling-taxonomy.md` for the full 3-tier classification (54 T1 + 11 T2 + 4 T3 = 69 model elements, 65 agent-ready benchmarkable) and `graph-object-catalog.md` for per-object specifications.
 
 ### 2.1 Strategic & Governance objects
 
@@ -270,6 +270,17 @@ graph LR
 
 This matrix is intentionally selective. Readiness does **not** apply to every object in the graph.
 
+**Agent-ready extension objects and readiness:**
+
+| Object | `status` | `readiness` | `completenessScore` | Rationale |
+|--------|----------|-------------|---------------------|-----------|
+| `CodeAsset` | Yes | No | Yes | Structural node — not independently deliverable |
+| `ImportSnapshot` | No (append-only) | No | No | Audit record — no lifecycle or completeness scoring |
+| `QualityConstraint` | Yes | No | Yes | Bound to artifacts via HAS_QUALITY_CONSTRAINT — scored via parent |
+| `CodingConvention` | No (registry) | No | No | T2 registry with docRef — activeStatus only |
+| `ProcessGateway` | Yes | No | Yes | Structural BPMN node — not independently deliverable |
+| `ProcessEvent` | Yes | No | Yes | Structural BPMN node — not independently deliverable |
+
 ---
 
 ## 7. Minimum Completeness Rules (MCR)
@@ -435,7 +446,7 @@ graph LR
 
 **Enforcement:** A UserStory MUST NOT transition to the unlocked status unless the corresponding edge exists. For example, a story cannot reach `APPROVED` without at least one `DELIVERS` edge to a Screen.
 
-**Note on total edge inventory:** The target model contains **79 edge types (76 base + DEPENDS_ON_COMPONENT, OWNS_DATA_ENTITY, ENFORCES_RULE from Technical Execution Context Extension)**. The completenessScore formula denominators should reference this inventory for global-level scoring.
+**Note on total edge inventory:** The target model contains **90 edge types (79 base + 8 Phase 1 agent-ready + 3 Phase 2 agent-ready)**. The completenessScore formula denominators should reference this inventory for global-level scoring. See `graph-object-catalog.md` section 6.3 for the full registry.
 
 ### 7.12 Implementation Pack Resolution
 
@@ -448,6 +459,58 @@ Every UserStory should resolve to a complete Implementation Pack — a computed 
 **Command precedence:** `COALESCE(comp.testCommand, app.defaultTestCommand)` — component-level overrides Application-level defaults
 
 See `docs/superpowers/specs/2026-03-14-technical-execution-context-design.md` section 7.1 for the full canonical Cypher query.
+
+### 7.13 Tightened MCR for AGENT_FIRST Stories
+
+When `UserStory.executionMode = AGENT_FIRST`, the Agent-Ready concern (MCR-STORY-AGENT-READY-001) adds 5 BLOCKING checks and 1 ADVISORY check beyond the base Implementation Pack resolution:
+
+| Check | Condition | Severity |
+|-------|-----------|----------|
+| Repo path resolvable | `Application.repoPath IS NOT NULL` | BLOCKING |
+| Build command available | `COALESCE(comp.buildCommand, app.defaultBuildCommand) IS NOT NULL` | BLOCKING |
+| Manifest path available | `comp.manifestPath IS NOT NULL` | BLOCKING |
+| Code-asset presence | ≥1 `HAS_CODE_ASSET` edge on at least one DELIVERS target's owning ApplicationComponent | BLOCKING |
+| Verification test-file resolution | ≥1 `LOCATED_IN` edge on at least one TestCase linked via `VERIFIED_BY` | BLOCKING |
+| Entrypoint path | `comp.entrypointPath IS NOT NULL` | ADVISORY (non-blocking) |
+
+**Tightened Cypher query:**
+
+```cypher
+MATCH (s:UserStory {storyId: $storyId, executionMode: 'AGENT_FIRST'})
+// Branch 1: Direct DELIVERS targets (Screen, ApiContract, DataEntity, Rule)
+OPTIONAL MATCH (s)-[:DELIVERS]->(target) WHERE NOT target:Message
+OPTIONAL MATCH (target)<-[:SUPPORTS_SCREEN|EXPOSES|OWNS_DATA_ENTITY|ENFORCES_RULE]-(comp1:ApplicationComponent)
+OPTIONAL MATCH (comp1)<-[:HAS_COMPONENT]-(app1:Application)
+OPTIONAL MATCH (comp1)-[:HAS_CODE_ASSET]->(ca1:CodeAsset)
+WITH s,
+     collect(DISTINCT comp1) AS directComps,
+     collect(DISTINCT app1) AS directApps,
+     collect(DISTINCT ca1) AS directAssets
+// Branch 2: Message targets (transitive via Screen → owning component)
+OPTIONAL MATCH (s)-[:DELIVERS]->(m:Message)<-[:HAS_MESSAGE]-(scr:Screen)<-[:SUPPORTS_SCREEN]-(comp2:ApplicationComponent)
+OPTIONAL MATCH (comp2)<-[:HAS_COMPONENT]-(app2:Application)
+OPTIONAL MATCH (comp2)-[:HAS_CODE_ASSET]->(ca2:CodeAsset)
+WITH s,
+     directComps + collect(DISTINCT comp2) AS allComps,
+     directApps + collect(DISTINCT app2) AS allApps,
+     directAssets + collect(DISTINCT ca2) AS allAssets
+// Verification test-file resolution
+OPTIONAL MATCH (s)-[:VERIFIED_BY]->(tc:TestCase)-[:LOCATED_IN]->(tca:CodeAsset)
+WITH s, allComps, allApps, allAssets,
+     count(DISTINCT tca) AS testFileCount
+RETURN s.storyId,
+  any(a IN allApps WHERE a.repoPath IS NOT NULL) AS hasRepoPath,
+  any(c IN allComps WHERE
+       COALESCE(c.buildCommand,
+            [a IN allApps WHERE a.defaultBuildCommand IS NOT NULL][0].defaultBuildCommand
+       ) IS NOT NULL) AS hasBuildCommand,
+  any(c IN allComps WHERE c.manifestPath IS NOT NULL) AS hasManifestPath,
+  size(allAssets) >= 1 AS hasCodeAsset,
+  testFileCount >= 1 AS hasTestFile,
+  any(c IN allComps WHERE c.entrypointPath IS NOT NULL) AS hasEntryPoint
+```
+
+**Semantics:** Uses `collect(DISTINCT)` + `any()` aggregation to check whether ANY resolved component satisfies each check. This avoids the false-negative trap of `LIMIT 1` which would only check an arbitrary single component. See `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` section 8.2 for the canonical pattern.
 
 ---
 
@@ -494,6 +557,8 @@ completenessScore = (
 ### 8.5 Diagnostic positioning
 
 `completenessScore` is a severity-weighted diagnostic. It does NOT replace or contribute to `status` or `readiness` flags.
+
+**Agent-ready extension:** The completenessScore formula now includes code-asset edges in the BLOCKING category. For AGENT_FIRST stories, HAS_CODE_ASSET and LOCATED_IN (via VERIFIED_BY chain) are BLOCKING edges and contribute to the weighted numerator accordingly (BLOCKING edge weight = 3x per the formula in section 8.1).
 
 ```mermaid
 graph TD

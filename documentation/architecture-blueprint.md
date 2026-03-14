@@ -4,7 +4,7 @@
 
 **Related documents:**
 
-- `modeling-taxonomy.md` (3-tier classification with current-to-target entity mapping)
+- `modeling-taxonomy.md` (3-tier classification: 54 T1 + 11 T2 + 4 T3 = 69 model elements with current-to-target entity mapping)
 - `graph-object-catalog.md` (full per-object specifications)
 - `product-vision.md` (traversal spine, canonical views)
 - `vision-benchmark.md` (8-dimension scoring, string-to-edge migration cost)
@@ -179,6 +179,23 @@ graph TD
 **Strategy:** Defined in `ci-quality-gates.md` (PR validation + merge protection lanes)
 
 **Implementation status:** `[PLANNED]` — no CI workflow configuration exists.
+
+### 2.8 Agent-ready layer (extension)
+
+The agent-ready layer adds code-targeting and convention compliance capabilities to the graph model, enabling coding agents to resolve from delivery artifacts to exact filesystem paths and applicable standards.
+
+**Code targeting:**
+
+- **CodeAsset** (T1): File-level code targeting. Resolves `Application.repoPath + ApplicationComponent.modulePath + CodeAsset.filePath` for full filesystem path. 10 attributes, 7 relationships.
+- **ImportSnapshot** (T2): Records point-in-time imports from Git docs to graph nodes. Enables drift detection via `contentHash` comparison between stored and current document content.
+- **RequirementSyncContract**: Protocol for maintaining doc↔graph consistency. See agent-ready spec Section 9.
+
+**Convention compliance:**
+
+- **CodingConvention** (T2 Hybrid): Stores queryable metadata in graph, detailed rules in Git-tracked Markdown via `docRef`. Resolution is edge-only via `GOVERNED_BY_CONVENTION` — no implicit matching. When multiple conventions apply, narrower scope overrides broader: `COMPONENT > SERVICE > FRONTEND/BACKEND > GLOBAL`.
+- **QualityConstraint** (T1): Instance-specific non-functional requirement with measurable threshold. Bound to Screen/ApiContract/DataEntity/ApplicationComponent via `HAS_QUALITY_CONSTRAINT`. Verified via `SATISFIED_BY → TestCase`.
+
+**Implementation status:** `[PLANNED]` — no CodeAsset, ImportSnapshot, QualityConstraint, or CodingConvention entities exist.
 
 ---
 
