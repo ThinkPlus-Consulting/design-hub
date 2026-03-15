@@ -24,4 +24,15 @@ class ImpactAnalysisServiceTest {
         assertTrue(cypher.contains("ASSET_FOR_SCREEN"));
         assertTrue(cypher.contains("DELIVERS"));
     }
+
+    @Test
+    void shouldHandleEmptyArtifactListWithoutDroppingRows() {
+        // The query must use a CASE guard so that assets with no ASSET_FOR_* edges
+        // still return blastRadiusFiles instead of producing zero rows from UNWIND [].
+        String cypher = impactService.buildBlastRadiusQuery("CA-ORPHAN-001");
+        assertTrue(cypher.contains("CASE WHEN size(artifacts) = 0 THEN [null] ELSE artifacts END"),
+                "Query must guard against empty UNWIND to preserve blast radius result");
+        assertTrue(cypher.contains("WHERE s IS NOT NULL"),
+                "Query must filter null storyIds introduced by the null sentinel");
+    }
 }

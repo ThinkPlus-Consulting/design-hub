@@ -15,7 +15,7 @@ public class ImpactAnalysisService {
     public String buildBlastRadiusQuery(String codeAssetId) {
         return """
             MATCH (ca:CodeAsset {codeAssetId: $codeAssetId})
-            OPTIONAL MATCH path = (ca)-[:DEPENDS_ON_ASSET*1..5]->(dep:CodeAsset)
+            OPTIONAL MATCH (ca)-[:DEPENDS_ON_ASSET*1..5]->(dep:CodeAsset)
             WITH ca, collect(DISTINCT dep) + [ca] AS allAssets
             UNWIND allAssets AS asset
             OPTIONAL MATCH (asset)-[:ASSET_FOR_SCREEN]->(scr:Screen)
@@ -23,17 +23,17 @@ public class ImpactAnalysisService {
             OPTIONAL MATCH (asset)-[:ASSET_FOR_ENTITY]->(de:DataEntity)
             OPTIONAL MATCH (asset)-[:ASSET_FOR_RULE]->(r:Rule)
             WITH allAssets,
-                 collect(DISTINCT scr) AS screens,
-                 collect(DISTINCT api) AS apis,
-                 collect(DISTINCT de) AS entities,
-                 collect(DISTINCT r) AS rules
-            UNWIND (screens + apis + entities + rules) AS artifact
+                 collect(DISTINCT scr) + collect(DISTINCT api)
+                 + collect(DISTINCT de) + collect(DISTINCT r) AS artifacts
+            WITH allAssets, artifacts,
+                 CASE WHEN size(artifacts) = 0 THEN [null] ELSE artifacts END AS safeArtifacts
+            UNWIND safeArtifacts AS artifact
             OPTIONAL MATCH (us:UserStory)-[:DELIVERS]->(artifact)
             OPTIONAL MATCH (us)-[:VERIFIED_BY]->(tc:TestCase)
             RETURN
                  size(allAssets) AS blastRadiusFiles,
-                 collect(DISTINCT us.storyId) AS affectedStories,
-                 collect(DISTINCT tc.testCaseId) AS affectedTests
+                 [s IN collect(DISTINCT us.storyId) WHERE s IS NOT NULL] AS affectedStories,
+                 [t IN collect(DISTINCT tc.testCaseId) WHERE t IS NOT NULL] AS affectedTests
             """;
     }
 }
