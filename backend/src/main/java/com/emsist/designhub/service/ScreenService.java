@@ -4,6 +4,7 @@ import com.emsist.designhub.domain.Screen;
 import com.emsist.designhub.repository.BusinessRoleRepository;
 import com.emsist.designhub.repository.ScreenRepository;
 import com.emsist.designhub.repository.UserStoryRepository;
+import com.emsist.designhub.repository.ValidationRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class ScreenService {
 
     private final ScreenRepository screenRepository;
     private final BusinessRoleRepository businessRoleRepository;
+    private final ValidationRoleRepository validationRoleRepository;
     private final UserStoryRepository userStoryRepository;
 
     public List<Screen> getAllScreens() {
@@ -69,7 +71,7 @@ public class ScreenService {
         stats.put("designNotStarted", designNotStarted);
         stats.put("deliveryIntegrated", deliveryIntegrated);
         stats.put("deliveryTested", deliveryTested);
-        stats.put("totalRoles", businessRoleRepository.count());
+        stats.put("totalRoles", businessRoleRepository.count() + validationRoleRepository.count());
         stats.put("totalStories", userStoryRepository.count());
 
         if (total > 0) {

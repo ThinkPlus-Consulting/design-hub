@@ -142,11 +142,40 @@ public class RegistryGraphMigrationService {
     }
 
     @Transactional
+    public void patchChannelCodes() {
+        // Migrate legacy CH-WEB → CH-WEB-DSK on persisted EntryMode nodes
+        neo4jClient.query("""
+                MATCH (em:EntryMode) WHERE em.channelId = 'CH-WEB'
+                SET em.channelId = 'CH-WEB-DSK'
+                """).run();
+    }
+
+    @Transactional
+    public void patchInteractionPermissions() {
+        // Set permission on interactions that logically require one.
+        // These were seeded as null; this patch makes permissions observable live.
+        neo4jClient.query("""
+                UNWIND [
+                  {id: 'INT-R05-AGT-LIST-003', perm: 'ADMIN'},
+                  {id: 'INT-R05-BUILDER-004',  perm: 'ADMIN'},
+                  {id: 'INT-R05-AGT-LIST-002', perm: 'AGENT_DESIGNER'},
+                  {id: 'INT-R05-CHAT-003',     perm: 'HITL_REVIEWER'}
+                ] AS patch
+                MATCH (i:Interaction {interactionId: patch.id})
+                SET i.permission = patch.perm
+                """).run();
+    }
+
+    @Transactional
     public void runFullMigration() {
         seedChannels();
         seedPermissions();
         seedBusinessRoles();
         seedValidationRoles();
+        // Patch persisted data before backfilling edges
+        patchChannelCodes();
+        patchInteractionPermissions();
+        // Backfill edges (now that string fields have correct values)
         backfillPersonas();
         backfillAccessibleByRoleEdges();
         backfillDeliveredViaChannelEdges();
