@@ -2102,7 +2102,7 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("SUPER_ADMIN", "ADMIN", "ARCHITECT", "AGENT_DESIGNER", "USER", "VIEWER"))
                 .targetScreen(screenMap.get("SCR-AGT-LIST"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Left-nav dock icon click").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Left-nav dock icon click").build()
                 ))
                 .build();
         Touchpoint tp_notif_click = Touchpoint.builder()
@@ -2113,7 +2113,7 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("SUPER_ADMIN", "ADMIN", "ARCHITECT", "AGENT_DESIGNER", "USER", "VIEWER"))
                 .targetScreen(screenMap.get("SURF-NOTIF-DROPDOWN"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Header notification bell icon click").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Header notification bell icon click").build()
                 ))
                 .build();
         Touchpoint tp_gallery_menu = Touchpoint.builder()
@@ -2124,7 +2124,7 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("ADMIN", "ARCHITECT", "AGENT_DESIGNER", "USER"))
                 .targetScreen(screenMap.get("SCR-AGT-GALLERY"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Left-nav Gallery menu item click").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Left-nav Gallery menu item click").build()
                 ))
                 .build();
         Touchpoint tp_chat_fab = Touchpoint.builder()
@@ -2135,7 +2135,7 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("ADMIN", "ARCHITECT", "AGENT_DESIGNER", "USER"))
                 .targetScreen(screenMap.get("SCR-AGT-CHAT"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Floating action button (bottom-right)").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Floating action button (bottom-right)").build()
                 ))
                 .build();
         Touchpoint tp_auth_direct = Touchpoint.builder()
@@ -2146,8 +2146,8 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("SUPER_ADMIN", "ADMIN", "ARCHITECT", "AGENT_DESIGNER", "USER", "VIEWER", "HITL_REVIEWER", "AUDITOR"))
                 .targetScreen(screenMap.get("SCR-AUTH"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Direct URL navigation to /auth/login").build(),
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Redirect from unauthenticated route").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Direct URL navigation to /auth/login").build(),
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Redirect from unauthenticated route").build()
                 ))
                 .build();
         Touchpoint tp_pwd_reset_link = Touchpoint.builder()
@@ -2158,7 +2158,7 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("SUPER_ADMIN", "ADMIN", "ARCHITECT", "AGENT_DESIGNER", "USER", "VIEWER", "HITL_REVIEWER", "AUDITOR"))
                 .targetScreen(screenMap.get("SCR-AUTH-PWD-RESET-REQ"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Forgot Password link on login page").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Forgot Password link on login page").build()
                 ))
                 .build();
         Touchpoint tp_r04_dock = Touchpoint.builder()
@@ -2169,7 +2169,7 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("SUPER_ADMIN", "ADMIN", "ARCHITECT", "USER", "VIEWER"))
                 .targetScreen(screenMap.get("SCR-01"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Left-nav dock icon click").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Left-nav dock icon click").build()
                 ))
                 .build();
         Touchpoint tp_r06_settings = Touchpoint.builder()
@@ -2180,7 +2180,7 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("SUPER_ADMIN", "ADMIN", "ARCHITECT"))
                 .targetScreen(screenMap.get("SCR-LM-LANG"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Settings menu → Localization").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Settings menu → Localization").build()
                 ))
                 .build();
         Touchpoint tp_global_search = Touchpoint.builder()
@@ -2191,7 +2191,7 @@ public class DataInitializer implements CommandLineRunner {
                 .roleKeys(List.of("SUPER_ADMIN", "ADMIN", "ARCHITECT", "AGENT_DESIGNER", "USER", "VIEWER"))
                 .targetScreen(screenMap.get("SURF-HEADER"))
                 .entryModes(List.of(
-                        EntryMode.builder().channelId("CH-WEB").mechanism("Header search bar focus/click").build()
+                        EntryMode.builder().channelId("CH-WEB-DSK").mechanism("Header search bar focus/click").build()
                 ))
                 .build();
         touchpointRepository.saveAll(List.of(tp_agt_dock, tp_notif_click, tp_gallery_menu, tp_chat_fab, tp_auth_direct, tp_pwd_reset_link, tp_r04_dock, tp_r06_settings, tp_global_search));

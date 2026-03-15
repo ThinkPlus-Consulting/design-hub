@@ -20,38 +20,32 @@ public class RoleService {
 
     public List<RoleResponse> getAll() {
         log.debug("Fetching business-role and validation-role graph summaries");
+        // ACCESSIBLE_BY_ROLE on Touchpoint/Interaction is deferred (no @Relationship yet).
+        // Only Screen→BusinessRole edges exist; touchpointCount/interactionCount hardcoded to 0.
         return neo4jClient.query("""
                         MATCH (r:BusinessRole)
                         OPTIONAL MATCH (s:Screen)-[:ACCESSIBLE_BY_ROLE]->(r)
                         WITH r, count(DISTINCT s) AS screenCount
-                        OPTIONAL MATCH (tp:Touchpoint)-[:ACCESSIBLE_BY_ROLE]->(r)
-                        WITH r, screenCount, count(DISTINCT tp) AS touchpointCount
-                        OPTIONAL MATCH (i:Interaction)-[:ACCESSIBLE_BY_ROLE]->(r)
-                        WITH r, screenCount, touchpointCount, count(DISTINCT i) AS interactionCount
                         OPTIONAL MATCH (j:Journey)-[:PERFORMED_BY_PERSONA]->(:Persona)<-[:USED_BY_PERSONA]-(s2:Screen)-[:ACCESSIBLE_BY_ROLE]->(r)
                         RETURN r.roleKey AS roleKey,
                                r.displayName AS displayName,
                                r.roleGroup AS roleGroup,
                                r.sortOrder AS sortOrder,
                                screenCount,
-                               touchpointCount,
-                               interactionCount,
+                               0 AS touchpointCount,
+                               0 AS interactionCount,
                                count(DISTINCT j) AS journeyCount
                         UNION ALL
                         MATCH (vr:ValidationRole)
                         OPTIONAL MATCH (s:Screen)-[:ACCESSIBLE_BY_ROLE]->(vr)
                         WITH vr, count(DISTINCT s) AS screenCount
-                        OPTIONAL MATCH (tp:Touchpoint)-[:ACCESSIBLE_BY_ROLE]->(vr)
-                        WITH vr, screenCount, count(DISTINCT tp) AS touchpointCount
-                        OPTIONAL MATCH (i:Interaction)-[:ACCESSIBLE_BY_ROLE]->(vr)
-                        WITH vr, screenCount, touchpointCount, count(DISTINCT i) AS interactionCount
                         RETURN vr.validationRoleKey AS roleKey,
                                vr.displayName AS displayName,
                                vr.scope AS roleGroup,
                                null AS sortOrder,
                                screenCount,
-                               touchpointCount,
-                               interactionCount,
+                               0 AS touchpointCount,
+                               0 AS interactionCount,
                                0 AS journeyCount
                         """)
                 .fetch().all().stream()
