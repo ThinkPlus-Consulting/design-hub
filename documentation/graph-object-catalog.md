@@ -27,16 +27,16 @@
 
 | Tier | Count | Benchmarkable | Objects |
 |------|-------|---------------|---------|
-| Tier 1 — First-Class Node | 54 | Yes | See sections 3.1 through 3.7 |
-| Tier 2 — Registry Node | 11 | Yes | See section 4 |
+| Tier 1 — First-Class Node | 58 | Yes | See sections 3.1 through 3.7 |
+| Tier 2 — Registry Node | 13 | Yes | See section 4 |
 | Tier 3 — Value Object | 4 | No (scored via parent) | See section 5 |
-| **Total** | **69** | **65** | |
+| **Total** | **75** | **71** | |
 
 ---
 
-## 3. Tier 1 — First-Class Nodes (54)
+## 3. Tier 1 — First-Class Nodes (58)
 
-### 3.1 Strategic & Governance (8)
+### 3.1 Strategic & Governance (9)
 
 ---
 
@@ -173,6 +173,38 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `SUPPORTS` | OUTGOING | Any Tier 1 object | 1:N | Yes | BLOCKING | `[PLANNED]` |
+
+---
+
+### Assessment
+
+**Tier**: 1 (First-Class Node)
+**Category**: Strategic & Governance
+**Purpose**: Polymorphic evaluation of an assessable T1 target. `assessmentType` is the evaluation lens; `targetKind` is the assessed node kind discriminator used by the Cypher-only `ASSESSES` edge.
+**Implementation Status**: `[IMPLEMENTED]` `domain/Assessment.java` + `service/AssessmentService.java`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `assessmentId` | String | Yes | Stable identifier | Pattern: `ASSESS-{targetKind}-{seq}` |
+| `name` | String | Yes | Assessment title | Max 200 chars |
+| `assessmentType` | Enum | Yes | Assessment lens | Enum: CAPABILITY, PROCESS, APPLICATION, COMPONENT, SECURITY, DATA |
+| `targetKind` | Enum | Yes | Assessed node kind | Enum: CAP, PROC, ACT, APP, CMP, API, DE |
+| `assessmentDate` | Date | Yes | Assessment date | |
+| `assessor` | String | Yes | Agent or person identifier | |
+| `maturityLevel` | Enum | No | Maturity/state level | Enum: NONE, INITIAL, DEVELOPING, DEFINED, MANAGED, OPTIMIZING |
+| `currentStateDescription` | String | No | Current-state summary | |
+| `targetStateDescription` | String | No | Target-state summary | |
+| `score` | Integer | No | Normalized score | 0-100 |
+| `status` | String | Yes | Lifecycle status | Universal status enum |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `ASSESSES` | OUTGOING | Assessable T1 node | 1:1 | Yes | BLOCKING | `[CYPHER]` — polymorphic edge resolved through `AssessmentService` |
+| `IDENTIFIES_GAP` | OUTGOING | Gap | 1:N | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -475,7 +507,32 @@
 
 ---
 
-### 3.3 Delivery & Execution (4)
+### 3.3 Delivery & Execution (7)
+
+---
+
+### RequirementPortfolio
+
+**Tier**: 1 (First-Class Node)
+**Category**: Delivery & Execution
+**Purpose**: Backlog container that owns the Epic → Feature → UserStory hierarchy for a single ProjectInstance.
+**Implementation Status**: `[IMPLEMENTED]` `domain/RequirementPortfolio.java`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `portfolioId` | String | Yes | Stable identifier | Pattern: `PORT-{projectCode}-{seq}` |
+| `name` | String | Yes | Portfolio name | Max 200 chars |
+| `description` | String | No | Portfolio scope summary | |
+| `status` | String | Yes | Lifecycle status | Universal status enum |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `HAS_EPIC` | OUTGOING | Epic | 1:N | Yes | BLOCKING | `[EDGE]` |
+| `HAS_PORTFOLIO` | INCOMING | ProjectInstance | 1:1 | Yes | BLOCKING | `[EDGE]` |
 
 ---
 
@@ -484,7 +541,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Delivery & Execution
 **Purpose**: Key hierarchy level between BusinessObjective and Feature. Enables traceability from strategic intent to delivery.
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Epic.java`
 
 #### Attributes
 
@@ -502,7 +559,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_FEATURE` | OUTGOING | Feature | 1:N | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_FEATURE` | OUTGOING | Feature | 1:N | Yes | BLOCKING | `[EDGE]` |
 | `REALIZED_BY` | INCOMING | BusinessObjective | N:M | No | OPTIONAL | `[PLANNED]` |
 | `AFFECTS` | OUTGOING | Application | 1:N | No | OPTIONAL | `[PLANNED]` |
 
@@ -513,7 +570,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Delivery & Execution
 **Purpose**: Cohesive delivery capability grouping
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Feature.java`
 
 #### Attributes
 
@@ -531,7 +588,7 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `BELONGS_TO_OBJECTIVE` | OUTGOING | BusinessObjective | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `HAS_STORY` | OUTGOING | UserStory | 1:N | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_STORY` | OUTGOING | UserStory | 1:N | Yes | BLOCKING | `[EDGE]` |
 | `HAS_SCREEN` | OUTGOING | Screen | 1:N | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -577,12 +634,40 @@
 
 ---
 
+### Milestone
+
+**Tier**: 1 (First-Class Node)
+**Category**: Delivery & Execution
+**Purpose**: Project timebox or checkpoint. Sprint is modeled as `milestoneType = SPRINT`, not as a separate node.
+**Implementation Status**: `[IMPLEMENTED]` `domain/Milestone.java`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `milestoneId` | String | Yes | Stable identifier | Pattern: `MS-{projectCode}-{seq}` |
+| `name` | String | Yes | Milestone name | Max 200 chars |
+| `description` | String | No | Milestone summary | |
+| `milestoneType` | Enum | Yes | Planning checkpoint type | Enum: SPRINT, PHASE, RELEASE_CUT, CHECKPOINT |
+| `startDate` | Date | No | Planned start | |
+| `endDate` | Date | No | Planned end | |
+| `status` | String | Yes | Lifecycle status | Universal status enum |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `HAS_MILESTONE` | INCOMING | ProjectInstance | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `HAS_TASK` | OUTGOING | Task | 1:N | No | OPTIONAL | `[EDGE]` |
+
+---
+
 ### Task
 
 **Tier**: 1 (First-Class Node)
 **Category**: Delivery & Execution
 **Purpose**: Atomic unit of work assigned to an individual or team, decomposed from a UserStory
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Task.java`
 
 #### Attributes
 
@@ -611,6 +696,42 @@
 
 ---
 
+### ProjectInstance
+
+**Tier**: 1 (First-Class Node)
+**Category**: Delivery & Execution
+**Purpose**: Temporary delivery container that bridges assessed gaps and capability targets to scoped project work across backlog, milestones, tasks, applications, and components.
+**Implementation Status**: `[IMPLEMENTED]` `domain/ProjectInstance.java`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `projectId` | String | Yes | Stable identifier | Pattern: `PROJ-{code}-{seq}` |
+| `name` | String | Yes | Project name | Max 200 chars |
+| `description` | String | No | Project summary | |
+| `projectType` | String | No | Delivery mode | Enum: GREENFIELD, ENHANCEMENT, MIGRATION, INTEGRATION |
+| `startDate` | Date | No | Planned start | |
+| `targetDate` | Date | No | Planned target completion | |
+| `status` | String | Yes | Lifecycle status | Universal status enum |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `TARGETS_CAPABILITY` | OUTGOING | BusinessCapability | 1:N | Yes | BLOCKING | `[EDGE]` |
+| `ADDRESSES_GAP` | OUTGOING | Gap | 1:N | Yes | BLOCKING | `[EDGE]` |
+| `HAS_PORTFOLIO` | OUTGOING | RequirementPortfolio | 1:1 | Yes | BLOCKING | `[EDGE]` |
+| `HAS_TASK` | OUTGOING | Task | 1:N | Yes | BLOCKING | `[EDGE]` |
+| `HAS_MILESTONE` | OUTGOING | Milestone | 1:N | No | OPTIONAL | `[EDGE]` |
+| `CREATES_APPLICATION` | OUTGOING | Application | 1:N | No | OPTIONAL | `[EDGE]` |
+| `ENHANCES_APPLICATION` | OUTGOING | Application | 1:N | No | OPTIONAL | `[EDGE]` |
+| `INTEGRATES_WITH` | OUTGOING | Application | 1:N | No | OPTIONAL | `[EDGE]` |
+| `CREATES_COMPONENT` | OUTGOING | ApplicationComponent | 1:N | No | OPTIONAL | `[EDGE]` |
+| `ENHANCES_COMPONENT` | OUTGOING | ApplicationComponent | 1:N | No | OPTIONAL | `[EDGE]` |
+
+---
+
 ### 3.4 Requirement & Design (10)
 
 ---
@@ -620,7 +741,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Verifiable story condition
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/QualityConstraint.java`
 
 #### Attributes
 
@@ -722,8 +843,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_QUALITY_CONSTRAINT` | INCOMING | Screen, ApiContract, DataEntity, ApplicationComponent | N:M | Yes | BLOCKING | `[PLANNED]` |
-| `SATISFIED_BY` | OUTGOING | TestCase | N:M | No | OPTIONAL | `[PLANNED]` |
+| `HAS_QUALITY_CONSTRAINT` | INCOMING | Screen, ApiContract, DataEntity, ApplicationComponent | N:M | Yes | BLOCKING | `[EDGE]` |
+| `SATISFIED_BY` | OUTGOING | TestCase | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -732,7 +853,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Non-happy-path scenario
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/TestCase.java`
 
 #### Attributes
 
@@ -1143,7 +1264,7 @@
 | `VERIFIES_CRITERION` | OUTGOING | AcceptanceCriterion | N:M | No | OPTIONAL | `[PLANNED]` |
 | `TESTS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
 | `TESTS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
-| `LOCATED_IN` | OUTGOING | CodeAsset | N:1 | No | OPTIONAL | `[PLANNED]` |
+| `LOCATED_IN` | OUTGOING | CodeAsset | N:1 | No | OPTIONAL | `[EDGE]` |
 
 **Agent-ready enrichment (7 attributes):** TestCase is enriched with execution metadata to enable agents to locate and run verification tests. These attributes are added by the agent-ready information model spec:
 
@@ -1164,7 +1285,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Engineering
 **Purpose**: File-level code targeting for agent-safe implementation. Curated subset of repo files that are explicit targets of stories, tasks, or tests. Not an exhaustive model of every file in the repo.
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/CodeAsset.java`
 
 #### Attributes
 
@@ -1185,12 +1306,12 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_CODE_ASSET` | INCOMING | ApplicationComponent | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `ASSET_FOR_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
-| `ASSET_FOR_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
-| `ASSET_FOR_ENTITY` | OUTGOING | DataEntity | N:M | No | OPTIONAL | `[PLANNED]` |
-| `ASSET_FOR_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[PLANNED]` |
-| `LOCATED_IN` | INCOMING | TestCase | N:1 | No | OPTIONAL | `[PLANNED]` |
+| `HAS_CODE_ASSET` | INCOMING | ApplicationComponent | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `ASSET_FOR_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[EDGE]` |
+| `ASSET_FOR_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[EDGE]` |
+| `ASSET_FOR_ENTITY` | OUTGOING | DataEntity | N:M | No | OPTIONAL | `[EDGE]` |
+| `ASSET_FOR_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[EDGE]` |
+| `LOCATED_IN` | INCOMING | TestCase | N:1 | No | OPTIONAL | `[EDGE]` |
 | `IMPLEMENTS` | INCOMING | Task | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -1204,7 +1325,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Cross-cutting
 **Purpose**: Synced or linked record from Azure DevOps, Jira, or other tools
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/BusinessCapability.java`
 
 #### Attributes
 
@@ -1234,7 +1355,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Cross-cutting
 **Purpose**: Unresolved question blocking design or implementation
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Application.java`
 
 #### Attributes
 
@@ -1531,7 +1652,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_COMPONENT` | OUTGOING | ApplicationComponent | 1:N | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_COMPONENT` | OUTGOING | ApplicationComponent | 1:N | Yes | BLOCKING | `[EDGE]` |
 | `REALIZES` | OUTGOING | Feature | 1:N | No | OPTIONAL | `[PLANNED]` |
 | `ENABLED_BY` | INCOMING | BusinessCapability | N:M | No | OPTIONAL | `[PLANNED]` |
 | `OWNS` | INCOMING | Organization | N:1 | No | OPTIONAL | `[PLANNED]` |
@@ -1546,7 +1667,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Architecture & EA
 **Purpose**: Technical component within an application. Links to Screen and ApiContract for cross-family traversal.
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ApplicationComponent.java`
 
 #### Attributes
 
@@ -1574,7 +1695,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_COMPONENT` | INCOMING | Application | N:1 | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_COMPONENT` | INCOMING | Application | N:1 | Yes | BLOCKING | `[EDGE]` |
 | `SUPPORTS_SCREEN` | OUTGOING | Screen | 1:N | No | OPTIONAL | `[PLANNED]` |
 | `EXPOSES` | OUTGOING | ApiContract | 1:N | No | OPTIONAL | `[PLANNED]` |
 | `HOSTS` | INCOMING | Deployment | N:M | No | OPTIONAL | `[PLANNED]` |
@@ -1697,7 +1818,7 @@
 
 ---
 
-## 4. Tier 2 — Registry Nodes (11)
+## 4. Tier 2 — Registry Nodes (13)
 
 ---
 
@@ -1752,7 +1873,7 @@
 **Tier**: 2 (Registry)
 **Category**: Error and message registry
 **Purpose**: Registry of 80+ error, warning, and success codes
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ImportSnapshot.java`
 
 #### Attributes
 
@@ -1941,7 +2062,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `IMPORTED_BY` | INCOMING | Importable T1 nodes | N:M | No | OPTIONAL | `[PLANNED]` |
+| `IMPORTED_BY` | INCOMING | Importable T1 nodes | N:M | No | OPTIONAL | `[EDGE]` — materialized on source T1 nodes |
 
 **Note:** The IMPORTED_BY edge is modeled on source T1 nodes (outgoing from the importable entity, incoming to ImportSnapshot), not on ImportSnapshot itself. This follows the convention that the entity being described carries its own provenance edge.
 
@@ -1952,7 +2073,7 @@
 **Tier**: 2 (Registry — Hybrid)
 **Category**: Cross-cutting
 **Purpose**: Queryable metadata for coding conventions. Structured categories stored in graph (conventionCode, category, enforcement, scope); detailed rules via docRef pointing to Markdown files in Git. This hybrid approach keeps the graph lightweight while enabling "which conventions apply to this component?" queries.
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/CodingConvention.java`
 
 #### Attributes
 
@@ -1971,15 +2092,73 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `GOVERNED_BY_CONVENTION` | INCOMING | Application, ApplicationComponent, CodeAsset | N:M | No | OPTIONAL | `[PLANNED]` |
+| `GOVERNED_BY_CONVENTION` | INCOMING | Application, ApplicationComponent, CodeAsset | N:M | No | OPTIONAL | `[EDGE]` — materialized on source entities |
 
 **Note:** The GOVERNED_BY_CONVENTION edge is modeled on source entities (Application, ApplicationComponent, CodeAsset → CodingConvention), not on CodingConvention itself. All bindings are materialized as explicit edges — no implicit attribute matching.
 
 ---
 
+### AgentPolicy
+
+**Tier**: 2 (Registry)
+**Category**: Cross-cutting
+**Purpose**: Agent execution guardrail registry. Captures allowed repos, commands, environments, secret scopes, file-touch limits, and human-approval thresholds.
+**Implementation Status**: `[IMPLEMENTED]` `domain/AgentPolicy.java`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `policyId` | String | Yes | Stable identifier | Pattern: `POL-{seq}` |
+| `name` | String | Yes | Policy display name | |
+| `allowedRepos` | List | No | Repo-path allowlist | |
+| `allowedCommands` | List | No | Command allowlist | |
+| `forbiddenCommands` | List | No | Explicitly blocked commands | |
+| `allowedEnvironments` | List | No | Execution environment allowlist | |
+| `secretScopes` | List | No | Secrets/config scopes allowed to the agent | |
+| `maxFilesTouched` | Integer | No | Safety limit for a single execution | |
+| `requiresHumanApproval` | Boolean | No | Human gate indicator | |
+| `approvalThreshold` | String | No | Risk threshold label | |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `GOVERNED_BY_POLICY` | INCOMING | Application, ApplicationComponent | N:M | No | OPTIONAL | `[EDGE]` — materialized on source entities |
+
+---
+
+### EvidenceRecord
+
+**Tier**: 2 (Registry)
+**Category**: Cross-cutting
+**Purpose**: Durable proof registry for tests, screenshots, contract snapshots, and visual baselines. Supports verification freshness and baseline traceability.
+**Implementation Status**: `[IMPLEMENTED]` `domain/EvidenceRecord.java`
+
+#### Attributes
+
+| Attribute | Type | Required | Description | Constraints |
+|-----------|------|----------|-------------|-------------|
+| `evidenceId` | String | Yes | Stable identifier | Pattern: `EVR-{seq}` |
+| `evidenceType` | String | Yes | Proof classification | Enum: TEST_RESULT, SCREENSHOT, CONTRACT_SNAPSHOT, VISUAL_REGRESSION |
+| `artifactId` | String | No | Proven artifact/test identifier | |
+| `producedAt` | Instant | Yes | Production timestamp | ISO 8601 |
+| `producedBy` | String | No | Agent or user identifier | |
+| `repoCommit` | String | No | Git SHA when the proof was produced | |
+| `result` | String | Yes | Proof outcome | Enum: PASS, FAIL, PARTIAL |
+| `artifactPath` | String | No | Filesystem path to proof artifact | |
+
+#### Relationships
+
+| Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
+|-------------|-----------|--------|-------------|----------|----------|----------------|
+| `BASELINED_BY` | INCOMING | Screen, ApiContract | N:M | No | OPTIONAL | `[EDGE]` — materialized on source entities |
+
+---
+
 ## 5. Tier 3 — Value Objects (4)
 
-Tier 3 objects inherit identity and lifecycle from their parent. They are not independently queryable and are not counted in the 65 benchmarkable nodes. Their attributes are scored as part of their parent's attribute depth.
+Tier 3 objects inherit identity and lifecycle from their parent. They are not independently queryable and are not counted in the 71 benchmarkable nodes. Their attributes are scored as part of their parent's attribute depth.
 
 ---
 
@@ -2066,6 +2245,8 @@ Complete registry of all modeled relationships with implementation status.
 
 ### 6.1 Existing Graph Edges
 
+The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **46 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
+
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
 | `HAS_STEP` | Journey | JourneyStep | 1:N | BLOCKING | `[EDGE]` |
@@ -2092,13 +2273,13 @@ Complete registry of all modeled relationships with implementation status.
 | `DELIVERED_VIA_CHANNEL` | Touchpoint | Channel (T2) | `channelId` in EntryMode | BLOCKING | `[STRING_REF]` |
 | `EXECUTES_INTERACTION` | JourneyStep | Interaction | `interactionRef` | OPTIONAL | `[STRING_REF]` |
 
-### 6.3 Planned Relationships (No Code Exists)
+### 6.3 Planned and Extension Relationships
 
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
 | `HAS_FEATURE` | BusinessObjective | Feature | 1:N | BLOCKING | `[PLANNED]` |
 | `BELONGS_TO_OBJECTIVE` | Feature | BusinessObjective | N:1 | BLOCKING | `[PLANNED]` |
-| `HAS_STORY` | Feature | UserStory | 1:N | BLOCKING | `[PLANNED]` |
+| `HAS_STORY` | Feature | UserStory | 1:N | BLOCKING | `[EDGE]` |
 | `HAS_CRITERION` | UserStory | AcceptanceCriterion | 1:N | BLOCKING | `[PLANNED]` |
 | `USES_DATA_ENTITY` | ApiContract | DataEntity | N:M | OPTIONAL | `[PLANNED]` |
 | `HAS_FIELD` | DataEntity | DataField | 1:N | BLOCKING | `[PLANNED]` |
@@ -2140,7 +2321,7 @@ Complete registry of all modeled relationships with implementation status.
 | `HOSTS` | Deployment | ApplicationComponent | 1:N | BLOCKING | `[PLANNED]` |
 | `DEPLOYED_ON` | Deployment | InfrastructureNode | 1:N | BLOCKING | `[PLANNED]` |
 | `DEPLOYED_VIA` | Deployment | Application | 1:1 | OPTIONAL | `[PLANNED]` — replaces deprecated DEPLOYS |
-| `HAS_FEATURE` | Epic | Feature | 1:N | BLOCKING | `[PLANNED]` |
+| `HAS_FEATURE` | Epic | Feature | 1:N | BLOCKING | `[EDGE]` |
 | `REALIZED_BY` | BusinessObjective | Epic | 1:N | OPTIONAL | `[PLANNED]` |
 | `AFFECTS` | Epic | Application | 1:N | OPTIONAL | `[PLANNED]` |
 | `SUPPORTED_BY` | BusinessProcess | Application | 1:N | OPTIONAL | `[PLANNED]` |
@@ -2163,17 +2344,33 @@ Complete registry of all modeled relationships with implementation status.
 | `ASSIGNED_TO` | Task | Organization | N:1 | OPTIONAL | `[PLANNED]` |
 | `HAS_CAPABILITY` | BusinessDomain | BusinessCapability | 1:N | BLOCKING | `[PLANNED]` |
 | `REALIZED_BY_PROCESS` | BusinessCapability | BusinessProcess | 1:N | OPTIONAL | `[PLANNED]` |
-| `HAS_CODE_ASSET` | ApplicationComponent | CodeAsset | 1:N | BLOCKING | `[PLANNED]` — agent-ready Phase 1 |
-| `LOCATED_IN` | TestCase | CodeAsset | N:1 | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
-| `ASSET_FOR_SCREEN` | CodeAsset | Screen | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
-| `ASSET_FOR_API` | CodeAsset | ApiContract | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
-| `ASSET_FOR_ENTITY` | CodeAsset | DataEntity | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
-| `ASSET_FOR_RULE` | CodeAsset | Rule | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
+| `HAS_CODE_ASSET` | ApplicationComponent | CodeAsset | 1:N | BLOCKING | `[EDGE]` — agent-ready Phase 1 |
+| `LOCATED_IN` | TestCase | CodeAsset | N:1 | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |
+| `ASSET_FOR_SCREEN` | CodeAsset | Screen | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |
+| `ASSET_FOR_API` | CodeAsset | ApiContract | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |
+| `ASSET_FOR_ENTITY` | CodeAsset | DataEntity | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |
+| `ASSET_FOR_RULE` | CodeAsset | Rule | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |
 | `IMPORTED_BY` | Importable T1 | ImportSnapshot (T2) | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
 | `IMPLEMENTS` | Task | CodeAsset | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 (extends existing IMPLEMENTS targets) |
-| `HAS_QUALITY_CONSTRAINT` | Screen, ApiContract, DataEntity, ApplicationComponent | QualityConstraint | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 2 |
-| `SATISFIED_BY` | QualityConstraint | TestCase | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 2 |
-| `GOVERNED_BY_CONVENTION` | Application, ApplicationComponent, CodeAsset | CodingConvention (T2) | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 2 |
+| `HAS_QUALITY_CONSTRAINT` | Screen, ApiContract, DataEntity, ApplicationComponent | QualityConstraint | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 2 |
+| `SATISFIED_BY` | QualityConstraint | TestCase | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 2 |
+| `GOVERNED_BY_CONVENTION` | Application, ApplicationComponent, CodeAsset | CodingConvention (T2) | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 2 |
+| `GOVERNED_BY_POLICY` | Application, ApplicationComponent | AgentPolicy (T2) | N:M | OPTIONAL | `[EDGE]` — operational near-zero-drift |
+| `BASELINED_BY` | Screen, ApiContract | EvidenceRecord (T2) | N:M | OPTIONAL | `[EDGE]` — operational near-zero-drift |
+| `DEPENDS_ON_ASSET` | CodeAsset | CodeAsset | N:M | OPTIONAL | `[PLANNED]` — operational near-zero-drift |
+| `ASSESSES` | Assessment | Assessable T1 node | 1:1 | BLOCKING | `[CYPHER]` — capability/project meta-model |
+| `IDENTIFIES_GAP` | Assessment | Gap | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
+| `ADDRESSES_GAP` | ProjectInstance | Gap | 1:N | BLOCKING | `[EDGE]` — capability/project meta-model |
+| `TARGETS_CAPABILITY` | ProjectInstance | BusinessCapability | 1:N | BLOCKING | `[EDGE]` — capability/project meta-model |
+| `HAS_PORTFOLIO` | ProjectInstance | RequirementPortfolio | 1:1 | BLOCKING | `[EDGE]` — capability/project meta-model |
+| `HAS_EPIC` | RequirementPortfolio | Epic | 1:N | BLOCKING | `[EDGE]` — capability/project meta-model |
+| `HAS_MILESTONE` | ProjectInstance | Milestone | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
+| `HAS_TASK` | Milestone | Task | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
+| `CREATES_APPLICATION` | ProjectInstance | Application | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
+| `ENHANCES_APPLICATION` | ProjectInstance | Application | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
+| `INTEGRATES_WITH` | ProjectInstance | Application | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
+| `CREATES_COMPONENT` | ProjectInstance | ApplicationComponent | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
+| `ENHANCES_COMPONENT` | ProjectInstance | ApplicationComponent | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
 
 ### 6.4 Deprecated Edges
 
@@ -2387,21 +2584,19 @@ Those fields should enrich the graph but should not replace domain-native object
 
 | Metric | Count |
 |--------|-------|
-| Total model elements | 69 |
-| Tier 1 (first-class nodes) | 54 |
-| Tier 2 (registry nodes) | 11 |
+| Total taxonomy nodes | 75 |
+| Tier 1 (first-class nodes) | 58 |
+| Tier 2 (registry nodes) | 13 |
 | Tier 3 (value objects) | 4 |
-| Benchmarkable (T1 + T2) | 65 |
-| Total relationship types | 90 |
-| Existing graph edges | 9 |
-| String-encoded relationships | 9 |
-| Planned relationships | 72+ |
-| Implemented entities | 11 |
+| Benchmarkable (T1 + T2) | 71 |
+| Total taxonomy edge types | 106 |
+| Implemented `@Node` entities | 31 |
+| Implemented SDN `@Relationship` declarations | 46 |
+| Cypher-only polymorphic edges | 1 (`ASSESSES`) |
+| String-encoded relationships still requiring migration | 9 |
+| Passing tests | 142 |
 | Entities needing reshape | 2 (Role, Gap) |
-| Planned entities | 56+ |
 | Architecture/EA objects | 12 |
-| Delivery & Execution objects | 4 |
-| Agent-ready Phase 1 new edges | 8 |
-| Agent-ready Phase 2 new edges | 3 |
+| Delivery & Execution objects | 7 |
 
-**Agent-ready extension note:** Phase 1: 87 edges (79 base + 8 new). Full: 90 edges (87 + 3 Phase 2). See `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` for phased breakdown.
+**Metric split:** This catalog tracks both the **approved design taxonomy** (`75 / 106 / 71`) and the **current implementation baseline** (`31 / 46 / 1 / 142`). Keep those families separate when reporting progress.

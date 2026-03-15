@@ -24,7 +24,7 @@ The Alfabet Accelerator metamodel provides an enterprise architecture and portfo
 5. **Service Architecture** — Business Service, Support Service, SLA, Service Items, Service Consumers
 6. **Investment Portfolio** — Strategic Theme, Portfolio, ART, PI, Epic, Feature, Story, Value Stream, Value Stream Step, Solution, Demand, Project, Bucket
 
-Design Hub's current 65-element model (52 T1 + 9 T2 + 4 T3) covers the **product/delivery/UX layer** and the **architecture/EA layer** — personas, journeys, screens, interactions, APIs, stories, capabilities, applications, components, deployments. The Alfabet deck covers the **enterprise context layer** — capabilities, applications, components, deployments, portfolio.
+Design Hub's current approved taxonomy (75 nodes = 58 T1 + 13 T2 + 4 T3, 71 benchmarkable) covers the **product/delivery/UX layer**, the **architecture/EA layer**, and the new **capability/project governance layer** — personas, journeys, screens, interactions, APIs, stories, capabilities, assessments, gaps, projects, applications, components, and deployments. The Alfabet deck still contributes the broader **enterprise context layer** — capabilities, applications, components, deployments, and portfolio concepts.
 
 These two layers connect but do not replace each other.
 
@@ -198,15 +198,18 @@ graph TD
 
 **Confirmed absorb-now set: 12 objects** (10 from Alfabet alignment + ProcessGateway and ProcessEvent from BPMN decomposition).
 
-| Metric | Before | After (absorb now — confirmed) | After (all conditional) |
-|--------|--------|-------------------------------|----------------------|
-| Tier 1 (first-class nodes) | 38 | **52** (+14) | 58 (+20) |
-| Tier 2 (registry nodes) | 8 | **9** (+1) | 12 (+4) |
-| Tier 3 (value objects) | 4 | **4** | 4 |
-| **Total model elements** | **50** | **65** | **74** |
-| Benchmarkable nodes (T1 + T2) | 46 | **61** | 70 |
+| Metric | Legacy baseline | After Alfabet/BPMN absorb-now set | Current approved taxonomy |
+|--------|-----------------|-----------------------------------|---------------------------|
+| Tier 1 (first-class nodes) | 38 | **52** (+14) | **58** |
+| Tier 2 (registry nodes) | 8 | **9** (+1) | **13** |
+| Tier 3 (value objects) | 4 | **4** | **4** |
+| **Total model elements** | **50** | **65** | **75** |
+| Benchmarkable nodes (T1 + T2) | 46 | **61** | **71** |
 
-**Active totals:** 52 T1 + 9 T2 + 4 T3 = **65 model elements**, **61 benchmarkable**. These counts are propagated through `modeling-taxonomy.md`, `graph-object-catalog.md`, `vision-benchmark.md`, and `implementation-readiness-graph-model.md`.
+**Current propagated totals:** 58 T1 + 13 T2 + 4 T3 = **75 model elements**, **71 benchmarkable**, **106 edge types**. The newer increments beyond the Alfabet/BPMN absorb-now set are:
+
+- operational near-zero-drift additions: `AgentPolicy`, `EvidenceRecord`
+- capability/project meta-model additions: `Assessment`, `RequirementPortfolio`, `ProjectInstance`, `Milestone`
 
 **Note:** ProcessGateway and ProcessEvent are BPMN-sourced additions (derived from OMG BPMN 2.0.2 decomposition of process flow), not from the Alfabet/EA metamodel deck. They were added to provide first-class routing and lifecycle nodes within BusinessProcess flows.
 
@@ -366,11 +369,11 @@ Vendor is NOT a separate node. It is an Organization with `organizationType = VE
 
 | Document | Required Change | Priority |
 |---------|----------------|----------|
-| `modeling-taxonomy.md` | Add 12 absorb-now objects to tier classification. Update counts from 50 → 65 (61 benchmarkable). Add cross-family edge catalog. | P0 |
+| `modeling-taxonomy.md` | Keep the Alfabet/BPMN absorb-now set reflected in the current 75-node / 71-benchmarkable taxonomy and preserve cross-family edge catalog alignment. | P0 |
 | `graph-object-catalog.md` | Add per-object specifications for all new T1/T2 nodes. Add cross-family relationship registry entries. | P1 |
-| `product-vision.md` | State that Design Hub supports both product/delivery views AND architecture views. Reference three object families. Update element counts to 65/61. | P0 |
+| `product-vision.md` | State that Design Hub supports both product/delivery views AND architecture views. Reference three object families. Keep counts aligned to 75 / 106 / 71. | P0 |
 | `feature-capability-map.md` | Add 4 Architecture Views to view registry. Add architecture capabilities to capability model. | P0 |
-| `vision-benchmark.md` | Expand benchmarkable count from 46 → 61. Add architecture view queryability tests. Score whether architecture views are graph-queryable. | P1 |
+| `vision-benchmark.md` | Keep the architecture-view queryability set aligned with the current 71-node benchmarkable taxonomy and the 31 / 46 / 1 / 142 implementation baseline. | P1 |
 | `implementation-readiness-graph-model.md` | Add MCR rules for architecture objects. Extend completenessScore to cover cross-family edges. | P1 |
 | `architecture-blueprint.md` | Add architecture graph persistence and query patterns. Update component diagrams. | P1 |
 

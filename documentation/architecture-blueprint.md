@@ -4,7 +4,7 @@
 
 **Related documents:**
 
-- `modeling-taxonomy.md` (3-tier classification: 54 T1 + 11 T2 + 4 T3 = 69 model elements with current-to-target entity mapping)
+- `modeling-taxonomy.md` (3-tier classification: 58 T1 + 13 T2 + 4 T3 = 75 model elements with current-to-target entity mapping)
 - `graph-object-catalog.md` (full per-object specifications)
 - `product-vision.md` (traversal spine, canonical views)
 - `vision-benchmark.md` (8-dimension scoring, string-to-edge migration cost)
@@ -97,8 +97,8 @@ graph TD
 
 | Aspect | Status | Evidence |
 |--------|--------|----------|
-| Node persistence | `[IMPLEMENTED]` | 11 entities with `@Node` annotations in `backend/src/main/java/com/emsist/designhub/domain/` |
-| Typed edges | `[PARTIAL]` | 9 `@Relationship` edges exist; 9 remain as string references |
+| Node persistence | `[IMPLEMENTED]` | 31 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
+| Typed edges | `[PARTIAL]` | 46 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; 9 string references remain |
 | Bidirectional traversal | `[PARTIAL]` | Forward traversal works for implemented edges; reverse requires Cypher |
 | Status filtering | `[IMPLEMENTED — reshape required]` | 3-enum status model; target is universal 10-value `status` |
 | Readiness filtering | `[PLANNED]` | No readiness flags on entities |
@@ -182,7 +182,7 @@ graph TD
 
 ### 2.8 Agent-ready layer (extension)
 
-The agent-ready layer adds code-targeting and convention compliance capabilities to the graph model, enabling coding agents to resolve from delivery artifacts to exact filesystem paths and applicable standards.
+The agent-ready and operational safety layer adds code-targeting, convention compliance, policy, and evidence capabilities to the graph model, enabling coding agents to resolve from delivery artifacts to exact filesystem paths, applicable standards, and proof artifacts.
 
 **Code targeting:**
 
@@ -195,7 +195,23 @@ The agent-ready layer adds code-targeting and convention compliance capabilities
 - **CodingConvention** (T2 Hybrid): Stores queryable metadata in graph, detailed rules in Git-tracked Markdown via `docRef`. Resolution is edge-only via `GOVERNED_BY_CONVENTION` — no implicit matching. When multiple conventions apply, narrower scope overrides broader: `COMPONENT > SERVICE > FRONTEND/BACKEND > GLOBAL`.
 - **QualityConstraint** (T1): Instance-specific non-functional requirement with measurable threshold. Bound to Screen/ApiContract/DataEntity/ApplicationComponent via `HAS_QUALITY_CONSTRAINT`. Verified via `SATISFIED_BY → TestCase`.
 
-**Implementation status:** `[PLANNED]` — no CodeAsset, ImportSnapshot, QualityConstraint, or CodingConvention entities exist.
+**Operational safety/intelligence additions:**
+
+- **AgentPolicy** (T2): Agent execution guardrails. Bound from Application and ApplicationComponent via `GOVERNED_BY_POLICY`.
+- **EvidenceRecord** (T2): Proof registry for test results, screenshots, and baselines. Bound from Screen and ApiContract via `BASELINED_BY`.
+
+**Implementation status:** `[IMPLEMENTED]` — CodeAsset, ImportSnapshot, QualityConstraint, CodingConvention, AgentPolicy, and EvidenceRecord now exist in code. Remaining work is broader coverage and UI/product surfacing, not entity creation.
+
+### 2.9 Capability/project meta-model layer
+
+The capability/project layer separates assessment/governance from delivery execution:
+
+- **Assessment** (T1): Polymorphic evaluation of an assessable T1 target via Cypher-only `ASSESSES`
+- **RequirementPortfolio** (T1): Owns the Epic → Feature → UserStory tree for one project
+- **Milestone** (T1): Sprint/phase/release checkpoint with optional task assignment
+- **ProjectInstance** (T1): Bridges gaps/capabilities to scoped application/component change work
+
+This layer is implemented in code and raises the approved taxonomy to **75 nodes / 106 edge types / 71 benchmarkable**.
 
 ---
 

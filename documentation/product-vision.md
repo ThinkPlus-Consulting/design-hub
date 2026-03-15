@@ -4,7 +4,7 @@
 
 **Related documents:**
 
-- `modeling-taxonomy.md` (3-tier classification: 54 T1 + 11 T2 + 4 T3 = 69 model elements, 65 agent-ready benchmarkable)
+- `modeling-taxonomy.md` (3-tier classification: 58 T1 + 13 T2 + 4 T3 = 75 model elements, 71 benchmarkable)
 - `graph-object-catalog.md` (full per-object specifications with attributes and relationships)
 - `vision-benchmark.md` (8-dimension scoring with queryability test suite)
 - `implementation-readiness-graph-model.md` (status, readiness, completenessScore governance)
@@ -38,7 +38,7 @@ It connects:
 - **what is still missing** (findings, bugs, gaps, open questions, risks)
 - **where it is tracked** (external artifacts in Azure DevOps, Jira)
 
-The graph model spans 69 elements across 3 tiers (54 first-class nodes, 11 registries, 4 value objects) with 65 agent-ready benchmarkable objects and 90 edge types. See `modeling-taxonomy.md` for classification rules and `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` for the agent-ready extension.
+The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 31 `@Node` entities, 46 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 142 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
 
 ---
 
@@ -324,12 +324,12 @@ Current state from `vision-benchmark.md`:
 | Dimension | Score |
 |-----------|-------|
 | Documentation completeness | **GREEN** |
-| Implementation completeness | **RED** (13.1%) |
+| Implementation completeness | **AMBER** (39.4% benchmarkable coverage; 31 `@Node` entities overall) |
 | Attribute depth | **AMBER** (~53%) |
-| Relationship coverage | **RED** (20.5%) |
+| Relationship coverage | **AMBER** (46 SDN + 1 Cypher relationship types implemented) |
 | Queryability | **RED** (0/17 GREEN) |
 | Source traceability | **RED** |
 | Delivery-tool interoperability | **RED** |
 | UX implementation support | **AMBER** |
 
-The documentation model is fully specified (65 agent-ready benchmarkable objects across 54 T1 + 11 T2, with 90 edge types). Implementation requires creating the remaining planned entities, migrating 9 string references to graph edges, and adopting the universal status enum.
+The documentation model is fully specified (71 benchmarkable objects across 58 T1 + 13 T2, with 106 edge types). Implementation has moved beyond the original seed baseline, but still requires completing the remaining planned entities, migrating 9 string references to graph edges, and adopting the universal status enum everywhere.

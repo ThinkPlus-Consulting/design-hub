@@ -63,7 +63,7 @@ graph TD
     end
 
     subgraph DH["Design Hub"]
-        DH_G[Graph Model: 61 benchmarkable nodes]
+        DH_G[Graph Model: 71 benchmarkable nodes]
         DH_EA[ExternalArtifact: linked reference node]
         DH_DOM[Domain-native: Persona, Journey, Screen, API...]
     end

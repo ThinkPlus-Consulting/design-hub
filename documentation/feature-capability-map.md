@@ -4,7 +4,7 @@
 
 **Related documents:**
 
-- `modeling-taxonomy.md` (3-tier classification: 54 T1 + 11 T2 + 4 T3 = 69 model elements, 65 agent-ready benchmarkable)
+- `modeling-taxonomy.md` (3-tier classification: 58 T1 + 13 T2 + 4 T3 = 75 model elements, 71 benchmarkable)
 - `graph-object-catalog.md` (full per-object specifications with attributes and relationships)
 - `product-vision.md` (traversal spine, north-star queries, canonical views)
 - `vision-benchmark.md` (8-dimension scoring with queryability test suite)
@@ -35,7 +35,7 @@ Design Hub should ingest canonical requirement and design sources, normalize the
 
 ### 1.2 Artifact registry and graph model
 
-The platform should maintain a first-class graph object registry covering 65 agent-ready benchmarkable nodes (52 T1 + 9 T2) rather than a flat record list.
+The platform should maintain a first-class graph object registry covering 71 benchmarkable nodes (58 T1 + 13 T2) rather than a flat record list.
 
 **Primary capabilities:**
 
@@ -192,7 +192,7 @@ graph TD
 
     C1 -->|produces| SR[SourceReference]
     C1 -->|produces| BO[BusinessObjective]
-    C2 -->|manages| ALL["65 agent-ready benchmarkable nodes"]
+    C2 -->|manages| ALL["71 benchmarkable nodes"]
     C3 -->|traverses| PE[Persona] & JO[Journey] & JS[JourneyStep]
     C4 -->|traverses| SC[Screen] & IN[Interaction] & TR[Transition]
     C5 -->|traverses| US[UserStory] & BG[Bug] & FI[Finding]
@@ -207,7 +207,7 @@ graph TD
 
 | Phase | Scope | Benchmark Status | Key Artifacts |
 |-------|-------|-----------------|---------------|
-| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IN-PROGRESS]` — 8/61 entities implemented (13.1%) | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Role, Gap |
+| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 31 `@Node` entities in code (28 benchmarkable + 3 T3), 46 SDN edges + 1 Cypher edge, 142 tests | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Role, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset |
 | 2. Exploration | Persona, journey, screen, and story traversal views | `[PLANNED]` — requires Persona, Topic, ScreenState, Transition entities | Persona View, Journey View, Screen Flow View |
 | 3. Delivery intelligence | Findings, bugs, readiness gaps, API and data dependencies | `[PLANNED]` — requires Bug, Finding, ApiContract, DataEntity | Delivery View, completenessScore engine |
 | 4. External alignment | Azure DevOps and Jira mapping, sync objects, benchmark reporting | `[PLANNED]` — requires ExternalArtifact | Benchmark View |
@@ -738,7 +738,7 @@ ORDER BY bo.name, f.name, us.title
 
 #### 4.3.2 Benchmark View
 
-**Purpose**: Show attribute and relationship parity scores, queryability test results, and drift indicators across all 65 agent-ready benchmarkable nodes.
+**Purpose**: Show attribute and relationship parity scores, queryability test results, and drift indicators across all 71 benchmarkable nodes.
 
 **Primary axis**: Computed diagnostic
 
@@ -746,7 +746,7 @@ ORDER BY bo.name, f.name, us.title
 
 **Default entry query**: Aggregation query across all entity types computing attribute depth, relationship coverage, and completenessScore.
 
-**Core linked objects**: All 65 agent-ready benchmarkable nodes (diagnostic metadata)
+**Core linked objects**: All 71 benchmarkable nodes (diagnostic metadata)
 
 **Grouping options**: by tier (T1/T2), by category, by implementation status
 

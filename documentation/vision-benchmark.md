@@ -6,7 +6,7 @@
 **Related documents:**
 
 - `modeling-taxonomy.md` (tier classification rules, string-to-edge migration map)
-- `graph-object-catalog.md` (full 69-element specification with relationship registry — 65 agent-ready benchmarkable)
+- `graph-object-catalog.md` (full 75-node taxonomy with 106 edge types and 71 benchmarkable nodes)
 - `implementation-readiness-graph-model.md` (status, readiness, and completeness governance)
 - `product-vision.md` (product thesis, users, outcomes, north-star queries)
 - `azure-jira-benchmark.md` (Azure DevOps and Jira field and relationship analysis)
@@ -35,7 +35,7 @@ This benchmark scores two separate baselines because they measure different conc
 
 | # | Dimension | Baseline | What It Measures |
 |---|-----------|----------|------------------|
-| 1 | Documentation completeness | Domain | Are all 61 benchmarkable nodes specified with typed attributes in the catalog? |
+| 1 | Documentation completeness | Domain | Are all 71 benchmarkable nodes specified with typed attributes in the catalog? |
 | 2 | Implementation completeness | Domain | Do Neo4j entities exist in code? Includes reshape detection via current-to-target mapping. |
 | 3 | Attribute depth | Domain | Code attributes / target spec attributes per implemented entity |
 | 4 | Relationship coverage | Domain | `[EDGE]` count / total target relationships per entity |
@@ -50,23 +50,23 @@ This benchmark scores two separate baselines because they measure different conc
 
 ### 3.1 Documentation Completeness
 
-**Question:** Are all 61 benchmarkable objects (52 T1 + 9 T2) specified in `graph-object-catalog.md` with typed attributes, constraints, and relationship tables?
+**Question:** Are all 71 benchmarkable objects (58 T1 + 13 T2) specified in `graph-object-catalog.md` with typed attributes, constraints, and relationship tables?
 
 | Category | Total | Documented | Coverage |
 |----------|-------|-----------|----------|
-| Strategic & Governance (T1) | 8 | 8 | 100% |
+| Strategic & Governance (T1) | 9 | 9 | 100% |
 | Business & Experience (T1) | 7 | 7 | 100% |
-| Delivery & Execution (T1) | 4 | 4 | 100% |
-| Requirement & Design (T1) | 9 | 9 | 100% |
-| Engineering (T1) | 8 | 8 | 100% |
+| Delivery & Execution (T1) | 7 | 7 | 100% |
+| Requirement & Design (T1) | 10 | 10 | 100% |
+| Engineering (T1) | 9 | 9 | 100% |
 | Architecture & EA (T1) | 12 | 12 | 100% |
 | Cross-cutting (T1) | 4 | 4 | 100% |
-| Registry (T2) | 9 | 9 | 100% |
-| **Total** | **61** | **61** | **100%** |
+| Registry (T2) | 13 | 13 | 100% |
+| **Total** | **71** | **71** | **100%** |
 
-**Score: GREEN** — All 61 benchmarkable nodes are documented with typed attributes and relationship tables in the catalog.
+**Score: GREEN** — All 71 benchmarkable nodes are documented with typed attributes and relationship tables in the catalog.
 
-**Agent-ready benchmarkable:** 65 (base 61 + CodeAsset, ImportSnapshot, QualityConstraint, CodingConvention). This count includes all objects an agent needs to resolve for safe implementation. Phase 1 intermediate: 63 (base 61 + CodeAsset, ImportSnapshot). See `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` for phased breakdown.
+**Current approved taxonomy baseline:** 75 total nodes, 106 edge types, 71 benchmarkable. This includes the agent-ready additions, the operational near-zero-drift additions (`AgentPolicy`, `EvidenceRecord`), and the capability/project meta-model additions (`Assessment`, `RequirementPortfolio`, `ProjectInstance`, `Milestone`).
 
 **Note:** Tier 3 value objects (4) are documented as part of their parent objects and are not independently scored.
 
@@ -74,29 +74,31 @@ This benchmark scores two separate baselines because they measure different conc
 
 ### 3.2 Implementation Completeness
 
-**Question:** Do Neo4j entities exist in code for the 61 benchmarkable objects?
+**Question:** Do Neo4j entities exist in code for the 71 benchmarkable objects?
 
 | Status | Count | Objects |
 |--------|-------|---------|
-| `[IMPLEMENTED]` — direct match | 6 | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint |
+| `[IMPLEMENTED]` — direct match | 26 | Assessment, RequirementPortfolio, ProjectInstance, Milestone, Epic, Feature, UserStory, Task, Screen, Interaction, Journey, JourneyStep, Touchpoint, Rule, ApiContract, DataEntity, TestCase, CodeAsset, QualityConstraint, BusinessCapability, Application, ApplicationComponent, ImportSnapshot, CodingConvention, AgentPolicy, EvidenceRecord |
 | `[IMPLEMENTED — reshape required]` | 2 | Role (splits to BusinessRole + ValidationRole), Gap (reshape to target schema) |
-| `[PLANNED]` — no code entity | 53 | All remaining T1 (including Message) and all T2 objects |
+| `[PLANNED]` — no code entity | 43 | Remaining benchmarkable T1/T2 objects |
 
-Tier 3 value objects (not counted in 61):
+Tier 3 value objects (not counted in 71):
 
 | Status | Count | Objects |
 |--------|-------|---------|
 | `[IMPLEMENTED]` | 3 | Effect, EntryMode, ContentElement |
 | `[PLANNED]` | 1 | InteractionOutcome |
 
-**Implementation ratio:** 8 implemented (including reshapes) / 61 benchmarkable = **13.1%**
+**Implementation ratio:** 28 benchmarkable nodes implemented (including reshapes) / 71 benchmarkable = **39.4%**
 
-**Score: RED** — Less than 15% of the target model has corresponding Neo4j entities. Message is counted as `[PLANNED]` because no `Message.java` domain entity exists in the backend.
+**Score: AMBER** — The implementation baseline is no longer a skeleton. The repo now has **31 `@Node` entities**, **46 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **142 passing tests**. Coverage is still incomplete, but the graph now contains most of the agent-ready, safety, and capability/project meta-model backbone.
 
 **Reshape notes:**
 
 - `Role.java` maps to two target objects (BusinessRole + ValidationRole). The benchmark counts this as 1 implemented entity covering 2 target nodes, both requiring reshape. Neither should be scored as `[PLANNED]` since code exists under a different shape.
 - `Gap.java` maps to Gap (T1) with field rename required (`type` → `gapType`, add `gapId`, `sourceRefs`, relationships). Finding (T1) is `[PLANNED]` — it has no current code entity.
+
+**Benchmark note:** The detailed attribute-depth table below still focuses on the original UX seed entities plus the two reshape cases, because those remain the biggest depth gaps even after the newer meta-model entities were added.
 
 ---
 
@@ -132,10 +134,11 @@ Tier 3 value objects (not counted in 61):
 
 | Category | Count | Percentage |
 |----------|-------|-----------|
-| Existing graph edges `[EDGE]` | 9 | 20.5% |
-| String-encoded relationships `[STRING_REF]` | 9 | 20.5% |
-| Planned relationships `[PLANNED]` | 26+ | 59.0% |
-| **Total target relationships** | **44+** | |
+| Implemented SDN edges `[EDGE]` | 46 | 43.4% |
+| Implemented Cypher edges `[CYPHER]` | 1 | 0.9% |
+| String-encoded relationships `[STRING_REF]` | 9 | 8.5% |
+| Planned relationships `[PLANNED]` | 50 | 47.2% |
+| **Total target relationships** | **106** | |
 
 **BLOCKING relationships breakdown:**
 
@@ -145,7 +148,7 @@ Tier 3 value objects (not counted in 61):
 | `[STRING_REF]` | 3 | DELIVERS (storyRefs), PERFORMED_BY_PERSONA (personaId), DELIVERED_VIA_CHANNEL (channelId) |
 | `[PLANNED]` | 12 | HAS_FEATURE, HAS_STORY, USES_SCREEN, HAS_CRITERION, PERFORMS_JOURNEY, BELONGS_TO_SCREEN, FROM_SCREEN, TO_SCREEN, BELONGS_TO_API (x3), HAS_FIELD |
 
-**Score: RED** — Only 20.5% of relationships exist as proper graph edges. 3 BLOCKING relationships remain as string references. 12 BLOCKING relationships have no code at all.
+**Score: AMBER** — Relationship coverage has improved materially, but 9 string-encoded relationships still block full traversal and 50 approved edge types remain unimplemented.
 
 ---
 
@@ -270,20 +273,22 @@ Tier 3 value objects (not counted in 61):
 
 ---
 
+**Benchmark note:** The detailed per-query statuses below are the last formal queryability capture. They predate the most recent capability/project meta-model rollout, so they should be rerun before treating the GREEN/AMBER/RED distribution as current.
+
 ## 4. Dimension Summary
 
 | # | Dimension | Score | Rationale |
 |---|-----------|-------|-----------|
-| 1 | Documentation completeness | **GREEN** | All 61 nodes documented with typed attributes |
-| 2 | Implementation completeness | **RED** | 8/61 entities exist (13.1%), 53 planned |
+| 1 | Documentation completeness | **GREEN** | All 71 benchmarkable nodes are documented with typed attributes |
+| 2 | Implementation completeness | **AMBER** | 28/71 benchmarkable nodes exist in code (39.4%), plus 3 T3 value objects |
 | 3 | Attribute depth | **AMBER** | ~53% average depth on implemented entities; universal status migration pending |
-| 4 | Relationship coverage | **RED** | 9/44+ edges exist (20.5%); 9 are string refs; 26+ planned |
+| 4 | Relationship coverage | **AMBER** | 46 SDN + 1 Cypher relationship types implemented; 9 string refs remain; 50 planned |
 | 5 | Queryability | **RED** | 0/17 GREEN, 2/17 AMBER, 15/17 RED |
 | 6 | Source traceability | **RED** | SourceReference entity does not exist |
 | 7 | Delivery-tool interoperability | **RED** | ExternalArtifact entity does not exist |
 | 8 | UX implementation support | **AMBER** | Screen API resolves stories[] and roles[] via lookup maps; graph model still string-backed; filtering and registries missing |
 
-**Overall assessment:** Documentation is complete (the model is fully specified), but implementation lags significantly. The graph is currently a partial skeleton — 11 entities (8 benchmarkable + 3 T3 value objects) with 9 real edges and 9 string-encoded relationships — operating in a 69-element (54 T1 + 11 T2 + 4 T3), 90-relationship target model (65 agent-ready benchmarkable). The Screen API projection layer partially compensates by resolving stories and roles at the application level, but the graph model itself remains string-backed for those relationships.
+**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **31 `@Node` entities**, **46 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **142 passing tests**. The largest remaining gaps are legacy string-to-edge migration, missing registries such as Channel/Permission/ErrorCode, and unreconciled benchmark re-scoring for the newest meta-model increment.
 
 ---
 
@@ -780,7 +785,7 @@ This benchmark should be re-scored when:
 | Dimension | Target Score |
 |-----------|-------------|
 | Documentation completeness | GREEN (maintain) |
-| Implementation completeness | AMBER (>50% of 65 agent-ready benchmarkable entities) |
+| Implementation completeness | AMBER (>50% of 71 benchmarkable entities) |
 | Attribute depth | GREEN (>80% average depth) |
 | Relationship coverage | AMBER (>50% as edges, 0 BLOCKING string refs) |
 | Queryability | AMBER (>50% queries at GREEN or AMBER) |

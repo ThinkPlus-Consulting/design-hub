@@ -5,7 +5,7 @@
 
 **Related documents:**
 
-- `graph-object-catalog.md` (uses this taxonomy to classify all 69 model elements)
+- `graph-object-catalog.md` (uses this taxonomy to classify all 75 model elements)
 - `implementation-readiness-graph-model.md` (uses tier rules to scope readiness and completenessScore)
 - `vision-benchmark.md` (uses tier rules to scope what is benchmarkable)
 - `product-vision.md`
@@ -69,15 +69,15 @@ graph TD
 | Tier 2 | Yes | Own attribute depth scored independently | Relationships scored where applicable |
 | Tier 3 | No | Attributes scored as part of parent object's depth | No independent relationship scoring |
 
-**Benchmarkable total: 65 (54 Tier 1 + 11 Tier 2)**
+**Benchmarkable total: 71 (58 Tier 1 + 13 Tier 2)**
 
 ---
 
 ## 3. Tier Assignments
 
-### 3.1 Tier 1 — First-Class Nodes (54)
+### 3.1 Tier 1 — First-Class Nodes (58)
 
-#### Strategic & Governance (8)
+#### Strategic & Governance (9)
 
 | Object | Purpose |
 |--------|---------|
@@ -86,6 +86,7 @@ graph TD
 | `Assumption` | Stated assumption underlying design or scope |
 | `Constraint` | Technical, business, or regulatory constraint |
 | `SourceReference` | Traceable provenance link to external artifact |
+| `Assessment` | Polymorphic evaluation of an assessable T1 target. Uses `assessmentType` as the lens and `targetKind` as the assessed node discriminator. |
 | `Finding` | Review observation, issue, or concern from analysis |
 | `Bug` | Delivery defect linked to graph artifacts |
 | `Risk` | Identified risk with probability and impact |
@@ -102,14 +103,17 @@ graph TD
 | `Topic` | Thematic grouping for journeys and features |
 | `Touchpoint` | Entry point into a journey or screen |
 
-#### Delivery & Execution (4)
+#### Delivery & Execution (7)
 
 | Object | Purpose |
 |--------|---------|
+| `RequirementPortfolio` | Backlog container that owns the Epic → Feature → UserStory hierarchy for a single ProjectInstance. |
 | `Epic` | Key hierarchy level between BusinessObjective/StrategicTheme and Feature |
 | `Feature` | Cohesive delivery capability grouping |
 | `UserStory` | Deliverable requirement unit with four-verb edge model (REALIZES, DELIVERS, HAS_TASK, VERIFIED_BY) |
+| `Milestone` | Project timebox or checkpoint. `milestoneType` covers SPRINT, PHASE, RELEASE_CUT, and CHECKPOINT. |
 | `Task` | Standalone execution unit. Carries taskType (FRONTEND, BACKEND, API, DATA, TEST, DEVOPS, UX, DOCUMENTATION), priority, estimate. Links to UserStory via HAS_TASK, to artifacts via IMPLEMENTS. |
+| `ProjectInstance` | Temporary delivery container that addresses a Gap, targets a BusinessCapability, owns a RequirementPortfolio, and scopes create/enhance/integrate work across Applications and ApplicationComponents. |
 
 #### Requirement & Design (10)
 
@@ -168,9 +172,9 @@ graph TD
 | `Gap` | Structural incompleteness detectable by benchmark engine |
 | `Message` | User-visible confirmation, warning, info, or error text |
 
-**Category verification:** 8 + 7 + 4 + 10 + 9 + 12 + 4 = 54
+**Category verification:** 9 + 7 + 7 + 10 + 9 + 12 + 4 = 58
 
-### 3.2 Tier 2 — Registry Nodes (11)
+### 3.2 Tier 2 — Registry Nodes (13)
 
 | Object | Family | Rationale |
 |--------|--------|-----------|
@@ -185,6 +189,8 @@ graph TD
 | `TranslationKey` | Cross-cutting / Localization | Registry of translatable strings linking Locale to UI elements. |
 | `ImportSnapshot` | Cross-cutting | Append-only audit record for batch imports into the graph. Captures sourceType (GIT_DOC, JIRA_SYNC, MANUAL_ENTRY), result, contentHash. Linked via IMPORTED_BY from importable T1 nodes. |
 | `CodingConvention` | Cross-cutting | Queryable metadata for coding conventions. Structured categories in graph (conventionCode, category, enforcement, scope); detailed rules via docRef pointing to Markdown files in Git. Linked via GOVERNED_BY_CONVENTION from Application, ApplicationComponent, CodeAsset. |
+| `AgentPolicy` | Cross-cutting | Allowlist/guardrail registry for agent execution. Captures allowed repos, commands, environments, secret scopes, touch limits, and approval thresholds. Linked via GOVERNED_BY_POLICY from Application and ApplicationComponent. |
+| `EvidenceRecord` | Cross-cutting | Durable proof artifact registry for tests, screenshots, contract snapshots, and visual baselines. Used by BASELINED_BY and verification write-back flows. |
 
 ### 3.3 Tier 3 — Value Objects (4)
 
@@ -195,9 +201,14 @@ graph TD
 | `EntryMode` | Embedded in Touchpoint. Channel + mechanism pair. The `channelId` reference resolves via parent Touchpoint's edge to Channel (T2). |
 | `ContentElement` | Embedded in Screen. Ordered content inventory. Not independently queried. |
 
-**Totals: 54 + 11 + 4 = 69 model elements**
+**Totals: 58 + 13 + 4 = 75 model elements**
 
-**Agent-ready extension note:** Counts above reflect the full agent-ready extension (Phase 1 + Phase 2). Phase 1 intermediate: 53 T1 / 10 T2 = 67 total / 63 benchmarkable. See `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md` for phased breakdown.
+**Model growth note:** Counts above reflect the full approved taxonomy after three increments:
+- agent-ready information model
+- operational near-zero-drift additions (`AgentPolicy`, `EvidenceRecord`)
+- capability/project meta-model (`Assessment`, `RequirementPortfolio`, `Milestone`, `ProjectInstance`)
+
+Current approved taxonomy: **75 total nodes, 106 edge types, 71 benchmarkable**.
 
 ---
 
@@ -217,35 +228,40 @@ Channel traversal is modeled as `Touchpoint -[DELIVERED_VIA_CHANNEL]-> Channel`.
 
 ### 4.3 General Rule
 
-Tier 3 objects are NOT counted in the 65 benchmarkable nodes. Their attributes are scored as part of the parent object's attribute depth. If a Tier 3 object's embedded structure blocks a queryability test from scoring GREEN, that test scores AMBER and the promotion question is flagged in gap recommendations.
+Tier 3 objects are NOT counted in the 71 benchmarkable nodes. Their attributes are scored as part of the parent object's attribute depth. If a Tier 3 object's embedded structure blocks a queryability test from scoring GREEN, that test scores AMBER and the promotion question is flagged in gap recommendations.
 
 ---
 
-## 5. Current-to-Target Entity Mapping
+## 5. Implementation Baseline Snapshot
 
-The current 11 implemented entities do not map 1:1 to the target model. This table resolves ambiguity for benchmark scoring.
+The implemented graph no longer resembles the original 11-entity seed. The current code baseline is:
+
+- **31 `@Node` entities**
+- **46 SDN `@Relationship` declarations**
+- **1 Cypher-only polymorphic edge** (`ASSESSES`)
+- **142 passing tests**
+
+This section highlights the remaining shape mismatches that still matter for benchmark scoring.
 
 | Current Code Entity | File | Target Model Object(s) | Mapping Type | Benchmark Treatment |
 |--------------------|------|------------------------|-------------|-------------------|
-| `Role.java` | `domain/Role.java` | BusinessRole (T1), ValidationRole (T1) | **Split** | Score as `[IMPLEMENTED — reshape required]`, not `[PLANNED]` |
-| `Gap.java` | `domain/Gap.java` | Gap (T1) | **Reshape** | Score as `[IMPLEMENTED — reshape required]` (current `type`/`severity`/`description` to target `gapType`/`severity`/`description` + relationships) |
-| `Screen.java` | `domain/Screen.java` | Screen (T1) | **Direct** | Attribute depth gap (3-status vs universal status + readiness) and string-encoded relationships |
-| `Journey.java` | `domain/Journey.java` | Journey (T1) | **Direct** | Same depth and status gaps as Screen |
-| `JourneyStep.java` | `domain/JourneyStep.java` | JourneyStep (T1) | **Direct** | Missing screen, interaction, and touchpoint edges |
-| `UserStory.java` | `domain/UserStory.java` | UserStory (T1) | **Direct** | Minimal — 5 fields versus 8+ target |
-| `Interaction.java` | `domain/Interaction.java` | Interaction (T1) | **Direct** | `permission` as string, `apiCalls` as strings, no InteractionOutcome |
-| `Touchpoint.java` | `domain/Touchpoint.java` | Touchpoint (T1) | **Direct** | `channelId` as string in embedded EntryMode |
-| `EntryMode.java` | `domain/EntryMode.java` | EntryMode (T3) | **Direct** | Value object; `channelId` needs edge to Channel (T2) via parent |
-| `ContentElement.java` | `domain/ContentElement.java` | ContentElement (T3) | **Direct** | Value object |
-| `Effect.java` | `domain/Effect.java` | Effect (T3) | **Direct** | Value object |
+| `Role.java` | `domain/Role.java` | BusinessRole (T1), ValidationRole (T1) | **Split still pending** | Score as `[IMPLEMENTED — reshape required]`, not `[PLANNED]` |
+| `Gap.java` | `domain/Gap.java` | Gap (T1) | **Reshape still pending** | Current `type`/`severity`/`description` still needs full target schema and gap-edge semantics |
+| `Assessment.java` | `domain/Assessment.java` | Assessment (T1) | **Direct + Cypher edge** | `IDENTIFIES_GAP` is SDN; polymorphic `ASSESSES` is Neo4jClient-executed |
+| `RequirementPortfolio.java` | `domain/RequirementPortfolio.java` | RequirementPortfolio (T1) | **Direct** | Anchors Epic → Feature → UserStory ownership for ProjectInstance |
+| `ProjectInstance.java` | `domain/ProjectInstance.java` | ProjectInstance (T1) | **Direct** | Encodes project-to-gap, project-to-capability, portfolio, milestone, task, and application/component change scope |
+| `Milestone.java` | `domain/Milestone.java` | Milestone (T1) | **Direct** | Sprint is modeled as `milestoneType = SPRINT`, not as a separate node |
+| `AgentPolicy.java` | `domain/AgentPolicy.java` | AgentPolicy (T2) | **Direct** | Safety/permission registry is implemented; policy-binding edges continue to mature |
+| `EvidenceRecord.java` | `domain/EvidenceRecord.java` | EvidenceRecord (T2) | **Direct** | Baseline and proof registry is implemented |
 
-### 5.1 Unmapped Target Objects
+### 5.1 Remaining Benchmark Gaps
 
-The following target objects have no current code entity and are scored as `[PLANNED]`:
+The current implementation baseline is materially ahead of the original seed model, but benchmark gaps still cluster in four areas:
 
-**Tier 1 (45 planned):** BusinessObjective, Decision, Assumption, Constraint, SourceReference, Finding, Bug, Risk, Persona, Topic, Epic, Feature, Task, AcceptanceCriterion, Rule, ValidationRule, QualityConstraint, EdgeCase, ExceptionCase, ScreenState, Transition, ApiContract, RequestSchema, ResponseSchema, ErrorContract, DataEntity, DataField, Integration, TestCase, CodeAsset, ExternalArtifact, OpenQuestion, Message, BusinessCapability, BusinessProcess, ProcessActivity, ProcessGateway, ProcessEvent, Organization, Application, ApplicationComponent, BusinessObject, InformationFlow, Deployment, InfrastructureNode
-
-**Tier 2 (11 planned):** BusinessDomain, Channel, Permission, ErrorCode, ConfirmationDialog, Enum, Event, Locale, TranslationKey, ImportSnapshot, CodingConvention
+- **Legacy string-to-edge migration**: `personaId`, `roleKeys`, `channelId`, `permission`, `apiCalls`, and similar fields still block full graph traversal.
+- **Registry completion**: `BusinessDomain`, `Channel`, `Permission`, `ErrorCode`, `ConfirmationDialog`, `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned.
+- **Enterprise architecture depth**: `Organization`, `BusinessObject`, `InformationFlow`, `Deployment`, and `InfrastructureNode` remain target-taxonomy objects but are not yet implemented.
+- **View-driving UX structure**: `Persona`, `Topic`, `ScreenState`, `Transition`, `SourceReference`, and `ExternalArtifact` still gate several benchmark queries.
 
 ---
 

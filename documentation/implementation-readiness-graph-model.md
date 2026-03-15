@@ -11,7 +11,7 @@
 
 - `README.md`
 - `modeling-taxonomy.md` (tier classification, current-to-target mapping)
-- `graph-object-catalog.md` (full 69-element specification, relationship registry — 65 agent-ready benchmarkable)
+- `graph-object-catalog.md` (full 75-node specification, relationship registry — 106 edge types / 71 benchmarkable)
 - `vision-benchmark.md` (8-dimension scoring, queryability tests, gap prioritization)
 - `product-vision.md`
 - `feature-capability-map.md`
@@ -35,12 +35,12 @@ The graph must support traversal in both directions. A user or agent should be a
 
 ## 2. First-Class Artifact Types
 
-See `modeling-taxonomy.md` for the full 3-tier classification (54 T1 + 11 T2 + 4 T3 = 69 model elements, 65 agent-ready benchmarkable) and `graph-object-catalog.md` for per-object specifications.
+See `modeling-taxonomy.md` for the full 3-tier classification (58 T1 + 13 T2 + 4 T3 = 75 model elements, 71 benchmarkable) and `graph-object-catalog.md` for per-object specifications.
 
 ### 2.1 Strategic & Governance objects
 
 - `BusinessObjective`
-- `Feature`
+- `Assessment`
 - `Decision`
 - `Assumption`
 - `Constraint`
@@ -60,8 +60,13 @@ See `modeling-taxonomy.md` for the full 3-tier classification (54 T1 + 11 T2 + 4
 
 ### 2.3 Delivery & Execution objects
 
+- `RequirementPortfolio`
 - `Epic`
+- `Feature`
+- `UserStory`
+- `Milestone`
 - `Task`
+- `ProjectInstance`
 - `Bug`
 - `ExternalArtifact`
 
@@ -87,6 +92,7 @@ See `modeling-taxonomy.md` for the full 3-tier classification (54 T1 + 11 T2 + 4
 - `DataField`
 - `Integration`
 - `TestCase`
+- `CodeAsset`
 
 ### 2.6 Architecture & EA objects
 
@@ -100,7 +106,7 @@ See `modeling-taxonomy.md` for the full 3-tier classification (54 T1 + 11 T2 + 4
 - `BusinessObject`
 - `InformationFlow`
 - `Deployment`
-- `DeploymentElement`
+- `InfrastructureNode`
 
 ### 2.7 Cross-cutting objects
 
@@ -108,6 +114,19 @@ See `modeling-taxonomy.md` for the full 3-tier classification (54 T1 + 11 T2 + 4
 - `Message`
 - `Gap`
 - `OpenQuestion`
+- `AgentPolicy`
+- `EvidenceRecord`
+
+### 2.8 Current implementation baseline
+
+The current code baseline is materially ahead of the original seed model:
+
+- **31 `@Node` entities**
+- **46 SDN `@Relationship` declarations**
+- **1 Cypher-only polymorphic edge** (`ASSESSES`)
+- **142 passing tests**
+
+This document defines the readiness model for the full approved taxonomy (`75 nodes / 106 edge types / 71 benchmarkable`), not just the currently implemented subset.
 
 ---
 
@@ -446,7 +465,13 @@ graph LR
 
 **Enforcement:** A UserStory MUST NOT transition to the unlocked status unless the corresponding edge exists. For example, a story cannot reach `APPROVED` without at least one `DELIVERS` edge to a Screen.
 
-**Note on total edge inventory:** The target model contains **90 edge types (79 base + 8 Phase 1 agent-ready + 3 Phase 2 agent-ready)**. The completenessScore formula denominators should reference this inventory for global-level scoring. See `graph-object-catalog.md` section 6.3 for the full registry.
+**Note on total edge inventory:** The approved target model contains **106 edge types**:
+
+- 90 from the agent-ready baseline
+- +3 operational near-zero-drift edge types (`GOVERNED_BY_POLICY`, `BASELINED_BY`, `DEPENDS_ON_ASSET`)
+- +13 capability/project meta-model edge types (`ASSESSES`, `IDENTIFIES_GAP`, `ADDRESSES_GAP`, `TARGETS_CAPABILITY`, `HAS_PORTFOLIO`, `HAS_EPIC`, `HAS_MILESTONE`, Milestone→`HAS_TASK`, `CREATES_APPLICATION`, `ENHANCES_APPLICATION`, `INTEGRATES_WITH`, `CREATES_COMPONENT`, `ENHANCES_COMPONENT`)
+
+The completenessScore formula denominators should reference this inventory for global-level scoring. See `graph-object-catalog.md` section 6.3 for the full registry.
 
 ### 7.12 Implementation Pack Resolution
 
