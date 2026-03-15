@@ -1006,15 +1006,15 @@ class MilestoneTest {
 
         assertEquals("MS-DH-001", milestone.getMilestoneId());
         assertEquals("Sprint 1", milestone.getName());
-        assertEquals("SPRINT", milestone.getMilestoneType());
+        assertEquals(MilestoneType.SPRINT, milestone.getMilestoneType());
     }
 
     @Test
     void shouldSupportAllMilestoneTypes() {
-        for (String type : new String[]{"SPRINT", "PHASE", "RELEASE_CUT", "CHECKPOINT"}) {
+        for (MilestoneType type : MilestoneType.values()) {
             Milestone ms = Milestone.builder()
-                    .milestoneId("MS-TEST-" + type)
-                    .name(type + " milestone")
+                    .milestoneId("MS-TEST-" + type.name())
+                    .name(type.name() + " milestone")
                     .milestoneType(type)
                     .status(Status.IDENTIFIED)
                     .build();
@@ -1623,12 +1623,13 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/test/java/co
 
 ### Task 11: AssessmentService — ASSESSES Polymorphic Edge (Cypher-Only)
 
-The ASSESSES edge (Assessment → assessable T1) is polymorphic — the target node type varies by `targetKind`. SDN's `@Relationship` requires a fixed target type, so this edge is created and queried via Cypher using `Neo4jClient`, following the established `ImpactAnalysisService` pattern.
+The ASSESSES edge (Assessment → assessable T1) is polymorphic — the target node type varies by `targetKind`. SDN's `@Relationship` requires a fixed target type, so this edge is created and queried via Cypher using `Neo4jClient`, following the established `ReconciliationService` pattern (Mockito with `RETURNS_DEEP_STUBS` for chained Neo4jClient calls).
 
 **Files:**
 - Create: `backend/src/main/java/com/emsist/designhub/service/AssessmentService.java`
 - Create: `backend/src/test/java/com/emsist/designhub/service/AssessmentServiceTest.java`
-- Reference: `backend/src/main/java/com/emsist/designhub/service/ImpactAnalysisService.java` (pattern source)
+- Reference: `backend/src/test/java/com/emsist/designhub/service/ReconciliationServiceTest.java` (mock pattern)
+- Reference: `backend/src/main/java/com/emsist/designhub/service/RoleService.java` (Neo4jClient fetch pattern)
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1637,34 +1638,29 @@ package com.emsist.designhub.service;
 
 import com.emsist.designhub.domain.TargetKind;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.neo4j.core.Neo4jClient;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 class AssessmentServiceTest {
 
-    private final AssessmentService service = new AssessmentService(null); // Neo4jClient not needed for query-builder tests
+    @Mock private Neo4jClient neo4jClient;
 
-    @Test
-    void shouldBuildCreateAssessesEdgeQuery() {
-        String query = service.buildCreateAssessesQuery();
-        assertTrue(query.contains("MATCH (a:Assessment {assessmentId: $assessmentId})"));
-        assertTrue(query.contains("MERGE (a)-[:ASSESSES]->(target)"));
-    }
+    @InjectMocks
+    private AssessmentService service;
 
-    @Test
-    void shouldBuildQueryByTargetKind() {
-        String query = service.buildFindAssessmentsByTargetQuery();
-        assertTrue(query.contains("MATCH (a:Assessment)-[:ASSESSES]->(target)"));
-        assertTrue(query.contains("WHERE a.targetKind = $targetKind"));
-        assertTrue(query.contains("AND target[$targetIdField] = $targetId"));
-    }
-
-    @Test
-    void shouldBuildQueryForAllAssessmentsOfTarget() {
-        String query = service.buildFindAssessmentsForTargetQuery();
-        assertTrue(query.contains("MATCH (a:Assessment)-[:ASSESSES]->(target)"));
-        assertTrue(query.contains("WHERE target[$targetIdField] = $targetId"));
-        assertTrue(query.contains("RETURN a"));
-    }
+    // --- Resolver tests (pure logic, no Neo4j) ---
 
     @Test
     void shouldResolveTargetLabel() {
@@ -1687,6 +1683,65 @@ class AssessmentServiceTest {
         assertEquals("contractId", service.resolveTargetIdField(TargetKind.API));
         assertEquals("entityId", service.resolveTargetIdField(TargetKind.DE));
     }
+
+    // --- createAssessesEdge (executes Neo4jClient) ---
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldCreateAssessesEdgeViaNeo4jClient() {
+        var runnableSpec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(runnableSpec);
+        when(runnableSpec.bind(any()).to(anyString())).thenReturn(runnableSpec);
+        when(runnableSpec.run()).thenReturn(null);
+
+        service.createAssessesEdge("ASSESS-CAP-001", TargetKind.CAP, "CAP-AUTH");
+
+        // Verify Neo4jClient was called with a query containing ASSESSES
+        verify(neo4jClient).query(argThat(cypher ->
+                cypher.contains("MERGE (a)-[:ASSESSES]->(target)")
+                && cypher.contains("Assessment")));
+        // Verify all 3 bind calls: assessmentId, targetIdField, targetId
+        verify(runnableSpec, atLeast(3)).bind(any());
+        verify(runnableSpec).run();
+    }
+
+    // --- findAssessmentsForTarget (executes Neo4jClient) ---
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldFindAssessmentsForTargetViaNeo4jClient() {
+        var runnableSpec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(runnableSpec);
+        when(runnableSpec.bind(any()).to(anyString())).thenReturn(runnableSpec);
+        var fetchSpec = mock(Neo4jClient.RecordFetchSpec.class);
+        when(runnableSpec.fetch()).thenReturn(fetchSpec);
+        when(fetchSpec.all()).thenReturn((Collection) List.of(
+                Map.of("assessmentId", "ASSESS-CAP-001", "name", "Auth Maturity")));
+
+        var results = service.findAssessmentsForTarget(TargetKind.CAP, "CAP-AUTH");
+
+        assertEquals(1, results.size());
+        assertEquals("ASSESS-CAP-001", results.get(0).get("assessmentId"));
+        verify(neo4jClient).query(argThat(cypher ->
+                cypher.contains("ASSESSES") && cypher.contains("RETURN")));
+    }
+
+    // --- findAssessmentsForTarget returns empty when no edges exist ---
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldReturnEmptyWhenNoAssessmentsExist() {
+        var runnableSpec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(runnableSpec);
+        when(runnableSpec.bind(any()).to(anyString())).thenReturn(runnableSpec);
+        var fetchSpec = mock(Neo4jClient.RecordFetchSpec.class);
+        when(runnableSpec.fetch()).thenReturn(fetchSpec);
+        when(fetchSpec.all()).thenReturn((Collection) List.of());
+
+        var results = service.findAssessmentsForTarget(TargetKind.APP, "APP-DH");
+
+        assertTrue(results.isEmpty());
+    }
 }
 ```
 
@@ -1701,56 +1756,60 @@ Expected: FAIL — `AssessmentService` class not found
 package com.emsist.designhub.service;
 
 import com.emsist.designhub.domain.TargetKind;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class AssessmentService {
 
     private final Neo4jClient neo4jClient;
 
-    public AssessmentService(Neo4jClient neo4jClient) {
-        this.neo4jClient = neo4jClient;
+    /**
+     * Creates an ASSESSES edge from an Assessment to its polymorphic target.
+     * The target node label is resolved from targetKind via the label/idField resolvers.
+     */
+    @Transactional
+    public void createAssessesEdge(String assessmentId, TargetKind targetKind, String targetId) {
+        String targetLabel = resolveTargetLabel(targetKind);
+        String targetIdField = resolveTargetIdField(targetKind);
+
+        neo4jClient.query("""
+                    MATCH (a:Assessment {assessmentId: $assessmentId})
+                    MATCH (target:%s {%s: $targetId})
+                    MERGE (a)-[:ASSESSES]->(target)
+                    """.formatted(targetLabel, targetIdField))
+                .bind(assessmentId).to("assessmentId")
+                .bind(targetId).to("targetId")
+                .run();
     }
 
     /**
-     * Creates an ASSESSES edge from an Assessment to its target node.
-     * The target node label is resolved dynamically from targetKind.
-     * Parameters: $assessmentId, $targetLabel (injected into query), $targetIdField, $targetId
+     * Finds all assessments targeting a specific node, regardless of assessment type.
+     * Returns raw result maps with assessment properties.
      */
-    public String buildCreateAssessesQuery() {
-        return """
-            MATCH (a:Assessment {assessmentId: $assessmentId})
-            MATCH (target WHERE target[$targetIdField] = $targetId)
-            WHERE $targetLabel IN labels(target)
-            MERGE (a)-[:ASSESSES]->(target)
-            RETURN a.assessmentId AS assessmentId
-            """;
-    }
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> findAssessmentsForTarget(TargetKind targetKind, String targetId) {
+        String targetLabel = resolveTargetLabel(targetKind);
+        String targetIdField = resolveTargetIdField(targetKind);
 
-    /**
-     * Finds assessments of a specific type targeting a specific node.
-     * Parameters: $targetKind, $targetIdField, $targetId
-     */
-    public String buildFindAssessmentsByTargetQuery() {
-        return """
-            MATCH (a:Assessment)-[:ASSESSES]->(target)
-            WHERE a.targetKind = $targetKind
-            AND target[$targetIdField] = $targetId
-            RETURN a
-            """;
-    }
+        Collection<Map<String, Object>> results = neo4jClient.query("""
+                    MATCH (a:Assessment)-[:ASSESSES]->(target:%s {%s: $targetId})
+                    RETURN a.assessmentId AS assessmentId, a.name AS name,
+                           a.assessmentType AS assessmentType, a.targetKind AS targetKind,
+                           a.maturityLevel AS maturityLevel, a.score AS score,
+                           a.status AS status
+                    """.formatted(targetLabel, targetIdField))
+                .bind(targetId).to("targetId")
+                .fetch().all();
 
-    /**
-     * Finds all assessments (any type) targeting a specific node.
-     * Parameters: $targetIdField, $targetId
-     */
-    public String buildFindAssessmentsForTargetQuery() {
-        return """
-            MATCH (a:Assessment)-[:ASSESSES]->(target)
-            WHERE target[$targetIdField] = $targetId
-            RETURN a
-            """;
+        return List.copyOf(results);
     }
 
     /** Resolves TargetKind enum to Neo4j node label. */
@@ -1781,6 +1840,8 @@ public class AssessmentService {
 }
 ```
 
+Note: The `targetLabel` and `targetIdField` are injected into the Cypher via `String.formatted()` (not as parameters) because Neo4j does not support parameterized labels or property keys. This is safe because both values come from a closed switch on the `TargetKind` enum — no user input reaches the query string.
+
 - [ ] **Step 4: Run tests to verify they pass**
 
 Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentServiceTest -pl . -q`
@@ -1794,7 +1855,7 @@ Expected: ≥142 tests, 0 failures
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/service/AssessmentService.java backend/src/test/java/com/emsist/designhub/service/AssessmentServiceTest.java && git commit -m "feat: add AssessmentService with ASSESSES polymorphic edge Cypher queries"
+cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/service/AssessmentService.java backend/src/test/java/com/emsist/designhub/service/AssessmentServiceTest.java && git commit -m "feat: add AssessmentService with ASSESSES polymorphic edge via Neo4jClient"
 ```
 
 ---
