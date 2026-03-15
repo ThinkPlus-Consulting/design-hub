@@ -32,4 +32,7 @@ public class Application {
 
     @Relationship(type = "GOVERNED_BY_CONVENTION", direction = Relationship.Direction.OUTGOING)
     private List<CodingConvention> conventions;
+
+    @Relationship(type = "GOVERNED_BY_POLICY", direction = Relationship.Direction.OUTGOING)
+    private List<AgentPolicy> policies;
 }

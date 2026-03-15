@@ -47,4 +47,7 @@ public class ApplicationComponent {
 
     @Relationship(type = "HAS_QUALITY_CONSTRAINT", direction = Relationship.Direction.OUTGOING)
     private List<QualityConstraint> qualityConstraints;
+
+    @Relationship(type = "GOVERNED_BY_POLICY", direction = Relationship.Direction.OUTGOING)
+    private List<AgentPolicy> policies;
 }
