@@ -53,7 +53,7 @@ class RegistryEdgeTraversalTest {
     @Test
     void shouldTraverseTouchpointToChannel() {
         Channel channel = Channel.builder()
-                .channelCode("CH-MOBILE").displayName("Mobile App").channelType("MOBILE").build();
+                .channelCode("CH-WEB-MOB").displayName("Web Mobile").channelType("WEB").build();
 
         Touchpoint tp = Touchpoint.builder()
                 .touchpointId("TP-MOB-001")
@@ -61,13 +61,13 @@ class RegistryEdgeTraversalTest {
                 .deliveredViaChannel(channel)
                 .build();
 
-        assertEquals("CH-MOBILE", tp.getDeliveredViaChannel().getChannelCode());
+        assertEquals("CH-WEB-MOB", tp.getDeliveredViaChannel().getChannelCode());
     }
 
     @Test
     void shouldTraverseInteractionToPermission() {
         Permission perm = Permission.builder()
-                .permissionKey("PERM-SUPER_ADMIN").displayName("Super Admin").sortOrder(1).build();
+                .permissionKey("SUPER_ADMIN").displayName("Super Admin").sortOrder(0).build();
 
         Interaction interaction = Interaction.builder()
                 .interactionId("INT-SYS-001")
@@ -76,14 +76,14 @@ class RegistryEdgeTraversalTest {
                 .requiresPermission(perm)
                 .build();
 
-        assertEquals("PERM-SUPER_ADMIN", interaction.getRequiresPermission().getPermissionKey());
+        assertEquals("SUPER_ADMIN", interaction.getRequiresPermission().getPermissionKey());
     }
 
     @Test
     void shouldTraverseFullPersonaToChannelPath() {
         // Persona -> Journey -> Step -> Touchpoint -> Channel
         Channel channel = Channel.builder()
-                .channelCode("CH-WEB").displayName("Web").channelType("WEB").build();
+                .channelCode("CH-WEB-DSK").displayName("Web Desktop").channelType("WEB").build();
 
         Touchpoint tp = Touchpoint.builder()
                 .touchpointId("TP-WEB-001").label("Web Login")
@@ -101,6 +101,6 @@ class RegistryEdgeTraversalTest {
 
         // Verify the full path is representable
         assertEquals("PER-USER", journey.getPerformedByPersona().getPersonaId());
-        assertEquals("CH-WEB", tp.getDeliveredViaChannel().getChannelCode());
+        assertEquals("CH-WEB-DSK", tp.getDeliveredViaChannel().getChannelCode());
     }
 }
