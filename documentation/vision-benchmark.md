@@ -91,7 +91,7 @@ Tier 3 value objects (not counted in 71):
 
 **Implementation ratio:** 35 benchmarkable nodes implemented / 71 benchmarkable = **49.3%**
 
-**Score: AMBER** — The implementation baseline is no longer a skeleton. The repo now has **35 `@Node` entities**, **51 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **180 passing tests**. Coverage is still incomplete, but the graph now contains most of the agent-ready, safety, capability/project, and registry/role-split backbone.
+**Score: AMBER** — The implementation baseline is no longer a skeleton. The repo now has **36 `@Node` entities**, **57 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **216 passing tests**. Coverage is still incomplete, but the graph now contains most of the agent-ready, safety, capability/project, and registry/role-split backbone, plus the interaction edge completion increment (ConfirmationDialog registry, CALLS_API, TRIGGERS_CONFIRMATION, interaction/touchpoint persona and role edges).
 
 **Reshape notes:**
 
@@ -282,13 +282,13 @@ Tier 3 value objects (not counted in 71):
 | 1 | Documentation completeness | **GREEN** | All 71 benchmarkable nodes are documented with typed attributes |
 | 2 | Implementation completeness | **AMBER** | 35/71 benchmarkable nodes exist in code (49.3%) |
 | 3 | Attribute depth | **AMBER** | ~53% average depth on implemented entities; universal status migration pending |
-| 4 | Relationship coverage | **AMBER** | 51 SDN + 1 Cypher relationship types implemented; the registry/role core is now edge-backed, with a smaller set of deferred string-backed relationships remaining |
+| 4 | Relationship coverage | **AMBER** | 57 SDN + 1 Cypher relationship types implemented; the registry/role core and interaction edges are now edge-backed, with a smaller set of deferred string-backed relationships remaining |
 | 5 | Queryability | **RED** | 2/17 GREEN, 2/17 AMBER, 13/17 RED |
 | 6 | Source traceability | **RED** | SourceReference entity does not exist |
 | 7 | Delivery-tool interoperability | **RED** | ExternalArtifact entity does not exist |
 | 8 | UX implementation support | **AMBER** | Screen API resolves stories[] and roles[] via lookup maps; Persona/Channel/Permission registries now exist, but several exploration views and traversal paths are still pending |
 
-**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **35 `@Node` entities**, **51 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **180 passing tests**. The largest remaining gaps are the deferred string-to-edge migrations, missing registries such as ErrorCode and ConfirmationDialog, and a full benchmark rerun against the newest registry/role implementation increment.
+**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **36 `@Node` entities**, **57 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **216 passing tests**. The largest remaining gaps are the deferred string-to-edge migrations (ErrorCode, Transition), missing registries such as ErrorCode, and a full benchmark rerun against the newest interaction edge completion increment.
 
 ---
 

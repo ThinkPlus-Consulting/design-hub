@@ -42,7 +42,7 @@ The platform should maintain a first-class graph object registry covering 71 ben
 | Capability | Status | Evidence |
 |-----------|--------|----------|
 | Stable object identity | `[IMPLEMENTED]` | `stableId` / `surfaceId` / `storyId` on implemented entities |
-| Typed relationships | `[PARTIAL]` | 51 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; several deferred string-backed relationships remain |
+| Typed relationships | `[PARTIAL]` | 57 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; several deferred string-backed relationships remain |
 | Object status tracking | `[IMPLEMENTED — reshape required]` | 3-enum model exists; target is universal 10-value `status` |
 | Selective readiness flags | `[PLANNED]` | No readiness flags in current entities |
 | Source traceability | `[PLANNED]` | No `SourceReference` entity |
@@ -207,7 +207,7 @@ graph TD
 
 | Phase | Scope | Benchmark Status | Key Artifacts |
 |-------|-------|-----------------|---------------|
-| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 35 `@Node` entities in code, 51 SDN edges + 1 Cypher edge, 180 tests | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset |
+| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 36 `@Node` entities in code, 57 SDN edges + 1 Cypher edge, 216 tests | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, ConfirmationDialog, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset |
 | 2. Exploration | Persona, journey, screen, and story traversal views | `[PLANNED]` — Persona/role/channel nodes exist; Topic, ScreenState, Transition, and dedicated exploration views still missing | Persona View, Journey View, Screen Flow View |
 | 3. Delivery intelligence | Findings, bugs, readiness gaps, API and data dependencies | `[PLANNED]` — requires Bug, Finding, ApiContract, DataEntity | Delivery View, completenessScore engine |
 | 4. External alignment | Azure DevOps and Jira mapping, sync objects, benchmark reporting | `[PLANNED]` — requires ExternalArtifact | Benchmark View |

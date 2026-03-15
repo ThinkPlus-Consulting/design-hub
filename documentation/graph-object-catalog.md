@@ -2245,7 +2245,7 @@ Complete registry of all modeled relationships with implementation status.
 
 ### 6.1 Existing Graph Edges
 
-The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **51 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
+The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **57 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
 
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
@@ -2594,9 +2594,9 @@ Those fields should enrich the graph but should not replace domain-native object
 | Implemented SDN `@Relationship` declarations | 51 |
 | Cypher-only polymorphic edges | 1 (`ASSESSES`) |
 | String-encoded relationships still requiring migration | 4 canonical relationships + deferred compatibility fields |
-| Passing tests | 180 |
+| Passing tests | 182 |
 | Entities needing reshape | 1 (Gap) |
 | Architecture/EA objects | 12 |
 | Delivery & Execution objects | 7 |
 
-**Metric split:** This catalog tracks both the **approved design taxonomy** (`75 / 106 / 71`) and the **current implementation baseline** (`35 / 51 / 1 / 180`). Keep those families separate when reporting progress.
+**Metric split:** This catalog tracks both the **approved design taxonomy** (`75 / 106 / 71`) and the **current implementation baseline** (`35 / 51 / 1 / 182`). Keep those families separate when reporting progress.

@@ -236,10 +236,10 @@ Tier 3 objects are NOT counted in the 71 benchmarkable nodes. Their attributes a
 
 The implemented graph no longer resembles the original 11-entity seed. The current code baseline is:
 
-- **35 `@Node` entities**
-- **51 SDN `@Relationship` declarations**
+- **36 `@Node` entities**
+- **57 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **180 passing tests**
+- **216 passing tests**
 
 This section highlights the remaining shape mismatches that still matter for benchmark scoring.
 
