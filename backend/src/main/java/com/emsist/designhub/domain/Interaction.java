@@ -32,8 +32,23 @@ public class Interaction {
     private List<String> roleKeys;
     private List<String> apiCalls;
 
+    @Relationship(type = "USED_BY_PERSONA", direction = Relationship.Direction.OUTGOING)
+    @Builder.Default
+    private List<Persona> usedByPersonas = new ArrayList<>();
+
+    @Relationship(type = "ACCESSIBLE_BY_ROLE", direction = Relationship.Direction.OUTGOING)
+    @Builder.Default
+    private List<BusinessRole> accessibleByRoles = new ArrayList<>();
+
     @Relationship(type = "REQUIRES_PERMISSION", direction = Relationship.Direction.OUTGOING)
     private Permission requiresPermission;
+
+    @Relationship(type = "CALLS_API", direction = Relationship.Direction.OUTGOING)
+    @Builder.Default
+    private List<ApiContract> callsApi = new ArrayList<>();
+
+    @Relationship(type = "TRIGGERS_CONFIRMATION", direction = Relationship.Direction.OUTGOING)
+    private ConfirmationDialog triggersConfirmation;
 
     @Relationship(type = "ON_SCREEN", direction = Relationship.Direction.OUTGOING)
     @JsonIgnore
