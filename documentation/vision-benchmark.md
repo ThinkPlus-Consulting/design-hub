@@ -89,13 +89,13 @@ Tier 3 value objects (not counted in 71):
 | `[IMPLEMENTED]` | 3 | Effect, EntryMode, ContentElement |
 | `[PLANNED]` | 1 | InteractionOutcome |
 
-**Implementation ratio:** 28 benchmarkable nodes implemented (including reshapes) / 71 benchmarkable = **39.4%**
+**Implementation ratio:** 35 benchmarkable nodes implemented / 71 benchmarkable = **49.3%**
 
-**Score: AMBER** — The implementation baseline is no longer a skeleton. The repo now has **31 `@Node` entities**, **46 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **142 passing tests**. Coverage is still incomplete, but the graph now contains most of the agent-ready, safety, and capability/project meta-model backbone.
+**Score: AMBER** — The implementation baseline is no longer a skeleton. The repo now has **35 `@Node` entities**, **51 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **180 passing tests**. Coverage is still incomplete, but the graph now contains most of the agent-ready, safety, capability/project, and registry/role-split backbone.
 
 **Reshape notes:**
 
-- `Role.java` maps to two target objects (BusinessRole + ValidationRole). The benchmark counts this as 1 implemented entity covering 2 target nodes, both requiring reshape. Neither should be scored as `[PLANNED]` since code exists under a different shape.
+- The role split is now direct in code: `BusinessRole.java` and `ValidationRole.java` replace the old single `Role.java` shape.
 - `Gap.java` maps to Gap (T1) with field rename required (`type` → `gapType`, add `gapId`, `sourceRefs`, relationships). Finding (T1) is `[PLANNED]` — it has no current code entity.
 
 **Benchmark note:** The detailed attribute-depth table below still focuses on the original UX seed entities plus the two reshape cases, because those remain the biggest depth gaps even after the newer meta-model entities were added.
@@ -144,11 +144,11 @@ Tier 3 value objects (not counted in 71):
 
 | Status | BLOCKING Count | Examples |
 |--------|---------------|----------|
-| `[EDGE]` | 5 | HAS_STEP, TARGETS, HAS_ENTRY_MODE, HAS_INTERACTION, TRANSITIONS_TO |
-| `[STRING_REF]` | 3 | DELIVERS (storyRefs), PERFORMED_BY_PERSONA (personaId), DELIVERED_VIA_CHANNEL (channelId) |
+| `[EDGE]` | 7 | HAS_STEP, TARGETS, HAS_ENTRY_MODE, HAS_INTERACTION, TRANSITIONS_TO, PERFORMED_BY_PERSONA, DELIVERED_VIA_CHANNEL |
+| `[STRING_REF]` | 1 | DELIVERS (storyRefs) |
 | `[PLANNED]` | 12 | HAS_FEATURE, HAS_STORY, USES_SCREEN, HAS_CRITERION, PERFORMS_JOURNEY, BELONGS_TO_SCREEN, FROM_SCREEN, TO_SCREEN, BELONGS_TO_API (x3), HAS_FIELD |
 
-**Score: AMBER** — Relationship coverage has improved materially, but 9 string-encoded relationships still block full traversal and 50 approved edge types remain unimplemented.
+**Score: AMBER** — Relationship coverage has improved materially, but a smaller residual set of string-encoded relationships still blocks full traversal and 50 approved edge types remain unimplemented.
 
 ---
 
@@ -158,10 +158,10 @@ Tier 3 value objects (not counted in 71):
 
 | # | Query | Required Path | Current Status | Score |
 |---|-------|---------------|----------------|-------|
-| 1 | Which journeys can persona P do? | `Persona <-[PERFORMED_BY_PERSONA]- Journey` | `personaId` string on Journey — no Persona entity, no edge | RED |
-| 2 | Which channels serve journey J? | `Journey -[HAS_STEP]-> JourneyStep -[STARTS_AT_TOUCHPOINT]-> Touchpoint -[DELIVERED_VIA_CHANNEL]-> Channel` | HAS_STEP is `[EDGE]`; STARTS_AT_TOUCHPOINT is `[PLANNED]`; DELIVERED_VIA_CHANNEL is `[STRING_REF]` (channelId in EntryMode); no Channel entity | RED |
-| 3 | Which screens can channel C reach? | `Channel <-[DELIVERED_VIA_CHANNEL]- Touchpoint -[TARGETS]-> Screen` | TARGETS is `[EDGE]`; DELIVERED_VIA_CHANNEL is `[STRING_REF]`; no Channel entity | RED |
-| 4 | Which permissions does screen S require? | `Screen -[HAS_INTERACTION]-> Interaction -[REQUIRES_PERMISSION]-> Permission` | HAS_INTERACTION is `[EDGE]` (replaces deprecated ON_SCREEN, direction reversed); permission is `[STRING_REF]`; no Permission entity | AMBER |
+| 1 | Which journeys can persona P do? | `Persona <-[PERFORMED_BY_PERSONA]- Journey` | Persona entity exists and Journey carries `PERFORMED_BY_PERSONA` | GREEN |
+| 2 | Which channels serve journey J? | `Journey -[HAS_STEP]-> JourneyStep -[STARTS_AT_TOUCHPOINT]-> Touchpoint -[DELIVERED_VIA_CHANNEL]-> Channel` | `DELIVERED_VIA_CHANNEL` and Channel exist, but `STARTS_AT_TOUCHPOINT` is still `[PLANNED]` | RED |
+| 3 | Which screens can channel C reach? | `Channel <-[DELIVERED_VIA_CHANNEL]- Touchpoint -[TARGETS]-> Screen` | Channel entity exists; `DELIVERED_VIA_CHANNEL` and `TARGETS` are implemented | GREEN |
+| 4 | Which permissions does screen S require? | `Screen -[HAS_INTERACTION]-> Interaction -[REQUIRES_PERMISSION]-> Permission` | Permission entity and `REQUIRES_PERMISSION` exist, but the current screen-to-interaction traversal still relies on the legacy `ON_SCREEN` side of the model | AMBER |
 | 5 | What happens if interaction I fails? | `Interaction.outcomes[error].errorCodeRef -> ErrorCode` | No InteractionOutcome structure; no ErrorCode entity | RED |
 | 6 | Which stories deliver screen S? | `UserStory -[DELIVERS]-> Screen` | `storyRefs` array on Screen — `[STRING_REF]` (note: direction reversed from old IMPLEMENTS_STORY) | AMBER |
 | 7 | Which bugs affect screen S? | `Bug -[AFFECTS]-> Screen` | No Bug entity | RED |
@@ -259,15 +259,15 @@ Tier 3 value objects (not counted in 71):
 | UI Concern | Required Backend Support | Status |
 |-----------|------------------------|--------|
 | Sidebar: screen list with module grouping | Screen entity with `module`, `label` | Partial — Screen has `module` and `label` |
-| Sidebar: persona/journey navigation | Persona → Journey → JourneyStep traversal | `[STRING_REF]` — personaId on Journey, no Persona entity |
+| Sidebar: persona/journey navigation | Persona → Journey → JourneyStep traversal | `[PARTIAL]` — Persona entity and `PERFORMED_BY_PERSONA` edge exist, but dedicated persona/journey sidebar UX is still pending |
 | Canvas: graph visualization of screen relationships | Screen → Screen transitions, Screen → Interaction | TRANSITIONS_TO `[EDGE]`, HAS_INTERACTION `[EDGE]` |
 | Detail panel: linked stories for selected screen | Screen → UserStory | Graph: `[STRING_REF]` — storyRefs array. API: **resolved** — ScreenResponse returns `stories[]` as `UserStoryResponse` objects via in-memory lookup. Frontend prefers resolved objects. |
 | Detail panel: linked roles for selected screen | Screen → BusinessRole | Graph: `[STRING_REF]` — roleKeys array. API: **resolved** — ScreenResponse returns `roles[]` as `RoleResponse` objects via in-memory lookup. Frontend prefers resolved objects. |
-| Detail panel: interactions with permissions | Interaction → Permission | `[STRING_REF]` — permission string |
-| Detail panel: touchpoint channels | Touchpoint → Channel | `[STRING_REF]` — channelId in EntryMode |
+| Detail panel: interactions with permissions | Interaction → Permission | `[EDGE]` — `REQUIRES_PERMISSION` is implemented; legacy `permission` string remains for migration compatibility |
+| Detail panel: touchpoint channels | Touchpoint → Channel | `[EDGE]` — `DELIVERED_VIA_CHANNEL` is implemented and backfilled from `EntryMode.channelId` |
 | Detail panel: journey step context | JourneyStep → Screen, Touchpoint | `[PLANNED]` — no edges |
 | Detail panel: error codes and confirmations | Interaction → ErrorCode, ConfirmationDialog | `[PLANNED]` / `[STRING_REF]` |
-| Filtering: by channel, persona, role | Channel, Persona, BusinessRole entities as filter facets | All `[PLANNED]` — entities do not exist |
+| Filtering: by channel, persona, role | Channel, Persona, BusinessRole entities as filter facets | `[PARTIAL]` — entities now exist, but dedicated filter UI and traversal views are still pending |
 
 **Score: AMBER** — The canvas has edge support (transitions, interactions on screens). The Screen API already returns resolved `stories[]` and `roles[]` via application-level lookup maps in `ScreenController`, and the frontend prefers these resolved objects. However, the graph model underneath is still `[STRING_REF]` (resolution relies on fetching all stories/roles per request, not targeted Cypher traversal), and the sidebar, journey step context, filtering facets, and registry entities (Channel, Permission, ErrorCode, ConfirmationDialog) remain unresolved.
 
@@ -280,15 +280,15 @@ Tier 3 value objects (not counted in 71):
 | # | Dimension | Score | Rationale |
 |---|-----------|-------|-----------|
 | 1 | Documentation completeness | **GREEN** | All 71 benchmarkable nodes are documented with typed attributes |
-| 2 | Implementation completeness | **AMBER** | 28/71 benchmarkable nodes exist in code (39.4%), plus 3 T3 value objects |
+| 2 | Implementation completeness | **AMBER** | 35/71 benchmarkable nodes exist in code (49.3%) |
 | 3 | Attribute depth | **AMBER** | ~53% average depth on implemented entities; universal status migration pending |
-| 4 | Relationship coverage | **AMBER** | 46 SDN + 1 Cypher relationship types implemented; 9 string refs remain; 50 planned |
-| 5 | Queryability | **RED** | 0/17 GREEN, 2/17 AMBER, 15/17 RED |
+| 4 | Relationship coverage | **AMBER** | 51 SDN + 1 Cypher relationship types implemented; the registry/role core is now edge-backed, with a smaller set of deferred string-backed relationships remaining |
+| 5 | Queryability | **RED** | 2/17 GREEN, 2/17 AMBER, 13/17 RED |
 | 6 | Source traceability | **RED** | SourceReference entity does not exist |
 | 7 | Delivery-tool interoperability | **RED** | ExternalArtifact entity does not exist |
-| 8 | UX implementation support | **AMBER** | Screen API resolves stories[] and roles[] via lookup maps; graph model still string-backed; filtering and registries missing |
+| 8 | UX implementation support | **AMBER** | Screen API resolves stories[] and roles[] via lookup maps; Persona/Channel/Permission registries now exist, but several exploration views and traversal paths are still pending |
 
-**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **31 `@Node` entities**, **46 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **142 passing tests**. The largest remaining gaps are legacy string-to-edge migration, missing registries such as Channel/Permission/ErrorCode, and unreconciled benchmark re-scoring for the newest meta-model increment.
+**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **35 `@Node` entities**, **51 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **180 passing tests**. The largest remaining gaps are the deferred string-to-edge migrations, missing registries such as ErrorCode and ConfirmationDialog, and a full benchmark rerun against the newest registry/role implementation increment.
 
 ---
 
@@ -306,8 +306,8 @@ MATCH (p:Persona)<-[:PERFORMED_BY_PERSONA]-(j:Journey)
 WHERE p.personaId = $personaId
 RETURN j.journeyId, j.title
 
--- CURRENT: Not possible — no Persona entity, personaId is a string on Journey
--- WORKAROUND: MATCH (j:Journey) WHERE j.personaId = $personaId RETURN j
+-- CURRENT: Persona entity and PERFORMED_BY_PERSONA edge are implemented.
+-- REMAINING GAP: the broader Persona → Journey → JourneyStep → Screen exploration path still lacks the journey-step edges.
 ```
 
 **Score: RED** — Persona entity does not exist. Journey stores `personaId` as string. No edge walk possible.
@@ -502,22 +502,22 @@ RETURN pe.eventId, pe.eventType, pe.name
 | Finding | T1 | Yes | — | `[PLANNED]` | — | 0/3 edges | RED | No code entity |
 | Bug | T1 | Yes | — | `[PLANNED]` | — | 0/2 edges | RED | No code entity |
 | Risk | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
-| Persona | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
-| BusinessRole | T1 | Yes | — | `[RESHAPE]` | Role split | 0/0 target | AMBER | Role.java exists, needs split |
-| ValidationRole | T1 | Yes | — | `[RESHAPE]` | Role split | 0/0 target | AMBER | Role.java exists, needs split |
-| Journey | T1 | Yes | 50% | `[IMPL]` | Direct | 1/2 edges | AMBER | HAS_STEP edge; personaId string |
+| Persona | T1 | Yes | 63% | `[IMPL]` | Direct | 0/1 edges | AMBER | Node exists; outgoing Persona-centric exploration edges still pending |
+| BusinessRole | T1 | Yes | 100% | `[IMPL]` | Direct | 1/1 edge family | GREEN | Role split landed; Screen ACCESSIBLE_BY_ROLE now targets BusinessRole |
+| ValidationRole | T1 | Yes | 100% | `[IMPL]` | Direct | 0/0 target | GREEN | Role split landed; resolved via RoleService union query |
+| Journey | T1 | Yes | 63% | `[IMPL]` | Direct | 2/2 edges | GREEN | HAS_STEP and PERFORMED_BY_PERSONA are both implemented |
 | JourneyStep | T1 | Yes | 50% | `[IMPL]` | Direct | 0/3 edges | RED | No screen, touchpoint, or interaction edges |
 | Topic | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
-| Touchpoint | T1 | Yes | 50% | `[IMPL]` | Direct | 2/4 edges | AMBER | TARGETS, HAS_ENTRY_MODE edges; channelId, personaIds strings |
+| Touchpoint | T1 | Yes | 63% | `[IMPL]` | Direct | 4/4 modeled edges | GREEN | TARGETS, HAS_ENTRY_MODE, USED_BY_PERSONA, DELIVERED_VIA_CHANNEL implemented; role edge still deferred |
 | UserStory | T1 | Yes | 42% | `[IMPL]` | Direct | 0/3 edges | AMBER | Entity exists but minimal attributes |
 | AcceptanceCriterion | T1 | Yes | — | `[PLANNED]` | — | 0/2 edges | RED | No code entity |
 | Rule | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
 | ValidationRule | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
 | EdgeCase | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
 | ExceptionCase | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
-| Screen | T1 | Yes | 70% | `[IMPL]` | Direct | 5/8 edges | AMBER | 5 real edges; storyRefs, roleKeys, personaIds strings |
+| Screen | T1 | Yes | 75% | `[IMPL]` | Direct | 7/8 edges | GREEN | registry/role edges implemented; story delivery remains string-backed |
 | ScreenState | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
-| Interaction | T1 | Yes | 57% | `[IMPL]` | Direct | 2/5 edges | AMBER | HAS_INTERACTION (from Screen), HAS_EFFECT edges; permission, apiCalls, confirmationCode strings |
+| Interaction | T1 | Yes | 63% | `[IMPL]` | Direct | 3/5 edges | AMBER | REQUIRES_PERMISSION implemented; confirmation and API edges remain deferred |
 | Transition | T1 | Yes | — | `[PLANNED]` | — | 0/2 edges | RED | No code entity |
 | ApiContract | T1 | Yes | — | `[PLANNED]` | — | 0/2 edges | RED | No code entity |
 | RequestSchema | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
@@ -536,8 +536,8 @@ RETURN pe.eventId, pe.eventType, pe.name
 | ProcessEvent | T1 | Yes | — | `[PLANNED]` | — | 0/2 edges | RED | No code entity |
 | Task | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
 | BusinessDomain | T2 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity; T2 registry node |
-| Channel | T2 | Yes | — | `[PLANNED]` | — | — | RED | No code entity |
-| Permission | T2 | Yes | — | `[PLANNED]` | — | — | RED | No code entity |
+| Channel | T2 | Yes | 100% | `[IMPL]` | Direct | 1/1 edge family | GREEN | Registry node exists and Touchpoint DELIVERED_VIA_CHANNEL is implemented |
+| Permission | T2 | Yes | 100% | `[IMPL]` | Direct | 1/1 edge family | GREEN | Registry node exists and Interaction REQUIRES_PERMISSION is implemented |
 | ErrorCode | T2 | Yes | — | `[PLANNED]` | — | — | RED | No code entity |
 | ConfirmationDialog | T2 | Yes | — | `[PLANNED]` | — | — | RED | No code entity |
 | Enum | T2 | Yes | — | `[PLANNED]` | — | — | RED | No code entity |
@@ -611,11 +611,11 @@ Each string-encoded relationship must become a Neo4j `@Relationship` edge. The e
 | String Field | Entity | Target Entity Status | Target Edge | Affected Queries | Effort |
 |-------------|--------|---------------------|-------------|-----------------|--------|
 | `storyRefs` | Screen | `[IMPLEMENTED]` UserStory exists | `DELIVERS` (UserStory→Screen) | #6 | Medium — both entities exist, create edge, migrate array to edges; note direction reversal from old IMPLEMENTS_STORY |
-| `personaId` | Journey | `[PLANNED]` no Persona entity | `PERFORMED_BY_PERSONA` | #1 | High — Persona entity must be created first |
-| `personaIds` | Screen, Interaction, Touchpoint | `[PLANNED]` no Persona entity | `USED_BY_PERSONA` | #1 | High — Persona entity must be created, 3 entities affected |
-| `roleKeys` | Screen, Interaction | `[PLANNED]` no BusinessRole split | `ACCESSIBLE_BY_ROLE` | — | High — Role must be split and reshaped first |
-| `permission` | Interaction | `[PLANNED]` no Permission entity | `REQUIRES_PERMISSION` | #4 | Medium — Permission entity is small registry |
-| `channelId` | EntryMode (in Touchpoint) | `[PLANNED]` no Channel entity | `DELIVERED_VIA_CHANNEL` | #2, #3 | Medium — Channel entity is small registry, edge on parent Touchpoint |
+| `personaId` | Journey | `[IMPLEMENTED]` Persona exists | `PERFORMED_BY_PERSONA` | #1 | Closed for graph traversal; legacy field remains for migration compatibility |
+| `personaIds` | Screen, Touchpoint | `[IMPLEMENTED]` Persona exists | `USED_BY_PERSONA` | #1 | Closed for these two entities; `Interaction.personaIds` remains deferred |
+| `roleKeys` | Screen | `[IMPLEMENTED]` BusinessRole exists | `ACCESSIBLE_BY_ROLE` | — | Closed for Screen; `Interaction.roleKeys` and `Touchpoint.roleKeys` remain deferred |
+| `permission` | Interaction | `[IMPLEMENTED]` Permission exists | `REQUIRES_PERMISSION` | #4 | Closed for graph traversal; legacy field remains for migration compatibility |
+| `channelId` | EntryMode (in Touchpoint) | `[IMPLEMENTED]` Channel exists | `DELIVERED_VIA_CHANNEL` | #2, #3 | Closed for graph traversal; legacy field remains in EntryMode for compatibility |
 | `apiCalls` | Interaction | `[PLANNED]` no ApiContract entity | `CALLS_API` | — | High — ApiContract entity is complex |
 | `confirmationCode` | Interaction | `[PLANNED]` no ConfirmationDialog entity | `TRIGGERS_CONFIRMATION` | #10 | Medium — ConfirmationDialog is small registry |
 | `interactionRef` | JourneyStep | `[IMPLEMENTED]` Interaction exists | `EXECUTES_INTERACTION` | — | Low — both entities exist, create edge |

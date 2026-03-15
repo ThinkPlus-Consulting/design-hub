@@ -236,16 +236,20 @@ Tier 3 objects are NOT counted in the 71 benchmarkable nodes. Their attributes a
 
 The implemented graph no longer resembles the original 11-entity seed. The current code baseline is:
 
-- **31 `@Node` entities**
-- **46 SDN `@Relationship` declarations**
+- **35 `@Node` entities**
+- **51 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **142 passing tests**
+- **180 passing tests**
 
 This section highlights the remaining shape mismatches that still matter for benchmark scoring.
 
 | Current Code Entity | File | Target Model Object(s) | Mapping Type | Benchmark Treatment |
 |--------------------|------|------------------------|-------------|-------------------|
-| `Role.java` | `domain/Role.java` | BusinessRole (T1), ValidationRole (T1) | **Split still pending** | Score as `[IMPLEMENTED — reshape required]`, not `[PLANNED]` |
+| `Persona.java` | `domain/Persona.java` | Persona (T1) | **Direct** | First-class persona node now exists; journey/screen/touchpoint persona edges are wired |
+| `BusinessRole.java` | `domain/BusinessRole.java` | BusinessRole (T1) | **Direct** | Role split landed; screen access now targets BusinessRole |
+| `ValidationRole.java` | `domain/ValidationRole.java` | ValidationRole (T1) | **Direct** | Role split landed; validation roles now resolve through RoleService |
+| `Channel.java` | `domain/Channel.java` | Channel (T2) | **Direct** | Registry seeded with frozen 9-code vocabulary and Touchpoint edges |
+| `Permission.java` | `domain/Permission.java` | Permission (T2) | **Direct** | Registry seeded with bare permission keys and Interaction edges |
 | `Gap.java` | `domain/Gap.java` | Gap (T1) | **Reshape still pending** | Current `type`/`severity`/`description` still needs full target schema and gap-edge semantics |
 | `Assessment.java` | `domain/Assessment.java` | Assessment (T1) | **Direct + Cypher edge** | `IDENTIFIES_GAP` is SDN; polymorphic `ASSESSES` is Neo4jClient-executed |
 | `RequirementPortfolio.java` | `domain/RequirementPortfolio.java` | RequirementPortfolio (T1) | **Direct** | Anchors Epic → Feature → UserStory ownership for ProjectInstance |

@@ -38,7 +38,7 @@ It connects:
 - **what is still missing** (findings, bugs, gaps, open questions, risks)
 - **where it is tracked** (external artifacts in Azure DevOps, Jira)
 
-The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 31 `@Node` entities, 46 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 142 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
+The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 35 `@Node` entities, 51 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 180 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
 
 ---
 
@@ -324,9 +324,9 @@ Current state from `vision-benchmark.md`:
 | Dimension | Score |
 |-----------|-------|
 | Documentation completeness | **GREEN** |
-| Implementation completeness | **AMBER** (39.4% benchmarkable coverage; 31 `@Node` entities overall) |
+| Implementation completeness | **AMBER** (49.3% benchmarkable coverage; 35 `@Node` entities overall) |
 | Attribute depth | **AMBER** (~53%) |
-| Relationship coverage | **AMBER** (46 SDN + 1 Cypher relationship types implemented) |
+| Relationship coverage | **AMBER** (51 SDN + 1 Cypher relationship types implemented) |
 | Queryability | **RED** (0/17 GREEN) |
 | Source traceability | **RED** |
 | Delivery-tool interoperability | **RED** |

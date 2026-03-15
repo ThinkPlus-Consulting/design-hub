@@ -16,7 +16,7 @@ Without this layer, documentation can improve while the shipped UI still diverge
 
 ## Current State
 
-- The backend graph baseline now includes **31 `@Node` entities**, **46 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **142 passing tests**.
+- The backend graph baseline now includes **35 `@Node` entities**, **51 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **180 passing tests**.
 - There is currently no Playwright harness in the repository.
 - The frontend only exposes Angular build and serve scripts in `frontend/package.json`.
 - The frontend still contains hardcoded colors and user-facing text in component files, which makes drift harder to detect mechanically.

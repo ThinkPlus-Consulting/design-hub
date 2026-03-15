@@ -302,7 +302,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Business and Experience
 **Purpose**: User archetype and operational context (19 unique in EMSIST source)
-**Implementation Status**: `[PLANNED]` — currently only string references in `personaIds` fields
+**Implementation Status**: `[IMPLEMENTED]` `domain/Persona.java`
 
 #### Attributes
 
@@ -332,7 +332,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Business and Experience
 **Purpose**: Domain or business responsibility (split from current `Role.java`)
-**Implementation Status**: `[IMPLEMENTED — reshape required]` `domain/Role.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/BusinessRole.java`
 
 #### Attributes
 
@@ -351,7 +351,7 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `ACTS_IN_JOURNEY` | OUTGOING | Journey | N:M | No | OPTIONAL | `[PLANNED]` |
-| `CAN_ACCESS_SCREEN` | INCOMING | Screen | N:M | No | OPTIONAL | `[STRING_REF]` — `roleKeys` on Screen |
+| `CAN_ACCESS_SCREEN` | INCOMING | Screen | N:M | No | OPTIONAL | `[EDGE]` — Screen `ACCESSIBLE_BY_ROLE` now targets BusinessRole |
 | `OWNS_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -361,7 +361,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Business and Experience
 **Purpose**: Role responsible for approval or governance checks (split from current `Role.java`)
-**Implementation Status**: `[IMPLEMENTED — reshape required]` `domain/Role.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ValidationRole.java`
 
 #### Attributes
 
@@ -412,7 +412,7 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `HAS_STEP` | OUTGOING | JourneyStep | 1:N | Yes | BLOCKING | `[EDGE]` |
-| `PERFORMED_BY_PERSONA` | OUTGOING | Persona | N:1 | Yes | BLOCKING | `[STRING_REF]` — `personaId` string |
+| `PERFORMED_BY_PERSONA` | OUTGOING | Persona | N:1 | Yes | BLOCKING | `[EDGE]` — legacy `personaId` retained for migration compatibility |
 | `REALIZES` | INCOMING | Epic, Feature, UserStory | N:M | No | OPTIONAL | `[PLANNED]` — four-verb traceability |
 
 ---
@@ -502,8 +502,8 @@
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `TARGETS` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[EDGE]` |
 | `HAS_ENTRY_MODE` | OUTGOING | EntryMode (T3) | 1:N | Yes | BLOCKING | `[EDGE]` |
-| `DELIVERED_VIA_CHANNEL` | OUTGOING | Channel (T2) | N:M | Yes | BLOCKING | `[STRING_REF]` — `channelId` in EntryMode |
-| `USED_BY_PERSONA` | OUTGOING | Persona | N:M | No | OPTIONAL | `[STRING_REF]` — `personaIds` |
+| `DELIVERED_VIA_CHANNEL` | OUTGOING | Channel (T2) | N:M | Yes | BLOCKING | `[EDGE]` — backfilled from `EntryMode.channelId` |
+| `USED_BY_PERSONA` | OUTGOING | Persona | N:M | No | OPTIONAL | `[EDGE]` — legacy `personaIds` retained for migration compatibility |
 
 ---
 
@@ -937,8 +937,8 @@
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `HAS_INTERACTION` | OUTGOING | Interaction | 1:N | Yes | BLOCKING | `[EDGE]` — replaces deprecated ON_SCREEN (direction reversed: Screen→Interaction) |
 | `DELIVERS` | INCOMING | UserStory | N:M | Yes | BLOCKING | `[STRING_REF]` — `storyRefs` (UserStory DELIVERS Screen) |
-| `ACCESSIBLE_BY_ROLE` | OUTGOING | BusinessRole | N:M | No | OPTIONAL | `[STRING_REF]` — `roleKeys` |
-| `USED_BY_PERSONA` | OUTGOING | Persona | N:M | No | OPTIONAL | `[STRING_REF]` — `personaIds` |
+| `ACCESSIBLE_BY_ROLE` | OUTGOING | BusinessRole | N:M | No | OPTIONAL | `[EDGE]` — legacy `roleKeys` retained for migration compatibility |
+| `USED_BY_PERSONA` | OUTGOING | Persona | N:M | No | OPTIONAL | `[EDGE]` — legacy `personaIds` retained for migration compatibility |
 | `HAS_MESSAGE` | OUTGOING | Message | 1:N | No | OPTIONAL | `[PLANNED]` |
 | `HAS_GAP` | OUTGOING | Gap | 1:N | No | OPTIONAL | `[EDGE]` |
 | `HAS_CONTENT` | OUTGOING | ContentElement (T3) | 1:N | No | OPTIONAL | `[EDGE]` |
@@ -1005,7 +1005,7 @@
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `HAS_INTERACTION` | INCOMING | Screen | N:1 | Yes | BLOCKING | `[EDGE]` — Screen HAS_INTERACTION Interaction (replaces deprecated ON_SCREEN) |
 | `HAS_EFFECT` | OUTGOING | Effect (T3) | 1:N | No | OPTIONAL | `[EDGE]` |
-| `REQUIRES_PERMISSION` | OUTGOING | Permission (T2) | N:1 | No | OPTIONAL | `[STRING_REF]` — `permission` |
+| `REQUIRES_PERMISSION` | OUTGOING | Permission (T2) | N:1 | No | OPTIONAL | `[EDGE]` — legacy `permission` retained for migration compatibility |
 | `TRIGGERS_CONFIRMATION` | OUTGOING | ConfirmationDialog (T2) | N:1 | No | OPTIONAL | `[STRING_REF]` — `confirmationCode` |
 | `CALLS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[STRING_REF]` — `apiCalls` |
 | `ON_ERROR_SHOWS` | OUTGOING | ErrorCode (T2) | N:M | No | OPTIONAL | `[PLANNED]` |
@@ -1827,7 +1827,7 @@
 **Tier**: 2 (Registry)
 **Category**: Delivery channel
 **Purpose**: Controlled vocabulary of delivery channels
-**Implementation Status**: `[PLANNED]` — currently only `channelId` string in EntryMode
+**Implementation Status**: `[IMPLEMENTED]` `domain/Channel.java`
 
 #### Attributes
 
@@ -1841,7 +1841,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `DELIVERED_VIA_CHANNEL` | INCOMING | Touchpoint | N:M | No | OPTIONAL | `[STRING_REF]` — `channelId` in EntryMode (Touchpoint DELIVERED_VIA_CHANNEL Channel) |
+| `DELIVERED_VIA_CHANNEL` | INCOMING | Touchpoint | N:M | No | OPTIONAL | `[EDGE]` — Touchpoint `DELIVERED_VIA_CHANNEL` now backfilled from `EntryMode.channelId` |
 
 ---
 
@@ -1850,7 +1850,7 @@
 **Tier**: 2 (Registry)
 **Category**: Access control
 **Purpose**: Closed registry of permission levels
-**Implementation Status**: `[PLANNED]` — currently only `permission` string on Interaction
+**Implementation Status**: `[IMPLEMENTED]` `domain/Permission.java`
 
 #### Attributes
 
@@ -2245,7 +2245,7 @@ Complete registry of all modeled relationships with implementation status.
 
 ### 6.1 Existing Graph Edges
 
-The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **46 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
+The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **51 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
 
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
@@ -2259,18 +2259,18 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `HAS_CONTENT` | Screen | ContentElement (T3) | 1:N | OPTIONAL | `[EDGE]` |
 | `TRANSITIONS_TO` | Screen | Screen | N:M | OPTIONAL | `[EDGE]` |
 
-### 6.2 String-Encoded Relationships (Migration Required)
+### 6.2 Transitional and Remaining String-Encoded Relationships
 
 | Relationship | Source | Target | Current Field | Severity | Status |
 |-------------|--------|--------|--------------|----------|--------|
 | `DELIVERS` | UserStory | Screen | `storyRefs` | BLOCKING | `[STRING_REF]` — UserStory DELIVERS Screen (replaces deprecated IMPLEMENTS_STORY, direction reversed) |
-| `ACCESSIBLE_BY_ROLE` | Screen | BusinessRole | `roleKeys` | OPTIONAL | `[STRING_REF]` |
-| `USED_BY_PERSONA` | Screen | Persona | `personaIds` | OPTIONAL | `[STRING_REF]` |
-| `PERFORMED_BY_PERSONA` | Journey | Persona | `personaId` | BLOCKING | `[STRING_REF]` |
-| `REQUIRES_PERMISSION` | Interaction | Permission (T2) | `permission` | OPTIONAL | `[STRING_REF]` |
+| `ACCESSIBLE_BY_ROLE` | Screen | BusinessRole | `roleKeys` | OPTIONAL | `[EDGE]` — legacy source field retained |
+| `USED_BY_PERSONA` | Screen | Persona | `personaIds` | OPTIONAL | `[EDGE]` — legacy source field retained |
+| `PERFORMED_BY_PERSONA` | Journey | Persona | `personaId` | BLOCKING | `[EDGE]` — legacy source field retained |
+| `REQUIRES_PERMISSION` | Interaction | Permission (T2) | `permission` | OPTIONAL | `[EDGE]` — legacy source field retained |
 | `CALLS_API` | Interaction | ApiContract | `apiCalls` | OPTIONAL | `[STRING_REF]` |
 | `TRIGGERS_CONFIRMATION` | Interaction | ConfirmationDialog (T2) | `confirmationCode` | OPTIONAL | `[STRING_REF]` |
-| `DELIVERED_VIA_CHANNEL` | Touchpoint | Channel (T2) | `channelId` in EntryMode | BLOCKING | `[STRING_REF]` |
+| `DELIVERED_VIA_CHANNEL` | Touchpoint | Channel (T2) | `channelId` in EntryMode | BLOCKING | `[EDGE]` — legacy source field retained |
 | `EXECUTES_INTERACTION` | JourneyStep | Interaction | `interactionRef` | OPTIONAL | `[STRING_REF]` |
 
 ### 6.3 Planned and Extension Relationships
@@ -2590,13 +2590,13 @@ Those fields should enrich the graph but should not replace domain-native object
 | Tier 3 (value objects) | 4 |
 | Benchmarkable (T1 + T2) | 71 |
 | Total taxonomy edge types | 106 |
-| Implemented `@Node` entities | 31 |
-| Implemented SDN `@Relationship` declarations | 46 |
+| Implemented `@Node` entities | 35 |
+| Implemented SDN `@Relationship` declarations | 51 |
 | Cypher-only polymorphic edges | 1 (`ASSESSES`) |
-| String-encoded relationships still requiring migration | 9 |
-| Passing tests | 142 |
-| Entities needing reshape | 2 (Role, Gap) |
+| String-encoded relationships still requiring migration | 4 canonical relationships + deferred compatibility fields |
+| Passing tests | 180 |
+| Entities needing reshape | 1 (Gap) |
 | Architecture/EA objects | 12 |
 | Delivery & Execution objects | 7 |
 
-**Metric split:** This catalog tracks both the **approved design taxonomy** (`75 / 106 / 71`) and the **current implementation baseline** (`31 / 46 / 1 / 142`). Keep those families separate when reporting progress.
+**Metric split:** This catalog tracks both the **approved design taxonomy** (`75 / 106 / 71`) and the **current implementation baseline** (`35 / 51 / 1 / 180`). Keep those families separate when reporting progress.

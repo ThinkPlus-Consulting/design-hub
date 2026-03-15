@@ -25,13 +25,13 @@ Design Hub should ingest canonical requirement and design sources, normalize the
 - `SourceReference` `[PLANNED]`
 - `BusinessObjective` `[PLANNED]`
 - `UserStory` `[IMPLEMENTED]`
-- `Persona` `[PLANNED]`
+- `Persona` `[IMPLEMENTED]`
 - `Journey` `[IMPLEMENTED]`
 - `JourneyStep` `[IMPLEMENTED]`
 - `Screen` `[IMPLEMENTED]`
 - `Interaction` `[IMPLEMENTED]`
-- `ApiContract` `[PLANNED]`
-- `DataEntity` `[PLANNED]`
+- `ApiContract` `[IMPLEMENTED]`
+- `DataEntity` `[IMPLEMENTED]`
 
 ### 1.2 Artifact registry and graph model
 
@@ -42,7 +42,7 @@ The platform should maintain a first-class graph object registry covering 71 ben
 | Capability | Status | Evidence |
 |-----------|--------|----------|
 | Stable object identity | `[IMPLEMENTED]` | `stableId` / `surfaceId` / `storyId` on implemented entities |
-| Typed relationships | `[PARTIAL]` | 9 edges exist as `@Relationship`; 9 remain as string refs |
+| Typed relationships | `[PARTIAL]` | 51 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; several deferred string-backed relationships remain |
 | Object status tracking | `[IMPLEMENTED — reshape required]` | 3-enum model exists; target is universal 10-value `status` |
 | Selective readiness flags | `[PLANNED]` | No readiness flags in current entities |
 | Source traceability | `[PLANNED]` | No `SourceReference` entity |
@@ -56,7 +56,7 @@ Selecting a persona should reveal journeys, steps, screens, stories, and related
 
 | Object | Tier | Status |
 |--------|------|--------|
-| `Persona` | T1 | `[PLANNED]` |
+| `Persona` | T1 | `[IMPLEMENTED]` |
 | `Journey` | T1 | `[IMPLEMENTED]` |
 | `JourneyStep` | T1 | `[IMPLEMENTED]` |
 | `Topic` | T1 | `[PLANNED]` |
@@ -65,7 +65,7 @@ Selecting a persona should reveal journeys, steps, screens, stories, and related
 
 **Key traversal**: `Persona <- PERFORMED_BY_PERSONA <- Journey -> HAS_STEP -> JourneyStep -> USES_SCREEN -> Screen`
 
-**Current gap**: `Journey.personaId` is a string reference, not a graph edge. Persona entity does not exist.
+**Current gap**: the core `Journey -> Persona` edge exists, but dedicated Persona exploration views and the remaining journey-step traversal edges are still missing.
 
 ### 1.4 Screen and interaction exploration
 
@@ -207,8 +207,8 @@ graph TD
 
 | Phase | Scope | Benchmark Status | Key Artifacts |
 |-------|-------|-----------------|---------------|
-| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 31 `@Node` entities in code (28 benchmarkable + 3 T3), 46 SDN edges + 1 Cypher edge, 142 tests | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Role, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset |
-| 2. Exploration | Persona, journey, screen, and story traversal views | `[PLANNED]` — requires Persona, Topic, ScreenState, Transition entities | Persona View, Journey View, Screen Flow View |
+| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 35 `@Node` entities in code, 51 SDN edges + 1 Cypher edge, 180 tests | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset |
+| 2. Exploration | Persona, journey, screen, and story traversal views | `[PLANNED]` — Persona/role/channel nodes exist; Topic, ScreenState, Transition, and dedicated exploration views still missing | Persona View, Journey View, Screen Flow View |
 | 3. Delivery intelligence | Findings, bugs, readiness gaps, API and data dependencies | `[PLANNED]` — requires Bug, Finding, ApiContract, DataEntity | Delivery View, completenessScore engine |
 | 4. External alignment | Azure DevOps and Jira mapping, sync objects, benchmark reporting | `[PLANNED]` — requires ExternalArtifact | Benchmark View |
 | 5. Verification | Playwright-based design testing, visual baselines, and anti-drift gates | `[PLANNED]` — requires B1+B2 completion | Verification View |
