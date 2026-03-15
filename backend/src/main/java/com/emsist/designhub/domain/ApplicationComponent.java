@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import java.util.List;
+import java.util.Map;
 
 @Node
 @Data
@@ -31,6 +32,11 @@ public class ApplicationComponent {
     private String buildCommand;
     private String testCommand;
     private String entrypointPath;
+    private Map<String, String> toolchainVersions;
+    private List<String> secretPrerequisites;
+    private List<String> fixturePrerequisites;
+    private List<String> localRunPrerequisites;
+    private String localRunCommand;
     private Status status;
 
     @Relationship(type = "HAS_CODE_ASSET", direction = Relationship.Direction.OUTGOING)

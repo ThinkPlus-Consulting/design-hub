@@ -24,6 +24,7 @@ public class Application {
     private String workspaceType;
     private String defaultBuildCommand;
     private String defaultTestCommand;
+    private List<String> bootstrapSteps;
     private Status status;
 
     @Relationship(type = "HAS_COMPONENT", direction = Relationship.Direction.OUTGOING)
