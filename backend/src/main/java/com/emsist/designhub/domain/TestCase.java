@@ -32,6 +32,7 @@ public class TestCase {
     private String suiteName;
     private List<String> tags;
     private String testCommand;
+    private List<String> expectedAssertions;
 
     @Relationship(type = "LOCATED_IN", direction = Relationship.Direction.OUTGOING)
     private CodeAsset locatedIn;

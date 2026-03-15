@@ -24,4 +24,7 @@ public class ApiContract {
 
     @Relationship(type = "HAS_QUALITY_CONSTRAINT", direction = Relationship.Direction.OUTGOING)
     private List<QualityConstraint> qualityConstraints;
+
+    @Relationship(type = "BASELINED_BY", direction = Relationship.Direction.OUTGOING)
+    private List<EvidenceRecord> baselines;
 }
