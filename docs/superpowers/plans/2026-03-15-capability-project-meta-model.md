@@ -1700,8 +1700,8 @@ class AssessmentServiceTest {
         verify(neo4jClient).query(argThat(cypher ->
                 cypher.contains("MERGE (a)-[:ASSESSES]->(target)")
                 && cypher.contains("Assessment")));
-        // Verify all 3 bind calls: assessmentId, targetIdField, targetId
-        verify(runnableSpec, atLeast(3)).bind(any());
+        // Verify 2 bind calls: assessmentId, targetId (label/idField injected via String.formatted)
+        verify(runnableSpec, times(2)).bind(any());
         verify(runnableSpec).run();
     }
 
@@ -1881,7 +1881,7 @@ Expected: ≥42 (was 31 + 11 new edges declared in Java: IDENTIFIES_GAP, HAS_FEA
 
 Count by entity: Assessment(1) + Epic(1) + Feature(1) + RequirementPortfolio(1) + Milestone(1) + ProjectInstance(10) = 15 new @Relationship declarations. Total: 31 + 15 = 46.
 
-Note: ASSESSES is the 16th new edge type in the taxonomy but is Cypher-only (polymorphic target), not a Java @Relationship. It is implemented in Task 11 via AssessmentService query-builders. SDN @Relationship declarations: 46. Taxonomy edge count: 106.
+Note: ASSESSES is the 13th new edge type added by this plan but is Cypher-only (polymorphic target), not a Java @Relationship. It is implemented in Task 11 via AssessmentService (Neo4jClient-executed). SDN @Relationship declarations: 46. Taxonomy edge count: 106.
 
 - [ ] **Step 4: Verify metric separation**
 
