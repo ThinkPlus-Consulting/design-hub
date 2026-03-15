@@ -45,6 +45,12 @@ public class Screen {
     private List<String> roleKeys;
     private List<String> personaIds;
 
+    @Relationship(type = "USED_BY_PERSONA", direction = Relationship.Direction.OUTGOING)
+    private List<Persona> usedByPersonas;
+
+    @Relationship(type = "ACCESSIBLE_BY_ROLE", direction = Relationship.Direction.OUTGOING)
+    private List<BusinessRole> accessibleByRoles;
+
     @Relationship(type = "HAS_GAP", direction = Relationship.Direction.OUTGOING)
     @Builder.Default
     private List<Gap> gaps = new ArrayList<>();
