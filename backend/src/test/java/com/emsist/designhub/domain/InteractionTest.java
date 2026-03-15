@@ -8,8 +8,8 @@ class InteractionTest {
     @Test
     void shouldLinkToPermissionViaRequiresPermission() {
         Permission perm = Permission.builder()
-                .permissionKey("PERM-ADMIN")
-                .displayName("Administrator Access")
+                .permissionKey("ADMIN")
+                .displayName("Administrator")
                 .sortOrder(1)
                 .build();
 
@@ -21,6 +21,6 @@ class InteractionTest {
                 .build();
 
         assertNotNull(interaction.getRequiresPermission());
-        assertEquals("PERM-ADMIN", interaction.getRequiresPermission().getPermissionKey());
+        assertEquals("ADMIN", interaction.getRequiresPermission().getPermissionKey());
     }
 }

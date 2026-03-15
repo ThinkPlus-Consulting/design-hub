@@ -28,7 +28,7 @@ class RegistryGraphMigrationServiceTest {
 
         verify(neo4jClient).query((String) argThat(cypher ->
                 ((String) cypher).contains("MERGE (c:Channel")
-                && ((String) cypher).contains("CH-WEB")));
+                && ((String) cypher).contains("CH-WEB-DSK")));
     }
 
     @Test
@@ -42,7 +42,7 @@ class RegistryGraphMigrationServiceTest {
         verify(neo4jClient).query((String) argThat(cypher ->
                 ((String) cypher).contains("Permission")
                 && ((String) cypher).contains("MERGE")
-                && ((String) cypher).contains("PERM-ADMIN")));
+                && ((String) cypher).contains("'ADMIN'")));
     }
 
     @Test

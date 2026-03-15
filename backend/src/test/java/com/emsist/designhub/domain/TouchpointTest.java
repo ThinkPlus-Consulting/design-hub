@@ -24,7 +24,7 @@ class TouchpointTest {
     @Test
     void shouldLinkToChannelViaDeliveredViaChannel() {
         Channel channel = Channel.builder()
-                .channelCode("CH-WEB").displayName("Web Browser").channelType("WEB").build();
+                .channelCode("CH-WEB-DSK").displayName("Web Desktop").channelType("WEB").build();
 
         Touchpoint tp = Touchpoint.builder()
                 .touchpointId("TP-WEB-001")
@@ -33,6 +33,6 @@ class TouchpointTest {
                 .build();
 
         assertNotNull(tp.getDeliveredViaChannel());
-        assertEquals("CH-WEB", tp.getDeliveredViaChannel().getChannelCode());
+        assertEquals("CH-WEB-DSK", tp.getDeliveredViaChannel().getChannelCode());
     }
 }

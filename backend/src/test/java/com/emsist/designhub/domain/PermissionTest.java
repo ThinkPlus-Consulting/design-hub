@@ -8,36 +8,38 @@ class PermissionTest {
     @Test
     void shouldBuildPermissionWithRequiredFields() {
         Permission perm = Permission.builder()
-                .permissionKey("PERM-ADMIN")
+                .permissionKey("ADMIN")
                 .displayName("Administrator Access")
                 .sortOrder(1)
                 .build();
 
-        assertEquals("PERM-ADMIN", perm.getPermissionKey());
+        assertEquals("ADMIN", perm.getPermissionKey());
         assertEquals("Administrator Access", perm.getDisplayName());
         assertEquals(1, perm.getSortOrder());
     }
 
     @Test
-    void shouldFollowIdPattern() {
+    void shouldUseBareKeyFormat() {
         Permission perm = Permission.builder()
-                .permissionKey("PERM-VIEWER")
+                .permissionKey("VIEWER")
                 .displayName("View Only")
-                .sortOrder(6)
+                .sortOrder(5)
                 .build();
 
-        assertTrue(perm.getPermissionKey().startsWith("PERM-"));
+        assertFalse(perm.getPermissionKey().contains("-"),
+                "Permission keys use bare format (ADMIN), not prefixed (PERM-ADMIN)");
     }
 
     @Test
-    void shouldSupportAllPermissionKeys() {
-        String[] keys = {"ADMIN", "SUPER_ADMIN", "ARCHITECT", "AGENT_DESIGNER",
+    void shouldSupportAllPublishedPermissionKeys() {
+        String[] keys = {"SUPER_ADMIN", "ADMIN", "ARCHITECT", "AGENT_DESIGNER",
                           "USER", "VIEWER", "HITL_REVIEWER", "AUDITOR"};
+        assertEquals(8, keys.length);
         for (int i = 0; i < keys.length; i++) {
             Permission p = Permission.builder()
-                    .permissionKey("PERM-" + keys[i])
+                    .permissionKey(keys[i])
                     .displayName(keys[i])
-                    .sortOrder(i + 1)
+                    .sortOrder(i)
                     .build();
             assertNotNull(p.getPermissionKey());
         }

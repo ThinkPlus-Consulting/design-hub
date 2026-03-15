@@ -15,13 +15,15 @@ public class RegistryGraphMigrationService {
     public void seedChannels() {
         neo4jClient.query("""
                 UNWIND [
-                  {code: 'CH-WEB',     name: 'Web Browser',    type: 'WEB'},
-                  {code: 'CH-MOBILE',  name: 'Mobile App',     type: 'MOBILE'},
-                  {code: 'CH-TABLET',  name: 'Tablet App',     type: 'TABLET'},
-                  {code: 'CH-CHATBOT', name: 'Chatbot',        type: 'CHATBOT'},
-                  {code: 'CH-KIOSK',   name: 'Kiosk',          type: 'KIOSK'},
-                  {code: 'CH-API',     name: 'API',            type: 'API'},
-                  {code: 'CH-VOICE',   name: 'Voice Assistant', type: 'VOICE'}
+                  {code: 'CH-WEB-DSK', name: 'Web Desktop',    type: 'WEB'},
+                  {code: 'CH-WEB-TAB', name: 'Web Tablet',     type: 'WEB'},
+                  {code: 'CH-WEB-MOB', name: 'Web Mobile',     type: 'WEB'},
+                  {code: 'CH-API',     name: 'REST API',       type: 'API'},
+                  {code: 'CH-WEBHOOK', name: 'Webhook',        type: 'API'},
+                  {code: 'CH-AI-CHAT', name: 'AI Chat',        type: 'AI'},
+                  {code: 'CH-AI-BG',   name: 'AI Background',  type: 'AI'},
+                  {code: 'CH-EMAIL',   name: 'Email',          type: 'NOTIFICATION'},
+                  {code: 'CH-INAPP',   name: 'In-App',         type: 'NOTIFICATION'}
                 ] AS ch
                 MERGE (c:Channel {channelCode: ch.code})
                 SET c.displayName = ch.name, c.channelType = ch.type
@@ -32,14 +34,14 @@ public class RegistryGraphMigrationService {
     public void seedPermissions() {
         neo4jClient.query("""
                 UNWIND [
-                  {key: 'PERM-ADMIN',          name: 'Administrator',    sort: 1},
-                  {key: 'PERM-SUPER_ADMIN',    name: 'Super Admin',      sort: 0},
-                  {key: 'PERM-ARCHITECT',      name: 'Architect',        sort: 2},
-                  {key: 'PERM-AGENT_DESIGNER', name: 'Agent Designer',   sort: 3},
-                  {key: 'PERM-USER',           name: 'User',             sort: 4},
-                  {key: 'PERM-VIEWER',         name: 'Viewer',           sort: 5},
-                  {key: 'PERM-HITL_REVIEWER',  name: 'HITL Reviewer',    sort: 6},
-                  {key: 'PERM-AUDITOR',        name: 'Auditor',          sort: 7}
+                  {key: 'SUPER_ADMIN',    name: 'Super Admin',      sort: 0},
+                  {key: 'ADMIN',          name: 'Administrator',    sort: 1},
+                  {key: 'ARCHITECT',      name: 'Architect',        sort: 2},
+                  {key: 'AGENT_DESIGNER', name: 'Agent Designer',   sort: 3},
+                  {key: 'USER',           name: 'User',             sort: 4},
+                  {key: 'VIEWER',         name: 'Viewer',           sort: 5},
+                  {key: 'HITL_REVIEWER',  name: 'HITL Reviewer',    sort: 6},
+                  {key: 'AUDITOR',        name: 'Auditor',          sort: 7}
                 ] AS p
                 MERGE (perm:Permission {permissionKey: p.key})
                 SET perm.displayName = p.name, perm.sortOrder = p.sort
@@ -134,7 +136,7 @@ public class RegistryGraphMigrationService {
         // Interaction.permission → Permission
         neo4jClient.query("""
                 MATCH (i:Interaction) WHERE i.permission IS NOT NULL AND i.permission <> ''
-                MATCH (perm:Permission {permissionKey: 'PERM-' + i.permission})
+                MATCH (perm:Permission {permissionKey: i.permission})
                 MERGE (i)-[:REQUIRES_PERMISSION]->(perm)
                 """).run();
     }

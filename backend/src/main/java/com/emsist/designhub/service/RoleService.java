@@ -19,7 +19,7 @@ public class RoleService {
     private final Neo4jClient neo4jClient;
 
     public List<RoleResponse> getAll() {
-        log.debug("Fetching business role graph summaries");
+        log.debug("Fetching business-role and validation-role graph summaries");
         return neo4jClient.query("""
                         MATCH (r:BusinessRole)
                         OPTIONAL MATCH (s:Screen)-[:ACCESSIBLE_BY_ROLE]->(r)
@@ -33,11 +33,26 @@ public class RoleService {
                                r.displayName AS displayName,
                                r.roleGroup AS roleGroup,
                                r.sortOrder AS sortOrder,
-                               screenCount AS screenCount,
-                               touchpointCount AS touchpointCount,
-                               interactionCount AS interactionCount,
+                               screenCount,
+                               touchpointCount,
+                               interactionCount,
                                count(DISTINCT j) AS journeyCount
-                        ORDER BY coalesce(r.sortOrder, 999), r.roleKey
+                        UNION ALL
+                        MATCH (vr:ValidationRole)
+                        OPTIONAL MATCH (s:Screen)-[:ACCESSIBLE_BY_ROLE]->(vr)
+                        WITH vr, count(DISTINCT s) AS screenCount
+                        OPTIONAL MATCH (tp:Touchpoint)-[:ACCESSIBLE_BY_ROLE]->(vr)
+                        WITH vr, screenCount, count(DISTINCT tp) AS touchpointCount
+                        OPTIONAL MATCH (i:Interaction)-[:ACCESSIBLE_BY_ROLE]->(vr)
+                        WITH vr, screenCount, touchpointCount, count(DISTINCT i) AS interactionCount
+                        RETURN vr.validationRoleKey AS roleKey,
+                               vr.displayName AS displayName,
+                               vr.scope AS roleGroup,
+                               null AS sortOrder,
+                               screenCount,
+                               touchpointCount,
+                               interactionCount,
+                               0 AS journeyCount
                         """)
                 .fetch().all().stream()
                 .map(RoleService::toRoleResponse)

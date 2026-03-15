@@ -8,36 +8,39 @@ class ChannelTest {
     @Test
     void shouldBuildChannelWithRequiredFields() {
         Channel channel = Channel.builder()
-                .channelCode("CH-WEB")
-                .displayName("Web Browser")
+                .channelCode("CH-WEB-DSK")
+                .displayName("Web Desktop")
                 .channelType("WEB")
                 .build();
 
-        assertEquals("CH-WEB", channel.getChannelCode());
-        assertEquals("Web Browser", channel.getDisplayName());
+        assertEquals("CH-WEB-DSK", channel.getChannelCode());
+        assertEquals("Web Desktop", channel.getDisplayName());
         assertEquals("WEB", channel.getChannelType());
     }
 
     @Test
     void shouldFollowIdPattern() {
         Channel channel = Channel.builder()
-                .channelCode("CH-MOBILE")
-                .displayName("Mobile App")
-                .channelType("MOBILE")
+                .channelCode("CH-API")
+                .displayName("REST API")
+                .channelType("API")
                 .build();
 
         assertTrue(channel.getChannelCode().startsWith("CH-"));
     }
 
     @Test
-    void shouldSupportAllChannelTypes() {
-        for (String type : new String[]{"WEB", "MOBILE", "TABLET", "CHATBOT", "KIOSK", "API", "VOICE"}) {
+    void shouldSupportAllPublishedChannelCodes() {
+        String[] codes = {"CH-WEB-DSK", "CH-WEB-TAB", "CH-WEB-MOB", "CH-API", "CH-WEBHOOK",
+                          "CH-AI-CHAT", "CH-AI-BG", "CH-EMAIL", "CH-INAPP"};
+        assertEquals(9, codes.length);
+        for (String code : codes) {
             Channel ch = Channel.builder()
-                    .channelCode("CH-" + type)
-                    .displayName(type + " channel")
-                    .channelType(type)
+                    .channelCode(code)
+                    .displayName(code + " channel")
+                    .channelType("WEB")
                     .build();
-            assertEquals(type, ch.getChannelType());
+            assertTrue(ch.getChannelCode().startsWith("CH-"));
         }
     }
 }
