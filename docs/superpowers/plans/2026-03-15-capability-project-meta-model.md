@@ -95,6 +95,8 @@ Not implemented in this plan. Direct edges sufficient until proven otherwise.
 | `domain/ProjectInstanceTest.java` (test) | Tests for ProjectInstance |
 | `domain/MilestoneTest.java` (test) | Tests for Milestone |
 | `domain/GapExtensionTest.java` (test) | Tests for Gap with new gapType values and inbound edges |
+| `service/AssessmentService.java` | Cypher query-builder for ASSESSES polymorphic edge |
+| `service/AssessmentServiceTest.java` (test) | Tests for AssessmentService query builders + resolvers |
 
 ### Modified Files
 
@@ -122,12 +124,15 @@ All paths relative to `backend/src/main/java/com/emsist/designhub/` (source) and
 
 Phase 1 entities have no cross-references to other new entities. Each can be built and tested independently.
 
-### Task 1: TargetKind Enum
+### Task 1: Frozen Enums (TargetKind, AssessmentType, MaturityLevel, MilestoneType)
 
 **Files:**
 - Create: `backend/src/main/java/com/emsist/designhub/domain/TargetKind.java`
+- Create: `backend/src/main/java/com/emsist/designhub/domain/AssessmentType.java`
+- Create: `backend/src/main/java/com/emsist/designhub/domain/MaturityLevel.java`
+- Create: `backend/src/main/java/com/emsist/designhub/domain/MilestoneType.java`
 
-- [ ] **Step 1: Write TargetKind enum**
+- [ ] **Step 1: Write all four enums**
 
 ```java
 package com.emsist.designhub.domain;
@@ -143,6 +148,43 @@ public enum TargetKind {
 }
 ```
 
+```java
+package com.emsist.designhub.domain;
+
+public enum AssessmentType {
+    CAPABILITY,
+    PROCESS,
+    APPLICATION,
+    COMPONENT,
+    SECURITY,
+    DATA
+}
+```
+
+```java
+package com.emsist.designhub.domain;
+
+public enum MaturityLevel {
+    NONE,
+    INITIAL,
+    DEVELOPING,
+    DEFINED,
+    MANAGED,
+    OPTIMIZING
+}
+```
+
+```java
+package com.emsist.designhub.domain;
+
+public enum MilestoneType {
+    SPRINT,
+    PHASE,
+    RELEASE_CUT,
+    CHECKPOINT
+}
+```
+
 - [ ] **Step 2: Run tests to verify no regressions**
 
 Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
@@ -151,7 +193,7 @@ Expected: 97 tests, 0 failures
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/TargetKind.java && git commit -m "feat: add TargetKind enum for assessment target discrimination"
+cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/TargetKind.java backend/src/main/java/com/emsist/designhub/domain/AssessmentType.java backend/src/main/java/com/emsist/designhub/domain/MaturityLevel.java backend/src/main/java/com/emsist/designhub/domain/MilestoneType.java && git commit -m "feat: add frozen enums (TargetKind, AssessmentType, MaturityLevel, MilestoneType)"
 ```
 
 ---
@@ -179,7 +221,7 @@ class AssessmentTest {
         Assessment assessment = Assessment.builder()
                 .assessmentId("ASSESS-CAP-001")
                 .name("Auth Capability Maturity")
-                .assessmentType("CAPABILITY")
+                .assessmentType(AssessmentType.CAPABILITY)
                 .targetKind(TargetKind.CAP)
                 .assessmentDate(LocalDate.of(2026, 3, 15))
                 .assessor("arch-agent")
@@ -187,7 +229,7 @@ class AssessmentTest {
                 .build();
 
         assertEquals("ASSESS-CAP-001", assessment.getAssessmentId());
-        assertEquals("CAPABILITY", assessment.getAssessmentType());
+        assertEquals(AssessmentType.CAPABILITY, assessment.getAssessmentType());
         assertEquals(TargetKind.CAP, assessment.getTargetKind());
         assertEquals("arch-agent", assessment.getAssessor());
         assertEquals(Status.DEFINED, assessment.getStatus());
@@ -198,18 +240,18 @@ class AssessmentTest {
         Assessment assessment = Assessment.builder()
                 .assessmentId("ASSESS-APP-001")
                 .name("Design Hub App Health")
-                .assessmentType("APPLICATION")
+                .assessmentType(AssessmentType.APPLICATION)
                 .targetKind(TargetKind.APP)
                 .assessmentDate(LocalDate.of(2026, 3, 15))
                 .assessor("sa-agent")
-                .maturityLevel("DEVELOPING")
+                .maturityLevel(MaturityLevel.DEVELOPING)
                 .currentStateDescription("11 entities, 14 edges")
                 .targetStateDescription("75 nodes, 106 edges")
                 .score(13)
                 .status(Status.IN_REVIEW)
                 .build();
 
-        assertEquals("DEVELOPING", assessment.getMaturityLevel());
+        assertEquals(MaturityLevel.DEVELOPING, assessment.getMaturityLevel());
         assertEquals(13, assessment.getScore());
     }
 
@@ -238,7 +280,7 @@ class AssessmentTest {
         Assessment assessment = Assessment.builder()
                 .assessmentId("ASSESS-CAP-002")
                 .name("Auth Gap Assessment")
-                .assessmentType("CAPABILITY")
+                .assessmentType(AssessmentType.CAPABILITY)
                 .targetKind(TargetKind.CAP)
                 .assessmentDate(LocalDate.of(2026, 3, 15))
                 .assessor("arch-agent")
@@ -255,14 +297,14 @@ class AssessmentTest {
         Assessment assessment = Assessment.builder()
                 .assessmentId("ASSESS-API-001")
                 .name("Auth API Security Review")
-                .assessmentType("SECURITY")
+                .assessmentType(AssessmentType.SECURITY)
                 .targetKind(TargetKind.API)
                 .assessmentDate(LocalDate.of(2026, 3, 15))
                 .assessor("sec-agent")
                 .status(Status.IN_REVIEW)
                 .build();
 
-        assertEquals("SECURITY", assessment.getAssessmentType());
+        assertEquals(AssessmentType.SECURITY, assessment.getAssessmentType());
         assertEquals(TargetKind.API, assessment.getTargetKind());
     }
 }
@@ -300,11 +342,11 @@ public class Assessment {
     private String assessmentId;      // Pattern: ASSESS-{targetKind}-{seq}
 
     private String name;
-    private String assessmentType;    // CAPABILITY, PROCESS, APPLICATION, COMPONENT, SECURITY, DATA
-    private TargetKind targetKind;    // Enum discriminator for query/indexing
+    private AssessmentType assessmentType;  // Frozen enum: CAPABILITY, PROCESS, APPLICATION, COMPONENT, SECURITY, DATA
+    private TargetKind targetKind;          // Enum discriminator for query/indexing
     private LocalDate assessmentDate;
-    private String assessor;          // Agent or person identifier
-    private String maturityLevel;     // NONE, INITIAL, DEVELOPING, DEFINED, MANAGED, OPTIMIZING
+    private String assessor;                // Agent or person identifier
+    private MaturityLevel maturityLevel;    // Frozen enum: NONE, INITIAL, DEVELOPING, DEFINED, MANAGED, OPTIMIZING
     private String currentStateDescription;
     private String targetStateDescription;
     private Integer score;            // 0-100 normalized
@@ -315,7 +357,7 @@ public class Assessment {
 }
 ```
 
-Note: The ASSESSES edge (Assessment → assessable T1) is polymorphic in Neo4j. It is NOT modeled as a Java @Relationship because SDN requires a typed target. Instead, it will be created via Cypher in DataInitializer and queried via Neo4jClient. The `targetKind` enum + `assessmentId` pattern provide the discriminator for efficient queries.
+Note: The ASSESSES edge (Assessment → assessable T1) is polymorphic in Neo4j. It is NOT modeled as a Java @Relationship because SDN requires a typed target. Instead, it is implemented in **Task 11** via `AssessmentService` (Cypher query-builders following the `ImpactAnalysisService` pattern). The `targetKind` enum + `assessmentId` pattern provide the discriminator for efficient queries.
 
 - [ ] **Step 4: Run tests to verify they pass**
 
@@ -958,7 +1000,7 @@ class MilestoneTest {
         Milestone milestone = Milestone.builder()
                 .milestoneId("MS-DH-001")
                 .name("Sprint 1")
-                .milestoneType("SPRINT")
+                .milestoneType(MilestoneType.SPRINT)
                 .status(Status.IN_IMPLEMENTATION)
                 .build();
 
@@ -992,7 +1034,7 @@ class MilestoneTest {
         Milestone milestone = Milestone.builder()
                 .milestoneId("MS-DH-001")
                 .name("Sprint 1")
-                .milestoneType("SPRINT")
+                .milestoneType(MilestoneType.SPRINT)
                 .status(Status.IN_IMPLEMENTATION)
                 .tasks(List.of(task))
                 .build();
@@ -1006,7 +1048,7 @@ class MilestoneTest {
         Milestone milestone = Milestone.builder()
                 .milestoneId("MS-DH-002")
                 .name("Phase 1 Release")
-                .milestoneType("RELEASE_CUT")
+                .milestoneType(MilestoneType.RELEASE_CUT)
                 .startDate(LocalDate.of(2026, 3, 15))
                 .endDate(LocalDate.of(2026, 4, 15))
                 .status(Status.APPROVED)
@@ -1021,7 +1063,7 @@ class MilestoneTest {
         Milestone milestone = Milestone.builder()
                 .milestoneId("MS-PLAT-003")
                 .name("Checkpoint 3")
-                .milestoneType("CHECKPOINT")
+                .milestoneType(MilestoneType.CHECKPOINT)
                 .status(Status.IDENTIFIED)
                 .build();
 
@@ -1064,7 +1106,7 @@ public class Milestone {
 
     private String name;
     private String description;
-    private String milestoneType; // SPRINT, PHASE, RELEASE_CUT, CHECKPOINT
+    private MilestoneType milestoneType; // Frozen enum: SPRINT, PHASE, RELEASE_CUT, CHECKPOINT
     private LocalDate startDate;
     private LocalDate endDate;
     private Status status;
@@ -1225,7 +1267,7 @@ class ProjectInstanceTest {
         Milestone ms = Milestone.builder()
                 .milestoneId("MS-DH-001")
                 .name("Sprint 1")
-                .milestoneType("SPRINT")
+                .milestoneType(MilestoneType.SPRINT)
                 .status(Status.IN_IMPLEMENTATION)
                 .build();
 
@@ -1486,7 +1528,7 @@ class SpineTraversalTest {
 
         Milestone sprint = Milestone.builder()
                 .milestoneId("MS-DH-001").name("Sprint 1")
-                .milestoneType("SPRINT").status(Status.IN_IMPLEMENTATION)
+                .milestoneType(MilestoneType.SPRINT).status(Status.IN_IMPLEMENTATION)
                 .tasks(List.of(task)).build();
 
         ProjectInstance project = ProjectInstance.builder()
@@ -1513,7 +1555,7 @@ class SpineTraversalTest {
 
         Assessment assessment = Assessment.builder()
                 .assessmentId("ASSESS-CAP-001").name("Auth Maturity")
-                .assessmentType("CAPABILITY").targetKind(TargetKind.CAP)
+                .assessmentType(AssessmentType.CAPABILITY).targetKind(TargetKind.CAP)
                 .assessmentDate(LocalDate.of(2026, 3, 15)).assessor("arch-agent")
                 .status(Status.DEFINED).identifiedGaps(List.of(gap)).build();
 
@@ -1577,16 +1619,194 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/test/java/co
 
 ---
 
-## Chunk 4: Final Verification (Task 11)
+## Chunk 4: ASSESSES Edge + Final Verification (Tasks 11–12)
 
-### Task 11: Full Suite Verification + Metric Checkpoint
+### Task 11: AssessmentService — ASSESSES Polymorphic Edge (Cypher-Only)
+
+The ASSESSES edge (Assessment → assessable T1) is polymorphic — the target node type varies by `targetKind`. SDN's `@Relationship` requires a fixed target type, so this edge is created and queried via Cypher using `Neo4jClient`, following the established `ImpactAnalysisService` pattern.
+
+**Files:**
+- Create: `backend/src/main/java/com/emsist/designhub/service/AssessmentService.java`
+- Create: `backend/src/test/java/com/emsist/designhub/service/AssessmentServiceTest.java`
+- Reference: `backend/src/main/java/com/emsist/designhub/service/ImpactAnalysisService.java` (pattern source)
+
+- [ ] **Step 1: Write the failing tests**
+
+```java
+package com.emsist.designhub.service;
+
+import com.emsist.designhub.domain.TargetKind;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class AssessmentServiceTest {
+
+    private final AssessmentService service = new AssessmentService(null); // Neo4jClient not needed for query-builder tests
+
+    @Test
+    void shouldBuildCreateAssessesEdgeQuery() {
+        String query = service.buildCreateAssessesQuery();
+        assertTrue(query.contains("MATCH (a:Assessment {assessmentId: $assessmentId})"));
+        assertTrue(query.contains("MERGE (a)-[:ASSESSES]->(target)"));
+    }
+
+    @Test
+    void shouldBuildQueryByTargetKind() {
+        String query = service.buildFindAssessmentsByTargetQuery();
+        assertTrue(query.contains("MATCH (a:Assessment)-[:ASSESSES]->(target)"));
+        assertTrue(query.contains("WHERE a.targetKind = $targetKind"));
+        assertTrue(query.contains("AND target[$targetIdField] = $targetId"));
+    }
+
+    @Test
+    void shouldBuildQueryForAllAssessmentsOfTarget() {
+        String query = service.buildFindAssessmentsForTargetQuery();
+        assertTrue(query.contains("MATCH (a:Assessment)-[:ASSESSES]->(target)"));
+        assertTrue(query.contains("WHERE target[$targetIdField] = $targetId"));
+        assertTrue(query.contains("RETURN a"));
+    }
+
+    @Test
+    void shouldResolveTargetLabel() {
+        assertEquals("BusinessCapability", service.resolveTargetLabel(TargetKind.CAP));
+        assertEquals("BusinessProcess", service.resolveTargetLabel(TargetKind.PROC));
+        assertEquals("ProcessActivity", service.resolveTargetLabel(TargetKind.ACT));
+        assertEquals("Application", service.resolveTargetLabel(TargetKind.APP));
+        assertEquals("ApplicationComponent", service.resolveTargetLabel(TargetKind.CMP));
+        assertEquals("ApiContract", service.resolveTargetLabel(TargetKind.API));
+        assertEquals("DataEntity", service.resolveTargetLabel(TargetKind.DE));
+    }
+
+    @Test
+    void shouldResolveTargetIdField() {
+        assertEquals("capabilityId", service.resolveTargetIdField(TargetKind.CAP));
+        assertEquals("processId", service.resolveTargetIdField(TargetKind.PROC));
+        assertEquals("activityId", service.resolveTargetIdField(TargetKind.ACT));
+        assertEquals("applicationId", service.resolveTargetIdField(TargetKind.APP));
+        assertEquals("componentId", service.resolveTargetIdField(TargetKind.CMP));
+        assertEquals("contractId", service.resolveTargetIdField(TargetKind.API));
+        assertEquals("entityId", service.resolveTargetIdField(TargetKind.DE));
+    }
+}
+```
+
+- [ ] **Step 2: Run tests to verify they fail**
+
+Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentServiceTest -pl . -q`
+Expected: FAIL — `AssessmentService` class not found
+
+- [ ] **Step 3: Write AssessmentService**
+
+```java
+package com.emsist.designhub.service;
+
+import com.emsist.designhub.domain.TargetKind;
+import org.springframework.data.neo4j.core.Neo4jClient;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AssessmentService {
+
+    private final Neo4jClient neo4jClient;
+
+    public AssessmentService(Neo4jClient neo4jClient) {
+        this.neo4jClient = neo4jClient;
+    }
+
+    /**
+     * Creates an ASSESSES edge from an Assessment to its target node.
+     * The target node label is resolved dynamically from targetKind.
+     * Parameters: $assessmentId, $targetLabel (injected into query), $targetIdField, $targetId
+     */
+    public String buildCreateAssessesQuery() {
+        return """
+            MATCH (a:Assessment {assessmentId: $assessmentId})
+            MATCH (target WHERE target[$targetIdField] = $targetId)
+            WHERE $targetLabel IN labels(target)
+            MERGE (a)-[:ASSESSES]->(target)
+            RETURN a.assessmentId AS assessmentId
+            """;
+    }
+
+    /**
+     * Finds assessments of a specific type targeting a specific node.
+     * Parameters: $targetKind, $targetIdField, $targetId
+     */
+    public String buildFindAssessmentsByTargetQuery() {
+        return """
+            MATCH (a:Assessment)-[:ASSESSES]->(target)
+            WHERE a.targetKind = $targetKind
+            AND target[$targetIdField] = $targetId
+            RETURN a
+            """;
+    }
+
+    /**
+     * Finds all assessments (any type) targeting a specific node.
+     * Parameters: $targetIdField, $targetId
+     */
+    public String buildFindAssessmentsForTargetQuery() {
+        return """
+            MATCH (a:Assessment)-[:ASSESSES]->(target)
+            WHERE target[$targetIdField] = $targetId
+            RETURN a
+            """;
+    }
+
+    /** Resolves TargetKind enum to Neo4j node label. */
+    public String resolveTargetLabel(TargetKind kind) {
+        return switch (kind) {
+            case CAP  -> "BusinessCapability";
+            case PROC -> "BusinessProcess";
+            case ACT  -> "ProcessActivity";
+            case APP  -> "Application";
+            case CMP  -> "ApplicationComponent";
+            case API  -> "ApiContract";
+            case DE   -> "DataEntity";
+        };
+    }
+
+    /** Resolves TargetKind enum to the @Id field name on the target node. */
+    public String resolveTargetIdField(TargetKind kind) {
+        return switch (kind) {
+            case CAP  -> "capabilityId";
+            case PROC -> "processId";
+            case ACT  -> "activityId";
+            case APP  -> "applicationId";
+            case CMP  -> "componentId";
+            case API  -> "contractId";
+            case DE   -> "entityId";
+        };
+    }
+}
+```
+
+- [ ] **Step 4: Run tests to verify they pass**
+
+Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentServiceTest -pl . -q`
+Expected: 5 tests, 0 failures
+
+- [ ] **Step 5: Run full suite**
+
+Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Expected: ≥142 tests, 0 failures
+
+- [ ] **Step 6: Commit**
+
+```bash
+cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/service/AssessmentService.java backend/src/test/java/com/emsist/designhub/service/AssessmentServiceTest.java && git commit -m "feat: add AssessmentService with ASSESSES polymorphic edge Cypher queries"
+```
+
+---
+
+### Task 12: Full Suite Verification + Metric Checkpoint
 
 This is a verification-only task. No new code. Confirms the plan delivered what was promised.
 
 - [ ] **Step 1: Run full test suite**
 
 Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
-Expected: ≥137 tests, 0 failures
+Expected: ≥142 tests, 0 failures
 
 - [ ] **Step 2: Count @Node entities**
 
@@ -1600,7 +1820,7 @@ Expected: ≥42 (was 31 + 11 new edges declared in Java: IDENTIFIES_GAP, HAS_FEA
 
 Count by entity: Assessment(1) + Epic(1) + Feature(1) + RequirementPortfolio(1) + Milestone(1) + ProjectInstance(10) = 15 new @Relationship declarations. Total: 31 + 15 = 46.
 
-Note: ASSESSES is the 13th new edge type in the taxonomy but is Cypher-only (polymorphic target), not a Java @Relationship. SDN @Relationship declarations: 46. Taxonomy edge count: 106.
+Note: ASSESSES is the 16th new edge type in the taxonomy but is Cypher-only (polymorphic target), not a Java @Relationship. It is implemented in Task 11 via AssessmentService query-builders. SDN @Relationship declarations: 46. Taxonomy edge count: 106.
 
 - [ ] **Step 4: Verify metric separation**
 
@@ -1608,9 +1828,10 @@ Record and confirm:
 
 | Metric | Expected | Category |
 |--------|----------|----------|
-| Tests | ≥137 | Verification (test suite size) |
+| Tests | ≥142 | Verification (test suite size) |
 | @Node entities | 31 | Implementation (SDN declarations) |
 | @Relationship edges | 46 | Implementation (SDN declarations) |
+| Cypher-only edges | 1 (ASSESSES) | Implementation (AssessmentService) |
 | Target taxonomy nodes | 75 | Design model (approved) |
 | Target taxonomy edges | 106 | Design model (approved) |
 | Benchmarkable | 71 | Design model (approved) |
@@ -1621,7 +1842,7 @@ Record and confirm:
 
 | Task | Entity/Artifact | New @Node | New @Relationship | New Tests |
 |------|----------------|-----------|-------------------|-----------|
-| 1 | TargetKind enum | 0 | 0 | 0 |
+| 1 | Frozen enums (TargetKind, AssessmentType, MaturityLevel, MilestoneType) | 0 | 0 | 0 |
 | 2 | Assessment | 1 | 1 (IDENTIFIES_GAP) | 5 |
 | 3 | Gap extension tests | 0 | 0 | 3 |
 | 4 | BusinessCapability | 1 | 0 | 3 |
@@ -1631,7 +1852,8 @@ Record and confirm:
 | 8 | Milestone | 1 | 1 (HAS_TASK) | 5 |
 | 9 | ProjectInstance | 1 | 10 (TARGETS_CAPABILITY, ADDRESSES_GAP, HAS_PORTFOLIO, HAS_TASK, HAS_MILESTONE, CREATES_APPLICATION, ENHANCES_APPLICATION, INTEGRATES_WITH, CREATES_COMPONENT, ENHANCES_COMPONENT) | 10 |
 | 10 | Spine traversal tests | 0 | 0 | 4 |
-| 11 | Verification | 0 | 0 | 0 |
-| **Total** | | **7** | **15** | **40** |
+| 11 | AssessmentService (ASSESSES Cypher edge) | 0 | 0 (+1 Cypher-only) | 5 |
+| 12 | Verification | 0 | 0 | 0 |
+| **Total** | | **7** | **15 + 1 Cypher** | **45** |
 
-**Post-plan baseline**: 31 @Node / 46 @Relationship / ~137 tests / 0 failures
+**Post-plan baseline**: 31 @Node / 46 @Relationship + 1 Cypher-only / ~142 tests / 0 failures
