@@ -30,6 +30,15 @@ public class CodeAsset {
     private String description;
     private Status status;
 
+    private String changePolicy;              // OPEN, EXTENSION_ONLY, PROTECTED, GENERATED
+    private String ownerAgent;
+    private Boolean migrationRequired;
+    private Boolean backwardCompatibilityObligation;
+
+    @Relationship(type = "DEPENDS_ON_ASSET", direction = Relationship.Direction.OUTGOING)
+    @JsonIgnoreProperties({"screensImplemented", "apisImplemented", "entitiesImplemented", "rulesImplemented", "conventions", "dependsOn"})
+    private List<CodeAsset> dependsOn;
+
     @Relationship(type = "ASSET_FOR_SCREEN", direction = Relationship.Direction.OUTGOING)
     @JsonIgnoreProperties({"gaps", "contentElements", "transitionsTo", "storyRefs", "roleKeys", "personaIds"})
     private List<Screen> screensImplemented;
