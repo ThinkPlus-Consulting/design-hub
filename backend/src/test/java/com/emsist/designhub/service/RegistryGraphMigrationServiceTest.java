@@ -282,7 +282,8 @@ class RegistryGraphMigrationServiceTest {
 
         verify(neo4jClient).query((String) argThat(cypher ->
                 ((String) cypher).contains("CALLS_API")
-                && ((String) cypher).contains("ApiContract")));
+                && ((String) cypher).contains("ApiContract")
+                && ((String) cypher).contains("toUpper")));
     }
 
     @Test
@@ -309,7 +310,8 @@ class RegistryGraphMigrationServiceTest {
 
         service.runFullMigration();
 
-        // Seeds (5) + patches (2) + upsert fetch (1) + backfills existing (4) + backfills new (5) = 17 queries min
-        verify(neo4jClient, atLeast(12)).query(anyString());
+        // Seeds (5) + patches (2) + upsert fetch (1) + existing backfills (6 — backfillPersonas has 3 internal)
+        // + new backfills (5) = 19 queries with empty apiCalls fetch
+        verify(neo4jClient, atLeast(19)).query(anyString());
     }
 }

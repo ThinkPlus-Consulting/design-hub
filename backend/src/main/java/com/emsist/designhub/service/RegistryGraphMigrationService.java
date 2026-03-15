@@ -258,7 +258,7 @@ public class RegistryGraphMigrationService {
                 UNWIND i.apiCalls AS apiCall
                 WITH i, apiCall, split(apiCall, ' ') AS parts
                 WHERE size(parts) >= 2
-                WITH i, parts[0] AS method, parts[1] AS path
+                WITH i, toUpper(parts[0]) AS method, parts[1] AS path
                 MATCH (ac:ApiContract {method: method, path: path})
                 MERGE (i)-[:CALLS_API]->(ac)
                 """).run();
