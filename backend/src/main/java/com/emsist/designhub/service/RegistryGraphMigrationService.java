@@ -5,11 +5,16 @@ import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class RegistryGraphMigrationService {
 
     private final Neo4jClient neo4jClient;
+
+    // ── Registry seeds (existing) ──────────────────────────────────────
 
     @Transactional
     public void seedChannels() {
@@ -77,6 +82,71 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    // ── New seeds (Chunk 2 — Task 4) ───────────────────────────────────
+
+    @Transactional
+    public void seedConfirmationDialogs() {
+        neo4jClient.query("""
+                UNWIND [
+                  {id: 'CONFIRM-AGT-DELETE',  action: 'Delete agent',  confirm: 'Delete',  cancel: 'Cancel',     consequence: 'The selected agent will be permanently removed.'},
+                  {id: 'CONFIRM-AGT-PUBLISH', action: 'Publish agent', confirm: 'Publish', cancel: 'Keep Draft', consequence: 'The draft agent becomes available to end users.'}
+                ] AS dlg
+                MERGE (d:ConfirmationDialog {dialogId: dlg.id})
+                SET d.triggerAction    = dlg.action,
+                    d.confirmLabel     = dlg.confirm,
+                    d.cancelLabel      = dlg.cancel,
+                    d.consequenceText  = dlg.consequence
+                """).run();
+    }
+
+    @Transactional
+    public void upsertApiContractsFromInteractions() {
+        // Collect distinct apiCall strings from all interactions
+        Collection<Map<String, Object>> rows = neo4jClient.query("""
+                MATCH (i:Interaction) WHERE i.apiCalls IS NOT NULL AND size(i.apiCalls) > 0
+                UNWIND i.apiCalls AS apiCall
+                RETURN DISTINCT apiCall
+                """).fetch().all();
+
+        for (Map<String, Object> row : rows) {
+            String apiCall = (String) row.get("apiCall");
+            if (apiCall == null || apiCall.isBlank()) continue;
+            String[] parts = apiCall.split(" ", 2);
+            if (parts.length < 2) continue;
+
+            String method = parts[0].toUpperCase();
+            String path = parts[1];
+            String contractId = generateContractId(method, path);
+
+            neo4jClient.query("""
+                    MERGE (ac:ApiContract {contractId: $contractId})
+                    SET ac.method = $method, ac.path = $path, ac.status = 'DEFINED'
+                    """)
+                    .bind(contractId).to("contractId")
+                    .bind(method).to("method")
+                    .bind(path).to("path")
+                    .run();
+        }
+    }
+
+    /**
+     * Frozen ID rule: API-{METHOD}-{SANITIZED_PATH}
+     * where SANITIZED_PATH is the request path uppercased with
+     * non-alphanumeric runs collapsed to "-" and leading/trailing "-" trimmed.
+     */
+    String generateContractId(String method, String path) {
+        String upperMethod = method.toUpperCase();
+        String sanitized = path.toUpperCase()
+                .replaceAll("[^A-Z0-9]+", "-")
+                .replaceAll("^-|-$", "");
+        if (sanitized.isEmpty()) {
+            return "API-" + upperMethod;
+        }
+        return "API-" + upperMethod + "-" + sanitized;
+    }
+
+    // ── Existing backfills ─────────────────────────────────────────────
+
     @Transactional
     public void backfillPersonas() {
         // Create Persona nodes from personaId on Journey
@@ -141,6 +211,71 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    // ── New backfills (Chunk 2 — Task 5) ───────────────────────────────
+
+    @Transactional
+    public void backfillInteractionPersonaEdges() {
+        // Interaction.personaIds → USED_BY_PERSONA
+        neo4jClient.query("""
+                MATCH (i:Interaction) WHERE i.personaIds IS NOT NULL
+                UNWIND i.personaIds AS pid
+                WITH i, pid WHERE pid <> ''
+                MERGE (p:Persona {personaId: pid})
+                ON CREATE SET p.name = pid, p.status = 'IDENTIFIED'
+                MERGE (i)-[:USED_BY_PERSONA]->(p)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillInteractionRoleEdges() {
+        // Interaction.roleKeys → ACCESSIBLE_BY_ROLE
+        neo4jClient.query("""
+                MATCH (i:Interaction) WHERE i.roleKeys IS NOT NULL
+                UNWIND i.roleKeys AS rk
+                WITH i, rk WHERE rk <> ''
+                MATCH (br:BusinessRole {roleKey: rk})
+                MERGE (i)-[:ACCESSIBLE_BY_ROLE]->(br)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillTouchpointRoleEdges() {
+        // Touchpoint.roleKeys → ACCESSIBLE_BY_ROLE
+        neo4jClient.query("""
+                MATCH (tp:Touchpoint) WHERE tp.roleKeys IS NOT NULL
+                UNWIND tp.roleKeys AS rk
+                WITH tp, rk WHERE rk <> ''
+                MATCH (br:BusinessRole {roleKey: rk})
+                MERGE (tp)-[:ACCESSIBLE_BY_ROLE]->(br)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillCallsApiEdges() {
+        // Interaction.apiCalls → CALLS_API (via ApiContract nodes created by upsert)
+        neo4jClient.query("""
+                MATCH (i:Interaction) WHERE i.apiCalls IS NOT NULL AND size(i.apiCalls) > 0
+                UNWIND i.apiCalls AS apiCall
+                WITH i, apiCall, split(apiCall, ' ') AS parts
+                WHERE size(parts) >= 2
+                WITH i, parts[0] AS method, parts[1] AS path
+                MATCH (ac:ApiContract {method: method, path: path})
+                MERGE (i)-[:CALLS_API]->(ac)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillTriggersConfirmationEdges() {
+        // Interaction.confirmationCode → TRIGGERS_CONFIRMATION
+        neo4jClient.query("""
+                MATCH (i:Interaction) WHERE i.confirmationCode IS NOT NULL AND i.confirmationCode <> ''
+                MATCH (dlg:ConfirmationDialog {dialogId: i.confirmationCode})
+                MERGE (i)-[:TRIGGERS_CONFIRMATION]->(dlg)
+                """).run();
+    }
+
+    // ── Patches (existing) ─────────────────────────────────────────────
+
     @Transactional
     public void patchChannelCodes() {
         // Migrate legacy CH-WEB → CH-WEB-DSK on persisted EntryMode nodes
@@ -166,19 +301,35 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    // ── Orchestration ──────────────────────────────────────────────────
+
     @Transactional
     public void runFullMigration() {
+        // 1. Seed all registry nodes first
         seedChannels();
         seedPermissions();
         seedBusinessRoles();
         seedValidationRoles();
-        // Patch persisted data before backfilling edges
+        seedConfirmationDialogs();
+
+        // 2. Patch persisted data before backfilling edges
         patchChannelCodes();
         patchInteractionPermissions();
-        // Backfill edges (now that string fields have correct values)
+
+        // 3. Upsert ApiContract nodes from interaction apiCalls strings
+        upsertApiContractsFromInteractions();
+
+        // 4. Backfill existing edges (personas, screen roles, channels, permissions)
         backfillPersonas();
         backfillAccessibleByRoleEdges();
         backfillDeliveredViaChannelEdges();
         backfillRequiresPermissionEdges();
+
+        // 5. Backfill new edges (interaction/touchpoint roles, API calls, confirmations)
+        backfillInteractionPersonaEdges();
+        backfillInteractionRoleEdges();
+        backfillTouchpointRoleEdges();
+        backfillCallsApiEdges();
+        backfillTriggersConfirmationEdges();
     }
 }
