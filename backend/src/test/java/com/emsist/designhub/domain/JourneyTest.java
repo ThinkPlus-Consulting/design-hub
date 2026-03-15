@@ -44,4 +44,16 @@ class JourneyTest {
         assertNotNull(journey.getPerformedByPersona());
         assertEquals("PER-ADMIN", journey.getPerformedByPersona().getPersonaId());
     }
+
+    @Test
+    void shouldRetainLegacyRoleKeyDuringMigrationWindow() {
+        Journey journey = Journey.builder()
+                .journeyId("JRN-ROLE-COMPAT")
+                .title("Legacy Role Compatibility")
+                .roleKey("ADMIN")
+                .status(Status.DEFINED)
+                .build();
+
+        assertEquals("ADMIN", journey.getRoleKey());
+    }
 }

@@ -23,6 +23,7 @@ public class Journey {
 
     private String title;
     private String personaId;
+    @Deprecated
     private String roleKey;
     private String goalStatement;
 

@@ -35,4 +35,24 @@ class TouchpointTest {
         assertNotNull(tp.getDeliveredViaChannel());
         assertEquals("CH-WEB-DSK", tp.getDeliveredViaChannel().getChannelCode());
     }
+
+    @Test
+    void shouldLinkToBusinessRoleViaAccessibleByRole() {
+        BusinessRole role = BusinessRole.builder()
+                .roleKey("ADMIN")
+                .displayName("Administrator")
+                .roleGroup("tenant")
+                .sortOrder(1)
+                .status(Status.DEFINED)
+                .build();
+
+        Touchpoint tp = Touchpoint.builder()
+                .touchpointId("TP-WEB-001")
+                .label("Web Entry")
+                .accessibleByRoles(List.of(role))
+                .build();
+
+        assertEquals(1, tp.getAccessibleByRoles().size());
+        assertEquals("ADMIN", tp.getAccessibleByRoles().get(0).getRoleKey());
+    }
 }

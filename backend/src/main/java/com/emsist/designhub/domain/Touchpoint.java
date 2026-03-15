@@ -29,7 +29,12 @@ public class Touchpoint {
     private List<String> roleKeys;
 
     @Relationship(type = "USED_BY_PERSONA", direction = Relationship.Direction.OUTGOING)
-    private List<Persona> usedByPersonas;
+    @Builder.Default
+    private List<Persona> usedByPersonas = new ArrayList<>();
+
+    @Relationship(type = "ACCESSIBLE_BY_ROLE", direction = Relationship.Direction.OUTGOING)
+    @Builder.Default
+    private List<BusinessRole> accessibleByRoles = new ArrayList<>();
 
     @Relationship(type = "DELIVERED_VIA_CHANNEL", direction = Relationship.Direction.OUTGOING)
     private Channel deliveredViaChannel;
