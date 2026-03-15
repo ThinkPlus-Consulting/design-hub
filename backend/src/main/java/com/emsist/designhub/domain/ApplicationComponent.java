@@ -37,6 +37,7 @@ public class ApplicationComponent {
     private List<String> fixturePrerequisites;
     private List<String> localRunPrerequisites;
     private String localRunCommand;
+    private List<ExternalDependency> externalDependencies;
     private Status status;
 
     @Relationship(type = "HAS_CODE_ASSET", direction = Relationship.Direction.OUTGOING)

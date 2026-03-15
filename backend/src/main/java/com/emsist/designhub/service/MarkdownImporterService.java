@@ -5,10 +5,12 @@ import com.emsist.designhub.dto.*;
 import com.emsist.designhub.repository.ImportSnapshotRepository;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class MarkdownImporterService {
@@ -19,7 +21,6 @@ public class MarkdownImporterService {
     private final RequirementSyncService syncService;
     private final Neo4jClient neo4jClient;
     private final ImportSnapshotRepository snapshotRepo;
-    private final AtomicInteger seqCounter = new AtomicInteger(1);
 
     public MarkdownImporterService(FrontmatterParser parser,
                                     SchemaValidatorService schemaValidator,
@@ -67,36 +68,128 @@ public class MarkdownImporterService {
                     .build();
         }
 
-        // Stage 3: Compute hash and reconcile
+        // Stage 3: Compute hash and reconcile against graph state
         String contentHash = syncService.computeContentHash(fm.getId(), body);
-        var decision = reconciler.decide(fm.getId(), fm.getType(), null, contentHash);
+        var decision = reconciler.reconcile(fm.getId(), fm.getType(), contentHash);
 
-        // Stage 4: Build result
+        // Stage 4: Persist to Neo4j and build result
         List<NodeSummary> created = new ArrayList<>();
         List<NodeSummary> updated = new ArrayList<>();
-        if (decision == ReconciliationService.Decision.CREATE) {
-            created.add(NodeSummary.builder()
-                    .nodeId(fm.getId()).nodeType(fm.getType())
-                    .action("CREATED").confidence("HIGH").build());
-        } else if (decision == ReconciliationService.Decision.UPDATE) {
-            updated.add(NodeSummary.builder()
-                    .nodeId(fm.getId()).nodeType(fm.getType())
-                    .action("UPDATED").confidence("HIGH").build());
+        String snapshotId = generateSnapshotId();
+
+        List<ConflictSummary> conflicts = new ArrayList<>();
+
+        switch (decision) {
+            case CREATE -> {
+                upsertNode(fm, body, contentHash);
+                created.add(NodeSummary.builder()
+                        .nodeId(fm.getId()).nodeType(fm.getType())
+                        .action("CREATED").confidence("HIGH").build());
+            }
+            case UPDATE -> {
+                upsertNode(fm, body, contentHash);
+                updated.add(NodeSummary.builder()
+                        .nodeId(fm.getId()).nodeType(fm.getType())
+                        .action("UPDATED").confidence("HIGH").build());
+            }
+            case SKIP -> {
+                // No persistence — graph already has current content
+            }
+            case CONFLICT -> {
+                conflicts.add(ConflictSummary.builder()
+                        .nodeId(fm.getId())
+                        .field("contentHash")
+                        .docValue(contentHash)
+                        .graphValue("(stored)")
+                        .resolution("MANUAL_REVIEW_REQUIRED")
+                        .build());
+            }
         }
 
-        String snapshotId = generateSnapshotId();
+        // Stage 5: Create audit snapshot with accurate result
+        String result = switch (decision) {
+            case CREATE, UPDATE -> "SUCCESS";
+            case SKIP -> "SKIPPED";
+            case CONFLICT -> "CONFLICTED";
+        };
+        int itemCount = created.size() + updated.size();
+        saveSnapshot(snapshotId, filePath, result, itemCount, contentHash,
+                conflicts.isEmpty() ? null : "Conflict on " + fm.getId());
+
         return ImportResult.builder()
                 .snapshotId(snapshotId)
-                .result("SUCCESS")
-                .created(created).updated(updated).conflicts(List.of())
+                .result(result)
+                .created(created).updated(updated).conflicts(conflicts)
                 .errors(List.of())
                 .diffReport(buildDiffReport(snapshotId, filePath, created, updated))
                 .build();
     }
 
+    public ImportResult importFile(String filePath, ImportRequest.ConflictStrategy strategy) {
+        try {
+            String content = Files.readString(Path.of(filePath));
+            var result = importDocument(content, filePath);
+            // If conflict detected and strategy says SKIP, change result
+            if ("CONFLICTED".equals(result.getResult())
+                    && strategy == ImportRequest.ConflictStrategy.SKIP) {
+                result.setResult("SKIPPED");
+                result.getConflicts().clear();
+            }
+            return result;
+        } catch (Exception e) {
+            return ImportResult.builder()
+                    .result("FAILED")
+                    .errors(List.of("Failed to read file: " + e.getMessage()))
+                    .build();
+        }
+    }
+
+    /**
+     * Upsert a node into Neo4j using MERGE. Sets contentHash for drift detection,
+     * label from first body line, status from frontmatter, and version.
+     */
+    private void upsertNode(Frontmatter fm, String body, String contentHash) {
+        String idField = getIdField(fm.getType());
+        String label = sanitizeLabel(fm.getType());
+        String firstLine = body.lines().findFirst().orElse("");
+
+        String cypher = String.format(
+                "MERGE (n:%s {%s: $nodeId}) " +
+                "SET n.contentHash = $contentHash, " +
+                "    n.label = $label, " +
+                "    n.status = $status, " +
+                "    n.version = $version",
+                label, idField);
+
+        neo4jClient.query(cypher)
+                .bind(fm.getId()).to("nodeId")
+                .bind(contentHash).to("contentHash")
+                .bind(firstLine).to("label")
+                .bind(fm.getStatus()).to("status")
+                .bind(fm.getVersion()).to("version")
+                .run();
+    }
+
+    private void saveSnapshot(String snapshotId, String filePath, String result,
+                               int itemCount, String contentHash, String errorSummary) {
+        var snapshot = ImportSnapshot.builder()
+                .snapshotId(snapshotId)
+                .sourceType("GIT_DOC")
+                .sourcePath(filePath)
+                .importedAt(Instant.now())
+                .importedBy("markdown-importer")
+                .result(result)
+                .itemCount(itemCount)
+                .contentHash(contentHash)
+                .errorSummary(errorSummary)
+                .build();
+        snapshotRepo.save(snapshot);
+    }
+
     private String generateSnapshotId() {
         String date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
-        return "IMP-" + date + "-" + String.format("%03d", seqCounter.getAndIncrement());
+        String suffix = UUID.randomUUID().toString().substring(0, 8);
+        return "IMP-" + date + "-" + suffix;
     }
 
     private String getIdField(String type) {
@@ -104,8 +197,24 @@ public class MarkdownImporterService {
             case "UserStory" -> "storyId";
             case "Screen" -> "surfaceId";
             case "Journey" -> "journeyId";
+            case "Epic" -> "epicId";
+            case "Feature" -> "featureId";
+            case "Task" -> "taskId";
+            case "TestCase" -> "testCaseId";
+            case "ApiContract" -> "contractId";
+            case "DataEntity" -> "entityId";
+            case "Rule" -> "ruleId";
+            case "ProcessActivity" -> "activityId";
+            case "BusinessProcess" -> "processId";
             default -> "id";
         };
+    }
+
+    private String sanitizeLabel(String label) {
+        if (!label.matches("[A-Za-z][A-Za-z0-9]*")) {
+            throw new IllegalArgumentException("Invalid node label: " + label);
+        }
+        return label;
     }
 
     private String buildDiffReport(String snapshotId, String filePath,

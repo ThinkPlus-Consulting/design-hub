@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
+import com.emsist.designhub.domain.ExternalDependency;
 
 class EnvironmentProfileTest {
 
@@ -36,5 +37,26 @@ class EnvironmentProfileTest {
                 .build();
 
         assertEquals(3, app.getBootstrapSteps().size());
+    }
+
+    @Test
+    void shouldBuildComponentWithExternalDependencies() {
+        var comp = ApplicationComponent.builder()
+                .componentId("CMP-DH-BE")
+                .externalDependencies(List.of(
+                        ExternalDependency.builder()
+                                .name("Neo4j")
+                                .healthCheckUrl("http://localhost:7474")
+                                .required(true)
+                                .build(),
+                        ExternalDependency.builder()
+                                .name("Valkey")
+                                .healthCheckUrl("http://localhost:6379")
+                                .required(false)
+                                .build()))
+                .build();
+
+        assertEquals(2, comp.getExternalDependencies().size());
+        assertTrue(comp.getExternalDependencies().get(0).isRequired());
     }
 }
