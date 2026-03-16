@@ -89,9 +89,9 @@ Tier 3 value objects (not counted in 71):
 | `[IMPLEMENTED]` | 3 | Effect, EntryMode, ContentElement |
 | `[PLANNED]` | 1 | InteractionOutcome |
 
-**Implementation ratio:** 45 benchmarkable nodes implemented / 71 benchmarkable = **63.4%**
+**Implementation ratio:** 58 benchmarkable nodes implemented / 71 benchmarkable = **81.7%**
 
-**Score: AMBER** — The implementation baseline is now materially beyond the original seed model. The repo now has **48 `@Node` entities**, **78 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **281 passing tests**. Coverage is still incomplete, but the graph now contains the agent-ready layer, safety layer, capability/project meta-model, registry/role split, D4 engineering entities, and the D5a BPMN-aligned process spine.
+**Score: GREEN** — The implementation baseline now exceeds the 80% benchmarkable threshold. The repo has **61 `@Node` entities**, **78 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **307 passing tests**. The graph now contains the agent-ready layer, safety layer, capability/project meta-model, registry/role split, D4 engineering entities, the D5a BPMN-aligned process spine, and D5b1 strategic & governance plus architecture & EA stubs.
 
 **Reshape notes:**
 

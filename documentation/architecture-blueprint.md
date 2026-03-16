@@ -97,7 +97,7 @@ graph TD
 
 | Aspect | Status | Evidence |
 |--------|--------|----------|
-| Node persistence | `[IMPLEMENTED]` | 48 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
+| Node persistence | `[IMPLEMENTED]` | 61 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
 | Typed edges | `[PARTIAL]` | 78 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, and process-spine core is now edge-backed, with a smaller residual set of string-backed relationships remaining |
 | Bidirectional traversal | `[PARTIAL]` | Forward traversal works for implemented edges; reverse requires Cypher |
 | Status filtering | `[IMPLEMENTED — reshape required]` | 3-enum status model; target is universal 10-value `status` |
