@@ -36,4 +36,7 @@ public class TestCase {
 
     @Relationship(type = "LOCATED_IN", direction = Relationship.Direction.OUTGOING)
     private CodeAsset locatedIn;
+
+    @Relationship(type = "VERIFIES", direction = Relationship.Direction.OUTGOING)
+    private List<Screen> verifiesScreens;
 }

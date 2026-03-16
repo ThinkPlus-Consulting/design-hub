@@ -299,6 +299,107 @@ class RegistryGraphMigrationServiceTest {
                 && ((String) cypher).contains("ConfirmationDialog")));
     }
 
+    @Test
+    void shouldSeedAcceptanceCriteria() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedAcceptanceCriteria();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("AcceptanceCriterion")
+                && ((String) cypher).contains("HAS_CRITERION")
+                && ((String) cypher).contains("US-AUTH-001")));
+    }
+
+    @Test
+    void shouldSeedDataFields() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedDataFields();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("DataField")
+                && ((String) cypher).contains("HAS_FIELD")
+                && ((String) cypher).contains("DE-AGENT")));
+    }
+
+    @Test
+    void shouldSeedMessages() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedMessages();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("Message")
+                && ((String) cypher).contains("HAS_MESSAGE")
+                && ((String) cypher).contains("SCR-AUTH")));
+    }
+
+    @Test
+    void shouldSeedValidationRules() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedValidationRules();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("ValidationRule")
+                && ((String) cypher).contains("ENFORCES_VALIDATION")
+                && ((String) cypher).contains("HAS_VALIDATION_RULE")));
+    }
+
+    @Test
+    void shouldSeedApiSchemas() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedApiSchemas();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("RequestSchema")
+                && ((String) cypher).contains("ResponseSchema")
+                && ((String) cypher).contains("ErrorContract")
+                && ((String) cypher).contains("HAS_REQUEST")
+                && ((String) cypher).contains("HAS_RESPONSE")
+                && ((String) cypher).contains("HAS_ERROR")));
+    }
+
+    @Test
+    void shouldSeedTestCaseVerifiesEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedTestCaseVerifies();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("TestCase")
+                && ((String) cypher).contains("VERIFIES")
+                && ((String) cypher).contains("SCR-AUTH")));
+    }
+
+    @Test
+    void shouldSeedStoryRuleEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedStoryRuleEdges();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("GOVERNED_BY_RULE")
+                && ((String) cypher).contains("US-AUTH-001")
+                && ((String) cypher).contains("RULE-AUTH-001")));
+    }
+
     // ── Full migration orchestration ───────────────────────────────────
 
     @Test
@@ -310,8 +411,7 @@ class RegistryGraphMigrationServiceTest {
 
         service.runFullMigration();
 
-        // Seeds (5) + patches (2) + upsert fetch (1) + existing backfills (6 — backfillPersonas has 3 internal)
-        // + new backfills (5) = 19 queries with empty apiCalls fetch
-        verify(neo4jClient, atLeast(19)).query(anyString());
+        // Existing 19 queries + D4 engineering seeds (7) = 26 minimum with empty apiCalls fetch
+        verify(neo4jClient, atLeast(26)).query(anyString());
     }
 }

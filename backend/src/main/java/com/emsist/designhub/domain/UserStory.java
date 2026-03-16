@@ -27,4 +27,7 @@ public class UserStory {
 
     @Relationship(type = "HAS_CRITERION", direction = Relationship.Direction.OUTGOING)
     private List<AcceptanceCriterion> criteria;
+
+    @Relationship(type = "GOVERNED_BY_RULE", direction = Relationship.Direction.OUTGOING)
+    private List<Rule> governedByRules;
 }

@@ -274,6 +274,110 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    // ── D4 engineering seeds (Chunk 3) ────────────────────────────────
+
+    @Transactional
+    public void seedAcceptanceCriteria() {
+        neo4jClient.query("""
+                MERGE (us:UserStory {storyId: 'US-AUTH-001'})
+                ON CREATE SET us.label = 'User can sign in', us.module = 'core', us.domain = 'auth', us.storyNumber = 'US-AUTH-001'
+                MERGE (ac:AcceptanceCriterion {criterionId: 'AC-US-AUTH-001-001'})
+                SET ac.description = 'Login requires valid email and password',
+                    ac.givenWhenThen = 'Given valid credentials, when the user submits the login form, then the dashboard is shown',
+                    ac.status = 'DEFINED'
+                MERGE (us)-[:HAS_CRITERION]->(ac)
+                """).run();
+    }
+
+    @Transactional
+    public void seedDataFields() {
+        neo4jClient.query("""
+                MERGE (de:DataEntity {entityId: 'DE-AGENT'})
+                ON CREATE SET de.name = 'Agent', de.description = 'AI agent configuration', de.entityType = 'CONFIGURATION', de.status = 'DEFINED'
+                MERGE (df:DataField {fieldId: 'DF-DE-AGENT-001'})
+                SET df.name = 'agentName',
+                    df.dataType = 'STRING',
+                    df.required = true,
+                    df.constraints = 'maxLength=120',
+                    df.status = 'DEFINED'
+                MERGE (de)-[:HAS_FIELD]->(df)
+                """).run();
+    }
+
+    @Transactional
+    public void seedMessages() {
+        neo4jClient.query("""
+                MATCH (s:Screen {surfaceId: 'SCR-AUTH'})
+                MERGE (m:Message {messageId: 'MSG-CORE-LOGIN-001'})
+                SET m.messageText = 'Invalid email or password.',
+                    m.messageType = 'VALIDATION',
+                    m.severity = 'MEDIUM',
+                    m.status = 'DEFINED'
+                MERGE (s)-[:HAS_MESSAGE]->(m)
+                SET s.messageRegistryCount = 1
+                """).run();
+    }
+
+    @Transactional
+    public void seedValidationRules() {
+        neo4jClient.query("""
+                MATCH (s:Screen {surfaceId: 'SCR-AUTH'})
+                MERGE (r:Rule {ruleId: 'RULE-AUTH-001'})
+                ON CREATE SET r.name = 'Password policy', r.description = 'Password must meet security policy', r.ruleType = 'SECURITY', r.status = 'DEFINED'
+                MERGE (vr:ValidationRule {validationRuleId: 'VR-AUTH-001'})
+                SET vr.fieldPath = 'password',
+                    vr.validationType = 'PATTERN',
+                    vr.expression = '^(?=.*[A-Z])(?=.*[a-z])(?=.*\\\\d).{8,}$',
+                    vr.errorMessage = 'Password must include upper, lower, number, and be at least 8 characters.',
+                    vr.status = 'DEFINED'
+                MERGE (s)-[:ENFORCES_VALIDATION]->(vr)
+                MERGE (r)-[:HAS_VALIDATION_RULE]->(vr)
+                """).run();
+    }
+
+    @Transactional
+    public void seedApiSchemas() {
+        neo4jClient.query("""
+                MERGE (ac:ApiContract {contractId: 'API-POST-API-V1-AUTH-LOGIN'})
+                ON CREATE SET ac.method = 'POST', ac.path = '/api/v1/auth/login', ac.description = 'Authenticate user login', ac.status = 'DEFINED'
+                MERGE (req:RequestSchema {schemaId: 'REQ-API-POST-API-V1-AUTH-LOGIN-001'})
+                SET req.contentType = 'application/json', req.status = 'DEFINED'
+                MERGE (res:ResponseSchema {schemaId: 'RES-API-POST-API-V1-AUTH-LOGIN-200'})
+                SET res.contentType = 'application/json', res.statusCode = 200, res.status = 'DEFINED'
+                MERGE (err:ErrorContract {errorContractId: 'EC-API-POST-API-V1-AUTH-LOGIN-401'})
+                SET err.httpStatus = 401, err.errorCode = 'AUTH_INVALID_CREDENTIALS', err.description = 'Credentials are invalid', err.status = 'DEFINED'
+                MERGE (ac)-[:HAS_REQUEST]->(req)
+                MERGE (ac)-[:HAS_RESPONSE]->(res)
+                MERGE (ac)-[:HAS_ERROR]->(err)
+                """).run();
+    }
+
+    @Transactional
+    public void seedTestCaseVerifies() {
+        neo4jClient.query("""
+                MATCH (s:Screen {surfaceId: 'SCR-AUTH'})
+                MERGE (tc:TestCase {testCaseId: 'TC-AUTH-001'})
+                SET tc.title = 'Login screen renders',
+                    tc.description = 'Validates login screen load and submit action',
+                    tc.testType = 'E2E',
+                    tc.preconditions = 'Authentication service available',
+                    tc.expectedResult = 'User reaches dashboard after valid login',
+                    tc.status = 'DEFINED'
+                MERGE (tc)-[:VERIFIES]->(s)
+                """).run();
+    }
+
+    @Transactional
+    public void seedStoryRuleEdges() {
+        neo4jClient.query("""
+                MERGE (us:UserStory {storyId: 'US-AUTH-001'})
+                ON CREATE SET us.label = 'User can sign in', us.module = 'core', us.domain = 'auth', us.storyNumber = 'US-AUTH-001'
+                MERGE (r:Rule {ruleId: 'RULE-AUTH-001'})
+                ON CREATE SET r.name = 'Password policy', r.description = 'Password must meet security policy', r.ruleType = 'SECURITY', r.status = 'DEFINED'
+                MERGE (us)-[:GOVERNED_BY_RULE]->(r)
+                """).run();
+    }
+
     // ── Patches (existing) ─────────────────────────────────────────────
 
     @Transactional
@@ -331,5 +435,14 @@ public class RegistryGraphMigrationService {
         backfillTouchpointRoleEdges();
         backfillCallsApiEdges();
         backfillTriggersConfirmationEdges();
+
+        // 6. Seed D4 engineering edge coverage
+        seedAcceptanceCriteria();
+        seedDataFields();
+        seedMessages();
+        seedValidationRules();
+        seedApiSchemas();
+        seedTestCaseVerifies();
+        seedStoryRuleEdges();
     }
 }

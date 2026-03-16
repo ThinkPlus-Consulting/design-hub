@@ -168,4 +168,42 @@ class EngineeringEdgeTraversalTest {
 
         assertEquals("VR-NAMING-001", rule.getValidationRules().get(0).getValidationRuleId());
     }
+
+    @Test
+    void shouldTraverseTestCaseToVerifiedScreen() {
+        Screen screen = Screen.builder()
+                .surfaceId("SCR-AUTH")
+                .label("Login / Sign In")
+                .status(Status.IN_IMPLEMENTATION)
+                .build();
+
+        TestCase testCase = TestCase.builder()
+                .testCaseId("TC-AUTH-001")
+                .title("Login screen renders")
+                .testType("E2E")
+                .status(Status.DEFINED)
+                .verifiesScreens(List.of(screen))
+                .build();
+
+        assertEquals("SCR-AUTH", testCase.getVerifiesScreens().get(0).getSurfaceId());
+    }
+
+    @Test
+    void shouldTraverseUserStoryToGovernedRule() {
+        Rule rule = Rule.builder()
+                .ruleId("RULE-AUTH-001")
+                .name("Password policy")
+                .ruleType("SECURITY")
+                .status(Status.DEFINED)
+                .build();
+
+        UserStory story = UserStory.builder()
+                .storyId("US-AUTH-001")
+                .label("User can sign in")
+                .module("core")
+                .governedByRules(List.of(rule))
+                .build();
+
+        assertEquals("RULE-AUTH-001", story.getGovernedByRules().get(0).getRuleId());
+    }
 }
