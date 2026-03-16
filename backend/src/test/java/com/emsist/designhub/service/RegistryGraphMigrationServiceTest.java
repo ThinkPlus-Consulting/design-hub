@@ -639,7 +639,8 @@ class RegistryGraphMigrationServiceTest {
                 ((String) cypher).contains("REPRESENTS_STORY")
                 && ((String) cypher).contains("REPRESENTS_BUG")
                 && ((String) cypher).contains("AFFECTS_SCREEN")
-                && ((String) cypher).contains("HAS_SOURCE")));
+                && ((String) cypher).contains("HAS_SOURCE")
+                && ((String) cypher).contains("WITH story, screen, bug")));
     }
 
     // ── D6a screen-flow seed tests (Chunk 3) ──────────────────────────
@@ -707,6 +708,7 @@ class RegistryGraphMigrationServiceTest {
                 && ((String) cypher).contains("HAS_CODE_ASSET")
                 && ((String) cypher).contains("ASSET_FOR_SCREEN")
                 && ((String) cypher).contains("GOVERNED_BY_CONVENTION")
+                && ((String) cypher).contains("WITH convFe, convBe")
                 && ((String) cypher).contains("CA-FE-BUILDER-E2E-001")));
     }
 
@@ -719,7 +721,9 @@ class RegistryGraphMigrationServiceTest {
         service.seedImplementationPackVerification();
 
         verify(neo4jClient).query((String) argThat(cypher ->
-                ((String) cypher).contains("VERIFIED_BY")
+                ((String) cypher).contains("MERGE (us:UserStory {storyId: 'US-AI-090'})")
+                && ((String) cypher).contains("DELIVERS")
+                && ((String) cypher).contains("VERIFIED_BY")
                 && ((String) cypher).contains("LOCATED_IN")
                 && ((String) cypher).contains("TASK-US-AI-090-001")
                 && ((String) cypher).contains("TC-US-AI-090-001")

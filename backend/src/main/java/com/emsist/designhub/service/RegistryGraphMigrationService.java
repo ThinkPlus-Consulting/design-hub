@@ -713,6 +713,7 @@ public class RegistryGraphMigrationService {
                     bug.summary = 'Session refresh banner stays visible after login retry',
                     bug.severity = 'HIGH',
                     bug.status = 'IDENTIFIED'
+                WITH story, screen, bug
                 MATCH (storySrc:SourceReference {sourceId: 'SRC-US-AUTH-001'})
                 MATCH (screenSrc:SourceReference {sourceId: 'SRC-SCR-AUTH-001'})
                 MATCH (bugSrc:SourceReference {sourceId: 'SRC-BUG-001'})
@@ -908,6 +909,7 @@ public class RegistryGraphMigrationService {
                     convBe.docRef = 'documentation/architecture-blueprint.md',
                     convBe.summary = 'Keep graph orchestration inside services and preserve explicit domain layering.',
                     convBe.activeStatus = 'ACTIVE'
+                WITH convFe, convBe
                 MATCH (app:Application {applicationId: 'APP-DH'})
                 MATCH (fe:ApplicationComponent {componentId: 'CMP-DH-FRONTEND'})
                 MATCH (be:ApplicationComponent {componentId: 'CMP-DH-BACKEND'})
@@ -979,11 +981,16 @@ public class RegistryGraphMigrationService {
     @Transactional
     public void seedImplementationPackVerification() {
         neo4jClient.query("""
-                MATCH (us:UserStory {storyId: 'US-AI-090'})
                 MATCH (fe:ApplicationComponent {componentId: 'CMP-DH-FRONTEND'})
                 MATCH (builderAsset:CodeAsset {codeAssetId: 'CA-FE-BUILDER-CANVAS-001'})
                 MATCH (testAsset:CodeAsset {codeAssetId: 'CA-FE-BUILDER-E2E-001'})
                 MATCH (builderScreen:Screen {surfaceId: 'SCR-AGT-BUILDER'})
+                MERGE (us:UserStory {storyId: 'US-AI-090'})
+                ON CREATE SET us.label = 'Builder canvas interactions ready for agent composition',
+                              us.module = 'ai',
+                              us.domain = 'agents',
+                              us.storyNumber = 'US-AI-090',
+                              us.status = 'DEFINED'
                 MERGE (task:Task {taskId: 'TASK-US-AI-090-001'})
                 SET task.title = 'Implement builder canvas interactions',
                     task.description = 'Wire the builder canvas and related panels for agent composition.',
@@ -1001,6 +1008,7 @@ public class RegistryGraphMigrationService {
                     tc.suiteName = 'frontend-playwright',
                     tc.testCommand = 'npm run test:e2e',
                     tc.status = 'DEFINED'
+                MERGE (us)-[:DELIVERS]->(builderScreen)
                 MERGE (us)-[:HAS_TASK]->(task)
                 MERGE (us)-[:VERIFIED_BY]->(tc)
                 MERGE (tc)-[:VERIFIES]->(builderScreen)

@@ -73,7 +73,9 @@ class AgentReadinessServiceTest {
                 && ((String) cypher).contains("SUPPORTS_SCREEN|EXPOSES|OWNS_DATA_ENTITY|ENFORCES_RULE")
                 && ((String) cypher).contains("HAS_CODE_ASSET")
                 && ((String) cypher).contains("VERIFIED_BY")
-                && ((String) cypher).contains("LOCATED_IN")));
+                && ((String) cypher).contains("LOCATED_IN")
+                && ((String) cypher).contains("collect(DISTINCT comp2) AS messageComps")
+                && ((String) cypher).contains("directComps + messageComps AS allComps")));
     }
 
     @Test

@@ -50,9 +50,16 @@ public class AgentReadinessService {
             OPTIONAL MATCH (comp2)<-[:HAS_COMPONENT]-(app2:Application)
             OPTIONAL MATCH (comp2)-[:HAS_CODE_ASSET]->(ca2:CodeAsset)
             WITH us,
-                 directComps + collect(DISTINCT comp2) AS allComps,
-                 directApps + collect(DISTINCT app2) AS allApps,
-                 directAssets + collect(DISTINCT ca2) AS allAssets
+                 directComps,
+                 directApps,
+                 directAssets,
+                 collect(DISTINCT comp2) AS messageComps,
+                 collect(DISTINCT app2) AS messageApps,
+                 collect(DISTINCT ca2) AS messageAssets
+            WITH us,
+                 directComps + messageComps AS allComps,
+                 directApps + messageApps AS allApps,
+                 directAssets + messageAssets AS allAssets
             // Verification test-file resolution
             OPTIONAL MATCH (us)-[:VERIFIED_BY]->(tc:TestCase)-[:LOCATED_IN]->(tca:CodeAsset)
             WITH us, allComps, allApps, allAssets,
