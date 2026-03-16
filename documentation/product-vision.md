@@ -38,7 +38,7 @@ It connects:
 - **what is still missing** (findings, bugs, gaps, open questions, risks)
 - **where it is tracked** (external artifacts in Azure DevOps, Jira)
 
-The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 61 `@Node` entities, 78 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 307 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
+The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 65 `@Node` entities, 90 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 340 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
 
 ---
 
@@ -221,7 +221,7 @@ The product must be able to answer these traversal queries via graph edge walks,
 | 12 | Which code files need to change for story S? | `UserStory → DELIVERS → artifact → owning ApplicationComponent → HAS_CODE_ASSET → CodeAsset` |
 | 13 | Which coding conventions apply to component C? | `ApplicationComponent ← GOVERNED_BY_CONVENTION ← CodingConvention` with scope resolution |
 
-**Current state (from `vision-benchmark.md`):** 6/17 GREEN, 2/17 AMBER, 9/17 RED (includes 3 BPMN process queries and 3 agent-ready code-targeting queries). Target for 1.0: >= 5 queries at GREEN or AMBER.
+**Current state (from `vision-benchmark.md`):** 9/17 GREEN, 3/17 AMBER, 5/17 RED (D6a closed failure-path, traceability, and screen-flow queries). Target for 1.0: >= 5 queries at GREEN or AMBER.
 
 ---
 
@@ -324,12 +324,12 @@ Current state from `vision-benchmark.md`:
 | Dimension | Score |
 |-----------|-------|
 | Documentation completeness | **GREEN** |
-| Implementation completeness | **GREEN** (81.7% benchmarkable coverage; 61 `@Node` entities overall) |
+| Implementation completeness | **GREEN** (87.3% benchmarkable coverage; 65 `@Node` entities overall) |
 | Attribute depth | **AMBER** (~53%) |
-| Relationship coverage | **AMBER** (78 SDN + 1 Cypher relationship types implemented) |
-| Queryability | **AMBER** (6/17 GREEN, 2/17 AMBER) |
-| Source traceability | **RED** |
-| Delivery-tool interoperability | **RED** |
+| Relationship coverage | **AMBER** (90 SDN + 1 Cypher relationship types implemented) |
+| Queryability | **AMBER** (9/17 GREEN, 3/17 AMBER) |
+| Source traceability | **AMBER** |
+| Delivery-tool interoperability | **AMBER** |
 | UX implementation support | **AMBER** |
 
 The documentation model is fully specified (71 benchmarkable objects across 58 T1 + 13 T2, with 106 edge types). Implementation now includes the D4 engineering entities, D5a BPMN-aligned process spine, and Playwright Layers 1-2. The main remaining gaps are the open string migrations (`storyRefs`, `interactionRef`), missing traceability/governance entities, and broader adoption of the universal status enum.

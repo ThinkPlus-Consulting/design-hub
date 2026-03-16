@@ -81,7 +81,7 @@ graph TD
 
 **Outputs:** canonical object records, typed relationship records, sync metadata
 
-**Implementation status:** `[PLANNED]` — normalization is implicit in seed data. No `SourceReference` entity exists.
+**Implementation status:** `[PARTIAL]` — normalization is still largely implicit in seed data, but `SourceReference` now exists and selected artifacts are linked through `HAS_SOURCE`.
 
 ### 2.3 Graph persistence layer
 
@@ -97,8 +97,8 @@ graph TD
 
 | Aspect | Status | Evidence |
 |--------|--------|----------|
-| Node persistence | `[IMPLEMENTED]` | 61 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
-| Typed edges | `[PARTIAL]` | 78 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, and process-spine core is now edge-backed, with a smaller residual set of string-backed relationships remaining |
+| Node persistence | `[IMPLEMENTED]` | 65 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
+| Typed edges | `[PARTIAL]` | 90 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, process-spine, failure-path, traceability, and screen-flow core is now edge-backed, with a smaller residual set of string-backed relationships remaining |
 | Bidirectional traversal | `[PARTIAL]` | Forward traversal works for implemented edges; reverse requires Cypher |
 | Status filtering | `[IMPLEMENTED — reshape required]` | 3-enum status model; target is universal 10-value `status` |
 | Readiness filtering | `[PLANNED]` | No readiness flags on entities |
@@ -603,11 +603,11 @@ These patterns correspond to the 10 north-star queries in `product-vision.md`:
 | 2 | `journey -> steps -> touchpoints -> channels` | `[PARTIAL]` — `DELIVERED_VIA_CHANNEL` exists, but `STARTS_AT_TOUCHPOINT` is still planned |
 | 3 | `channel -> touchpoints -> screens` | `[EDGE]` — `DELIVERED_VIA_CHANNEL` and `TARGETS` are implemented |
 | 4 | `screen -> interactions -> permissions` | `[PARTIAL]` — `REQUIRES_PERMISSION` exists, but the canonical screen-to-interaction path is not fully cleaned up yet |
-| 5 | `interaction -> outcomes -> error codes` | `[PLANNED]` — no InteractionOutcome or ErrorCode |
+| 5 | `interaction -> outcomes -> error codes` | `[PARTIAL]` — embedded Interaction outcomes and `ON_ERROR_SHOWS` now resolve to ErrorCode, but the outcome structure is still Tier 3 rather than a first-class node |
 | 6 | `screen -> stories` | `[STRING_REF]` — `storyRefs` on Screen still block a canonical `DELIVERS` edge walk |
-| 7 | `bug -> affected screens` | `[PLANNED]` — no Bug entity |
-| 8 | `artifact -> source references` | `[PLANNED]` — no SourceReference |
-| 9 | `external artifact -> domain objects` | `[PLANNED]` — no ExternalArtifact |
+| 7 | `bug -> affected screens` | `[EDGE]` — Bug now exists with `AFFECTS_SCREEN` |
+| 8 | `artifact -> source references` | `[PARTIAL]` — `HAS_SOURCE` now exists for Screen, UserStory, and Bug |
+| 9 | `external artifact -> domain objects` | `[EDGE/PARTIAL]` — ExternalArtifact now represents stories and bugs; broader sync hierarchy and dependency edges remain planned |
 | 10 | `interaction -> confirmation dialogs` | `[EDGE]` — ConfirmationDialog registry and `TRIGGERS_CONFIRMATION` are implemented |
 
 ---

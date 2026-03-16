@@ -103,7 +103,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Stated assumption underlying design or scope
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/SourceReference.java`
 
 #### Attributes
 
@@ -129,7 +129,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Technical, business, or regulatory constraint
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Bug.java`
 
 #### Attributes
 
@@ -172,7 +172,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `SUPPORTS` | OUTGOING | Any Tier 1 object | 1:N | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_SOURCE` | INCOMING | Screen, UserStory, Bug | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -258,9 +258,10 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `AFFECTS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
+| `AFFECTS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[EDGE]` |
 | `AFFECTS_STORY` | OUTGOING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` |
 | `AFFECTS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
+| `HAS_SOURCE` | OUTGOING | SourceReference | N:M | No | OPTIONAL | `[EDGE]` |
 | `TRACKED_IN_EXTERNAL_SYSTEM` | OUTGOING | ExternalArtifact | N:1 | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -939,11 +940,12 @@
 | `DELIVERS` | INCOMING | UserStory | N:M | Yes | BLOCKING | `[STRING_REF]` — `storyRefs` (UserStory DELIVERS Screen) |
 | `ACCESSIBLE_BY_ROLE` | OUTGOING | BusinessRole | N:M | No | OPTIONAL | `[EDGE]` — legacy `roleKeys` retained for migration compatibility |
 | `USED_BY_PERSONA` | OUTGOING | Persona | N:M | No | OPTIONAL | `[EDGE]` — legacy `personaIds` retained for migration compatibility |
-| `HAS_MESSAGE` | OUTGOING | Message | 1:N | No | OPTIONAL | `[PLANNED]` |
+| `HAS_MESSAGE` | OUTGOING | Message | 1:N | No | OPTIONAL | `[EDGE]` |
 | `HAS_GAP` | OUTGOING | Gap | 1:N | No | OPTIONAL | `[EDGE]` |
 | `HAS_CONTENT` | OUTGOING | ContentElement (T3) | 1:N | No | OPTIONAL | `[EDGE]` |
 | `TRANSITIONS_TO` | OUTGOING | Screen | N:M | No | OPTIONAL | `[EDGE]` |
-| `CAN_PRODUCE_ERROR` | OUTGOING | ErrorCode (T2) | N:M | No | OPTIONAL | `[PLANNED]` |
+| `CAN_PRODUCE_ERROR` | OUTGOING | ErrorCode (T2) | N:M | No | OPTIONAL | `[EDGE]` |
+| `HAS_SOURCE` | OUTGOING | SourceReference | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -952,7 +954,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Distinct state of a screen
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ScreenState.java`
 
 #### Attributes
 
@@ -969,7 +971,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_SCREEN` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[PLANNED]` |
+| `BELONGS_TO_SCREEN` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[EDGE]` |
 | `TRIGGERED_BY_INTERACTION` | INCOMING | Interaction | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -994,7 +996,10 @@
 | `personaIds` | List | No | Associated personas | **Current code**: string list. **Target**: edge |
 | `roleKeys` | List | No | Associated roles | **Current code**: string list. **Target**: edge |
 | `apiCalls` | List | No | Called APIs | **Current code**: string list. **Target**: edge to ApiContract |
-| `outcomes` | Object | No | Structured outcomes | **Missing from code**: `{success: String, error: String, loading: String}` — see InteractionOutcome (T3) |
+| `outcomeSuccess` | String | No | Success outcome text | |
+| `outcomeError` | String | No | Error outcome text | |
+| `outcomeLoading` | String | No | Loading outcome text | |
+| `errorCodeRef` | String | No | Referenced error code | Legacy compatibility field retained alongside `ON_ERROR_SHOWS` |
 | `status` | String | Yes | Lifecycle status | Universal status enum |
 | `readiness` | Object | No | Readiness flags | All 7 flags applicable |
 | `sourceRefs` | List | No | Provenance links | **Missing from code** |
@@ -1008,7 +1013,7 @@
 | `REQUIRES_PERMISSION` | OUTGOING | Permission (T2) | N:1 | No | OPTIONAL | `[EDGE]` — legacy `permission` retained for migration compatibility |
 | `TRIGGERS_CONFIRMATION` | OUTGOING | ConfirmationDialog (T2) | N:1 | No | OPTIONAL | `[EDGE]` — legacy `confirmationCode` source field retained |
 | `CALLS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[EDGE]` — legacy `apiCalls` source field retained |
-| `ON_ERROR_SHOWS` | OUTGOING | ErrorCode (T2) | N:M | No | OPTIONAL | `[PLANNED]` |
+| `ON_ERROR_SHOWS` | OUTGOING | ErrorCode (T2) | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1017,26 +1022,26 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Screen-to-screen or state transition
-**Implementation Status**: `[PLANNED]` — TRANSITIONS_TO edge exists on Screen but Transition as independent node is planned
+**Implementation Status**: `[IMPLEMENTED]` `domain/Transition.java`
 
 #### Attributes
 
 | Attribute | Type | Required | Description | Constraints |
 |-----------|------|----------|-------------|-------------|
-| `transitionId` | String | Yes | Stable identifier | Pattern: `TRANS-{seq}` |
-| `fromRef` | String | Yes | Source screen or state | Screen or ScreenState ID |
-| `toRef` | String | Yes | Target screen or state | Screen or ScreenState ID |
-| `triggerRef` | String | No | Triggering interaction | Interaction ID |
+| `transitionId` | String | Yes | Stable identifier | Pattern: `TRN-{from}-{to}` |
+| `name` | String | Yes | Transition name | |
+| `description` | String | No | Transition description | |
+| `transitionType` | String | Yes | Transition kind | Enum: NAVIGATION, MODAL_OPEN, MODAL_CLOSE, TAB_SWITCH, REDIRECT |
+| `guard` | String | No | Condition that allows the transition | |
 | `status` | String | Yes | Lifecycle status | Universal status enum |
-| `sourceRefs` | List | No | Provenance links | |
 
 #### Relationships
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `FROM_SCREEN` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `TO_SCREEN` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `CAUSED_BY_INTERACTION` | OUTGOING | Interaction | N:1 | No | OPTIONAL | `[PLANNED]` |
+| `FROM_SCREEN` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `TO_SCREEN` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `CAUSED_BY_INTERACTION` | OUTGOING | Interaction | N:1 | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1325,7 +1330,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Cross-cutting
 **Purpose**: Synced or linked record from Azure DevOps, Jira, or other tools
-**Implementation Status**: `[IMPLEMENTED]` `domain/BusinessCapability.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ExternalArtifact.java`
 
 #### Attributes
 
@@ -1344,8 +1349,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `REPRESENTS_STORY` | OUTGOING | UserStory | N:1 | No | OPTIONAL | `[PLANNED]` |
-| `REPRESENTS_BUG` | OUTGOING | Bug | N:1 | No | OPTIONAL | `[PLANNED]` |
+| `REPRESENTS_STORY` | OUTGOING | UserStory | N:1 | No | OPTIONAL | `[EDGE]` |
+| `REPRESENTS_BUG` | OUTGOING | Bug | N:1 | No | OPTIONAL | `[EDGE]` |
 | `LINKS_TO_OBJECT` | OUTGOING | Any Tier 1 | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -1873,7 +1878,7 @@
 **Tier**: 2 (Registry)
 **Category**: Error and message registry
 **Purpose**: Registry of 80+ error, warning, and success codes
-**Implementation Status**: `[IMPLEMENTED]` `domain/ImportSnapshot.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ErrorCode.java`
 
 #### Attributes
 
@@ -1889,8 +1894,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `PRODUCED_BY_SCREEN` | INCOMING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
-| `SHOWN_BY_INTERACTION` | INCOMING | Interaction | N:M | No | OPTIONAL | `[PLANNED]` |
+| `CAN_PRODUCE_ERROR` | INCOMING | Screen | N:M | No | OPTIONAL | `[EDGE]` |
+| `ON_ERROR_SHOWS` | INCOMING | Interaction | N:M | No | OPTIONAL | `[EDGE]` |
 | `REFERENCED_BY_VALIDATION` | INCOMING | ValidationRule | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -2245,7 +2250,7 @@ Complete registry of all modeled relationships with implementation status.
 
 ### 6.1 Existing Graph Edges
 
-The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **78 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
+The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **90 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
 
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
@@ -2283,18 +2288,19 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `HAS_CRITERION` | UserStory | AcceptanceCriterion | 1:N | BLOCKING | `[EDGE]` |
 | `USES_DATA_ENTITY` | ApiContract | DataEntity | N:M | OPTIONAL | `[PLANNED]` |
 | `HAS_FIELD` | DataEntity | DataField | 1:N | BLOCKING | `[EDGE]` |
-| `SUPPORTS` | SourceReference | Any Tier 1 | 1:N | BLOCKING | `[PLANNED]` |
+| `HAS_SOURCE` | Screen, UserStory, Bug | SourceReference | N:M | OPTIONAL | `[EDGE]` |
 | `PERFORMS_JOURNEY` | Persona | Journey | 1:N | BLOCKING | `[PLANNED]` |
 | `USES_SCREEN` | JourneyStep | Screen | N:1 | BLOCKING | `[PLANNED]` |
 | `STARTS_AT_TOUCHPOINT` | JourneyStep | Touchpoint | N:M | OPTIONAL | `[PLANNED]` |
 | `HAS_MESSAGE` | Screen | Message | 1:N | OPTIONAL | `[EDGE]` |
-| `CAN_PRODUCE_ERROR` | Screen | ErrorCode (T2) | N:M | OPTIONAL | `[PLANNED]` |
-| `ON_ERROR_SHOWS` | Interaction | ErrorCode (T2) | N:M | OPTIONAL | `[PLANNED]` |
+| `CAN_PRODUCE_ERROR` | Screen | ErrorCode (T2) | N:M | OPTIONAL | `[EDGE]` |
+| `ON_ERROR_SHOWS` | Interaction | ErrorCode (T2) | N:M | OPTIONAL | `[EDGE]` |
 | `GOVERNS_STORY` | Rule | UserStory | N:M | OPTIONAL | `[PLANNED]` |
 | `AFFECTS_SCREEN` | Finding | Screen | N:M | OPTIONAL | `[PLANNED]` |
-| `AFFECTS_SCREEN` | Bug | Screen | N:M | OPTIONAL | `[PLANNED]` |
+| `AFFECTS_SCREEN` | Bug | Screen | N:M | OPTIONAL | `[EDGE]` |
 | `TRACKED_IN_EXTERNAL_SYSTEM` | Bug | ExternalArtifact | N:1 | OPTIONAL | `[PLANNED]` |
-| `REPRESENTS_STORY` | ExternalArtifact | UserStory | N:1 | OPTIONAL | `[PLANNED]` |
+| `REPRESENTS_STORY` | ExternalArtifact | UserStory | N:1 | OPTIONAL | `[EDGE]` |
+| `REPRESENTS_BUG` | ExternalArtifact | Bug | N:1 | OPTIONAL | `[EDGE]` |
 | `BELONGS_TO_SCREEN` | ScreenState | Screen | N:1 | BLOCKING | `[PLANNED]` |
 | `FROM_SCREEN` | Transition | Screen | N:1 | BLOCKING | `[PLANNED]` |
 | `TO_SCREEN` | Transition | Screen | N:1 | BLOCKING | `[PLANNED]` |

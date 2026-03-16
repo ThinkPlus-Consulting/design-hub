@@ -89,9 +89,9 @@ Tier 3 value objects (not counted in 71):
 | `[IMPLEMENTED]` | 3 | Effect, EntryMode, ContentElement |
 | `[PLANNED]` | 1 | InteractionOutcome |
 
-**Implementation ratio:** 58 benchmarkable nodes implemented / 71 benchmarkable = **81.7%**
+**Implementation ratio:** 62 benchmarkable nodes implemented / 71 benchmarkable = **87.3%**
 
-**Score: GREEN** — The implementation baseline now exceeds the 80% benchmarkable threshold. The repo has **61 `@Node` entities**, **78 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **307 passing tests**. The graph now contains the agent-ready layer, safety layer, capability/project meta-model, registry/role split, D4 engineering entities, the D5a BPMN-aligned process spine, and D5b1 strategic & governance plus architecture & EA stubs.
+**Score: GREEN** — The implementation baseline now exceeds the 80% benchmarkable threshold. The repo has **65 `@Node` entities**, **90 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **340 passing tests**. The graph now contains the agent-ready layer, safety layer, capability/project meta-model, registry/role split, D4 engineering entities, the D5a BPMN-aligned process spine, D5b1 strategic & governance plus architecture & EA stubs, and D6a failure-path/traceability/screen-flow closure.
 
 **Reshape notes:**
 
@@ -134,19 +134,19 @@ Tier 3 value objects (not counted in 71):
 
 | Category | Count | Percentage |
 |----------|-------|-----------|
-| Implemented SDN edges `[EDGE]` | 46 | 43.4% |
+| Implemented SDN edges `[EDGE]` | 90 | 84.9% |
 | Implemented Cypher edges `[CYPHER]` | 1 | 0.9% |
-| String-encoded relationships `[STRING_REF]` | 9 | 8.5% |
-| Planned relationships `[PLANNED]` | 50 | 47.2% |
+| String-encoded relationships `[STRING_REF]` | 5 | 4.7% |
+| Planned relationships `[PLANNED]` | 10 | 9.4% |
 | **Total target relationships** | **106** | |
 
 **BLOCKING relationships breakdown:**
 
 | Status | BLOCKING Count | Examples |
 |--------|---------------|----------|
-| `[EDGE]` | 7 | HAS_STEP, TARGETS, HAS_ENTRY_MODE, HAS_INTERACTION, TRANSITIONS_TO, PERFORMED_BY_PERSONA, DELIVERED_VIA_CHANNEL |
+| `[EDGE]` | 11 | HAS_STEP, TARGETS, HAS_ENTRY_MODE, PERFORMED_BY_PERSONA, HAS_FEATURE, HAS_STORY, HAS_CRITERION, HAS_FIELD, BELONGS_TO_SCREEN, FROM_SCREEN, TO_SCREEN |
 | `[STRING_REF]` | 1 | DELIVERS (storyRefs) |
-| `[PLANNED]` | 12 | HAS_FEATURE, HAS_STORY, USES_SCREEN, HAS_CRITERION, PERFORMS_JOURNEY, BELONGS_TO_SCREEN, FROM_SCREEN, TO_SCREEN, BELONGS_TO_API (x3), HAS_FIELD |
+| `[PLANNED]` | 8 | USES_SCREEN, PERFORMS_JOURNEY, STARTS_AT_TOUCHPOINT, BELONGS_TO_API (x3), BLOCKS_ARTIFACT, LINKS_TO_OBJECT |
 
 **Score: AMBER** — Relationship coverage has improved materially, but a smaller residual set of string-encoded relationships still blocks full traversal and 50 approved edge types remain unimplemented.
 
@@ -162,11 +162,11 @@ Tier 3 value objects (not counted in 71):
 | 2 | Which channels serve journey J? | `Journey -[HAS_STEP]-> JourneyStep -[STARTS_AT_TOUCHPOINT]-> Touchpoint -[DELIVERED_VIA_CHANNEL]-> Channel` | `DELIVERED_VIA_CHANNEL` and Channel exist, but `STARTS_AT_TOUCHPOINT` is still `[PLANNED]` | RED |
 | 3 | Which screens can channel C reach? | `Channel <-[DELIVERED_VIA_CHANNEL]- Touchpoint -[TARGETS]-> Screen` | Channel entity exists; `DELIVERED_VIA_CHANNEL` and `TARGETS` are implemented | GREEN |
 | 4 | Which permissions does screen S require? | `Screen -[HAS_INTERACTION]-> Interaction -[REQUIRES_PERMISSION]-> Permission` | Permission entity and `REQUIRES_PERMISSION` exist, but the current screen-to-interaction traversal still relies on the legacy `ON_SCREEN` side of the model | AMBER |
-| 5 | What happens if interaction I fails? | `Interaction.outcomes[error].errorCodeRef -> ErrorCode` | No InteractionOutcome structure; no ErrorCode entity | RED |
+| 5 | What happens if interaction I fails? | `Interaction.outcomeError / errorCodeRef -> ErrorCode` | Embedded failure outcomes exist on Interaction and `ON_ERROR_SHOWS` resolves to ErrorCode; traversal still crosses a Tier 3-style embedded structure | AMBER |
 | 6 | Which stories deliver screen S? | `UserStory -[DELIVERS]-> Screen` | `storyRefs` array on Screen — `[STRING_REF]` (note: direction reversed from old IMPLEMENTS_STORY) | AMBER |
-| 7 | Which bugs affect screen S? | `Bug -[AFFECTS]-> Screen` | No Bug entity | RED |
-| 8 | Where did artifact A come from? | `A -[HAS_SOURCE]-> SourceReference` | No SourceReference entity | RED |
-| 9 | Which Jira tickets track story S? | `ExternalArtifact -[REPRESENTS]-> UserStory` | No ExternalArtifact entity | RED |
+| 7 | Which bugs affect screen S? | `Bug -[AFFECTS_SCREEN]-> Screen` | Bug entity and `AFFECTS_SCREEN` edge now exist | GREEN |
+| 8 | Where did artifact A come from? | `A -[HAS_SOURCE]-> SourceReference` | `SourceReference` and `HAS_SOURCE` now exist for Screen, UserStory, and Bug | GREEN |
+| 9 | Which Jira tickets track story S? | `ExternalArtifact -[REPRESENTS_STORY]-> UserStory` | ExternalArtifact now represents stories and bugs with synced metadata | GREEN |
 | 10 | Which confirmation dialogs can interaction I trigger? | `Interaction -[TRIGGERS_CONFIRMATION]-> ConfirmationDialog` | ConfirmationDialog registry and `TRIGGERS_CONFIRMATION` edge exist; legacy `confirmationCode` remains for compatibility | GREEN |
 | 14 | Can story S resolve to a complete Implementation Pack? | `UserStory -[DELIVERS]-> deliverable <-[SUPPORTS_SCREEN\|EXPOSES\|OWNS_DATA_ENTITY\|ENFORCES_RULE]- ApplicationComponent` (transitive: Message via HAS_MESSAGE→Screen→SUPPORTS_SCREEN) | `[PLANNED]` — no ApplicationComponent execution metadata populated | RED |
 | 15 | Which code files implement screen S? | `Screen <-[SUPPORTS_SCREEN]- ApplicationComponent -[HAS_CODE_ASSET]-> CodeAsset -[ASSET_FOR_SCREEN]-> Screen` | `[PLANNED]` — no CodeAsset entity | RED |
@@ -179,11 +179,11 @@ Tier 3 value objects (not counted in 71):
 
 | Score | Count | Queries |
 |-------|-------|---------|
-| GREEN | 6 | #1, #3, #10, #11, #12, #13 |
-| AMBER | 2 | #4 (permission), #6 (stories) — partial edge walk, partial string ref |
-| RED | 9 | #2, #5, #7, #8, #9, #14, #15, #16, #17 |
+| GREEN | 9 | #1, #3, #7, #8, #9, #10, #11, #12, #13 |
+| AMBER | 3 | #4 (permission), #5 (embedded failure outcome), #6 (stories) |
+| RED | 5 | #2, #14, #15, #16, #17 |
 
-**Score: AMBER** — Six queries can now execute as full edge walks, including confirmation-dialog and BPMN process traversal. Two more have partial coverage (`REQUIRES_PERMISSION` and `storyRefs` remain mixed edge/string paths). Nine queries remain blocked by missing entities, missing edge families, or unpopulated implementation-pack metadata. Queries #11-#13 cover BPMN process traversal. Query #14 covers Implementation Pack resolution. Queries #15-#17 cover agent-ready code-targeting (code files, test file location, convention governance).
+**Score: AMBER** — Nine queries can now execute as full edge walks, including bug traceability, source provenance, delivery-tool linkage, confirmation-dialog, and BPMN process traversal. Three more have partial coverage (`REQUIRES_PERMISSION`, embedded failure outcomes, and `storyRefs` remain mixed edge/string paths). Five queries remain blocked by missing journey-step/touchpoint traversal or unpopulated implementation-pack metadata. Queries #11-#13 cover BPMN process traversal. Query #14 covers Implementation Pack resolution. Queries #15-#17 cover agent-ready code-targeting (code files, test file location, convention governance).
 
 **AMBER scoring rationale:**
 
@@ -192,7 +192,7 @@ Tier 3 value objects (not counted in 71):
 
 **Tier 3 benchmark note (frozen decision):**
 
-- **Query #5** (InteractionOutcome): InteractionOutcome is Tier 3. Even if the `outcomes` structure existed on Interaction, the benchmark would score the embedded-to-registry hop (`errorCodeRef` → ErrorCode) as AMBER, not GREEN. Currently it scores RED because neither the embedded structure nor the registry entity exists.
+- **Query #5** (InteractionOutcome): InteractionOutcome is Tier 3. The embedded outcome fields now exist on Interaction and resolve to ErrorCode, so the query scores AMBER rather than GREEN because the hop still depends on embedded data rather than a first-class outcome node.
 - **Query #2/3** (Channel via EntryMode): EntryMode is Tier 3. Channel traversal is modeled as `Touchpoint -[DELIVERED_VIA_CHANNEL]-> Channel`. That parent edge now exists, which is why query #3 is GREEN. Query #2 remains RED only because `JourneyStep -[STARTS_AT_TOUCHPOINT]-> Touchpoint` is still missing.
 
 ---
@@ -203,16 +203,16 @@ Tier 3 value objects (not counted in 71):
 
 | Artifact Type | Has SourceReference Edge? | Status |
 |--------------|--------------------------|--------|
-| Screen | No | `[PLANNED]` |
+| Screen | Yes | `[EDGE]` |
 | Journey | No | `[PLANNED]` |
 | JourneyStep | No | `[PLANNED]` |
-| UserStory | No | `[PLANNED]` |
+| UserStory | Yes | `[EDGE]` |
 | Interaction | No | `[PLANNED]` |
 | Touchpoint | No | `[PLANNED]` |
 | ApiContract | No (entity does not exist) | `[PLANNED]` |
 | DataEntity | No (entity does not exist) | `[PLANNED]` |
 
-**Score: RED** — SourceReference entity does not exist. No artifact has source traceability edges. All `[PLANNED]`.
+**Score: AMBER** — `SourceReference` now exists and `HAS_SOURCE` is implemented for Screen, UserStory, and Bug. Journey, JourneyStep, Interaction, Touchpoint, ApiContract, and DataEntity still lack source edges.
 
 ---
 
@@ -222,16 +222,16 @@ Tier 3 value objects (not counted in 71):
 
 | Capability | Required | Status |
 |-----------|----------|--------|
-| ExternalArtifact entity | Yes | `[PLANNED]` — entity does not exist |
-| External key and URL fields | Yes | `[PLANNED]` |
-| System discriminator (AZURE_DEVOPS, JIRA) | Yes | `[PLANNED]` |
-| Sync status and timestamp | Yes | `[PLANNED]` |
-| REPRESENTS link (ExternalArtifact → domain object) | Yes | `[PLANNED]` |
+| ExternalArtifact entity | Yes | `[EDGE]` — entity now exists |
+| External key and URL fields | Yes | `[EDGE]` |
+| System discriminator (AZURE_DEVOPS, JIRA) | Yes | `[EDGE]` |
+| Sync status and timestamp | Yes | `[EDGE]` |
+| REPRESENTS link (ExternalArtifact → domain object) | Yes | `[EDGE]` — stories and bugs implemented |
 | PARENT_OF / CHILD_OF hierarchy links | Yes | `[PLANNED]` |
 | DEPENDS_ON / BLOCKS dependency links | Yes | `[PLANNED]` |
 | Priority, owner, labels on delivery-relevant objects | Recommended | Partially present (`storyNumber` on UserStory) |
 
-**Score: RED** — No delivery-tool interoperability exists. ExternalArtifact and all sync infrastructure are `[PLANNED]`.
+**Score: AMBER** — ExternalArtifact now supports story/bug traceability with source-system metadata and sync timestamps. Hierarchy/dependency sync and broader object coverage are still planned.
 
 ---
 
@@ -280,15 +280,15 @@ Tier 3 value objects (not counted in 71):
 | # | Dimension | Score | Rationale |
 |---|-----------|-------|-----------|
 | 1 | Documentation completeness | **GREEN** | All 71 benchmarkable nodes are documented with typed attributes |
-| 2 | Implementation completeness | **AMBER** | 45/71 benchmarkable nodes exist in code (63.4%) |
+| 2 | Implementation completeness | **GREEN** | 62/71 benchmarkable nodes exist in code (87.3%) |
 | 3 | Attribute depth | **AMBER** | ~53% average depth on implemented entities; universal status migration pending |
-| 4 | Relationship coverage | **AMBER** | 78 SDN + 1 Cypher relationship declarations are implemented; the engineering and process spines are now edge-backed, with a smaller residual string-backed set remaining |
-| 5 | Queryability | **AMBER** | 6/17 GREEN, 2/17 AMBER, 9/17 RED after D5a process-spine closure |
-| 6 | Source traceability | **RED** | SourceReference entity does not exist |
-| 7 | Delivery-tool interoperability | **RED** | ExternalArtifact entity does not exist |
+| 4 | Relationship coverage | **AMBER** | 90 SDN + 1 Cypher relationship declarations are implemented; the engineering, process, failure-path, traceability, and screen-flow spines are now edge-backed, with a smaller residual string-backed set remaining |
+| 5 | Queryability | **AMBER** | 9/17 GREEN, 3/17 AMBER, 5/17 RED after D6a failure/traceability/screen-flow closure |
+| 6 | Source traceability | **AMBER** | SourceReference exists and key `HAS_SOURCE` edges are live, but coverage is still partial |
+| 7 | Delivery-tool interoperability | **AMBER** | ExternalArtifact exists with story/bug representation, but sync hierarchy and dependency edges are still missing |
 | 8 | UX implementation support | **AMBER** | Screen API resolves stories[] and roles[] via lookup maps; Persona/Channel/Permission registries now exist, but several exploration views and traversal paths are still pending |
 
-**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **48 `@Node` entities**, **78 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **281 passing tests**. The largest remaining gaps are the deferred string-to-edge migrations around journeys, transitions, and error-code handling; missing registries such as ErrorCode, Enum, Event, Locale, and TranslationKey; and a full benchmark rerun against the post-D5a model.
+**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **65 `@Node` entities**, **90 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **340 passing tests**. The largest remaining gaps are the deferred string-to-edge migrations around journeys and story delivery, remaining registry work such as Enum/Event/Locale/TranslationKey, and a full benchmark rerun against the post-D6a model.
 
 ---
 
@@ -363,12 +363,14 @@ WITH i, i.outcomes.error AS errorOutcome
 OPTIONAL MATCH (ec:ErrorCode) WHERE ec.code = errorOutcome.errorCodeRef
 RETURN errorOutcome, ec
 
--- CURRENT: No outcomes structure on Interaction. No ErrorCode entity.
+-- CURRENT: Interaction has embedded outcome fields (outcomeSuccess, outcomeError, outcomeLoading, errorCodeRef).
+-- ErrorCode entity exists. ON_ERROR_SHOWS edge links Interaction → ErrorCode.
+-- WORKAROUND: MATCH (i:Interaction)-[:ON_ERROR_SHOWS]->(ec:ErrorCode)
+--             WHERE i.interactionId = $interactionId
+--             RETURN i.outcomeSuccess, i.outcomeError, i.outcomeLoading, ec
 ```
 
-**Score: RED** — InteractionOutcome structure does not exist. ErrorCode entity does not exist.
-
-**Tier 3 note:** Even when implemented, this query traverses an embedded value object (InteractionOutcome), scoring AMBER at best due to the embedded-to-registry hop. Promotion to GREEN would require InteractionOutcome becoming Tier 1.
+**Score: AMBER** — InteractionOutcome fields are embedded (T3) on Interaction, not a separate node. ErrorCode entity and ON_ERROR_SHOWS edge exist. The embedded-to-registry hop prevents GREEN; promotion requires InteractionOutcome becoming Tier 1.
 
 #### Query 6: Which stories deliver screen S?
 
@@ -395,10 +397,13 @@ MATCH (b:Bug)-[:AFFECTS]->(scr:Screen)
 WHERE scr.surfaceId = $surfaceId
 RETURN b.bugId, b.summary, b.severity
 
--- CURRENT: No Bug entity exists.
+-- CURRENT: Bug entity exists. AFFECTS_SCREEN edge links Bug → Screen.
+-- MATCH (b:Bug)-[:AFFECTS_SCREEN]->(scr:Screen)
+-- WHERE scr.surfaceId = $surfaceId
+-- RETURN b.bugId, b.summary, b.severity
 ```
 
-**Score: RED** — Bug entity does not exist.
+**Score: GREEN** — Bug entity and AFFECTS_SCREEN edge are implemented. Full edge walk is available.
 
 #### Query 8: Where did artifact A come from?
 
@@ -408,10 +413,13 @@ MATCH (a)-[:HAS_SOURCE]->(sr:SourceReference)
 WHERE a.surfaceId = $artifactId OR a.storyId = $artifactId
 RETURN sr.sourceType, sr.documentPath, sr.lineReference
 
--- CURRENT: No SourceReference entity exists.
+-- CURRENT: SourceReference entity exists. HAS_SOURCE edge links multiple entity types → SourceReference.
+-- MATCH (a)-[:HAS_SOURCE]->(sr:SourceReference)
+-- WHERE a.surfaceId = $artifactId OR a.storyId = $artifactId
+-- RETURN sr.artifactPath, sr.section, sr.lineRef
 ```
 
-**Score: RED** — SourceReference entity does not exist.
+**Score: GREEN** — SourceReference entity and HAS_SOURCE edge are implemented on UserStory, Screen, and Bug.
 
 #### Query 9: Which Jira tickets track story S?
 
@@ -421,10 +429,13 @@ MATCH (ea:ExternalArtifact)-[:REPRESENTS]->(us:UserStory)
 WHERE us.storyId = $storyId AND ea.system = 'JIRA'
 RETURN ea.key, ea.url, ea.syncStatus
 
--- CURRENT: No ExternalArtifact entity exists.
+-- CURRENT: ExternalArtifact entity exists. REPRESENTS_STORY edge links ExternalArtifact → UserStory.
+-- MATCH (ea:ExternalArtifact)-[:REPRESENTS_STORY]->(us:UserStory)
+-- WHERE us.storyId = $storyId AND ea.system = 'JIRA'
+-- RETURN ea.key, ea.url, ea.syncStatus
 ```
 
-**Score: RED** — ExternalArtifact entity does not exist.
+**Score: GREEN** — ExternalArtifact entity and REPRESENTS_STORY edge are implemented. Edge name uses typed suffix (REPRESENTS_STORY not generic REPRESENTS) per SDN convention.
 
 #### Query 10: Which confirmation dialogs can interaction I trigger?
 
@@ -482,9 +493,9 @@ RETURN pe.eventId, pe.eventType, pe.name
 
 | Score | Count | % | Queries |
 |-------|-------|---|---------|
-| GREEN | 6 | 35% | #1 (persona journeys), #3 (channel reach), #10 (confirmation dialogs), #11 (process activities), #12 (process gateways), #13 (process events) |
-| AMBER | 2 | 12% | #4 (permissions), #6 (stories) |
-| RED | 9 | 53% | #2, #5, #7, #8, #9, #14, #15, #16, #17 |
+| GREEN | 9 | 53% | #1 (persona journeys), #3 (channel reach), #7 (bugs affect screen), #8 (source reference), #9 (external artifacts), #10 (confirmation dialogs), #11 (process activities), #12 (process gateways), #13 (process events) |
+| AMBER | 3 | 18% | #4 (permissions), #5 (failure path), #6 (stories) |
+| RED | 5 | 29% | #2, #14, #15, #16, #17 |
 
 ---
 
@@ -712,7 +723,7 @@ When a client requests a Screen, the response should expose linked graph objects
 |-----|--------|----------------|
 | No `STARTS_AT_TOUCHPOINT` edge | Query #2 remains blocked even though Channel traversal is now edge-backed | Create `JourneyStep -[STARTS_AT_TOUCHPOINT]-> Touchpoint` |
 | Legacy permission compatibility field on Interaction | Query #4 remains mixed-mode until the canonical screen-to-interaction path is fully cleaned up | Keep `REQUIRES_PERMISSION` as source of truth and retire the compatibility field later |
-| No ErrorCode entity | Query #5 blocked | Create ErrorCode T2 registry from EMSIST 80+ codes |
+| Embedded InteractionOutcome remains Tier 3 | Query #5 is still partial, not a full graph walk | Keep embedded outcome fields for now; promote only if direct querying becomes necessary |
 
 ### 10.3 Priority 2 — Structural Completeness (Enables full traversal spine)
 
@@ -728,14 +739,14 @@ When a client requests a Screen, the response should expose linked graph objects
 | Gap | Impact | Recommendation |
 |-----|--------|----------------|
 | No BusinessObjective entity | No upstream business context in graph | Create entity; seed from EMSIST source |
-| No SourceReference entity | Query #8 blocked; zero traceability | Create entity with SUPPORTS edge to any T1 |
-| No ExternalArtifact entity | Query #9 blocked; no delivery-tool integration | Create entity per `azure-jira-benchmark.md` spec |
+| No source coverage on Journey/JourneyStep/Interaction/Touchpoint | Query #8 is only partially closed | Extend `HAS_SOURCE` beyond Screen/UserStory/Bug where traceability matters most |
+| No hierarchy/dependency sync on ExternalArtifact | Query #9 is only partially closed | Add work-item hierarchy and dependency edges after the basic sync shape is stable |
 
 ### 10.5 Priority 4 — Engineering Layer (Enables contract-level queries)
 
 | Gap | Impact | Recommendation |
 |-----|--------|----------------|
-| No ErrorCode entity | Interaction failure paths still cannot resolve to a typed registry | Create ErrorCode entity and wire `InteractionOutcome.errorCodeRef` migration |
+| No canonical `DELIVERS` edge | Screen-to-story traversal still depends on `storyRefs` | Replace string refs with `UserStory -[DELIVERS]-> Screen` |
 | No `LOCATED_IN` edge | Query #16 cannot resolve test cases to code files | Add `TestCase -[LOCATED_IN]-> CodeAsset` |
 | No CodingConvention entity | Query #17 cannot resolve convention governance | Create CodingConvention entity and scope edges to ApplicationComponent |
 

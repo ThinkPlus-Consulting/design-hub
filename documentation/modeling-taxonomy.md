@@ -238,10 +238,10 @@ Tier 3 objects are NOT counted in the 71 benchmarkable nodes. Their attributes a
 
 The implemented graph no longer resembles the original 11-entity seed. The current code baseline is:
 
-- **61 `@Node` entities**
-- **78 SDN `@Relationship` declarations**
+- **65 `@Node` entities**
+- **90 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **307 passing tests**
+- **340 passing tests**
 
 This section highlights the remaining shape mismatches that still matter for benchmark scoring.
 
@@ -264,10 +264,10 @@ This section highlights the remaining shape mismatches that still matter for ben
 
 The current implementation baseline is materially ahead of the original seed model, but benchmark gaps still cluster in four areas:
 
-- **Legacy string-to-edge migration**: `storyRefs`, `journeyStepRefs`, `interactionRef`, and ErrorCode-related references still block full graph traversal.
-- **Registry completion**: `ErrorCode`, `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned.
+- **Legacy string-to-edge migration**: `storyRefs`, `journeyStepRefs`, and `interactionRef` still block full graph traversal.
+- **Registry completion**: `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned.
 - **Enterprise architecture depth**: `Organization`, `BusinessObject`, `InformationFlow`, `Deployment`, and `InfrastructureNode` remain target-taxonomy objects but are not yet implemented.
-- **View-driving UX structure**: `Topic`, `ScreenState`, `Transition`, `SourceReference`, and `ExternalArtifact` still gate several benchmark queries.
+- **View-driving UX structure**: `Topic` remains the main missing UX/navigation node; screen-flow and traceability objects are now implemented.
 
 ---
 
