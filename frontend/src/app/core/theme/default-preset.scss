@@ -1,0 +1,65 @@
+/* ==========================================================================
+   Default Preset -- Neumorphic Design System Composites
+   ========================================================================== */
+
+:root {
+  /* === RGB Channel Tokens === */
+  --nm-shadow-dark-rgb: 152, 133, 97;
+  --nm-shadow-light-rgb: 250, 248, 240;
+  --nm-warning-rgb: 185, 167, 121;
+  --nm-danger-rgb: 107, 31, 42;
+  --nm-text-deep-rgb: 22, 22, 22;
+
+  /* === Shadow Base === */
+  --nm-shadow-dark: rgba(var(--nm-shadow-dark-rgb), 0.38);
+  --nm-shadow-light: rgba(var(--nm-shadow-light-rgb), 0.55);
+
+  /* === Fonts === */
+  --nm-font-brand: 'Gotham Rounded', 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  --nm-font-code: 'Courier New', monospace;
+
+  /* === Island & Divider === */
+  --nm-shadow-island: 6px 6px 14px rgba(var(--nm-shadow-dark-rgb), 0.32),
+    -6px -6px 14px rgba(var(--nm-shadow-light-rgb), 0.60);
+  --nm-island-border: 1px solid rgba(var(--nm-shadow-light-rgb), 0.28);
+  --nm-divider-soft: 1px solid rgba(var(--nm-black-rgb), 0.09);
+
+  /* === Elevation === */
+  --nm-elevation-default: 0 4px 10px rgba(var(--nm-black-rgb), 0.24);
+  --nm-elevation-hover: 0 7px 16px rgba(var(--nm-black-rgb), 0.3);
+  --nm-elevation-pressed: inset 0 2px 6px rgba(var(--nm-black-rgb), 0.22);
+  --nm-elevation-subtle: 0 4px 12px rgba(var(--nm-black-rgb), 0.08);
+
+  /* === Borders === */
+  --nm-border-divider: 1px solid rgba(var(--nm-shadow-dark-rgb), 0.18);
+  --nm-border-soft: 1px solid rgba(var(--nm-shadow-dark-rgb), 0.22);
+  --nm-border-strong: 1px solid rgba(var(--nm-shadow-dark-rgb), 0.28);
+  --nm-border-accent-soft: 1px solid rgba(var(--nm-accent-rgb, 66, 129, 119), 0.24);
+  --nm-border-accent: 1px solid rgba(var(--nm-accent-rgb, 66, 129, 119), 0.32);
+  --nm-border-warning: 1px solid rgba(var(--nm-warning-rgb), 0.45);
+  --nm-border-danger: 1px solid rgba(var(--nm-danger-rgb), 0.3);
+
+  /* === Backgrounds === */
+  --nm-accent-soft: color-mix(in srgb, var(--tp-primary) 17%, transparent);
+  --nm-bg-accent-soft: rgba(var(--nm-accent-rgb, 66, 129, 119), 0.12);
+  --nm-bg-warning-soft: rgba(var(--nm-warning-rgb), 0.18);
+  --nm-bg-danger-soft: rgba(var(--nm-danger-rgb), 0.08);
+  --nm-bg-panel-soft: color-mix(in srgb, var(--tp-surface) 56%, transparent);
+
+  /* === Shadows === */
+  --nm-shadow-card: 12px 12px 24px rgba(var(--nm-shadow-dark-rgb), 0.38),
+    -10px -10px 20px rgba(var(--nm-shadow-light-rgb), 0.55);
+  --nm-shadow-item: 7px 7px 14px rgba(var(--nm-shadow-dark-rgb), 0.35),
+    -6px -6px 12px rgba(var(--nm-shadow-light-rgb), 0.55);
+  --nm-shadow-item-active: inset 4px 4px 9px rgba(var(--nm-shadow-dark-rgb), 0.34),
+    inset -4px -4px 8px rgba(var(--nm-shadow-light-rgb), 0.55);
+  --nm-shadow-input-inset: inset 4px 4px 8px rgba(var(--nm-shadow-dark-rgb), 0.3),
+    inset -4px -4px 8px rgba(var(--nm-shadow-light-rgb), 0.52);
+  --nm-shadow-panel: 6px 6px 14px rgba(var(--nm-shadow-dark-rgb), 0.16),
+    -4px -4px 10px rgba(var(--nm-shadow-light-rgb), 0.45);
+  --nm-panel-shadow: -8px 0 32px rgba(var(--nm-black-rgb), 0.12);
+
+  /* === Radii === */
+  --radius-card: 1rem;
+  --radius-control: 0.72rem;
+}
