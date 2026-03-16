@@ -20,7 +20,7 @@ class InteractionRepositoryQueryTest {
         String cypher = query.value();
 
         assertAll(
-                () -> assertTrue(cypher.contains("MATCH (i:Interaction {surfaceId: $surfaceId})")),
+                () -> assertTrue(cypher.contains("MATCH (s:Screen {surfaceId: $surfaceId})-[:HAS_INTERACTION]->(i:Interaction)")),
                 () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[effectRel:HAS_EFFECT]->(e:Effect)")),
                 () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[permissionRel:REQUIRES_PERMISSION]->(perm:Permission)")),
                 () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[personaRel:USED_BY_PERSONA]->(persona:Persona)")),

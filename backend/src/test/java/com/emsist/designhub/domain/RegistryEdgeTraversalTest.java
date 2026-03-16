@@ -92,15 +92,23 @@ class RegistryEdgeTraversalTest {
         Persona persona = Persona.builder()
                 .personaId("PER-USER").name("Standard User").status(Status.DEFINED).build();
 
+        JourneyStep step = JourneyStep.builder()
+                .stepId("JRN-LOGIN-001")
+                .label("Open login experience")
+                .startsAtTouchpoint(tp)
+                .orderIndex(0)
+                .build();
+
         Journey journey = Journey.builder()
                 .journeyId("JRN-LOGIN").title("Login Flow")
                 .status(Status.DEFINED)
                 .performedByPersona(persona)
-                .steps(List.of())
+                .steps(List.of(step))
                 .build();
 
         // Verify the full path is representable
         assertEquals("PER-USER", journey.getPerformedByPersona().getPersonaId());
+        assertEquals("TP-WEB-001", journey.getSteps().get(0).getStartsAtTouchpoint().getTouchpointId());
         assertEquals("CH-WEB-DSK", tp.getDeliveredViaChannel().getChannelCode());
     }
 }

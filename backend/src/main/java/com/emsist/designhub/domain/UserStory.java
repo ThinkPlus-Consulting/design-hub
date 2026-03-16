@@ -36,4 +36,7 @@ public class UserStory {
 
     @Relationship(type = "HAS_SOURCE", direction = Relationship.Direction.OUTGOING)
     private List<SourceReference> sourceReferences;
+
+    @Relationship(type = "DELIVERS", direction = Relationship.Direction.OUTGOING)
+    private List<Screen> deliversScreens;
 }

@@ -81,4 +81,12 @@ public class Screen {
 
     @Relationship(type = "HAS_SOURCE", direction = Relationship.Direction.OUTGOING)
     private List<SourceReference> sourceReferences;
+
+    @Relationship(type = "HAS_INTERACTION", direction = Relationship.Direction.OUTGOING)
+    @JsonIgnoreProperties({"usedByPersonas", "accessibleByRoles", "requiresPermission", "callsApi",
+            "triggersConfirmation", "onErrorShows", "onScreen", "effects"})
+    private List<Interaction> interactions;
+
+    @Relationship(type = "DELIVERS", direction = Relationship.Direction.INCOMING)
+    private List<UserStory> deliveredByStories;
 }

@@ -3,6 +3,7 @@ package com.emsist.designhub.dto;
 import com.emsist.designhub.domain.ContentElement;
 import com.emsist.designhub.domain.Gap;
 import com.emsist.designhub.domain.Screen;
+import com.emsist.designhub.domain.UserStory;
 
 import java.util.List;
 import java.util.Map;
@@ -58,8 +59,8 @@ public record ScreenResponse(
                 screen.isLoadingStates(),
                 screen.getMessageRegistryCount(),
                 screen.getNotes(),
-                safeList(screen.getStoryRefs()),
-                resolveStories(screen.getStoryRefs(), storyLookup),
+                storyIds(screen),
+                resolveStories(screen, storyLookup),
                 safeList(screen.getRoleKeys()),
                 resolveRoles(screen.getRoleKeys(), roleLookup),
                 safeList(screen.getPersonaIds()),
@@ -79,6 +80,16 @@ public record ScreenResponse(
         return values == null ? List.of() : values;
     }
 
+    private static List<String> storyIds(Screen screen) {
+        List<UserStory> deliveredStories = screen.getDeliveredByStories();
+        if (deliveredStories != null && !deliveredStories.isEmpty()) {
+            return deliveredStories.stream()
+                    .map(UserStory::getStoryId)
+                    .toList();
+        }
+        return safeList(screen.getStoryRefs());
+    }
+
     private static List<RoleResponse> resolveRoles(
             List<String> roleKeys,
             Map<String, RoleResponse> roleLookup
@@ -90,10 +101,30 @@ public record ScreenResponse(
     }
 
     private static List<UserStoryResponse> resolveStories(
-            List<String> storyRefs,
+            Screen screen,
             Map<String, UserStoryResponse> storyLookup
     ) {
-        return safeList(storyRefs).stream()
+        List<UserStory> deliveredStories = screen.getDeliveredByStories();
+        if (deliveredStories != null && !deliveredStories.isEmpty()) {
+            return deliveredStories.stream()
+                    .map(story -> {
+                        UserStoryResponse resolved = storyLookup.get(story.getStoryId());
+                        if (resolved != null) {
+                            return resolved;
+                        }
+                        long screenCount = story.getDeliversScreens() == null ? 0 : story.getDeliversScreens().size();
+                        return new UserStoryResponse(
+                                story.getStoryId(),
+                                story.getLabel(),
+                                story.getModule(),
+                                story.getDomain(),
+                                story.getStoryNumber(),
+                                screenCount
+                        );
+                    })
+                    .toList();
+        }
+        return safeList(screen.getStoryRefs()).stream()
                 .map(storyLookup::get)
                 .filter(story -> story != null)
                 .toList();

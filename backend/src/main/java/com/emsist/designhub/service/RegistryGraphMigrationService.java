@@ -319,6 +319,69 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    @Transactional
+    public void backfillHasInteractionEdges() {
+        neo4jClient.query("""
+                MATCH (i:Interaction) WHERE i.surfaceId IS NOT NULL AND i.surfaceId <> ''
+                MATCH (s:Screen {surfaceId: i.surfaceId})
+                MERGE (s)-[:HAS_INTERACTION]->(i)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillDeliversEdges() {
+        neo4jClient.query("""
+                MATCH (s:Screen) WHERE s.storyRefs IS NOT NULL AND size(s.storyRefs) > 0
+                UNWIND s.storyRefs AS storyId
+                WITH s, storyId WHERE storyId <> ''
+                MATCH (us:UserStory {storyId: storyId})
+                MERGE (us)-[:DELIVERS]->(s)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillExecutesInteractionEdges() {
+        neo4jClient.query("""
+                MATCH (j:Journey)-[:HAS_STEP]->(step:JourneyStep)
+                WHERE step.interactionRef IS NOT NULL AND step.interactionRef <> ''
+                MATCH (i:Interaction {interactionId: step.interactionRef})
+                MERGE (step)-[:EXECUTES_INTERACTION]->(i)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillJourneyStepTraversalEdges() {
+        neo4jClient.query("""
+                UNWIND [
+                  {stepId: 'JRN-R05-001.01', screenId: 'SCR-AGT-GALLERY', touchpointId: 'TP-GALLERY-MENU'},
+                  {stepId: 'JRN-R05-001.02', screenId: 'SCR-AGT-GALLERY', touchpointId: null},
+                  {stepId: 'JRN-R05-001.03', screenId: 'SCR-AGT-GALLERY', touchpointId: null},
+                  {stepId: 'JRN-R05-001.04', screenId: 'SCR-AGT-GALLERY', touchpointId: null},
+                  {stepId: 'JRN-R05-001.05', screenId: 'SCR-AGT-BUILDER', touchpointId: null},
+                  {stepId: 'JRN-R05-001.06', screenId: 'SCR-AGT-BUILDER', touchpointId: null},
+                  {stepId: 'JRN-R05-001.07', screenId: 'SCR-AGT-BUILDER', touchpointId: null},
+                  {stepId: 'JRN-R05-002.01', screenId: 'SCR-AGT-LIST', touchpointId: 'TP-AGT-DOCK'},
+                  {stepId: 'JRN-R05-002.02', screenId: 'SCR-AGT-LIST', touchpointId: null},
+                  {stepId: 'JRN-R05-003.01', screenId: 'SCR-AGT-CHAT', touchpointId: 'TP-CHAT-FAB'},
+                  {stepId: 'JRN-R05-003.02', screenId: 'SCR-AGT-CHAT', touchpointId: null},
+                  {stepId: 'JRN-R01-001.01', screenId: 'SCR-AUTH', touchpointId: 'TP-AUTH-DIRECT'},
+                  {stepId: 'JRN-R01-001.02', screenId: 'SCR-AUTH', touchpointId: null},
+                  {stepId: 'JRN-R01-001.03', screenId: 'SURF-HEADER', touchpointId: null},
+                  {stepId: 'JRN-R01-002.01', screenId: 'SCR-AUTH', touchpointId: 'TP-PWD-RESET-LINK'},
+                  {stepId: 'JRN-R01-002.02', screenId: 'SCR-AUTH-PWD-RESET-REQ', touchpointId: null},
+                  {stepId: 'JRN-R01-002.03', screenId: 'SCR-AUTH-PWD-RESET-CONFIRM', touchpointId: null},
+                  {stepId: 'JRN-R01-002.04', screenId: 'SCR-AUTH-PWD-RESET-CONFIRM', touchpointId: null}
+                ] AS mapping
+                MATCH (step:JourneyStep {stepId: mapping.stepId})
+                MATCH (screen:Screen {surfaceId: mapping.screenId})
+                OPTIONAL MATCH (tp:Touchpoint {touchpointId: mapping.touchpointId})
+                MERGE (step)-[:USES_SCREEN]->(screen)
+                FOREACH (_ IN CASE WHEN tp IS NULL THEN [] ELSE [1] END |
+                  MERGE (step)-[:STARTS_AT_TOUCHPOINT]->(tp)
+                )
+                """).run();
+    }
+
     // ── D4 engineering seeds (Chunk 3) ────────────────────────────────
 
     @Transactional
@@ -808,6 +871,10 @@ public class RegistryGraphMigrationService {
         backfillTriggersConfirmationEdges();
         backfillOnErrorShowsEdges();
         backfillCanProduceErrorEdges();
+        backfillHasInteractionEdges();
+        backfillDeliversEdges();
+        backfillExecutesInteractionEdges();
+        backfillJourneyStepTraversalEdges();
 
         // 6. Seed D4 engineering edge coverage
         seedAcceptanceCriteria();

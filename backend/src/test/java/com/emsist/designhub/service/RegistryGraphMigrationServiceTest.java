@@ -356,6 +356,63 @@ class RegistryGraphMigrationServiceTest {
     }
 
     @Test
+    void shouldBackfillHasInteractionEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.backfillHasInteractionEdges();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("HAS_INTERACTION")
+                && ((String) cypher).contains("Interaction")
+                && ((String) cypher).contains("surfaceId")));
+    }
+
+    @Test
+    void shouldBackfillDeliversEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.backfillDeliversEdges();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("DELIVERS")
+                && ((String) cypher).contains("storyRefs")
+                && ((String) cypher).contains("UserStory")));
+    }
+
+    @Test
+    void shouldBackfillExecutesInteractionEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.backfillExecutesInteractionEdges();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("EXECUTES_INTERACTION")
+                && ((String) cypher).contains("JourneyStep")
+                && ((String) cypher).contains("interactionRef")));
+    }
+
+    @Test
+    void shouldBackfillJourneyStepTraversalEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.backfillJourneyStepTraversalEdges();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("USES_SCREEN")
+                && ((String) cypher).contains("STARTS_AT_TOUCHPOINT")
+                && ((String) cypher).contains("JRN-R05-001.01")
+                && ((String) cypher).contains("TP-GALLERY-MENU")));
+    }
+
+    @Test
     void shouldSeedAcceptanceCriteria() {
         var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
         when(neo4jClient.query(anyString())).thenReturn(spec);
@@ -630,7 +687,7 @@ class RegistryGraphMigrationServiceTest {
 
         service.runFullMigration();
 
-        // Existing 39 + D6a screen-flow additions (2) = 41 minimum with empty apiCalls fetch
-        verify(neo4jClient, atLeast(41)).query(anyString());
+        // Existing 41 + canonical story/journey traversal backfills (4) = 45 minimum with empty apiCalls fetch
+        verify(neo4jClient, atLeast(45)).query(anyString());
     }
 }

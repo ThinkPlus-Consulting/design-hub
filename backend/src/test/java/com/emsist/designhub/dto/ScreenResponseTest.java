@@ -3,9 +3,11 @@ package com.emsist.designhub.dto;
 import com.emsist.designhub.domain.Gap;
 import com.emsist.designhub.domain.Screen;
 import com.emsist.designhub.domain.Status;
+import com.emsist.designhub.domain.UserStory;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -95,5 +97,34 @@ class ScreenResponseTest {
 
         assertNotNull(response.gaps());
         assertTrue(response.gaps().isEmpty());
+    }
+
+    @Test
+    void shouldPreferDeliveredStoriesWhenGraphEdgesExist() {
+        UserStory deliveredStory = UserStory.builder()
+                .storyId("US-DM-007")
+                .label("View object types")
+                .module("R04")
+                .domain("definitions")
+                .storyNumber("US-DM-007")
+                .build();
+
+        Screen screen = Screen.builder()
+                .surfaceId("SCR-01")
+                .label("Object Type List/Grid")
+                .module("R04")
+                .storyRefs(List.of("LEGACY-SHOULD-NOT-WIN"))
+                .deliveredByStories(List.of(deliveredStory))
+                .build();
+
+        ScreenResponse response = ScreenResponse.from(
+                screen,
+                Map.of(),
+                Map.of("US-DM-007", new UserStoryResponse("US-DM-007", "View object types", "R04", "definitions", "US-DM-007", 1))
+        );
+
+        assertEquals(List.of("US-DM-007"), response.storyRefs());
+        assertEquals(1, response.stories().size());
+        assertEquals("US-DM-007", response.stories().get(0).storyId());
     }
 }

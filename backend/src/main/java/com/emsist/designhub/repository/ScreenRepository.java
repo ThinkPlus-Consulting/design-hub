@@ -24,12 +24,22 @@ public interface ScreenRepository extends Neo4jRepository<Screen, String> {
 
     @Query("""
             MATCH (s:Screen {surfaceId: $surfaceId})
-            OPTIONAL MATCH (s)-[:HAS_GAP]->(g:Gap)
-            OPTIONAL MATCH (s)-[:HAS_CONTENT]->(c:ContentElement)
-            OPTIONAL MATCH (s)-[:TRANSITIONS_TO]->(t:Screen)
-            RETURN s, collect(DISTINCT g) AS gaps,
-                   collect(DISTINCT c) AS contentElements,
-                   collect(DISTINCT t) AS transitionsTo
+            OPTIONAL MATCH (s)-[gapRel:HAS_GAP]->(g:Gap)
+            OPTIONAL MATCH (s)-[contentRel:HAS_CONTENT]->(c:ContentElement)
+            OPTIONAL MATCH (s)-[transitionRel:TRANSITIONS_TO]->(t:Screen)
+            OPTIONAL MATCH (story:UserStory)-[storyRel:DELIVERS]->(s)
+            OPTIONAL MATCH (s)-[interactionRel:HAS_INTERACTION]->(interaction:Interaction)
+            RETURN s,
+                   collect(DISTINCT gapRel),
+                   collect(DISTINCT g),
+                   collect(DISTINCT contentRel),
+                   collect(DISTINCT c),
+                   collect(DISTINCT transitionRel),
+                   collect(DISTINCT t),
+                   collect(DISTINCT storyRel),
+                   collect(DISTINCT story),
+                   collect(DISTINCT interactionRel),
+                   collect(DISTINCT interaction)
             """)
     Optional<Screen> findFullGraph(@Param("surfaceId") String surfaceId);
 

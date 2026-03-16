@@ -12,7 +12,7 @@ public interface UserStoryRepository extends Neo4jRepository<UserStory, String> 
 
     @Query("""
             MATCH (u:UserStory)
-            OPTIONAL MATCH (s:Screen)-[:IMPLEMENTS_STORY]->(u)
+            OPTIONAL MATCH (u)-[:DELIVERS]->(s:Screen)
             RETURN u.storyId AS storyId,
                    u.label AS label,
                    u.module AS module,

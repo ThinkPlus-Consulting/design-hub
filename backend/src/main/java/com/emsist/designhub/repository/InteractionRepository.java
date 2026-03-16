@@ -12,7 +12,7 @@ import java.util.List;
 public interface InteractionRepository extends Neo4jRepository<Interaction, String> {
 
     @Query("""
-            MATCH (i:Interaction {surfaceId: $surfaceId})
+            MATCH (s:Screen {surfaceId: $surfaceId})-[:HAS_INTERACTION]->(i:Interaction)
             OPTIONAL MATCH (i)-[effectRel:HAS_EFFECT]->(e:Effect)
             OPTIONAL MATCH (i)-[permissionRel:REQUIRES_PERMISSION]->(perm:Permission)
             OPTIONAL MATCH (i)-[personaRel:USED_BY_PERSONA]->(persona:Persona)

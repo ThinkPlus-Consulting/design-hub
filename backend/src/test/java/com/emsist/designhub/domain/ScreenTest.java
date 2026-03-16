@@ -92,4 +92,41 @@ class ScreenTest {
         assertEquals(1, screen.getSourceReferences().size());
         assertEquals("SRC-SCR-AUTH-001", screen.getSourceReferences().get(0).getSourceId());
     }
+
+    @Test
+    void shouldLinkToInteractionViaHasInteraction() {
+        Interaction interaction = Interaction.builder()
+                .interactionId("INT-G-002")
+                .surfaceId("SURF-HEADER")
+                .element("Global search input")
+                .trigger("type")
+                .build();
+
+        Screen screen = Screen.builder()
+                .surfaceId("SURF-HEADER")
+                .status(Status.DEFINED)
+                .interactions(List.of(interaction))
+                .build();
+
+        assertEquals(1, screen.getInteractions().size());
+        assertEquals("INT-G-002", screen.getInteractions().get(0).getInteractionId());
+    }
+
+    @Test
+    void shouldLinkToDeliveredStoriesViaIncomingDelivers() {
+        UserStory story = UserStory.builder()
+                .storyId("US-DM-007")
+                .label("View object types")
+                .module("R04")
+                .build();
+
+        Screen screen = Screen.builder()
+                .surfaceId("SCR-01")
+                .status(Status.DEFINED)
+                .deliveredByStories(List.of(story))
+                .build();
+
+        assertEquals(1, screen.getDeliveredByStories().size());
+        assertEquals("US-DM-007", screen.getDeliveredByStories().get(0).getStoryId());
+    }
 }
