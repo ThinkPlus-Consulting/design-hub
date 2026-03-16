@@ -42,7 +42,7 @@ The platform should maintain a first-class graph object registry covering 71 ben
 | Capability | Status | Evidence |
 |-----------|--------|----------|
 | Stable object identity | `[IMPLEMENTED]` | `stableId` / `surfaceId` / `storyId` on implemented entities |
-| Typed relationships | `[PARTIAL]` | 90 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; several deferred string-backed relationships remain |
+| Typed relationships | `[PARTIAL]` | 97 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; a smaller residual set of deferred relationships remains |
 | Object status tracking | `[IMPLEMENTED — reshape required]` | 3-enum model exists; target is universal 10-value `status` |
 | Selective readiness flags | `[PLANNED]` | No readiness flags in current entities |
 | Source traceability | `[IMPLEMENTED]` | `SourceReference` entity exists; `HAS_SOURCE` edges on `UserStory`, `Screen`, `Bug` |
@@ -65,7 +65,7 @@ Selecting a persona should reveal journeys, steps, screens, stories, and related
 
 **Key traversal**: `Persona <- PERFORMED_BY_PERSONA <- Journey -> HAS_STEP -> JourneyStep -> USES_SCREEN -> Screen`
 
-**Current gap**: the core `Journey -> Persona` edge exists, but dedicated Persona exploration views and the remaining journey-step traversal edges are still missing.
+**Current gap**: the core `Journey -> Persona -> JourneyStep -> Screen/Touchpoint` traversal is now present in the graph, but dedicated Persona exploration views are still missing.
 
 ### 1.4 Screen and interaction exploration
 
@@ -84,7 +84,7 @@ Selecting a screen should reveal its route, states, interactions, messages, vali
 | `Finding` | T1 | `[PLANNED]` |
 | `ErrorCode` | T2 | `[IMPLEMENTED]` |
 
-**Current gap**: Screen returns resolved stories and roles via API projection (`ScreenResponse.java`), but the underlying graph uses `storyRefs` and `roleKeys` as strings.
+**Current gap**: Screen now has canonical `DELIVERS` and `HAS_INTERACTION` graph traversal support, but roles still resolve through a compatibility lookup layer and the broader exploration views remain incomplete.
 
 ### 1.5 Story and delivery exploration
 
@@ -207,7 +207,7 @@ graph TD
 
 | Phase | Scope | Benchmark Status | Key Artifacts |
 |-------|-------|-----------------|---------------|
-| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 65 `@Node` entities in code, 90 SDN edges + 1 Cypher edge, 340 tests | Screen, ScreenState, Transition, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, ConfirmationDialog, ErrorCode, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset, AcceptanceCriterion, Rule, ValidationRule, Message, ApiContract, RequestSchema, ResponseSchema, ErrorContract, DataEntity, DataField, TestCase, BusinessDomain, BusinessCapability, BusinessProcess, ProcessActivity, ProcessGateway, ProcessEvent, Task, SourceReference, ExternalArtifact, Bug, plus the previously delivered governance and architecture stubs |
+| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 65 `@Node` entities in code, 97 SDN edges + 1 Cypher edge, 353 tests | Screen, ScreenState, Transition, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, ConfirmationDialog, ErrorCode, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset, AcceptanceCriterion, Rule, ValidationRule, Message, ApiContract, RequestSchema, ResponseSchema, ErrorContract, DataEntity, DataField, TestCase, BusinessDomain, BusinessCapability, BusinessProcess, ProcessActivity, ProcessGateway, ProcessEvent, Task, SourceReference, ExternalArtifact, Bug, plus the previously delivered governance and architecture stubs |
 | 2. Exploration | Persona, journey, screen, and story traversal views | `[PARTIAL]` — Persona/role/channel nodes and screen-flow graph objects now exist; Topic and dedicated exploration views still missing | Persona View, Journey View, Screen Flow View |
 | 3. Delivery intelligence | Findings, bugs, readiness gaps, API and data dependencies | `[PLANNED]` — requires Bug, Finding, ApiContract, DataEntity | Delivery View, completenessScore engine |
 | 4. External alignment | Azure DevOps and Jira mapping, sync objects, benchmark reporting | `[PARTIAL]` — ExternalArtifact exists for story/bug representation; sync hierarchy and dependency semantics are still missing | Benchmark View |

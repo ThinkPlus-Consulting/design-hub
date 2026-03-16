@@ -98,7 +98,7 @@ graph TD
 | Aspect | Status | Evidence |
 |--------|--------|----------|
 | Node persistence | `[IMPLEMENTED]` | 65 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
-| Typed edges | `[PARTIAL]` | 90 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, process-spine, failure-path, traceability, and screen-flow core is now edge-backed, with a smaller residual set of string-backed relationships remaining |
+| Typed edges | `[PARTIAL]` | 97 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, process-spine, failure-path, traceability, screen-flow, and canonical journey/story traversal core is now edge-backed |
 | Bidirectional traversal | `[PARTIAL]` | Forward traversal works for implemented edges; reverse requires Cypher |
 | Status filtering | `[IMPLEMENTED — reshape required]` | 3-enum status model; target is universal 10-value `status` |
 | Readiness filtering | `[PLANNED]` | No readiness flags on entities |

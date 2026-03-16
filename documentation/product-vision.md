@@ -38,7 +38,7 @@ It connects:
 - **what is still missing** (findings, bugs, gaps, open questions, risks)
 - **where it is tracked** (external artifacts in Azure DevOps, Jira)
 
-The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 65 `@Node` entities, 90 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 340 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
+The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 65 `@Node` entities, 97 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 353 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
 
 ---
 
@@ -221,7 +221,7 @@ The product must be able to answer these traversal queries via graph edge walks,
 | 12 | Which code files need to change for story S? | `UserStory → DELIVERS → artifact → owning ApplicationComponent → HAS_CODE_ASSET → CodeAsset` |
 | 13 | Which coding conventions apply to component C? | `ApplicationComponent ← GOVERNED_BY_CONVENTION ← CodingConvention` with scope resolution |
 
-**Current state (from `vision-benchmark.md`):** 9/17 GREEN, 3/17 AMBER, 5/17 RED (D6a closed failure-path, traceability, and screen-flow queries). Target for 1.0: >= 5 queries at GREEN or AMBER.
+**Current state (from `vision-benchmark.md`):** 12/17 GREEN, 1/17 AMBER, 4/17 RED after the canonical journey/story traversal closure. Target for 1.0: >= 5 queries at GREEN or AMBER.
 
 ---
 
@@ -326,8 +326,8 @@ Current state from `vision-benchmark.md`:
 | Documentation completeness | **GREEN** |
 | Implementation completeness | **GREEN** (87.3% benchmarkable coverage; 65 `@Node` entities overall) |
 | Attribute depth | **AMBER** (~53%) |
-| Relationship coverage | **AMBER** (90 SDN + 1 Cypher relationship types implemented) |
-| Queryability | **AMBER** (9/17 GREEN, 3/17 AMBER) |
+| Relationship coverage | **AMBER** (97 SDN + 1 Cypher relationship types implemented) |
+| Queryability | **AMBER** (12/17 GREEN, 1/17 AMBER) |
 | Source traceability | **AMBER** |
 | Delivery-tool interoperability | **AMBER** |
 | UX implementation support | **AMBER** |

@@ -2250,7 +2250,7 @@ Complete registry of all modeled relationships with implementation status.
 
 ### 6.1 Existing Graph Edges
 
-The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **90 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
+The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **97 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
 
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
@@ -2268,7 +2268,7 @@ The table below shows the legacy/core implemented edges that were present earlie
 
 | Relationship | Source | Target | Current Field | Severity | Status |
 |-------------|--------|--------|--------------|----------|--------|
-| `DELIVERS` | UserStory | Screen | `storyRefs` | BLOCKING | `[STRING_REF]` — UserStory DELIVERS Screen (replaces deprecated IMPLEMENTS_STORY, direction reversed) |
+| `DELIVERS` | UserStory | Screen | `storyRefs` | BLOCKING | `[EDGE]` — canonical edge is implemented; legacy `storyRefs` remains for compatibility |
 | `ACCESSIBLE_BY_ROLE` | Screen | BusinessRole | `roleKeys` | OPTIONAL | `[EDGE]` — legacy source field retained |
 | `USED_BY_PERSONA` | Screen | Persona | `personaIds` | OPTIONAL | `[EDGE]` — legacy source field retained |
 | `PERFORMED_BY_PERSONA` | Journey | Persona | `personaId` | BLOCKING | `[EDGE]` — legacy source field retained |

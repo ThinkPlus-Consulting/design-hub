@@ -239,9 +239,9 @@ Tier 3 objects are NOT counted in the 71 benchmarkable nodes. Their attributes a
 The implemented graph no longer resembles the original 11-entity seed. The current code baseline is:
 
 - **65 `@Node` entities**
-- **90 SDN `@Relationship` declarations**
+- **97 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **340 passing tests**
+- **353 passing tests**
 
 This section highlights the remaining shape mismatches that still matter for benchmark scoring.
 
@@ -264,7 +264,7 @@ This section highlights the remaining shape mismatches that still matter for ben
 
 The current implementation baseline is materially ahead of the original seed model, but benchmark gaps still cluster in four areas:
 
-- **Legacy string-to-edge migration**: `storyRefs`, `journeyStepRefs`, and `interactionRef` still block full graph traversal.
+- **Legacy compatibility fields**: `storyRefs` and `interactionRef` remain on the model for compatibility, but the canonical traversals now run through `DELIVERS` and `EXECUTES_INTERACTION`. `journeyStepRefs` remains a frontend-side compatibility field.
 - **Registry completion**: `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned.
 - **Enterprise architecture depth**: `Organization`, `BusinessObject`, `InformationFlow`, `Deployment`, and `InfrastructureNode` remain target-taxonomy objects but are not yet implemented.
 - **View-driving UX structure**: `Topic` remains the main missing UX/navigation node; screen-flow and traceability objects are now implemented.
@@ -399,7 +399,7 @@ The object families (Product/UX, Architecture/EA, Delivery/Execution) are connec
 | Edge | Source | Target(s) | Purpose | Implementation |
 |------|--------|-----------|---------|----------------|
 | `REALIZES` | Epic, Feature, UserStory | BusinessCapability, BusinessProcess, Journey, ProcessActivity, JourneyStep | Why a backlog item exists (origin traceability) | `[PLANNED]` |
-| `DELIVERS` | UserStory | Screen, ApiContract, DataEntity, Rule, Message | What testable artifact a story must produce | `[PLANNED]` |
+| `DELIVERS` | UserStory | Screen, ApiContract, DataEntity, Rule, Message | What testable artifact a story must produce | `[EDGE]` for Screen targets; additional deliverable target types continue to mature |
 | `IMPLEMENTS` | Task | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | What a task builds or creates | `[PLANNED]` |
 | `VERIFIED_BY` | UserStory | TestCase | How a story is proven | `[PLANNED]` |
 | `VERIFIES` | TestCase | Screen, ApiContract | What a test case validates | `[PLANNED]` |
