@@ -54,4 +54,22 @@ class ScreenTest {
         assertEquals(1, screen.getAccessibleByRoles().size());
         assertEquals("ADMIN", screen.getAccessibleByRoles().get(0).getRoleKey());
     }
+
+    @Test
+    void shouldLinkToErrorCodeViaCanProduceError() {
+        ErrorCode errorCode = ErrorCode.builder()
+                .code("AGT-E-404")
+                .severity("ERROR")
+                .messageText("Agent could not be found.")
+                .build();
+
+        Screen screen = Screen.builder()
+                .surfaceId("SCR-AGT-LIST")
+                .status(Status.DEFINED)
+                .canProduceErrors(List.of(errorCode))
+                .build();
+
+        assertEquals(1, screen.getCanProduceErrors().size());
+        assertEquals("AGT-E-404", screen.getCanProduceErrors().get(0).getCode());
+    }
 }

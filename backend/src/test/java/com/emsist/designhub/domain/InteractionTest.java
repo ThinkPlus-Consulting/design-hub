@@ -78,4 +78,31 @@ class InteractionTest {
         assertNotNull(interaction.getTriggersConfirmation());
         assertEquals("CONFIRM-AGT-PUBLISH", interaction.getTriggersConfirmation().getDialogId());
     }
+
+    @Test
+    void shouldHoldEmbeddedOutcomesAndErrorEdges() {
+        ErrorCode errorCode = ErrorCode.builder()
+                .code("AUTH-E-401")
+                .severity("ERROR")
+                .messageText("Session refresh failed.")
+                .build();
+
+        Interaction interaction = Interaction.builder()
+                .interactionId("INT-G-004")
+                .element("Extend session button")
+                .trigger("click")
+                .outcomeSuccess("Session is extended and the timeout modal closes.")
+                .outcomeError("Session refresh failed.")
+                .outcomeLoading("Refreshing session…")
+                .errorCodeRef("AUTH-E-401")
+                .onErrorShows(List.of(errorCode))
+                .build();
+
+        assertEquals("Session is extended and the timeout modal closes.", interaction.getOutcomeSuccess());
+        assertEquals("Session refresh failed.", interaction.getOutcomeError());
+        assertEquals("Refreshing session…", interaction.getOutcomeLoading());
+        assertEquals("AUTH-E-401", interaction.getErrorCodeRef());
+        assertEquals(1, interaction.getOnErrorShows().size());
+        assertEquals("AUTH-E-401", interaction.getOnErrorShows().get(0).getCode());
+    }
 }

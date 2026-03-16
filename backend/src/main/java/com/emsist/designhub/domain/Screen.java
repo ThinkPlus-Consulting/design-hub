@@ -75,4 +75,7 @@ public class Screen {
 
     @Relationship(type = "ENFORCES_VALIDATION", direction = Relationship.Direction.OUTGOING)
     private List<ValidationRule> validationRules;
+
+    @Relationship(type = "CAN_PRODUCE_ERROR", direction = Relationship.Direction.OUTGOING)
+    private List<ErrorCode> canProduceErrors;
 }

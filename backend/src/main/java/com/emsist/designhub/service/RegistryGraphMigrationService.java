@@ -100,6 +100,33 @@ public class RegistryGraphMigrationService {
     }
 
     @Transactional
+    public void seedErrorCodes() {
+        neo4jClient.query("""
+                UNWIND [
+                  {code: 'AUTH-E-401',           severity: 'ERROR', text: 'Session refresh failed.',                     trigger: 'Session refresh API returns 401',              hint: 'Prompt the user to sign in again.'},
+                  {code: 'CORE-E-SEARCH-001',    severity: 'ERROR', text: 'Search could not be completed.',              trigger: 'Global search API fails',                       hint: 'Retry search after connectivity is restored.'},
+                  {code: 'CORE-E-NOTIF-001',     severity: 'ERROR', text: 'Notification update failed.',                 trigger: 'Notification read API fails',                   hint: 'Retry from the notification center.'},
+                  {code: 'AGT-E-403',            severity: 'ERROR', text: 'Agent action is not permitted.',              trigger: 'Create or publish agent without permission',    hint: 'Request a role with agent publishing rights.'},
+                  {code: 'AGT-E-404',            severity: 'ERROR', text: 'Agent could not be found.',                   trigger: 'Agent lookup or deletion targets a missing id', hint: 'Refresh the list and retry the action.'},
+                  {code: 'AGT-E-BUILDER-001',    severity: 'ERROR', text: 'Component could not be added to the canvas.', trigger: 'Builder mutation fails',                         hint: 'Retry the drag-and-drop action.'},
+                  {code: 'AGT-E-BUILDER-002',    severity: 'ERROR', text: 'Draft save failed.',                          trigger: 'Draft persistence API fails',                   hint: 'Review validation messages and retry save.'},
+                  {code: 'AGT-E-PLAYGROUND-001', severity: 'ERROR', text: 'Test session could not be created.',          trigger: 'Playground session API fails',                  hint: 'Retry after the agent draft is saved.'},
+                  {code: 'TPL-E-404',            severity: 'ERROR', text: 'Template details could not be loaded.',       trigger: 'Template details request fails',                hint: 'Refresh the gallery and try again.'},
+                  {code: 'TPL-E-QUERY-001',      severity: 'ERROR', text: 'Template filter could not be applied.',       trigger: 'Template query request fails',                  hint: 'Retry the selected category filter.'},
+                  {code: 'TPL-E-FORK-001',       severity: 'ERROR', text: 'Template fork failed.',                       trigger: 'Template fork API fails',                       hint: 'Retry after verifying access to the template.'},
+                  {code: 'CHAT-E-STREAM-001',    severity: 'ERROR', text: 'Chat response could not be generated.',       trigger: 'Agent chat stream fails',                       hint: 'Retry the prompt or switch models.'},
+                  {code: 'CHAT-E-STREAM-002',    severity: 'ERROR', text: 'Generation could not be stopped.',            trigger: 'Chat stream cancellation fails',                hint: 'Retry stop or refresh the chat session.'},
+                  {code: 'CHAT-E-503',           severity: 'ERROR', text: 'Escalation failed.',                          trigger: 'Human escalation service is unavailable',       hint: 'Retry escalation or contact a reviewer directly.'}
+                ] AS ec
+                MERGE (code:ErrorCode {code: ec.code})
+                SET code.severity = ec.severity,
+                    code.messageText = ec.text,
+                    code.triggerCondition = ec.trigger,
+                    code.resolutionHint = ec.hint
+                """).run();
+    }
+
+    @Transactional
     public void upsertApiContractsFromInteractions() {
         // Collect distinct apiCall strings from all interactions
         Collection<Map<String, Object>> rows = neo4jClient.query("""
@@ -271,6 +298,24 @@ public class RegistryGraphMigrationService {
                 MATCH (i:Interaction) WHERE i.confirmationCode IS NOT NULL AND i.confirmationCode <> ''
                 MATCH (dlg:ConfirmationDialog {dialogId: i.confirmationCode})
                 MERGE (i)-[:TRIGGERS_CONFIRMATION]->(dlg)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillOnErrorShowsEdges() {
+        neo4jClient.query("""
+                MATCH (i:Interaction) WHERE i.errorCodeRef IS NOT NULL AND i.errorCodeRef <> ''
+                MATCH (ec:ErrorCode {code: i.errorCodeRef})
+                MERGE (i)-[:ON_ERROR_SHOWS]->(ec)
+                """).run();
+    }
+
+    @Transactional
+    public void backfillCanProduceErrorEdges() {
+        neo4jClient.query("""
+                MATCH (i:Interaction)-[:ON_SCREEN]->(s:Screen)
+                MATCH (i)-[:ON_ERROR_SHOWS]->(ec:ErrorCode)
+                MERGE (s)-[:CAN_PRODUCE_ERROR]->(ec)
                 """).run();
     }
 
@@ -577,6 +622,35 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    @Transactional
+    public void patchInteractionOutcomes() {
+        neo4jClient.query("""
+                UNWIND [
+                  {id: 'INT-G-002', success: 'Matching entities are returned as the user types.', error: 'Search could not be completed.', loading: 'Searching…', code: 'CORE-E-SEARCH-001'},
+                  {id: 'INT-G-003', success: 'Notification is marked as read and the linked target is opened.', error: 'Notification update failed.', loading: 'Updating notification…', code: 'CORE-E-NOTIF-001'},
+                  {id: 'INT-G-004', success: 'Session is extended and the timeout modal closes.', error: 'Session refresh failed.', loading: 'Refreshing session…', code: 'AUTH-E-401'},
+                  {id: 'INT-R05-AGT-LIST-001', success: 'Agent details are loaded.', error: 'Agent details could not be loaded.', loading: 'Loading agent details…', code: 'AGT-E-404'},
+                  {id: 'INT-R05-AGT-LIST-002', success: 'Agent builder opens in create mode.', error: 'You are not allowed to create agents.', loading: null, code: 'AGT-E-403'},
+                  {id: 'INT-R05-AGT-LIST-003', success: 'Agent was deleted successfully.', error: 'Agent could not be deleted.', loading: 'Deleting agent…', code: 'AGT-E-404'},
+                  {id: 'INT-R05-BUILDER-001', success: 'Component is dropped onto the canvas.', error: 'Component could not be added to the canvas.', loading: null, code: 'AGT-E-BUILDER-001'},
+                  {id: 'INT-R05-BUILDER-002', success: 'Draft agent is saved.', error: 'Draft save failed.', loading: 'Saving draft…', code: 'AGT-E-BUILDER-002'},
+                  {id: 'INT-R05-BUILDER-003', success: 'Playground session is ready.', error: 'Test session could not be created.', loading: 'Creating test session…', code: 'AGT-E-PLAYGROUND-001'},
+                  {id: 'INT-R05-BUILDER-004', success: 'Agent was published.', error: 'Agent publish failed.', loading: 'Publishing agent…', code: 'AGT-E-403'},
+                  {id: 'INT-R05-GALLERY-001', success: 'Template details drawer opens.', error: 'Template details could not be loaded.', loading: 'Loading template…', code: 'TPL-E-404'},
+                  {id: 'INT-R05-GALLERY-002', success: 'Gallery is filtered by category.', error: 'Category filter could not be applied.', loading: 'Filtering templates…', code: 'TPL-E-QUERY-001'},
+                  {id: 'INT-R05-GALLERY-003', success: 'Template is forked into a draft agent.', error: 'Template fork failed.', loading: 'Forking template…', code: 'TPL-E-FORK-001'},
+                  {id: 'INT-R05-CHAT-001', success: 'Message is sent to the agent.', error: 'Chat response could not be generated.', loading: 'Agent is thinking…', code: 'CHAT-E-STREAM-001'},
+                  {id: 'INT-R05-CHAT-002', success: 'Generation is stopped.', error: 'Generation could not be stopped.', loading: null, code: 'CHAT-E-STREAM-002'},
+                  {id: 'INT-R05-CHAT-003', success: 'Conversation is escalated to a human reviewer.', error: 'Escalation failed.', loading: 'Escalating…', code: 'CHAT-E-503'}
+                ] AS patch
+                MATCH (i:Interaction {interactionId: patch.id})
+                SET i.outcomeSuccess = patch.success,
+                    i.outcomeError = patch.error,
+                    i.outcomeLoading = patch.loading,
+                    i.errorCodeRef = patch.code
+                """).run();
+    }
+
     // ── Orchestration ──────────────────────────────────────────────────
 
     @Transactional
@@ -587,10 +661,12 @@ public class RegistryGraphMigrationService {
         seedBusinessRoles();
         seedValidationRoles();
         seedConfirmationDialogs();
+        seedErrorCodes();
 
         // 2. Patch persisted data before backfilling edges
         patchChannelCodes();
         patchInteractionPermissions();
+        patchInteractionOutcomes();
 
         // 3. Upsert ApiContract nodes from interaction apiCalls strings
         upsertApiContractsFromInteractions();
@@ -607,6 +683,8 @@ public class RegistryGraphMigrationService {
         backfillTouchpointRoleEdges();
         backfillCallsApiEdges();
         backfillTriggersConfirmationEdges();
+        backfillOnErrorShowsEdges();
+        backfillCanProduceErrorEdges();
 
         // 6. Seed D4 engineering edge coverage
         seedAcceptanceCriteria();

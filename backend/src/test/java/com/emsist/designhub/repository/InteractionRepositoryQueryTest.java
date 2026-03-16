@@ -26,7 +26,8 @@ class InteractionRepositoryQueryTest {
                 () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[personaRel:USED_BY_PERSONA]->(persona:Persona)")),
                 () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[roleRel:ACCESSIBLE_BY_ROLE]->(role:BusinessRole)")),
                 () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[apiRel:CALLS_API]->(api:ApiContract)")),
-                () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[dialogRel:TRIGGERS_CONFIRMATION]->(dialog:ConfirmationDialog)"))
+                () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[dialogRel:TRIGGERS_CONFIRMATION]->(dialog:ConfirmationDialog)")),
+                () -> assertTrue(cypher.contains("OPTIONAL MATCH (i)-[errorRel:ON_ERROR_SHOWS]->(errorCode:ErrorCode)"))
         );
     }
 
@@ -50,7 +51,9 @@ class InteractionRepositoryQueryTest {
                 () -> assertTrue(cypher.contains("collect(DISTINCT apiRel)")),
                 () -> assertTrue(cypher.contains("collect(DISTINCT api)")),
                 () -> assertTrue(cypher.contains("collect(DISTINCT dialogRel)")),
-                () -> assertTrue(cypher.contains("collect(DISTINCT dialog)"))
+                () -> assertTrue(cypher.contains("collect(DISTINCT dialog)")),
+                () -> assertTrue(cypher.contains("collect(DISTINCT errorRel)")),
+                () -> assertTrue(cypher.contains("collect(DISTINCT errorCode)"))
         );
     }
 }

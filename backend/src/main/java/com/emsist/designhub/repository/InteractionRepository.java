@@ -19,6 +19,7 @@ public interface InteractionRepository extends Neo4jRepository<Interaction, Stri
             OPTIONAL MATCH (i)-[roleRel:ACCESSIBLE_BY_ROLE]->(role:BusinessRole)
             OPTIONAL MATCH (i)-[apiRel:CALLS_API]->(api:ApiContract)
             OPTIONAL MATCH (i)-[dialogRel:TRIGGERS_CONFIRMATION]->(dialog:ConfirmationDialog)
+            OPTIONAL MATCH (i)-[errorRel:ON_ERROR_SHOWS]->(errorCode:ErrorCode)
             RETURN i,
                    collect(DISTINCT effectRel),
                    collect(DISTINCT e),
@@ -31,7 +32,9 @@ public interface InteractionRepository extends Neo4jRepository<Interaction, Stri
                    collect(DISTINCT apiRel),
                    collect(DISTINCT api),
                    collect(DISTINCT dialogRel),
-                   collect(DISTINCT dialog)
+                   collect(DISTINCT dialog),
+                   collect(DISTINCT errorRel),
+                   collect(DISTINCT errorCode)
             """)
     List<Interaction> findBySurfaceId(@Param("surfaceId") String surfaceId);
 }

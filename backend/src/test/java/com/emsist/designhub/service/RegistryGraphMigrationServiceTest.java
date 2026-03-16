@@ -153,6 +153,20 @@ class RegistryGraphMigrationServiceTest {
     }
 
     @Test
+    void shouldSeedErrorCodes() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedErrorCodes();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("MERGE (code:ErrorCode")
+                && ((String) cypher).contains("AUTH-E-401")
+                && ((String) cypher).contains("CHAT-E-503")));
+    }
+
+    @Test
     void shouldUpsertApiContractsFromInteractionApiCalls() {
         var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
         when(neo4jClient.query(anyString())).thenReturn(spec);
@@ -297,6 +311,48 @@ class RegistryGraphMigrationServiceTest {
         verify(neo4jClient).query((String) argThat(cypher ->
                 ((String) cypher).contains("TRIGGERS_CONFIRMATION")
                 && ((String) cypher).contains("ConfirmationDialog")));
+    }
+
+    @Test
+    void shouldPatchInteractionOutcomes() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.patchInteractionOutcomes();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("outcomeSuccess")
+                && ((String) cypher).contains("errorCodeRef")
+                && ((String) cypher).contains("INT-R05-BUILDER-004")));
+    }
+
+    @Test
+    void shouldBackfillOnErrorShowsEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.backfillOnErrorShowsEdges();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("ON_ERROR_SHOWS")
+                && ((String) cypher).contains("ErrorCode")
+                && ((String) cypher).contains("errorCodeRef")));
+    }
+
+    @Test
+    void shouldBackfillCanProduceErrorEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.backfillCanProduceErrorEdges();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("CAN_PRODUCE_ERROR")
+                && ((String) cypher).contains("ON_ERROR_SHOWS")
+                && ((String) cypher).contains("ON_SCREEN")));
     }
 
     @Test
@@ -497,7 +553,7 @@ class RegistryGraphMigrationServiceTest {
 
         service.runFullMigration();
 
-        // Existing 19 queries + D4 engineering seeds (7) + D5a seeds (6) = 32 minimum with empty apiCalls fetch
-        verify(neo4jClient, atLeast(32)).query(anyString());
+        // Existing 32 queries + D6a failure-path additions (4) = 36 minimum with empty apiCalls fetch
+        verify(neo4jClient, atLeast(36)).query(anyString());
     }
 }

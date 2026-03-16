@@ -27,6 +27,10 @@ public class Interaction {
     private String trigger;
     private String permission;
     private String confirmationCode;
+    private String outcomeSuccess;
+    private String outcomeError;
+    private String outcomeLoading;
+    private String errorCodeRef;
 
     private List<String> personaIds;
     private List<String> roleKeys;
@@ -49,6 +53,10 @@ public class Interaction {
 
     @Relationship(type = "TRIGGERS_CONFIRMATION", direction = Relationship.Direction.OUTGOING)
     private ConfirmationDialog triggersConfirmation;
+
+    @Relationship(type = "ON_ERROR_SHOWS", direction = Relationship.Direction.OUTGOING)
+    @Builder.Default
+    private List<ErrorCode> onErrorShows = new ArrayList<>();
 
     @Relationship(type = "ON_SCREEN", direction = Relationship.Direction.OUTGOING)
     @JsonIgnore
