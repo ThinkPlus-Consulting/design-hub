@@ -373,7 +373,7 @@ Vendor is NOT a separate node. It is an Organization with `organizationType = VE
 | `graph-object-catalog.md` | Add per-object specifications for all new T1/T2 nodes. Add cross-family relationship registry entries. | P1 |
 | `product-vision.md` | State that Design Hub supports both product/delivery views AND architecture views. Reference three object families. Keep counts aligned to 75 / 106 / 71. | P0 |
 | `feature-capability-map.md` | Add 4 Architecture Views to view registry. Add architecture capabilities to capability model. | P0 |
-| `vision-benchmark.md` | Keep the architecture-view queryability set aligned with the current 71-node benchmarkable taxonomy and the 35 / 51 / 1 / 180 implementation baseline. | P1 |
+| `vision-benchmark.md` | Keep the architecture-view queryability set aligned with the current 71-node benchmarkable taxonomy and the 35 / 51 / 1 / 182 implementation baseline. | P1 |
 | `implementation-readiness-graph-model.md` | Add MCR rules for architecture objects. Extend completenessScore to cover cross-family edges. | P1 |
 | `architecture-blueprint.md` | Add architecture graph persistence and query patterns. Update component diagrams. | P1 |
 
