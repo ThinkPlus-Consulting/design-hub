@@ -42,7 +42,7 @@ The platform should maintain a first-class graph object registry covering 71 ben
 | Capability | Status | Evidence |
 |-----------|--------|----------|
 | Stable object identity | `[IMPLEMENTED]` | `stableId` / `surfaceId` / `storyId` on implemented entities |
-| Typed relationships | `[PARTIAL]` | 57 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; several deferred string-backed relationships remain |
+| Typed relationships | `[PARTIAL]` | 78 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; several deferred string-backed relationships remain |
 | Object status tracking | `[IMPLEMENTED — reshape required]` | 3-enum model exists; target is universal 10-value `status` |
 | Selective readiness flags | `[PLANNED]` | No readiness flags in current entities |
 | Source traceability | `[PLANNED]` | No `SourceReference` entity |
@@ -79,8 +79,8 @@ Selecting a screen should reveal its route, states, interactions, messages, vali
 | `ScreenState` | T1 | `[PLANNED]` |
 | `Interaction` | T1 | `[IMPLEMENTED]` |
 | `Transition` | T1 | `[PLANNED]` |
-| `Message` | T1 | `[PLANNED]` |
-| `ValidationRule` | T1 | `[PLANNED]` |
+| `Message` | T1 | `[IMPLEMENTED]` |
+| `ValidationRule` | T1 | `[IMPLEMENTED]` |
 | `Finding` | T1 | `[PLANNED]` |
 | `ErrorCode` | T2 | `[PLANNED]` |
 
@@ -97,9 +97,9 @@ Selecting a story, bug, finding, or API should show the connected screens, journ
 | `UserStory` | T1 | `[IMPLEMENTED]` |
 | `Bug` | T1 | `[PLANNED]` |
 | `Finding` | T1 | `[PLANNED]` |
-| `ApiContract` | T1 | `[PLANNED]` |
-| `DataEntity` | T1 | `[PLANNED]` |
-| `Rule` | T1 | `[PLANNED]` |
+| `ApiContract` | T1 | `[IMPLEMENTED]` |
+| `DataEntity` | T1 | `[IMPLEMENTED]` |
+| `Rule` | T1 | `[IMPLEMENTED]` |
 
 ### 1.6 Readiness and governance
 
@@ -135,7 +135,7 @@ The platform should include strict design verification so rendered UI stays alig
 
 | Capability | Status |
 |-----------|--------|
-| Semantic end-to-end verification | `[PLANNED]` — Playwright harness not yet created |
+| Semantic end-to-end verification | `[IMPLEMENTED]` — Playwright Layers 1-2 smoke and semantic suites are running against the live backend |
 | Visual baseline comparison | `[PLANNED]` |
 | Token-compliance verification | `[PLANNED]` — requires B1 (token import) first |
 | Localization and RTL verification | `[PLANNED]` — requires B2 (i18n) first |
@@ -148,7 +148,7 @@ Agents must be able to resolve from a UserStory to the exact code files and test
 **Objects:** CodeAsset (T1), ImportSnapshot (T2)
 **Edges:** HAS_CODE_ASSET, LOCATED_IN, ASSET_FOR_SCREEN, ASSET_FOR_API, ASSET_FOR_ENTITY, ASSET_FOR_RULE, IMPORTED_BY, IMPLEMENTS→CodeAsset
 **Enables:** Agent can resolve from UserStory to exact code files and test files
-**Status:** `[PLANNED]`
+**Status:** `[IMPLEMENTED]` — CodeAsset and ImportSnapshot exist in code; broader story-to-pack resolution is still maturing
 
 ### 1.10 Convention compliance (agent-ready extension)
 
@@ -157,7 +157,7 @@ Agents must be able to discover which coding standards and quality thresholds ap
 **Objects:** CodingConvention (T2 Hybrid), QualityConstraint (T1)
 **Edges:** GOVERNED_BY_CONVENTION, HAS_QUALITY_CONSTRAINT, SATISFIED_BY
 **Enables:** Agent can discover which coding standards and quality thresholds apply to its work
-**Status:** `[PLANNED]`
+**Status:** `[IMPLEMENTED]` — CodingConvention and QualityConstraint exist in code; broader UI and policy surfacing remains planned
 
 ---
 
@@ -207,11 +207,11 @@ graph TD
 
 | Phase | Scope | Benchmark Status | Key Artifacts |
 |-------|-------|-----------------|---------------|
-| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 36 `@Node` entities in code, 57 SDN edges + 1 Cypher edge, 216 tests | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, ConfirmationDialog, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset |
+| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 48 `@Node` entities in code, 78 SDN edges + 1 Cypher edge, 281 tests | Screen, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, ConfirmationDialog, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset, AcceptanceCriterion, Rule, ValidationRule, Message, ApiContract, RequestSchema, ResponseSchema, ErrorContract, DataEntity, DataField, TestCase, BusinessDomain, BusinessCapability, BusinessProcess, ProcessActivity, ProcessGateway, ProcessEvent, Task |
 | 2. Exploration | Persona, journey, screen, and story traversal views | `[PLANNED]` — Persona/role/channel nodes exist; Topic, ScreenState, Transition, and dedicated exploration views still missing | Persona View, Journey View, Screen Flow View |
 | 3. Delivery intelligence | Findings, bugs, readiness gaps, API and data dependencies | `[PLANNED]` — requires Bug, Finding, ApiContract, DataEntity | Delivery View, completenessScore engine |
 | 4. External alignment | Azure DevOps and Jira mapping, sync objects, benchmark reporting | `[PLANNED]` — requires ExternalArtifact | Benchmark View |
-| 5. Verification | Playwright-based design testing, visual baselines, and anti-drift gates | `[PLANNED]` — requires B1+B2 completion | Verification View |
+| 5. Verification | Playwright-based design testing, visual baselines, and anti-drift gates | `[PARTIAL]` — Layers 1-2 are implemented; visual, token, and i18n layers still require B1+B2 completion | Verification View |
 | 6. Automation | Agent-facing query patterns, export contracts, generation workflows | `[PLANNED]` | Agent API, export contracts |
 
 ```mermaid

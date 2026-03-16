@@ -210,6 +210,8 @@ graph TD
 
 - operational near-zero-drift additions: `AgentPolicy`, `EvidenceRecord`
 - capability/project meta-model additions: `Assessment`, `RequirementPortfolio`, `ProjectInstance`, `Milestone`
+- engineering completion additions already included in the approved taxonomy: `AcceptanceCriterion`, `ValidationRule`, `Message`, `DataField`, `RequestSchema`, `ResponseSchema`, `ErrorContract`
+- BPMN-aligned process spine completion now implemented in code: `BusinessDomain`, `BusinessProcess`, `ProcessActivity`, `ProcessGateway`, `ProcessEvent`
 
 **Note:** ProcessGateway and ProcessEvent are BPMN-sourced additions (derived from OMG BPMN 2.0.2 decomposition of process flow), not from the Alfabet/EA metamodel deck. They were added to provide first-class routing and lifecycle nodes within BusinessProcess flows.
 

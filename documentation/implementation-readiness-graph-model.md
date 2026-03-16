@@ -121,10 +121,12 @@ See `modeling-taxonomy.md` for the full 3-tier classification (58 T1 + 13 T2 + 4
 
 The current code baseline is materially ahead of the original seed model:
 
-- **36 `@Node` entities**
-- **57 SDN `@Relationship` declarations**
+- **48 `@Node` entities**
+- **78 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **216 passing tests**
+- **281 passing tests**
+
+That implemented subset now includes the D4 engineering entity completion and the D5a BPMN-aligned process spine, not just the earlier agent-ready, safety, capability/project, and registry increments.
 
 This document defines the readiness model for the full approved taxonomy (`75 nodes / 106 edge types / 71 benchmarkable`), not just the currently implemented subset.
 

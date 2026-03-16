@@ -203,10 +203,12 @@ graph TD
 
 **Totals: 58 + 13 + 4 = 75 model elements**
 
-**Model growth note:** Counts above reflect the full approved taxonomy after three increments:
+**Model growth note:** Counts above reflect the full approved taxonomy after the delivered increments to date:
 - agent-ready information model
 - operational near-zero-drift additions (`AgentPolicy`, `EvidenceRecord`)
 - capability/project meta-model (`Assessment`, `RequirementPortfolio`, `Milestone`, `ProjectInstance`)
+ - D4 engineering entity completion (`AcceptanceCriterion`, `ValidationRule`, `Message`, `DataField`, `RequestSchema`, `ResponseSchema`, `ErrorContract`)
+ - D5a BPMN-aligned process spine (`BusinessDomain`, `BusinessProcess`, `ProcessActivity`, `ProcessGateway`, `ProcessEvent`)
 
 Current approved taxonomy: **75 total nodes, 106 edge types, 71 benchmarkable**.
 
@@ -236,10 +238,10 @@ Tier 3 objects are NOT counted in the 71 benchmarkable nodes. Their attributes a
 
 The implemented graph no longer resembles the original 11-entity seed. The current code baseline is:
 
-- **36 `@Node` entities**
-- **57 SDN `@Relationship` declarations**
+- **48 `@Node` entities**
+- **78 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **216 passing tests**
+- **281 passing tests**
 
 This section highlights the remaining shape mismatches that still matter for benchmark scoring.
 
@@ -262,10 +264,10 @@ This section highlights the remaining shape mismatches that still matter for ben
 
 The current implementation baseline is materially ahead of the original seed model, but benchmark gaps still cluster in four areas:
 
-- **Legacy string-to-edge migration**: `personaId`, `roleKeys`, `channelId`, `permission`, `apiCalls`, and similar fields still block full graph traversal.
-- **Registry completion**: `BusinessDomain`, `Channel`, `Permission`, `ErrorCode`, `ConfirmationDialog`, `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned.
+- **Legacy string-to-edge migration**: `storyRefs`, `journeyStepRefs`, `interactionRef`, and ErrorCode-related references still block full graph traversal.
+- **Registry completion**: `ErrorCode`, `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned.
 - **Enterprise architecture depth**: `Organization`, `BusinessObject`, `InformationFlow`, `Deployment`, and `InfrastructureNode` remain target-taxonomy objects but are not yet implemented.
-- **View-driving UX structure**: `Persona`, `Topic`, `ScreenState`, `Transition`, `SourceReference`, and `ExternalArtifact` still gate several benchmark queries.
+- **View-driving UX structure**: `Topic`, `ScreenState`, `Transition`, `SourceReference`, and `ExternalArtifact` still gate several benchmark queries.
 
 ---
 
@@ -379,8 +381,8 @@ The object families (Product/UX, Architecture/EA, Delivery/Execution) are connec
 | `MAPPED_TO` | BusinessObject | DataEntity | Architecture → Product | `[PLANNED]` |
 | `OWNS` | Organization | Application | Architecture internal | `[PLANNED]` |
 | `DEPLOYED_ON` | Deployment | InfrastructureNode | Architecture internal | `[PLANNED]` |
-| `HAS_CAPABILITY` | BusinessDomain (T2) | BusinessCapability | Architecture internal | `[PLANNED]` |
-| `REALIZED_BY_PROCESS` | BusinessCapability | BusinessProcess | Architecture internal | `[PLANNED]` |
+| `HAS_CAPABILITY` | BusinessDomain (T1) | BusinessCapability | Architecture internal | `[EDGE]` |
+| `REALIZED_BY_PROCESS` | BusinessCapability | BusinessProcess | Architecture internal | `[EDGE]` |
 
 ### 10.2 Delivery Hierarchy Edges
 

@@ -97,8 +97,8 @@ graph TD
 
 | Aspect | Status | Evidence |
 |--------|--------|----------|
-| Node persistence | `[IMPLEMENTED]` | 36 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
-| Typed edges | `[PARTIAL]` | 57 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; core persona/channel/permission/role/interaction edges are now typed, with deferred string-backed relationships still remaining |
+| Node persistence | `[IMPLEMENTED]` | 48 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
+| Typed edges | `[PARTIAL]` | 78 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, and process-spine core is now edge-backed, with a smaller residual set of string-backed relationships remaining |
 | Bidirectional traversal | `[PARTIAL]` | Forward traversal works for implemented edges; reverse requires Cypher |
 | Status filtering | `[IMPLEMENTED — reshape required]` | 3-enum status model; target is universal 10-value `status` |
 | Readiness filtering | `[PLANNED]` | No readiness flags on entities |
@@ -163,12 +163,12 @@ graph TD
 
 **Strategy:** Defined in `design-testing-strategy.md` (6 test layers, 8 anti-drift scenarios)
 
-**Implementation status:** `[PLANNED]` — no Playwright harness, no test files exist.
+**Implementation status:** `[IMPLEMENTED — partial]` — Playwright Layers 1-2 are present in `frontend/tests/` and run against the live backend; visual, token, localization, and graph-UI drift layers are still pending.
 
 | Test Layer | Status |
 |-----------|--------|
-| 1. Contract/route smoke | `[PLANNED]` |
-| 2. Semantic interaction | `[PLANNED]` |
+| 1. Contract/route smoke | `[IMPLEMENTED]` |
+| 2. Semantic interaction | `[IMPLEMENTED]` |
 | 3. Visual baselines | `[PLANNED]` |
 | 4. Token compliance | `[PLANNED]` — requires B1 (token import) |
 | 5. Localization/RTL | `[PLANNED]` — requires B2 (i18n) |
@@ -599,16 +599,16 @@ These patterns correspond to the 10 north-star queries in `product-vision.md`:
 
 | # | Query Pattern | Current Status |
 |---|--------------|---------------|
-| 1 | `persona -> journeys -> steps -> screens -> stories` | `[STRING_REF]` — `personaId` on Journey |
-| 2 | `journey -> steps -> touchpoints -> channels` | `[STRING_REF]` — `channelId` in EntryMode |
-| 3 | `channel -> touchpoints -> screens` | `[STRING_REF]` |
-| 4 | `screen -> interactions -> permissions` | `[STRING_REF]` — `permission` string on Interaction |
+| 1 | `persona -> journeys -> steps -> screens -> stories` | `[EDGE/PARTIAL]` — `PERFORMED_BY_PERSONA` is implemented; the residual gap is `DELIVERS` for story traversal |
+| 2 | `journey -> steps -> touchpoints -> channels` | `[PARTIAL]` — `DELIVERED_VIA_CHANNEL` exists, but `STARTS_AT_TOUCHPOINT` is still planned |
+| 3 | `channel -> touchpoints -> screens` | `[EDGE]` — `DELIVERED_VIA_CHANNEL` and `TARGETS` are implemented |
+| 4 | `screen -> interactions -> permissions` | `[PARTIAL]` — `REQUIRES_PERMISSION` exists, but the canonical screen-to-interaction path is not fully cleaned up yet |
 | 5 | `interaction -> outcomes -> error codes` | `[PLANNED]` — no InteractionOutcome or ErrorCode |
-| 6 | `screen -> stories` | `[STRING_REF]` — `storyRefs` on Screen (resolved at API level) |
+| 6 | `screen -> stories` | `[STRING_REF]` — `storyRefs` on Screen still block a canonical `DELIVERS` edge walk |
 | 7 | `bug -> affected screens` | `[PLANNED]` — no Bug entity |
 | 8 | `artifact -> source references` | `[PLANNED]` — no SourceReference |
 | 9 | `external artifact -> domain objects` | `[PLANNED]` — no ExternalArtifact |
-| 10 | `interaction -> confirmation dialogs` | `[PLANNED]` — no ConfirmationDialog |
+| 10 | `interaction -> confirmation dialogs` | `[EDGE]` — ConfirmationDialog registry and `TRIGGERS_CONFIRMATION` are implemented |
 
 ---
 

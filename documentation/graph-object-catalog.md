@@ -45,7 +45,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Business intent and outcome target
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ApiContract.java`
 
 #### Attributes
 
@@ -73,7 +73,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Recorded decision with rationale and status
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Message.java`
 
 #### Attributes
 
@@ -598,7 +598,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Delivery & Execution
 **Purpose**: Deliverable requirement unit
-**Implementation Status**: `[IMPLEMENTED]` `domain/UserStory.java` — minimal (5 fields vs 8+ target)
+**Implementation Status**: `[IMPLEMENTED]` `domain/UserStory.java` — minimal attribute set, but the delivery spine is now edge-backed
 
 #### Attributes
 
@@ -622,14 +622,14 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_STORY` | INCOMING | Feature | N:1 | Yes | BLOCKING | `[PLANNED]` — delivery spine: Feature HAS_STORY UserStory |
+| `HAS_STORY` | INCOMING | Feature | N:1 | Yes | BLOCKING | `[EDGE]` — delivery spine: Feature HAS_STORY UserStory |
 | `USES_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[STRING_REF]` — `storyRefs` on Screen (reverse) |
 | `REQUIRES_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
-| `GOVERNED_BY_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[PLANNED]` |
-| `HAS_CRITERION` | OUTGOING | AcceptanceCriterion | 1:N | Yes | BLOCKING | `[PLANNED]` |
+| `GOVERNED_BY_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[EDGE]` |
+| `HAS_CRITERION` | OUTGOING | AcceptanceCriterion | 1:N | Yes | BLOCKING | `[EDGE]` |
 | `REALIZES` | OUTGOING | ProcessActivity, JourneyStep | N:M | No | OPTIONAL | `[PLANNED]` |
 | `DELIVERS` | OUTGOING | Screen, ApiContract, DataEntity, Rule, Message | N:M | No | OPTIONAL | `[PLANNED]` |
-| `HAS_TASK` | OUTGOING | Task | 1:N | No | OPTIONAL | `[PLANNED]` |
+| `HAS_TASK` | OUTGOING | Task | 1:N | No | OPTIONAL | `[EDGE]` |
 | `VERIFIED_BY` | OUTGOING | TestCase | 1:N | Yes | BLOCKING | `[PLANNED]` |
 
 ---
@@ -689,7 +689,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_TASK` | INCOMING | UserStory | N:1 | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_TASK` | INCOMING | UserStory | N:1 | Yes | BLOCKING | `[EDGE]` |
 | `IMPLEMENTS` | OUTGOING | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | N:M | No | OPTIONAL | `[PLANNED]` |
 | `DEPENDS_ON` | OUTGOING | Task | N:M | No | OPTIONAL | `[PLANNED]` |
 | `ASSIGNED_TO` | OUTGOING | Organization | N:1 | No | OPTIONAL | `[PLANNED]` |
@@ -741,7 +741,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Verifiable story condition
-**Implementation Status**: `[IMPLEMENTED]` `domain/QualityConstraint.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/AcceptanceCriterion.java`
 
 #### Attributes
 
@@ -757,7 +757,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_STORY` | INCOMING | UserStory | N:1 | Yes | BLOCKING | `[PLANNED]` |
+| `BELONGS_TO_STORY` | INCOMING | UserStory | N:1 | Yes | BLOCKING | `[EDGE]` |
 | `VERIFIED_BY` | OUTGOING | TestCase | 1:N | No | OPTIONAL | `[PLANNED]` — consistent with four-verb model |
 
 ---
@@ -767,7 +767,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Business rule or domain rule
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Rule.java`
 
 #### Attributes
 
@@ -783,9 +783,9 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `GOVERNS_STORY` | OUTGOING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` |
+| `GOVERNED_BY_RULE` | INCOMING | UserStory | N:M | No | OPTIONAL | `[EDGE]` |
 | `GOVERNS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
-| `GOVERNS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
+| `HAS_VALIDATION_RULE` | OUTGOING | ValidationRule | 1:N | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -794,7 +794,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Explicit validation behavior
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ValidationRule.java`
 
 #### Attributes
 
@@ -812,8 +812,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `VALIDATES_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
-| `VALIDATES_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
+| `ENFORCES_VALIDATION` | INCOMING | Screen | N:M | No | OPTIONAL | `[EDGE]` |
+| `HAS_VALIDATION_RULE` | INCOMING | Rule | N:1 | No | OPTIONAL | `[EDGE]` |
 | `REFERENCES_ERROR_CODE` | OUTGOING | ErrorCode (T2) | N:1 | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -823,7 +823,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Artifact-bound non-functional requirement with measurable threshold. Bound to Screen, ApiContract, DataEntity, or ApplicationComponent. Verified via SATISFIED_BY → TestCase (distinct from VERIFIED_BY which proves functional correctness).
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/QualityConstraint.java`
 
 #### Attributes
 
@@ -1006,8 +1006,8 @@
 | `HAS_INTERACTION` | INCOMING | Screen | N:1 | Yes | BLOCKING | `[EDGE]` — Screen HAS_INTERACTION Interaction (replaces deprecated ON_SCREEN) |
 | `HAS_EFFECT` | OUTGOING | Effect (T3) | 1:N | No | OPTIONAL | `[EDGE]` |
 | `REQUIRES_PERMISSION` | OUTGOING | Permission (T2) | N:1 | No | OPTIONAL | `[EDGE]` — legacy `permission` retained for migration compatibility |
-| `TRIGGERS_CONFIRMATION` | OUTGOING | ConfirmationDialog (T2) | N:1 | No | OPTIONAL | `[STRING_REF]` — `confirmationCode` |
-| `CALLS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[STRING_REF]` — `apiCalls` |
+| `TRIGGERS_CONFIRMATION` | OUTGOING | ConfirmationDialog (T2) | N:1 | No | OPTIONAL | `[EDGE]` — legacy `confirmationCode` source field retained |
+| `CALLS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[EDGE]` — legacy `apiCalls` source field retained |
 | `ON_ERROR_SHOWS` | OUTGOING | ErrorCode (T2) | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -1071,11 +1071,11 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `REQUIRED_BY_STORY` | INCOMING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` |
-| `CALLED_BY_INTERACTION` | INCOMING | Interaction | N:M | No | OPTIONAL | `[STRING_REF]` — `apiCalls` |
+| `CALLS_API` | INCOMING | Interaction | N:M | No | OPTIONAL | `[EDGE]` — legacy `apiCalls` source field retained |
 | `USES_DATA_ENTITY` | OUTGOING | DataEntity | N:M | No | OPTIONAL | `[PLANNED]` |
-| `HAS_REQUEST_SCHEMA` | OUTGOING | RequestSchema | 1:1 | No | OPTIONAL | `[PLANNED]` |
-| `HAS_RESPONSE_SCHEMA` | OUTGOING | ResponseSchema | 1:1 | No | OPTIONAL | `[PLANNED]` |
-| `HAS_ERROR_CONTRACT` | OUTGOING | ErrorContract | 1:1 | No | OPTIONAL | `[PLANNED]` |
+| `HAS_REQUEST` | OUTGOING | RequestSchema | 1:1 | No | OPTIONAL | `[EDGE]` |
+| `HAS_RESPONSE` | OUTGOING | ResponseSchema | 1:1 | No | OPTIONAL | `[EDGE]` |
+| `HAS_ERROR` | OUTGOING | ErrorContract | 1:1 | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1084,7 +1084,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Engineering
 **Purpose**: Input schema for an API contract
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/RequestSchema.java`
 
 #### Attributes
 
@@ -1099,7 +1099,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_API` | INCOMING | ApiContract | 1:1 | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_REQUEST` | INCOMING | ApiContract | 1:1 | Yes | BLOCKING | `[EDGE]` |
 
 ---
 
@@ -1108,7 +1108,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Engineering
 **Purpose**: Output schema for an API contract
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ResponseSchema.java`
 
 #### Attributes
 
@@ -1123,7 +1123,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_API` | INCOMING | ApiContract | 1:1 | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_RESPONSE` | INCOMING | ApiContract | 1:1 | Yes | BLOCKING | `[EDGE]` |
 
 ---
 
@@ -1132,7 +1132,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Engineering
 **Purpose**: Error response structure for an API contract
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ErrorContract.java`
 
 #### Attributes
 
@@ -1147,7 +1147,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_API` | INCOMING | ApiContract | 1:1 | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_ERROR` | INCOMING | ApiContract | 1:1 | Yes | BLOCKING | `[EDGE]` |
 | `REFERENCES_ERROR_CODE` | OUTGOING | ErrorCode (T2) | 1:N | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -1157,7 +1157,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Engineering
 **Purpose**: Domain data object
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/DataEntity.java`
 
 #### Attributes
 
@@ -1176,7 +1176,7 @@
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `USED_BY_API` | INCOMING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
 | `USED_BY_STORY` | INCOMING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` |
-| `HAS_FIELD` | OUTGOING | DataField | 1:N | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_FIELD` | OUTGOING | DataField | 1:N | Yes | BLOCKING | `[EDGE]` |
 
 ---
 
@@ -1185,7 +1185,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Engineering
 **Purpose**: Field inside a data entity
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/DataField.java`
 
 #### Attributes
 
@@ -1203,7 +1203,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_ENTITY` | INCOMING | DataEntity | N:1 | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_FIELD` | INCOMING | DataEntity | N:1 | Yes | BLOCKING | `[EDGE]` |
 | `VALIDATED_BY_RULE` | OUTGOING | ValidationRule | N:M | No | OPTIONAL | `[PLANNED]` |
 | `USES_ENUM` | OUTGOING | Enum (T2) | N:1 | No | OPTIONAL | `[PLANNED]` |
 
@@ -1214,7 +1214,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Engineering
 **Purpose**: Cross-system or cross-service integration point
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/TestCase.java`
 
 #### Attributes
 
@@ -1427,7 +1427,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `DISPLAYED_ON_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
+| `HAS_MESSAGE` | INCOMING | Screen | N:M | No | OPTIONAL | `[EDGE]` |
 | `TRIGGERED_BY_INTERACTION` | INCOMING | Interaction | N:M | No | OPTIONAL | `[PLANNED]` |
 | `BACKED_BY_VALIDATION` | OUTGOING | ValidationRule | N:1 | No | OPTIONAL | `[PLANNED]` |
 
@@ -1442,7 +1442,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Architecture & EA
 **Purpose**: Stable functional classification of what the business does ("Onboarding", "KYC", "Compliance"). Not time-bound like BusinessObjective.
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/BusinessCapability.java`
 
 #### Attributes
 
@@ -1460,8 +1460,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_CAPABILITY` | INCOMING | BusinessDomain (T2) | N:1 | No | OPTIONAL | `[PLANNED]` |
-| `REALIZED_BY_PROCESS` | OUTGOING | BusinessProcess | 1:N | No | OPTIONAL | `[PLANNED]` |
+| `HAS_CAPABILITY` | INCOMING | BusinessDomain (T1) | N:1 | No | OPTIONAL | `[EDGE]` |
+| `REALIZED_BY_PROCESS` | OUTGOING | BusinessProcess | 1:N | No | OPTIONAL | `[EDGE]` |
 | `ENABLED_BY` | OUTGOING | Application | 1:N | Yes | BLOCKING | `[PLANNED]` |
 | `REALIZES` | INCOMING | Feature | N:M | No | OPTIONAL | `[PLANNED]` — Feature REALIZES BusinessCapability |
 | `REQUIRES_CAPABILITY` | INCOMING | BusinessObjective | N:M | No | OPTIONAL | `[PLANNED]` — BusinessObjective REQUIRES_CAPABILITY |
@@ -1473,7 +1473,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Architecture & EA
 **Purpose**: Formal process model (BPMN-aligned). NOT the same as Journey — Journey is UX-focused, BusinessProcess is operations-focused.
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/BusinessProcess.java`
 
 #### Attributes
 
@@ -1498,9 +1498,9 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `REALIZED_BY_PROCESS` | INCOMING | BusinessCapability | N:1 | Yes | BLOCKING | `[PLANNED]` |
+| `REALIZED_BY_PROCESS` | INCOMING | BusinessCapability | N:1 | Yes | BLOCKING | `[EDGE]` |
 | `SUPPORTED_BY` | OUTGOING | Application | 1:N | No | OPTIONAL | `[PLANNED]` |
-| `HAS_FLOW_NODE` | OUTGOING | ProcessActivity, ProcessGateway, ProcessEvent | 1:N | No | OPTIONAL | `[PLANNED]` |
+| `HAS_FLOW_NODE` | OUTGOING | ProcessActivity, ProcessGateway, ProcessEvent | 1:N | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1509,7 +1509,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Architecture & EA
 **Purpose**: BPMN-aligned task or subprocess step within a BusinessProcess. Replaces any prior "ProcessStep" concept.
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ProcessActivity.java`
 
 #### Attributes
 
@@ -1531,10 +1531,10 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_FLOW_NODE` | INCOMING | BusinessProcess | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `FLOWS_TO` | OUTGOING | ProcessActivity, ProcessGateway, ProcessEvent | N:M | No | OPTIONAL | `[PLANNED]` |
-| `EXPANDS_TO` | OUTGOING | BusinessProcess | N:1 | No | OPTIONAL | `[PLANNED]` — only when activityType = SUBPROCESS |
-| `CALLS_PROCESS` | OUTGOING | BusinessProcess | N:1 | No | OPTIONAL | `[PLANNED]` — only when activityType = CALL_ACTIVITY |
+| `HAS_FLOW_NODE` | INCOMING | BusinessProcess | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `FLOWS_TO` | OUTGOING | ProcessActivity, ProcessGateway, ProcessEvent | N:M | No | OPTIONAL | `[EDGE]` |
+| `EXPANDS_TO` | OUTGOING | BusinessProcess | N:1 | No | OPTIONAL | `[EDGE]` — only when activityType = SUBPROCESS |
+| `CALLS_PROCESS` | OUTGOING | BusinessProcess | N:1 | No | OPTIONAL | `[EDGE]` — only when activityType = CALL_ACTIVITY |
 | `REALIZES` | INCOMING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -1544,7 +1544,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Architecture & EA
 **Purpose**: BPMN-aligned decision or fork/join point within a BusinessProcess
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ProcessGateway.java`
 
 #### Attributes
 
@@ -1560,9 +1560,9 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_FLOW_NODE` | INCOMING | BusinessProcess | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `FLOWS_TO` | OUTGOING | ProcessActivity, ProcessGateway, ProcessEvent | N:M | Yes | BLOCKING | `[PLANNED]` |
-| `FLOWS_TO` | INCOMING | ProcessActivity, ProcessGateway, ProcessEvent | N:M | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_FLOW_NODE` | INCOMING | BusinessProcess | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `FLOWS_TO` | OUTGOING | ProcessActivity, ProcessGateway, ProcessEvent | N:M | Yes | BLOCKING | `[EDGE]` |
+| `FLOWS_TO` | INCOMING | ProcessActivity, ProcessGateway, ProcessEvent | N:M | Yes | BLOCKING | `[EDGE]` |
 
 ---
 
@@ -1571,7 +1571,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Architecture & EA
 **Purpose**: BPMN-aligned event (start, end, intermediate) within a BusinessProcess
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ProcessEvent.java`
 
 #### Attributes
 
@@ -1589,9 +1589,9 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_FLOW_NODE` | INCOMING | BusinessProcess | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `FLOWS_TO` | OUTGOING | ProcessActivity, ProcessGateway, ProcessEvent | N:M | No | OPTIONAL | `[PLANNED]` |
-| `ATTACHED_TO` | OUTGOING | ProcessActivity | N:1 | No | OPTIONAL | `[PLANNED]` — only when eventPosition = BOUNDARY |
+| `HAS_FLOW_NODE` | INCOMING | BusinessProcess | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `FLOWS_TO` | OUTGOING | ProcessActivity, ProcessGateway, ProcessEvent | N:M | No | OPTIONAL | `[EDGE]` |
+| `ATTACHED_TO` | OUTGOING | ProcessActivity | N:1 | No | OPTIONAL | `[EDGE]` — only when eventPosition = BOUNDARY |
 
 ---
 
@@ -1900,7 +1900,7 @@
 **Tier**: 2 (Registry)
 **Category**: UX registry
 **Purpose**: Registry of 25+ confirmation dialogs
-**Implementation Status**: `[PLANNED]` — currently only `confirmationCode` string on Interaction
+**Implementation Status**: `[IMPLEMENTED]` `domain/ConfirmationDialog.java`
 
 #### Attributes
 
@@ -1916,7 +1916,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `TRIGGERED_BY_INTERACTION` | INCOMING | Interaction | N:M | No | OPTIONAL | `[STRING_REF]` — `confirmationCode` |
+| `TRIGGERS_CONFIRMATION` | INCOMING | Interaction | N:M | No | OPTIONAL | `[EDGE]` — legacy `confirmationCode` source field retained |
 
 ---
 
@@ -1925,7 +1925,7 @@
 **Tier**: 2 (Registry)
 **Category**: Data vocabulary
 **Purpose**: Controlled value sets for dropdown and select fields
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/BusinessDomain.java`
 
 #### Attributes
 
@@ -2033,7 +2033,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_CAPABILITY` | OUTGOING | BusinessCapability | 1:N | Yes | BLOCKING | `[PLANNED]` |
+| `HAS_CAPABILITY` | OUTGOING | BusinessCapability | 1:N | Yes | BLOCKING | `[EDGE]` |
 
 ---
 
@@ -2042,7 +2042,7 @@
 **Tier**: 2 (Registry)
 **Category**: Cross-cutting
 **Purpose**: Append-only audit record for batch imports into the graph. Captures what was imported, when, from where, and whether it succeeded. One snapshot per import operation.
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ImportSnapshot.java`
 
 #### Attributes
 
@@ -2245,7 +2245,7 @@ Complete registry of all modeled relationships with implementation status.
 
 ### 6.1 Existing Graph Edges
 
-The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **57 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
+The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **78 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
 
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
@@ -2268,8 +2268,8 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `USED_BY_PERSONA` | Screen | Persona | `personaIds` | OPTIONAL | `[EDGE]` — legacy source field retained |
 | `PERFORMED_BY_PERSONA` | Journey | Persona | `personaId` | BLOCKING | `[EDGE]` — legacy source field retained |
 | `REQUIRES_PERMISSION` | Interaction | Permission (T2) | `permission` | OPTIONAL | `[EDGE]` — legacy source field retained |
-| `CALLS_API` | Interaction | ApiContract | `apiCalls` | OPTIONAL | `[STRING_REF]` |
-| `TRIGGERS_CONFIRMATION` | Interaction | ConfirmationDialog (T2) | `confirmationCode` | OPTIONAL | `[STRING_REF]` |
+| `CALLS_API` | Interaction | ApiContract | `apiCalls` | OPTIONAL | `[EDGE]` |
+| `TRIGGERS_CONFIRMATION` | Interaction | ConfirmationDialog (T2) | `confirmationCode` | OPTIONAL | `[EDGE]` |
 | `DELIVERED_VIA_CHANNEL` | Touchpoint | Channel (T2) | `channelId` in EntryMode | BLOCKING | `[EDGE]` — legacy source field retained |
 | `EXECUTES_INTERACTION` | JourneyStep | Interaction | `interactionRef` | OPTIONAL | `[STRING_REF]` |
 
@@ -2280,14 +2280,14 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `HAS_FEATURE` | BusinessObjective | Feature | 1:N | BLOCKING | `[PLANNED]` |
 | `BELONGS_TO_OBJECTIVE` | Feature | BusinessObjective | N:1 | BLOCKING | `[PLANNED]` |
 | `HAS_STORY` | Feature | UserStory | 1:N | BLOCKING | `[EDGE]` |
-| `HAS_CRITERION` | UserStory | AcceptanceCriterion | 1:N | BLOCKING | `[PLANNED]` |
+| `HAS_CRITERION` | UserStory | AcceptanceCriterion | 1:N | BLOCKING | `[EDGE]` |
 | `USES_DATA_ENTITY` | ApiContract | DataEntity | N:M | OPTIONAL | `[PLANNED]` |
-| `HAS_FIELD` | DataEntity | DataField | 1:N | BLOCKING | `[PLANNED]` |
+| `HAS_FIELD` | DataEntity | DataField | 1:N | BLOCKING | `[EDGE]` |
 | `SUPPORTS` | SourceReference | Any Tier 1 | 1:N | BLOCKING | `[PLANNED]` |
 | `PERFORMS_JOURNEY` | Persona | Journey | 1:N | BLOCKING | `[PLANNED]` |
 | `USES_SCREEN` | JourneyStep | Screen | N:1 | BLOCKING | `[PLANNED]` |
 | `STARTS_AT_TOUCHPOINT` | JourneyStep | Touchpoint | N:M | OPTIONAL | `[PLANNED]` |
-| `HAS_MESSAGE` | Screen | Message | 1:N | OPTIONAL | `[PLANNED]` |
+| `HAS_MESSAGE` | Screen | Message | 1:N | OPTIONAL | `[EDGE]` |
 | `CAN_PRODUCE_ERROR` | Screen | ErrorCode (T2) | N:M | OPTIONAL | `[PLANNED]` |
 | `ON_ERROR_SHOWS` | Interaction | ErrorCode (T2) | N:M | OPTIONAL | `[PLANNED]` |
 | `GOVERNS_STORY` | Rule | UserStory | N:M | OPTIONAL | `[PLANNED]` |
@@ -2298,12 +2298,12 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `BELONGS_TO_SCREEN` | ScreenState | Screen | N:1 | BLOCKING | `[PLANNED]` |
 | `FROM_SCREEN` | Transition | Screen | N:1 | BLOCKING | `[PLANNED]` |
 | `TO_SCREEN` | Transition | Screen | N:1 | BLOCKING | `[PLANNED]` |
-| `BELONGS_TO_API` | RequestSchema | ApiContract | 1:1 | BLOCKING | `[PLANNED]` |
-| `BELONGS_TO_API` | ResponseSchema | ApiContract | 1:1 | BLOCKING | `[PLANNED]` |
-| `BELONGS_TO_API` | ErrorContract | ApiContract | 1:1 | BLOCKING | `[PLANNED]` |
+| `HAS_REQUEST` | ApiContract | RequestSchema | 1:1 | OPTIONAL | `[EDGE]` |
+| `HAS_RESPONSE` | ApiContract | ResponseSchema | 1:1 | OPTIONAL | `[EDGE]` |
+| `HAS_ERROR` | ApiContract | ErrorContract | 1:1 | OPTIONAL | `[EDGE]` |
 | `VERIFIED_BY` | AcceptanceCriterion | TestCase | 1:N | OPTIONAL | `[PLANNED]` |
 | `HAS_TRANSLATIONS` | Locale | TranslationKey | 1:N | OPTIONAL | `[PLANNED]` |
-| `REALIZED_BY_PROCESS` | BusinessCapability | BusinessProcess | 1:N | OPTIONAL | `[PLANNED]` |
+| `REALIZED_BY_PROCESS` | BusinessCapability | BusinessProcess | 1:N | OPTIONAL | `[EDGE]` |
 | `ENABLED_BY` | BusinessCapability | Application | 1:N | BLOCKING | `[PLANNED]` |
 | `REALIZES` | Feature | BusinessCapability | N:M | OPTIONAL | `[PLANNED]` — four-verb traceability |
 | `REQUIRES_CAPABILITY` | BusinessObjective | BusinessCapability | N:M | OPTIONAL | `[PLANNED]` |
@@ -2325,25 +2325,25 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `REALIZED_BY` | BusinessObjective | Epic | 1:N | OPTIONAL | `[PLANNED]` |
 | `AFFECTS` | Epic | Application | 1:N | OPTIONAL | `[PLANNED]` |
 | `SUPPORTED_BY` | BusinessProcess | Application | 1:N | OPTIONAL | `[PLANNED]` |
-| `HAS_FLOW_NODE` | BusinessProcess | ProcessActivity, ProcessGateway, ProcessEvent | 1:N | OPTIONAL | `[PLANNED]` |
-| `FLOWS_TO` | ProcessActivity, ProcessGateway, ProcessEvent | ProcessActivity, ProcessGateway, ProcessEvent | N:M | OPTIONAL | `[PLANNED]` |
-| `EXPANDS_TO` | ProcessActivity | BusinessProcess | N:1 | OPTIONAL | `[PLANNED]` |
-| `CALLS_PROCESS` | ProcessActivity | BusinessProcess | N:1 | OPTIONAL | `[PLANNED]` |
-| `ATTACHED_TO` | ProcessEvent | ProcessActivity | N:1 | OPTIONAL | `[PLANNED]` |
+| `HAS_FLOW_NODE` | BusinessProcess | ProcessActivity, ProcessGateway, ProcessEvent | 1:N | OPTIONAL | `[EDGE]` |
+| `FLOWS_TO` | ProcessActivity, ProcessGateway, ProcessEvent | ProcessActivity, ProcessGateway, ProcessEvent | N:M | OPTIONAL | `[EDGE]` |
+| `EXPANDS_TO` | ProcessActivity | BusinessProcess | N:1 | OPTIONAL | `[EDGE]` |
+| `CALLS_PROCESS` | ProcessActivity | BusinessProcess | N:1 | OPTIONAL | `[EDGE]` |
+| `ATTACHED_TO` | ProcessEvent | ProcessActivity | N:1 | OPTIONAL | `[EDGE]` |
 | `REALIZES` | UserStory | ProcessActivity, JourneyStep | N:M | OPTIONAL | `[PLANNED]` |
 | `DELIVERS` | UserStory | Screen, ApiContract, DataEntity, Rule, Message | N:M | OPTIONAL | `[PLANNED]` |
 | `IMPLEMENTS` | Task | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | N:M | OPTIONAL | `[PLANNED]` |
 | `DEPENDS_ON_COMPONENT` | ApplicationComponent | ApplicationComponent | N:M | OPTIONAL | `[PLANNED]` — edge properties: dependencyType, protocol, required |
 | `OWNS_DATA_ENTITY` | ApplicationComponent | DataEntity | 1:N | OPTIONAL | `[PLANNED]` |
 | `ENFORCES_RULE` | ApplicationComponent | Rule | N:M | OPTIONAL | `[PLANNED]` |
-| `GOVERNED_BY_RULE` | UserStory | Rule | N:M | OPTIONAL | `[PLANNED]` |
+| `GOVERNED_BY_RULE` | UserStory | Rule | N:M | OPTIONAL | `[EDGE]` |
 | `VERIFIED_BY` | UserStory | TestCase | 1:N | BLOCKING | `[PLANNED]` |
 | `VERIFIES` | TestCase | UserStory | N:M | OPTIONAL | `[PLANNED]` |
-| `HAS_TASK` | UserStory | Task | 1:N | OPTIONAL | `[PLANNED]` |
+| `HAS_TASK` | UserStory | Task | 1:N | OPTIONAL | `[EDGE]` |
 | `DEPENDS_ON` | Task | Task | N:M | OPTIONAL | `[PLANNED]` |
 | `ASSIGNED_TO` | Task | Organization | N:1 | OPTIONAL | `[PLANNED]` |
-| `HAS_CAPABILITY` | BusinessDomain | BusinessCapability | 1:N | BLOCKING | `[PLANNED]` |
-| `REALIZED_BY_PROCESS` | BusinessCapability | BusinessProcess | 1:N | OPTIONAL | `[PLANNED]` |
+| `HAS_CAPABILITY` | BusinessDomain | BusinessCapability | 1:N | BLOCKING | `[EDGE]` |
+| `REALIZED_BY_PROCESS` | BusinessCapability | BusinessProcess | 1:N | OPTIONAL | `[EDGE]` |
 | `HAS_CODE_ASSET` | ApplicationComponent | CodeAsset | 1:N | BLOCKING | `[EDGE]` — agent-ready Phase 1 |
 | `LOCATED_IN` | TestCase | CodeAsset | N:1 | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |
 | `ASSET_FOR_SCREEN` | CodeAsset | Screen | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |

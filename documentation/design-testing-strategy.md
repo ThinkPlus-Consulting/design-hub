@@ -16,8 +16,8 @@ Without this layer, documentation can improve while the shipped UI still diverge
 
 ## Current State
 
-- The backend graph baseline now includes **36 `@Node` entities**, **57 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **216 passing tests**.
-- There is currently no Playwright harness in the repository.
+- The backend graph baseline now includes **48 `@Node` entities**, **78 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **281 passing tests**.
+- A Playwright harness now exists in `frontend/` with Layers 1-2 implemented against the live backend.
 - The frontend only exposes Angular build and serve scripts in `frontend/package.json`.
 - The frontend still contains hardcoded colors and user-facing text in component files, which makes drift harder to detect mechanically.
 
@@ -257,7 +257,7 @@ This makes Playwright part of the anti-drift architecture, not just QA tooling.
 ## Implementation Sequence
 
 1. Add Playwright to the frontend workspace.
-2. Create smoke and semantic tests first.
+2. Create smoke and semantic tests first. **Status:** done for Layers 1-2.
 3. Add visual baselines for the three-column shell and the highest-signal panels.
 4. Add English and Arabic locale tests.
 5. Add token-compliance and anti-drift checks.
