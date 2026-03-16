@@ -83,6 +83,98 @@ class RequirementLinterServiceTest {
     }
 
     @Test
+    void shouldRejectMissingId() {
+        String doc = """
+                ---
+                type: UserStory
+                status: DEFINED
+                version: 1
+                ---
+                ## Description
+                Content.
+                """;
+
+        var result = linter.lint(doc, "docs/stories/no-id.md");
+        assertTrue(result.hasBlockingErrors());
+        assertTrue(result.getErrors().stream()
+                .anyMatch(e -> e.getRule().equals("field-required") && e.getMessage().contains("'id'")));
+    }
+
+    @Test
+    void shouldRejectMissingType() {
+        String doc = """
+                ---
+                id: US-SCR-044
+                status: DEFINED
+                version: 1
+                ---
+                ## Description
+                Content.
+                """;
+
+        var result = linter.lint(doc, "docs/stories/no-type.md");
+        assertTrue(result.hasBlockingErrors());
+        assertTrue(result.getErrors().stream()
+                .anyMatch(e -> e.getRule().equals("field-required") && e.getMessage().contains("'type'")));
+    }
+
+    @Test
+    void shouldRejectMissingStatus() {
+        String doc = """
+                ---
+                id: US-SCR-046
+                type: UserStory
+                version: 1
+                ---
+                ## Description
+                Content.
+                """;
+
+        var result = linter.lint(doc, "docs/stories/no-status.md");
+        assertTrue(result.hasBlockingErrors());
+        assertTrue(result.getErrors().stream()
+                .anyMatch(e -> e.getRule().equals("field-required") && e.getMessage().contains("'status'")));
+    }
+
+    @Test
+    void shouldRejectZeroVersion() {
+        String doc = """
+                ---
+                id: US-SCR-045
+                type: UserStory
+                status: DEFINED
+                version: 0
+                ---
+                ## Description
+                Content.
+                """;
+
+        var result = linter.lint(doc, "docs/stories/bad-version.md");
+        assertTrue(result.hasBlockingErrors());
+        assertTrue(result.getErrors().stream()
+                .anyMatch(e -> e.getRule().equals("field-required") && e.getMessage().contains("'version'")));
+    }
+
+    @Test
+    void shouldWarnOnUnknownArtifactType() {
+        String doc = """
+                ---
+                id: WIDGET-001
+                type: Widget
+                status: DEFINED
+                version: 1
+                ---
+                ## Description
+                Content.
+                """;
+
+        var result = linter.lint(doc, "docs/widgets/WIDGET-001.md");
+        assertFalse(result.hasBlockingErrors());
+        assertTrue(result.getWarnings().stream()
+                .anyMatch(w -> w.getRule().equals("unknown-artifact-type")));
+    }
+
+    @Test
     void shouldWarnOnMissingSections() {
         String doc = """
                 ---

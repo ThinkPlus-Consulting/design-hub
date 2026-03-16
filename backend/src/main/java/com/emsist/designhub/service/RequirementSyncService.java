@@ -51,6 +51,9 @@ public class RequirementSyncService {
      * @return true if hashes differ (drift detected), false if they match
      */
     public boolean hasDrift(String storedHash, String currentHash) {
+        if (storedHash == null || currentHash == null) {
+            return storedHash != currentHash;
+        }
         return !storedHash.equals(currentHash);
     }
 }

@@ -30,6 +30,21 @@ class RequirementSyncServiceTest {
     }
 
     @Test
+    void shouldDetectDriftWhenStoredHashIsNull() {
+        assertTrue(service.hasDrift(null, "sha256:abc123"));
+    }
+
+    @Test
+    void shouldDetectDriftWhenCurrentHashIsNull() {
+        assertTrue(service.hasDrift("sha256:abc123", null));
+    }
+
+    @Test
+    void shouldNotDetectDriftWhenBothNull() {
+        assertFalse(service.hasDrift(null, null));
+    }
+
+    @Test
     void shouldNotDetectDriftWhenHashesMatch() {
         String hash1 = service.computeContentHash("US-AUTH-001",
                 "As an admin, I want to manage users", "Given...");

@@ -36,6 +36,48 @@ public class RequirementLinterService {
 
         var fm = fmOpt.get();
 
+        // Validate required frontmatter fields
+        if (fm.getId() == null || fm.getId().isBlank()) {
+            errors.add(LintIssue.builder()
+                    .rule("field-required").line(2)
+                    .message("Frontmatter field 'id' is required and must not be blank")
+                    .severity(LintIssue.Severity.ERROR).autoFixable(false).build());
+        }
+        if (fm.getType() == null || fm.getType().isBlank()) {
+            errors.add(LintIssue.builder()
+                    .rule("field-required").line(2)
+                    .message("Frontmatter field 'type' is required and must not be blank")
+                    .severity(LintIssue.Severity.ERROR).autoFixable(false).build());
+        }
+        if (fm.getStatus() == null || fm.getStatus().isBlank()) {
+            errors.add(LintIssue.builder()
+                    .rule("field-required").line(2)
+                    .message("Frontmatter field 'status' is required and must not be blank")
+                    .severity(LintIssue.Severity.ERROR).autoFixable(false).build());
+        }
+        if (fm.getVersion() < 1) {
+            errors.add(LintIssue.builder()
+                    .rule("field-required").line(2)
+                    .message("Frontmatter field 'version' must be >= 1")
+                    .severity(LintIssue.Severity.ERROR).autoFixable(false).build());
+        }
+
+        // Short-circuit if required fields are missing — type-specific rules need valid type
+        if (!errors.isEmpty()) {
+            return LintResult.builder().file(filePath)
+                    .artifactId(fm.getId() != null ? fm.getId() : "UNKNOWN")
+                    .artifactType(fm.getType() != null ? fm.getType() : "UNKNOWN")
+                    .errors(errors).warnings(warnings).build();
+        }
+
+        // Warn on unknown artifact types
+        if (config.getArtifactTypes() == null || !config.getArtifactTypes().containsKey(fm.getType())) {
+            warnings.add(LintIssue.builder()
+                    .rule("unknown-artifact-type").line(2)
+                    .message("Unknown artifact type: " + fm.getType() + ". No type-specific rules will be applied.")
+                    .severity(LintIssue.Severity.WARNING).autoFixable(false).build());
+        }
+
         // Validate ID pattern and required sections for known artifact types
         if (config.getArtifactTypes() != null && config.getArtifactTypes().containsKey(fm.getType())) {
             var rules = config.getArtifactTypes().get(fm.getType());
