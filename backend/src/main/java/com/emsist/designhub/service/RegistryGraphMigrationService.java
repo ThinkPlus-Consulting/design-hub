@@ -837,6 +837,179 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    // ── Technical execution context activation ────────────────────────
+
+    @Transactional
+    public void seedApplicationsAndComponents() {
+        neo4jClient.query("""
+                MERGE (app:Application {applicationId: 'APP-DH'})
+                SET app.name = 'Design Hub',
+                    app.description = 'Design Hub workspace and graph explorer',
+                    app.repoPath = '.',
+                    app.repoUrl = 'https://example.invalid/emsist/design-hub.git',
+                    app.workspaceType = 'MONOREPO',
+                    app.defaultBuildCommand = 'mvn -q -DskipTests package',
+                    app.defaultTestCommand = 'mvn -q test',
+                    app.status = 'IMPLEMENTED'
+                MERGE (fe:ApplicationComponent {componentId: 'CMP-DH-FRONTEND'})
+                SET fe.name = 'Design Hub Frontend',
+                    fe.description = 'Angular user interface for the Design Hub workspace',
+                    fe.componentType = 'FRONTEND_APP',
+                    fe.frameworkFamily = 'ANGULAR',
+                    fe.frameworkName = 'Angular',
+                    fe.frameworkVersion = '21',
+                    fe.runtime = 'BROWSER',
+                    fe.language = 'TYPESCRIPT',
+                    fe.languageVersion = '5',
+                    fe.modulePath = 'frontend',
+                    fe.manifestPath = 'package.json',
+                    fe.buildCommand = 'npm run build',
+                    fe.testCommand = 'npm run test:e2e',
+                    fe.entrypointPath = 'src/main.ts',
+                    fe.status = 'IMPLEMENTED'
+                MERGE (be:ApplicationComponent {componentId: 'CMP-DH-BACKEND'})
+                SET be.name = 'Design Hub Backend',
+                    be.description = 'Spring Boot API and graph orchestration layer',
+                    be.componentType = 'MICROSERVICE',
+                    be.frameworkFamily = 'SPRING_BOOT',
+                    be.frameworkName = 'Spring Boot',
+                    be.frameworkVersion = '3.4',
+                    be.runtime = 'JVM',
+                    be.language = 'JAVA',
+                    be.languageVersion = '23',
+                    be.modulePath = 'backend',
+                    be.manifestPath = 'pom.xml',
+                    be.buildCommand = 'mvn -q -DskipTests package',
+                    be.testCommand = 'mvn -q test',
+                    be.entrypointPath = 'src/main/java/com/emsist/designhub/DesignHubApplication.java',
+                    be.status = 'IMPLEMENTED'
+                MERGE (app)-[:HAS_COMPONENT]->(fe)
+                MERGE (app)-[:HAS_COMPONENT]->(be)
+                MERGE (fe)-[:DEPENDS_ON_COMPONENT]->(be)
+                """).run();
+    }
+
+    @Transactional
+    public void seedImplementationPackArtifacts() {
+        neo4jClient.query("""
+                MERGE (convFe:CodingConvention {conventionCode: 'CONV-FE-TEST-001'})
+                SET convFe.name = 'Frontend smoke and semantic test convention',
+                    convFe.category = 'TESTING',
+                    convFe.enforcement = 'MANDATORY',
+                    convFe.scope = 'FRONTEND',
+                    convFe.docRef = 'documentation/design-testing-strategy.md',
+                    convFe.summary = 'Frontend changes must preserve Playwright smoke and semantic interaction coverage.',
+                    convFe.activeStatus = 'ACTIVE'
+                MERGE (convBe:CodingConvention {conventionCode: 'CONV-BE-LAYER-001'})
+                SET convBe.name = 'Backend layering convention',
+                    convBe.category = 'STRUCTURE',
+                    convBe.enforcement = 'MANDATORY',
+                    convBe.scope = 'BACKEND',
+                    convBe.docRef = 'documentation/architecture-blueprint.md',
+                    convBe.summary = 'Keep graph orchestration inside services and preserve explicit domain layering.',
+                    convBe.activeStatus = 'ACTIVE'
+                MATCH (app:Application {applicationId: 'APP-DH'})
+                MATCH (fe:ApplicationComponent {componentId: 'CMP-DH-FRONTEND'})
+                MATCH (be:ApplicationComponent {componentId: 'CMP-DH-BACKEND'})
+                MATCH (builder:Screen {surfaceId: 'SCR-AGT-BUILDER'})
+                MATCH (gallery:Screen {surfaceId: 'SCR-AGT-GALLERY'})
+                MATCH (list:Screen {surfaceId: 'SCR-AGT-LIST'})
+                MATCH (api:ApiContract {contractId: 'API-POST-API-V1-AGENTS-ID-PUBLISH'})
+                MATCH (entity:DataEntity {entityId: 'DE-AGENT'})
+                MATCH (rule:Rule {ruleId: 'RULE-AUTH-001'})
+                MERGE (fe)-[:SUPPORTS_SCREEN]->(builder)
+                MERGE (fe)-[:SUPPORTS_SCREEN]->(gallery)
+                MERGE (fe)-[:SUPPORTS_SCREEN]->(list)
+                MERGE (be)-[:EXPOSES]->(api)
+                MERGE (be)-[:OWNS_DATA_ENTITY]->(entity)
+                MERGE (be)-[:ENFORCES_RULE]->(rule)
+                MERGE (app)-[:GOVERNED_BY_CONVENTION]->(convFe)
+                MERGE (fe)-[:GOVERNED_BY_CONVENTION]->(convFe)
+                MERGE (be)-[:GOVERNED_BY_CONVENTION]->(convBe)
+                MERGE (caPage:CodeAsset {codeAssetId: 'CA-FE-DH-PAGE-001'})
+                SET caPage.filePath = 'src/app/features/design-hub/design-hub.page.ts',
+                    caPage.assetType = 'SOURCE',
+                    caPage.language = 'TYPESCRIPT',
+                    caPage.layerType = 'PAGE',
+                    caPage.description = 'Design Hub page shell',
+                    caPage.status = 'IMPLEMENTED'
+                MERGE (caCanvas:CodeAsset {codeAssetId: 'CA-FE-BUILDER-CANVAS-001'})
+                SET caCanvas.filePath = 'src/app/features/design-hub/components/flow-canvas/flow-canvas.component.ts',
+                    caCanvas.assetType = 'SOURCE',
+                    caCanvas.language = 'TYPESCRIPT',
+                    caCanvas.layerType = 'COMPONENT',
+                    caCanvas.description = 'Builder canvas implementation',
+                    caCanvas.status = 'IMPLEMENTED'
+                MERGE (caSidebar:CodeAsset {codeAssetId: 'CA-FE-BUILDER-SIDEBAR-001'})
+                SET caSidebar.filePath = 'src/app/features/design-hub/components/screen-sidebar/screen-sidebar.component.ts',
+                    caSidebar.assetType = 'SOURCE',
+                    caSidebar.language = 'TYPESCRIPT',
+                    caSidebar.layerType = 'COMPONENT',
+                    caSidebar.description = 'Builder sidebar implementation',
+                    caSidebar.status = 'IMPLEMENTED'
+                MERGE (caDetail:CodeAsset {codeAssetId: 'CA-FE-BUILDER-DETAIL-001'})
+                SET caDetail.filePath = 'src/app/features/design-hub/components/detail-panel/detail-panel.component.ts',
+                    caDetail.assetType = 'SOURCE',
+                    caDetail.language = 'TYPESCRIPT',
+                    caDetail.layerType = 'COMPONENT',
+                    caDetail.description = 'Builder detail panel implementation',
+                    caDetail.status = 'IMPLEMENTED'
+                MERGE (caSpec:CodeAsset {codeAssetId: 'CA-FE-BUILDER-E2E-001'})
+                SET caSpec.filePath = 'tests/graph/screen-selection.spec.ts',
+                    caSpec.assetType = 'TEST',
+                    caSpec.language = 'TYPESCRIPT',
+                    caSpec.layerType = 'TEST',
+                    caSpec.description = 'Playwright builder interaction coverage',
+                    caSpec.status = 'IMPLEMENTED'
+                MERGE (fe)-[:HAS_CODE_ASSET]->(caPage)
+                MERGE (fe)-[:HAS_CODE_ASSET]->(caCanvas)
+                MERGE (fe)-[:HAS_CODE_ASSET]->(caSidebar)
+                MERGE (fe)-[:HAS_CODE_ASSET]->(caDetail)
+                MERGE (fe)-[:HAS_CODE_ASSET]->(caSpec)
+                MERGE (caCanvas)-[:ASSET_FOR_SCREEN]->(builder)
+                MERGE (caSidebar)-[:ASSET_FOR_SCREEN]->(builder)
+                MERGE (caDetail)-[:ASSET_FOR_SCREEN]->(builder)
+                MERGE (caPage)-[:ASSET_FOR_SCREEN]->(list)
+                MERGE (caPage)-[:ASSET_FOR_SCREEN]->(gallery)
+                MERGE (caCanvas)-[:GOVERNED_BY_CONVENTION]->(convFe)
+                MERGE (caSpec)-[:GOVERNED_BY_CONVENTION]->(convFe)
+                """).run();
+    }
+
+    @Transactional
+    public void seedImplementationPackVerification() {
+        neo4jClient.query("""
+                MATCH (us:UserStory {storyId: 'US-AI-090'})
+                MATCH (fe:ApplicationComponent {componentId: 'CMP-DH-FRONTEND'})
+                MATCH (builderAsset:CodeAsset {codeAssetId: 'CA-FE-BUILDER-CANVAS-001'})
+                MATCH (testAsset:CodeAsset {codeAssetId: 'CA-FE-BUILDER-E2E-001'})
+                MATCH (builderScreen:Screen {surfaceId: 'SCR-AGT-BUILDER'})
+                MERGE (task:Task {taskId: 'TASK-US-AI-090-001'})
+                SET task.title = 'Implement builder canvas interactions',
+                    task.description = 'Wire the builder canvas and related panels for agent composition.',
+                    task.taskType = 'FRONTEND',
+                    task.priority = 'HIGH',
+                    task.status = 'IN_IMPLEMENTATION'
+                MERGE (tc:TestCase {testCaseId: 'TC-US-AI-090-001'})
+                SET tc.title = 'Builder screen selection smoke',
+                    tc.description = 'Verifies builder screen selection and detail synchronization.',
+                    tc.testType = 'E2E',
+                    tc.preconditions = 'Frontend and backend are running with seeded data',
+                    tc.expectedResult = 'Selecting a builder screen updates detail context with no runtime errors.',
+                    tc.testFilePath = 'frontend/tests/graph/screen-selection.spec.ts',
+                    tc.testFramework = 'PLAYWRIGHT',
+                    tc.suiteName = 'frontend-playwright',
+                    tc.testCommand = 'npm run test:e2e',
+                    tc.status = 'DEFINED'
+                MERGE (us)-[:HAS_TASK]->(task)
+                MERGE (us)-[:VERIFIED_BY]->(tc)
+                MERGE (tc)-[:VERIFIES]->(builderScreen)
+                MERGE (tc)-[:LOCATED_IN]->(testAsset)
+                MERGE (task)-[:IMPLEMENTS]->(fe)
+                MERGE (task)-[:IMPLEMENTS]->(builderAsset)
+                """).run();
+    }
+
     // ── Orchestration ──────────────────────────────────────────────────
 
     @Transactional
@@ -901,5 +1074,10 @@ public class RegistryGraphMigrationService {
         // 9. Seed D6a screen-flow coverage
         seedScreenStates();
         seedTransitions();
+
+        // 10. Seed technical execution context coverage
+        seedApplicationsAndComponents();
+        seedImplementationPackArtifacts();
+        seedImplementationPackVerification();
     }
 }

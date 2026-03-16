@@ -43,6 +43,21 @@ public class ApplicationComponent {
     @Relationship(type = "HAS_CODE_ASSET", direction = Relationship.Direction.OUTGOING)
     private List<CodeAsset> codeAssets;
 
+    @Relationship(type = "SUPPORTS_SCREEN", direction = Relationship.Direction.OUTGOING)
+    private List<Screen> supportedScreens;
+
+    @Relationship(type = "EXPOSES", direction = Relationship.Direction.OUTGOING)
+    private List<ApiContract> exposedApis;
+
+    @Relationship(type = "OWNS_DATA_ENTITY", direction = Relationship.Direction.OUTGOING)
+    private List<DataEntity> ownedEntities;
+
+    @Relationship(type = "ENFORCES_RULE", direction = Relationship.Direction.OUTGOING)
+    private List<Rule> enforcedRules;
+
+    @Relationship(type = "DEPENDS_ON_COMPONENT", direction = Relationship.Direction.OUTGOING)
+    private List<ApplicationComponent> dependsOnComponents;
+
     @Relationship(type = "GOVERNED_BY_CONVENTION", direction = Relationship.Direction.OUTGOING)
     private List<CodingConvention> conventions;
 

@@ -25,4 +25,7 @@ public class Task {
 
     @Relationship(type = "IMPLEMENTS", direction = Relationship.Direction.OUTGOING)
     private List<CodeAsset> implementsAssets;
+
+    @Relationship(type = "IMPLEMENTS", direction = Relationship.Direction.OUTGOING)
+    private List<ApplicationComponent> implementsComponents;
 }

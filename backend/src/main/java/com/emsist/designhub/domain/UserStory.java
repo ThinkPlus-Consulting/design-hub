@@ -34,6 +34,9 @@ public class UserStory {
     @Relationship(type = "HAS_TASK", direction = Relationship.Direction.OUTGOING)
     private List<Task> tasks;
 
+    @Relationship(type = "VERIFIED_BY", direction = Relationship.Direction.OUTGOING)
+    private List<TestCase> verifiedByTests;
+
     @Relationship(type = "HAS_SOURCE", direction = Relationship.Direction.OUTGOING)
     private List<SourceReference> sourceReferences;
 

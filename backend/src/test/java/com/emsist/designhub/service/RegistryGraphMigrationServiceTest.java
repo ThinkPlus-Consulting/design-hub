@@ -676,6 +676,56 @@ class RegistryGraphMigrationServiceTest {
                 && ((String) cypher).contains("TRN-SCR-AUTH-TO-DASH")));
     }
 
+    @Test
+    void shouldSeedApplicationsAndComponents() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedApplicationsAndComponents();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("Application {applicationId: 'APP-DH'}")
+                && ((String) cypher).contains("CMP-DH-FRONTEND")
+                && ((String) cypher).contains("CMP-DH-BACKEND")
+                && ((String) cypher).contains("DEPENDS_ON_COMPONENT")));
+    }
+
+    @Test
+    void shouldSeedImplementationPackArtifacts() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedImplementationPackArtifacts();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("SUPPORTS_SCREEN")
+                && ((String) cypher).contains("EXPOSES")
+                && ((String) cypher).contains("OWNS_DATA_ENTITY")
+                && ((String) cypher).contains("ENFORCES_RULE")
+                && ((String) cypher).contains("HAS_CODE_ASSET")
+                && ((String) cypher).contains("ASSET_FOR_SCREEN")
+                && ((String) cypher).contains("GOVERNED_BY_CONVENTION")
+                && ((String) cypher).contains("CA-FE-BUILDER-E2E-001")));
+    }
+
+    @Test
+    void shouldSeedImplementationPackVerification() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedImplementationPackVerification();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("VERIFIED_BY")
+                && ((String) cypher).contains("LOCATED_IN")
+                && ((String) cypher).contains("TASK-US-AI-090-001")
+                && ((String) cypher).contains("TC-US-AI-090-001")
+                && ((String) cypher).contains("US-AI-090")));
+    }
+
     // ── Full migration orchestration ───────────────────────────────────
 
     @Test
@@ -687,7 +737,7 @@ class RegistryGraphMigrationServiceTest {
 
         service.runFullMigration();
 
-        // Existing 41 + canonical story/journey traversal backfills (4) = 45 minimum with empty apiCalls fetch
-        verify(neo4jClient, atLeast(45)).query(anyString());
+        // Existing 45 minimum + technical execution activation seeds (3) = 48 minimum with empty apiCalls fetch
+        verify(neo4jClient, atLeast(48)).query(anyString());
     }
 }
