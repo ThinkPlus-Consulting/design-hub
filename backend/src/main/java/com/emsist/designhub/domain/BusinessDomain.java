@@ -14,15 +14,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BusinessCapability {
-
+public class BusinessDomain {
     @Id
-    private String capabilityId;
-
+    private String domainCode;
     private String name;
     private String description;
-    private Status status;
+    private String activeStatus;
 
-    @Relationship(type = "REALIZED_BY_PROCESS", direction = Relationship.Direction.OUTGOING)
-    private List<BusinessProcess> realizedByProcesses;
+    @Relationship(type = "HAS_CAPABILITY", direction = Relationship.Direction.OUTGOING)
+    private List<BusinessCapability> capabilities;
 }

@@ -6,23 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
-import java.util.List;
 
 @Node
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BusinessCapability {
-
+public class ProcessEvent {
     @Id
-    private String capabilityId;
-
+    private String eventId;
     private String name;
-    private String description;
+    private String eventPosition;
+    private String eventTrigger;
+    private boolean isInterrupting;
+    private String attachedToRef;
     private Status status;
-
-    @Relationship(type = "REALIZED_BY_PROCESS", direction = Relationship.Direction.OUTGOING)
-    private List<BusinessProcess> realizedByProcesses;
 }
