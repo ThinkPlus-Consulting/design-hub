@@ -64,6 +64,9 @@ public class Screen {
     @Builder.Default
     private List<Screen> transitionsTo = new ArrayList<>();
 
+    @Relationship(type = "HAS_MESSAGE", direction = Relationship.Direction.OUTGOING)
+    private List<Message> messages;
+
     @Relationship(type = "HAS_QUALITY_CONSTRAINT", direction = Relationship.Direction.OUTGOING)
     private List<QualityConstraint> qualityConstraints;
 

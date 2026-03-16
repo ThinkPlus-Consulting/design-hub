@@ -22,6 +22,9 @@ public class DataEntity {
     private String entityType;
     private Status status;
 
+    @Relationship(type = "HAS_FIELD", direction = Relationship.Direction.OUTGOING)
+    private List<DataField> fields;
+
     @Relationship(type = "HAS_QUALITY_CONSTRAINT", direction = Relationship.Direction.OUTGOING)
     private List<QualityConstraint> qualityConstraints;
 }
