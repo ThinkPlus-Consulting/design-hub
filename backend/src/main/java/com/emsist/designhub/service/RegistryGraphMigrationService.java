@@ -378,6 +378,178 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    // ── D5a process spine seeds (Chunk 2) ─────────────────────────────
+
+    @Transactional
+    public void seedBusinessDomains() {
+        neo4jClient.query("""
+                MERGE (dom:BusinessDomain {domainCode: 'DOM-DESIGN'})
+                SET dom.name = 'Design Management',
+                    dom.description = 'Business domain for design operations',
+                    dom.activeStatus = 'ACTIVE'
+                MERGE (cap:BusinessCapability {capabilityId: 'CAP-SCREEN-MGMT'})
+                ON CREATE SET cap.name = 'Screen Management',
+                              cap.description = 'Manage screen inventory and review workflow',
+                              cap.status = 'DEFINED'
+                MERGE (dom)-[:HAS_CAPABILITY]->(cap)
+                """).run();
+    }
+
+    @Transactional
+    public void seedBusinessProcesses() {
+        neo4jClient.query("""
+                MATCH (cap:BusinessCapability {capabilityId: 'CAP-SCREEN-MGMT'})
+                MERGE (proc:BusinessProcess {processId: 'PROC-SCREEN-REVIEW'})
+                SET proc.name = 'Screen Review Process',
+                    proc.description = 'Review and approve screen designs',
+                    proc.diagramFormat = 'BPMN_XML',
+                    proc.diagramVersion = '1.0',
+                    proc.diagramSource = 'OMG_BPMN',
+                    proc.isExecutableModel = false,
+                    proc.status = 'DEFINED'
+                MERGE (act:ProcessActivity {activityId: 'ACT-PROC-SCREEN-REVIEW-001'})
+                SET act.name = 'Review screen design',
+                    act.description = 'Review submitted design assets',
+                    act.activityType = 'TASK',
+                    act.actionType = 'REVIEW',
+                    act.taskNature = 'USER',
+                    act.orderIndex = 1,
+                    act.status = 'DEFINED'
+                MERGE (gw:ProcessGateway {gatewayId: 'GW-PROC-SCREEN-REVIEW-001'})
+                SET gw.name = 'Review outcome',
+                    gw.gatewayType = 'EXCLUSIVE',
+                    gw.defaultFlowTarget = 'ACT-PROC-SCREEN-REVIEW-003',
+                    gw.status = 'DEFINED'
+                MERGE (evt:ProcessEvent {eventId: 'EVT-PROC-SCREEN-REVIEW-001'})
+                SET evt.name = 'Review started',
+                    evt.eventPosition = 'START',
+                    evt.eventTrigger = 'NONE',
+                    evt.isInterrupting = false,
+                    evt.status = 'DEFINED'
+                MERGE (cap)-[:REALIZED_BY_PROCESS]->(proc)
+                MERGE (proc)-[:HAS_FLOW_NODE]->(act)
+                MERGE (proc)-[:HAS_FLOW_NODE]->(gw)
+                MERGE (proc)-[:HAS_FLOW_NODE]->(evt)
+                """).run();
+    }
+
+    @Transactional
+    public void seedProcessFlows() {
+        neo4jClient.query("""
+                MERGE (act1:ProcessActivity {activityId: 'ACT-PROC-SCREEN-REVIEW-001'})
+                ON CREATE SET act1.name = 'Review screen design',
+                              act1.activityType = 'TASK',
+                              act1.actionType = 'REVIEW',
+                              act1.status = 'DEFINED'
+                MERGE (act2:ProcessActivity {activityId: 'ACT-PROC-SCREEN-REVIEW-002'})
+                SET act2.name = 'Capture decision',
+                    act2.activityType = 'TASK',
+                    act2.actionType = 'APPROVE',
+                    act2.taskNature = 'USER',
+                    act2.orderIndex = 2,
+                    act2.status = 'DEFINED'
+                MERGE (act3:ProcessActivity {activityId: 'ACT-PROC-SCREEN-REVIEW-003'})
+                SET act3.name = 'Request rework',
+                    act3.activityType = 'TASK',
+                    act3.actionType = 'UPDATE',
+                    act3.taskNature = 'USER',
+                    act3.orderIndex = 3,
+                    act3.status = 'DEFINED'
+                MERGE (gw:ProcessGateway {gatewayId: 'GW-PROC-SCREEN-REVIEW-001'})
+                ON CREATE SET gw.name = 'Review outcome',
+                              gw.gatewayType = 'EXCLUSIVE',
+                              gw.status = 'DEFINED'
+                MERGE (evt:ProcessEvent {eventId: 'EVT-PROC-SCREEN-REVIEW-001'})
+                ON CREATE SET evt.name = 'Review started',
+                              evt.eventPosition = 'START',
+                              evt.eventTrigger = 'NONE',
+                              evt.status = 'DEFINED'
+                MERGE (act1)-[:FLOWS_TO]->(act2)
+                MERGE (gw)-[:FLOWS_TO]->(act3)
+                MERGE (evt)-[:FLOWS_TO]->(act1)
+                """).run();
+    }
+
+    @Transactional
+    public void seedProcessExpansion() {
+        neo4jClient.query("""
+                MERGE (subProc:BusinessProcess {processId: 'PROC-SCREEN-DETAIL-REVIEW'})
+                SET subProc.name = 'Detailed Screen Review',
+                    subProc.description = 'Subprocess for design review details',
+                    subProc.diagramFormat = 'BPMN_XML',
+                    subProc.diagramVersion = '1.0',
+                    subProc.diagramSource = 'OMG_BPMN',
+                    subProc.isExecutableModel = false,
+                    subProc.status = 'DEFINED'
+                MERGE (callProc:BusinessProcess {processId: 'PROC-NOTIFY-REVIEWERS'})
+                SET callProc.name = 'Notify Reviewers',
+                    callProc.description = 'Called process for reviewer notifications',
+                    callProc.diagramFormat = 'BPMN_XML',
+                    callProc.diagramVersion = '1.0',
+                    callProc.diagramSource = 'OMG_BPMN',
+                    callProc.isExecutableModel = false,
+                    callProc.status = 'DEFINED'
+                MERGE (subAct:ProcessActivity {activityId: 'ACT-PROC-SCREEN-REVIEW-010'})
+                SET subAct.name = 'Run detailed review',
+                    subAct.activityType = 'SUBPROCESS',
+                    subAct.actionType = 'REVIEW',
+                    subAct.taskNature = 'USER',
+                    subAct.orderIndex = 10,
+                    subAct.status = 'DEFINED'
+                MERGE (callAct:ProcessActivity {activityId: 'ACT-PROC-SCREEN-REVIEW-011'})
+                SET callAct.name = 'Notify reviewers',
+                    callAct.activityType = 'CALL_ACTIVITY',
+                    callAct.actionType = 'NOTIFY',
+                    callAct.taskNature = 'SERVICE',
+                    callAct.orderIndex = 11,
+                    callAct.status = 'DEFINED'
+                MERGE (subAct)-[:EXPANDS_TO]->(subProc)
+                MERGE (callAct)-[:CALLS_PROCESS]->(callProc)
+                """).run();
+    }
+
+    @Transactional
+    public void seedBoundaryEvent() {
+        neo4jClient.query("""
+                MERGE (host:ProcessActivity {activityId: 'ACT-PROC-SCREEN-REVIEW-002'})
+                ON CREATE SET host.name = 'Capture decision',
+                              host.activityType = 'TASK',
+                              host.actionType = 'APPROVE',
+                              host.status = 'DEFINED'
+                MERGE (escalate:ProcessActivity {activityId: 'ACT-PROC-SCREEN-REVIEW-004'})
+                SET escalate.name = 'Escalate stalled review',
+                    escalate.activityType = 'TASK',
+                    escalate.actionType = 'NOTIFY',
+                    escalate.taskNature = 'SERVICE',
+                    escalate.orderIndex = 4,
+                    escalate.status = 'DEFINED'
+                MERGE (evt:ProcessEvent {eventId: 'EVT-PROC-SCREEN-REVIEW-002'})
+                SET evt.name = 'Review timeout',
+                    evt.eventPosition = 'BOUNDARY',
+                    evt.eventTrigger = 'TIMER',
+                    evt.isInterrupting = true,
+                    evt.attachedToRef = 'ACT-PROC-SCREEN-REVIEW-002',
+                    evt.status = 'DEFINED'
+                MERGE (evt)-[:ATTACHED_TO]->(host)
+                MERGE (evt)-[:FLOWS_TO]->(escalate)
+                """).run();
+    }
+
+    @Transactional
+    public void seedStoryTasks() {
+        neo4jClient.query("""
+                MERGE (us:UserStory {storyId: 'US-AUTH-001'})
+                ON CREATE SET us.label = 'User can sign in', us.module = 'core', us.domain = 'auth', us.storyNumber = 'US-AUTH-001'
+                MERGE (t:Task {taskId: 'TASK-US-AUTH-001-001'})
+                SET t.title = 'Implement login form',
+                    t.description = 'Build login form validation and submit behavior',
+                    t.taskType = 'IMPLEMENTATION',
+                    t.status = 'DEFINED',
+                    t.priority = 'HIGH'
+                MERGE (us)-[:HAS_TASK]->(t)
+                """).run();
+    }
+
     // ── Patches (existing) ─────────────────────────────────────────────
 
     @Transactional
@@ -444,5 +616,13 @@ public class RegistryGraphMigrationService {
         seedApiSchemas();
         seedTestCaseVerifies();
         seedStoryRuleEdges();
+
+        // 7. Seed D5a process spine coverage
+        seedBusinessDomains();
+        seedBusinessProcesses();
+        seedProcessFlows();
+        seedProcessExpansion();
+        seedBoundaryEvent();
+        seedStoryTasks();
     }
 }

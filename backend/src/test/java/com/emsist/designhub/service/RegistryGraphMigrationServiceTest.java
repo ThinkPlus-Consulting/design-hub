@@ -400,6 +400,92 @@ class RegistryGraphMigrationServiceTest {
                 && ((String) cypher).contains("RULE-AUTH-001")));
     }
 
+    @Test
+    void shouldSeedBusinessDomains() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedBusinessDomains();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("BusinessDomain")
+                && ((String) cypher).contains("HAS_CAPABILITY")
+                && ((String) cypher).contains("DOM-DESIGN")));
+    }
+
+    @Test
+    void shouldSeedBusinessProcesses() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedBusinessProcesses();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("BusinessProcess")
+                && ((String) cypher).contains("REALIZED_BY_PROCESS")
+                && ((String) cypher).contains("HAS_FLOW_NODE")
+                && ((String) cypher).contains("GW-PROC-SCREEN-REVIEW-001")
+                && ((String) cypher).contains("EVT-PROC-SCREEN-REVIEW-001")));
+    }
+
+    @Test
+    void shouldSeedProcessFlows() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedProcessFlows();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("FLOWS_TO")
+                && ((String) cypher).contains("ProcessGateway")
+                && ((String) cypher).contains("ProcessEvent")));
+    }
+
+    @Test
+    void shouldSeedProcessExpansion() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedProcessExpansion();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("EXPANDS_TO")
+                && ((String) cypher).contains("CALLS_PROCESS")
+                && ((String) cypher).contains("PROC-SCREEN-DETAIL-REVIEW")));
+    }
+
+    @Test
+    void shouldSeedBoundaryEvent() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedBoundaryEvent();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("ATTACHED_TO")
+                && ((String) cypher).contains("FLOWS_TO")
+                && ((String) cypher).contains("EVT-PROC-SCREEN-REVIEW-002")));
+    }
+
+    @Test
+    void shouldSeedStoryTasks() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedStoryTasks();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("HAS_TASK")
+                && ((String) cypher).contains("TASK-US-AUTH-001-001")
+                && ((String) cypher).contains("US-AUTH-001")));
+    }
+
     // ── Full migration orchestration ───────────────────────────────────
 
     @Test
@@ -411,7 +497,7 @@ class RegistryGraphMigrationServiceTest {
 
         service.runFullMigration();
 
-        // Existing 19 queries + D4 engineering seeds (7) = 26 minimum with empty apiCalls fetch
-        verify(neo4jClient, atLeast(26)).query(anyString());
+        // Existing 19 queries + D4 engineering seeds (7) + D5a seeds (6) = 32 minimum with empty apiCalls fetch
+        verify(neo4jClient, atLeast(32)).query(anyString());
     }
 }

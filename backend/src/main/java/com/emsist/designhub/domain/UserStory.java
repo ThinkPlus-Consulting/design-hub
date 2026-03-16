@@ -30,4 +30,7 @@ public class UserStory {
 
     @Relationship(type = "GOVERNED_BY_RULE", direction = Relationship.Direction.OUTGOING)
     private List<Rule> governedByRules;
+
+    @Relationship(type = "HAS_TASK", direction = Relationship.Direction.OUTGOING)
+    private List<Task> tasks;
 }

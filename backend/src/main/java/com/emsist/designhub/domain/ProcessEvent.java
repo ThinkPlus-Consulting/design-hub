@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
+
+import java.util.List;
 
 @Node
 @Data
@@ -21,4 +24,10 @@ public class ProcessEvent {
     private boolean isInterrupting;
     private String attachedToRef;
     private Status status;
+
+    @Relationship(type = "ATTACHED_TO", direction = Relationship.Direction.OUTGOING)
+    private List<ProcessActivity> attachedTo;
+
+    @Relationship(type = "FLOWS_TO", direction = Relationship.Direction.OUTGOING)
+    private List<ProcessActivity> flowsToActivities;
 }

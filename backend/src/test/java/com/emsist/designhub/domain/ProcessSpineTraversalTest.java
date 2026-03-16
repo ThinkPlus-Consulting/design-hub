@@ -166,6 +166,94 @@ class ProcessSpineTraversalTest {
     }
 
     @Test
+    void shouldTraverseGatewayFlowsToActivity() {
+        ProcessActivity approve = ProcessActivity.builder()
+                .activityId("ACT-PROC-REVIEW-003")
+                .name("Approve screen")
+                .activityType("TASK")
+                .actionType("APPROVE")
+                .status(Status.DEFINED)
+                .build();
+
+        ProcessGateway gateway = ProcessGateway.builder()
+                .gatewayId("GW-PROC-REVIEW-001")
+                .name("Review outcome")
+                .gatewayType("EXCLUSIVE")
+                .status(Status.DEFINED)
+                .flowsToActivities(List.of(approve))
+                .build();
+
+        assertEquals("ACT-PROC-REVIEW-003", gateway.getFlowsToActivities().get(0).getActivityId());
+    }
+
+    @Test
+    void shouldTraverseEventAttachedToActivity() {
+        ProcessActivity review = ProcessActivity.builder()
+                .activityId("ACT-PROC-REVIEW-002")
+                .name("Review screen design")
+                .activityType("TASK")
+                .actionType("REVIEW")
+                .status(Status.DEFINED)
+                .build();
+
+        ProcessEvent event = ProcessEvent.builder()
+                .eventId("EVT-PROC-REVIEW-002")
+                .name("Review timeout")
+                .eventPosition("BOUNDARY")
+                .eventTrigger("TIMER")
+                .status(Status.DEFINED)
+                .attachedTo(List.of(review))
+                .build();
+
+        assertEquals("ACT-PROC-REVIEW-002", event.getAttachedTo().get(0).getActivityId());
+    }
+
+    @Test
+    void shouldTraverseEventFlowsToActivity() {
+        ProcessActivity escalate = ProcessActivity.builder()
+                .activityId("ACT-PROC-REVIEW-004")
+                .name("Escalate review")
+                .activityType("TASK")
+                .actionType("NOTIFY")
+                .status(Status.DEFINED)
+                .build();
+
+        ProcessEvent event = ProcessEvent.builder()
+                .eventId("EVT-PROC-REVIEW-003")
+                .name("Escalation trigger")
+                .eventPosition("INTERMEDIATE_THROW")
+                .eventTrigger("ESCALATION")
+                .status(Status.DEFINED)
+                .flowsToActivities(List.of(escalate))
+                .build();
+
+        assertEquals("ACT-PROC-REVIEW-004", event.getFlowsToActivities().get(0).getActivityId());
+    }
+
+    @Test
+    void shouldTraverseUserStoryToTask() {
+        Task task = Task.builder()
+                .taskId("TASK-US-AUTH-001-001")
+                .title("Implement login screen")
+                .description("Create the login form and submission flow")
+                .taskType("IMPLEMENTATION")
+                .priority("HIGH")
+                .status(Status.DEFINED)
+                .build();
+
+        UserStory story = UserStory.builder()
+                .storyId("US-AUTH-001")
+                .label("User can sign in")
+                .module("core")
+                .domain("auth")
+                .storyNumber("US-AUTH-001")
+                .tasks(List.of(task))
+                .build();
+
+        assertEquals("TASK-US-AUTH-001-001", story.getTasks().get(0).getTaskId());
+    }
+
+    @Test
     void shouldTraverseFullProcessSpine() {
         // Build bottom-up: Activity → Process → Capability → Domain
         ProcessActivity activity = ProcessActivity.builder()
