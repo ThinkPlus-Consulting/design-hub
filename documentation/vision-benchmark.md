@@ -91,7 +91,7 @@ Tier 3 value objects (not counted in 71):
 
 **Implementation ratio:** 62 benchmarkable nodes implemented / 71 benchmarkable = **87.3%**
 
-**Score: GREEN** — The implementation baseline now exceeds the 80% benchmarkable threshold. The repo has **65 `@Node` entities**, **97 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **353 passing tests**. The graph now contains the agent-ready layer, safety layer, capability/project meta-model, registry/role split, D4 engineering entities, the D5a BPMN-aligned process spine, D5b1 strategic & governance plus architecture & EA stubs, D6a failure-path/traceability/screen-flow closure, and the canonical journey/story traversal closure.
+**Score: GREEN** — The implementation baseline now exceeds the 80% benchmarkable threshold. The repo has **65 `@Node` entities**, **103 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **363 passing tests**. The graph now contains the agent-ready layer, safety layer, capability/project meta-model, registry/role split, D4 engineering entities, the D5a BPMN-aligned process spine, D5b1 strategic & governance plus architecture & EA stubs, D6a failure-path/traceability/screen-flow closure, canonical journey/story traversal closure, and implementation-pack execution-context wiring.
 
 **Reshape notes:**
 
@@ -132,23 +132,16 @@ Tier 3 value objects (not counted in 71):
 
 **Question:** What proportion of target relationships are implemented as Neo4j `@Relationship` edges?
 
-| Category | Count | Percentage |
-|----------|-------|-----------|
-| Implemented SDN edges `[EDGE]` | 90 | 84.9% |
-| Implemented Cypher edges `[CYPHER]` | 1 | 0.9% |
-| String-encoded relationships `[STRING_REF]` | 5 | 4.7% |
-| Planned relationships `[PLANNED]` | 10 | 9.4% |
-| **Total target relationships** | **106** | |
+The current source baseline is **103 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**. Since the post-D6a canonical traversal and execution-context work materially changed the edge surface, the older normalized 106-edge-type percentage table is no longer trustworthy without a full rerun.
 
-**BLOCKING relationships breakdown:**
+What is true now:
 
-| Status | BLOCKING Count | Examples |
-|--------|---------------|----------|
-| `[EDGE]` | 11 | HAS_STEP, TARGETS, HAS_ENTRY_MODE, PERFORMED_BY_PERSONA, HAS_FEATURE, HAS_STORY, HAS_CRITERION, HAS_FIELD, BELONGS_TO_SCREEN, FROM_SCREEN, TO_SCREEN |
-| `[STRING_REF]` | 1 | DELIVERS (storyRefs) |
-| `[PLANNED]` | 8 | USES_SCREEN, PERFORMS_JOURNEY, STARTS_AT_TOUCHPOINT, BELONGS_TO_API (x3), BLOCKS_ARTIFACT, LINKS_TO_OBJECT |
+- Canonical story delivery is edge-backed through `DELIVERS`
+- Canonical journey-step traversal is edge-backed through `USES_SCREEN`, `EXECUTES_INTERACTION`, and `STARTS_AT_TOUCHPOINT`
+- Permission, API, confirmation, error, traceability, and implementation-pack execution-context paths are edge-backed
+- Remaining string fields are compatibility fields alongside implemented edges, not blockers for the closed traversal paths
 
-**Score: AMBER** — Relationship coverage has improved materially, but a smaller residual set of string-encoded relationships still blocks full traversal and 50 approved edge types remain unimplemented.
+**Score: AMBER** — Relationship coverage is materially stronger than the last normalized benchmark table showed, but a fresh 106-edge-type rerun is still needed before publishing a new percentage breakdown.
 
 ---
 
@@ -282,13 +275,13 @@ Tier 3 value objects (not counted in 71):
 | 1 | Documentation completeness | **GREEN** | All 71 benchmarkable nodes are documented with typed attributes |
 | 2 | Implementation completeness | **GREEN** | 62/71 benchmarkable nodes exist in code (87.3%) |
 | 3 | Attribute depth | **AMBER** | ~53% average depth on implemented entities; universal status migration pending |
-| 4 | Relationship coverage | **AMBER** | 97 SDN + 1 Cypher relationship declarations are implemented; the engineering, process, failure-path, traceability, screen-flow, and canonical journey/story traversal spines are now edge-backed |
+| 4 | Relationship coverage | **AMBER** | 103 SDN + 1 Cypher relationship declarations are implemented; the engineering, process, failure-path, traceability, screen-flow, canonical journey/story traversal, and implementation-pack execution-context spines are now edge-backed |
 | 5 | Queryability | **AMBER** | 12/17 GREEN, 1/17 AMBER, 4/17 RED after canonical journey/story traversal closure |
 | 6 | Source traceability | **AMBER** | SourceReference exists and key `HAS_SOURCE` edges are live, but coverage is still partial |
 | 7 | Delivery-tool interoperability | **AMBER** | ExternalArtifact exists with story/bug representation, but sync hierarchy and dependency edges are still missing |
 | 8 | UX implementation support | **AMBER** | Screen API resolves stories[] and roles[] via lookup maps; Persona/Channel/Permission registries now exist, but several exploration views and traversal paths are still pending |
 
-**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **65 `@Node` entities**, **97 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **353 passing tests**. The largest remaining gaps are now implementation-pack/code-targeting metadata, remaining registry work such as Enum/Event/Locale/TranslationKey, and a full benchmark rerun against the post-traversal model.
+**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **65 `@Node` entities**, **103 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **363 passing tests**. The largest remaining gaps are now the remaining registry stubs (Enum, Event, Locale, TranslationKey), the 5 missing T1 nodes (EdgeCase, ExceptionCase, Integration, OpenQuestion, Topic), and a full benchmark rerun against the post-execution-context model.
 
 ---
 

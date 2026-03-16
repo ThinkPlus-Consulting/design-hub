@@ -122,11 +122,11 @@ See `modeling-taxonomy.md` for the full 3-tier classification (58 T1 + 13 T2 + 4
 The current code baseline is materially ahead of the original seed model:
 
 - **65 `@Node` entities**
-- **97 SDN `@Relationship` declarations**
+- **103 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **353 passing tests**
+- **363 passing tests**
 
-That implemented subset now includes the D4 engineering entity completion, the D5a BPMN-aligned process spine, D5b1 strategic & governance plus architecture & EA stubs, and D6a failure-path/traceability/screen-flow closure, not just the earlier agent-ready, safety, capability/project, and registry increments.
+That implemented subset now includes the D4 engineering entity completion, the D5a BPMN-aligned process spine, D5b1 strategic & governance plus architecture & EA stubs, D6a failure-path/traceability/screen-flow closure, the canonical journey/story traversal edges, and the implementation-pack execution-context wiring.
 
 This document defines the readiness model for the full approved taxonomy (`75 nodes / 106 edge types / 71 benchmarkable`), not just the currently implemented subset.
 
@@ -611,19 +611,19 @@ Given MCR rules for Screen (section 7.4):
 
 | Rule | Severity | Type | Weight | Satisfied? | Score |
 |------|----------|------|--------|-----------|-------|
-| MCR-SCR-001 (story edge via DELIVERS) | BLOCKING | EDGE | 3 | No — `storyRefs` is `[STRING_REF]` | 0 |
+| MCR-SCR-001 (story edge via DELIVERS) | BLOCKING | EDGE | 3 | Yes — `DELIVERS` is `[EDGE]` | 3 |
 | MCR-SCR-002 (interaction edge) | BLOCKING | EDGE | 3 | Yes — `HAS_INTERACTION` is `[EDGE]` | 3 |
 | MCR-SCR-003 (surfaceId) | BLOCKING | ATTR | 2 | Yes | 2 |
 | MCR-SCR-004 (label) | BLOCKING | ATTR | 2 | Yes | 2 |
 | MCR-SCR-005 (status) | BLOCKING | ATTR | 2 | No — uses 3-field model, not universal enum | 0 |
 | MCR-SCR-006 (routePath) | BLOCKING | ATTR | 2 | Yes | 2 |
-| MCR-SCR-007 (role edge) | OPTIONAL | EDGE | 1 | No — `roleKeys` is `[STRING_REF]` | 0 |
-| MCR-SCR-008 (message edge) | OPTIONAL | EDGE | 1 | No — Message entity `[PLANNED]` | 0 |
-| MCR-SCR-009 (state edge) | OPTIONAL | EDGE | 1 | No — ScreenState entity `[PLANNED]` | 0 |
+| MCR-SCR-007 (role edge) | OPTIONAL | EDGE | 1 | Yes — `ACCESSIBLE_BY_ROLE` is `[EDGE]` | 1 |
+| MCR-SCR-008 (message edge) | OPTIONAL | EDGE | 1 | No — this example screen has no linked `HAS_MESSAGE` edge | 0 |
+| MCR-SCR-009 (state edge) | OPTIONAL | EDGE | 1 | No — this example screen has no linked ScreenState via reverse `BELONGS_TO_SCREEN` | 0 |
 | MCR-SCR-010 (transition edge) | OPTIONAL | EDGE | 1 | Yes — `TRANSITIONS_TO` is `[EDGE]` | 1 |
 | MCR-SCR-011 (finding/gap edge) | OPTIONAL | EDGE | 1 | Yes — `HAS_GAP` is `[EDGE]` | 1 |
 
-**Score:** (0+3+2+2+0+2+0+0+0+1+1) / (3+3+2+2+2+2+1+1+1+1+1) = 11 / 19 = **57.9% (AMBER)**
+**Score:** (3+3+2+2+0+2+1+0+0+1+1) / (3+3+2+2+2+2+1+1+1+1+1) = 15 / 19 = **78.9% (AMBER)**
 
 ---
 
@@ -678,13 +678,13 @@ Given MCR rules for Screen (section 7.4):
     "designReady": true,
     "frontendReady": false
   },
-  "completenessScore": 57.9,
+  "completenessScore": 78.9,
   "completenessLevel": "AMBER",
-  "missingBlockingRules": ["MCR-SCR-001", "MCR-SCR-005"]
+  "missingBlockingRules": ["MCR-SCR-005"]
 }
 ```
 
-The `completenessScore` is 57.9% (AMBER) even though `status` is APPROVED and some readiness flags are true. The score reveals that `DELIVERS` edge (UserStory→Screen) and universal `status` enum are missing — structural gaps that governance flags do not capture.
+ The `completenessScore` is 78.9% (AMBER) even though `status` is APPROVED and some readiness flags are true. The score shows that the canonical `DELIVERS` edge is now in place, but the universal `status` enum and some optional linked artifacts may still be missing on a given Screen instance.
 
 ---
 

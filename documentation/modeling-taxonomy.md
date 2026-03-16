@@ -239,9 +239,9 @@ Tier 3 objects are NOT counted in the 71 benchmarkable nodes. Their attributes a
 The implemented graph no longer resembles the original 11-entity seed. The current code baseline is:
 
 - **65 `@Node` entities**
-- **97 SDN `@Relationship` declarations**
+- **103 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **353 passing tests**
+- **363 passing tests**
 
 This section highlights the remaining shape mismatches that still matter for benchmark scoring.
 
@@ -265,9 +265,9 @@ This section highlights the remaining shape mismatches that still matter for ben
 The current implementation baseline is materially ahead of the original seed model, but benchmark gaps still cluster in four areas:
 
 - **Legacy compatibility fields**: `storyRefs` and `interactionRef` remain on the model for compatibility, but the canonical traversals now run through `DELIVERS` and `EXECUTES_INTERACTION`. `journeyStepRefs` remains a frontend-side compatibility field.
-- **Registry completion**: `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned.
-- **Enterprise architecture depth**: `Organization`, `BusinessObject`, `InformationFlow`, `Deployment`, and `InfrastructureNode` remain target-taxonomy objects but are not yet implemented.
-- **View-driving UX structure**: `Topic` remains the main missing UX/navigation node; screen-flow and traceability objects are now implemented.
+- **Registry completion**: `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned (4 of 13 T2 registries).
+- **Missing T1 nodes**: `EdgeCase`, `ExceptionCase`, `Integration`, `OpenQuestion`, and `Topic` remain unimplemented (5 of 58 T1 nodes). `InteractionOutcome` (T3) is also unimplemented.
+- **EA nodes exist but lack edges**: `Organization`, `BusinessObject`, `InformationFlow`, `Deployment`, and `InfrastructureNode` are implemented as stubs (@Node only, no @Relationship edges yet).
 
 ---
 
@@ -375,7 +375,7 @@ The object families (Product/UX, Architecture/EA, Delivery/Execution) are connec
 |------|--------|--------|----------------|----------------|
 | `REQUIRES_CAPABILITY` | BusinessObjective | BusinessCapability | Strategic → Architecture | `[PLANNED]` |
 | `ENABLED_BY` | BusinessCapability | Application | Architecture internal | `[PLANNED]` |
-| `SUPPORTS_SCREEN` | ApplicationComponent | Screen | Architecture → Product | `[PLANNED]` |
+| `SUPPORTS_SCREEN` | ApplicationComponent | Screen | Architecture → Product | `[EDGE]` |
 | `EXPOSED_VIA` | InformationFlow | ApiContract | Architecture → Product | `[PLANNED]` |
 | `HOSTS` | Deployment | ApplicationComponent | Architecture internal | `[PLANNED]` |
 | `MAPPED_TO` | BusinessObject | DataEntity | Architecture → Product | `[PLANNED]` |
@@ -388,9 +388,9 @@ The object families (Product/UX, Architecture/EA, Delivery/Execution) are connec
 
 | Edge | Source | Target | Family | Implementation |
 |------|--------|--------|--------|----------------|
-| `HAS_FEATURE` | Epic | Feature | Delivery internal | `[PLANNED]` |
-| `HAS_STORY` | Feature | UserStory | Delivery internal | `[PLANNED]` |
-| `HAS_TASK` | UserStory | Task | Delivery internal | `[PLANNED]` |
+| `HAS_FEATURE` | Epic | Feature | Delivery internal | `[EDGE]` |
+| `HAS_STORY` | Feature | UserStory | Delivery internal | `[EDGE]` |
+| `HAS_TASK` | UserStory | Task | Delivery internal | `[EDGE]` |
 | `DEPENDS_ON` | Task | Task | Delivery internal | `[PLANNED]` |
 | `ASSIGNED_TO` | Task | Organization | Delivery → Architecture | `[PLANNED]` |
 
@@ -400,27 +400,27 @@ The object families (Product/UX, Architecture/EA, Delivery/Execution) are connec
 |------|--------|-----------|---------|----------------|
 | `REALIZES` | Epic, Feature, UserStory | BusinessCapability, BusinessProcess, Journey, ProcessActivity, JourneyStep | Why a backlog item exists (origin traceability) | `[PLANNED]` |
 | `DELIVERS` | UserStory | Screen, ApiContract, DataEntity, Rule, Message | What testable artifact a story must produce | `[EDGE]` for Screen targets; additional deliverable target types continue to mature |
-| `IMPLEMENTS` | Task | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | What a task builds or creates | `[PLANNED]` |
-| `VERIFIED_BY` | UserStory | TestCase | How a story is proven | `[PLANNED]` |
-| `VERIFIES` | TestCase | Screen, ApiContract | What a test case validates | `[PLANNED]` |
+| `IMPLEMENTS` | Task | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | What a task builds or creates | `[EDGE]` |
+| `VERIFIED_BY` | UserStory | TestCase | How a story is proven | `[EDGE]` |
+| `VERIFIES` | TestCase | Screen, ApiContract | What a test case validates | `[EDGE]` |
 
 ### 10.4 Process Spine Edges (BPMN-Aligned)
 
 | Edge | Source | Target | Purpose | Implementation |
 |------|--------|--------|---------|----------------|
-| `HAS_FLOW_NODE` | BusinessProcess | ProcessActivity, ProcessGateway, ProcessEvent | Process containment (replaces HAS_STEP on process spine) | `[PLANNED]` |
-| `FLOWS_TO` | Any flow node | Any flow node | Sequence flow with properties (conditionExpression, isDefault, name) | `[PLANNED]` |
-| `EXPANDS_TO` | ProcessActivity (SUBPROCESS) | BusinessProcess | Subprocess expansion | `[PLANNED]` |
-| `CALLS_PROCESS` | ProcessActivity (CALL_ACTIVITY) | BusinessProcess | Call activity invocation | `[PLANNED]` |
-| `ATTACHED_TO` | ProcessEvent (BOUNDARY) | ProcessActivity | Boundary event attachment | `[PLANNED]` |
+| `HAS_FLOW_NODE` | BusinessProcess | ProcessActivity, ProcessGateway, ProcessEvent | Process containment (replaces HAS_STEP on process spine) | `[EDGE]` |
+| `FLOWS_TO` | Any flow node | Any flow node | Sequence flow with properties (conditionExpression, isDefault, name) | `[EDGE]` |
+| `EXPANDS_TO` | ProcessActivity (SUBPROCESS) | BusinessProcess | Subprocess expansion | `[EDGE]` |
+| `CALLS_PROCESS` | ProcessActivity (CALL_ACTIVITY) | BusinessProcess | Call activity invocation | `[EDGE]` |
+| `ATTACHED_TO` | ProcessEvent (BOUNDARY) | ProcessActivity | Boundary event attachment | `[EDGE]` |
 
 ### 10.5 Technical Execution Context Edges
 
 | Edge | Source | Target | Purpose | Implementation |
 |------|--------|--------|---------|----------------|
-| `DEPENDS_ON_COMPONENT` | ApplicationComponent | ApplicationComponent | Inter-component dependency with type and protocol | `[PLANNED]` |
-| `OWNS_DATA_ENTITY` | ApplicationComponent | DataEntity | Component ownership of data entities (closes DELIVERS→DataEntity resolution) | `[PLANNED]` |
-| `ENFORCES_RULE` | ApplicationComponent | Rule | Component enforcement of business rules (closes DELIVERS→Rule resolution) | `[PLANNED]` |
+| `DEPENDS_ON_COMPONENT` | ApplicationComponent | ApplicationComponent | Inter-component dependency with type and protocol | `[EDGE]` |
+| `OWNS_DATA_ENTITY` | ApplicationComponent | DataEntity | Component ownership of data entities (closes DELIVERS→DataEntity resolution) | `[EDGE]` |
+| `ENFORCES_RULE` | ApplicationComponent | Rule | Component enforcement of business rules (closes DELIVERS→Rule resolution) | `[EDGE]` |
 
 ### 10.6 Deprecated Edges
 

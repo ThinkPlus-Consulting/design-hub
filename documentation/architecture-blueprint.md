@@ -98,7 +98,7 @@ graph TD
 | Aspect | Status | Evidence |
 |--------|--------|----------|
 | Node persistence | `[IMPLEMENTED]` | 65 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
-| Typed edges | `[PARTIAL]` | 97 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, process-spine, failure-path, traceability, screen-flow, and canonical journey/story traversal core is now edge-backed |
+| Typed edges | `[PARTIAL]` | 103 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, process-spine, failure-path, traceability, screen-flow, canonical journey/story traversal, and implementation-pack execution-context core is now edge-backed |
 | Bidirectional traversal | `[PARTIAL]` | Forward traversal works for implemented edges; reverse requires Cypher |
 | Status filtering | `[IMPLEMENTED — reshape required]` | 3-enum status model; target is universal 10-value `status` |
 | Readiness filtering | `[PLANNED]` | No readiness flags on entities |
@@ -130,7 +130,7 @@ graph TD
 
 **API resolution layer** (current):
 
-`ScreenController.java` builds in-memory lookup maps from `roleService.getAll()` and `userStoryService.getAll()`, then resolves string references (`storyRefs`, `roleKeys`) into full response objects (`UserStoryResponse[]`, `RoleResponse[]`). This is application-level resolution, not graph-edge-backed traversal.
+`ScreenController.java` still builds in-memory lookup maps from `roleService.getAll()` and `userStoryService.getAll()`, but `ScreenResponse` now prefers graph-backed `deliveredByStories` for story resolution and only falls back to legacy `storyRefs` when the graph edge is absent. Role projection still resolves through the compatibility `roleKeys` lookup. The current API surface is therefore mixed-mode: graph-first for stories, app-layer lookup for some compatibility projections.
 
 ### 2.5 Presentation layer
 
@@ -599,12 +599,12 @@ These patterns correspond to the 10 north-star queries in `product-vision.md`:
 
 | # | Query Pattern | Current Status |
 |---|--------------|---------------|
-| 1 | `persona -> journeys -> steps -> screens -> stories` | `[EDGE/PARTIAL]` — `PERFORMED_BY_PERSONA` is implemented; the residual gap is `DELIVERS` for story traversal |
-| 2 | `journey -> steps -> touchpoints -> channels` | `[PARTIAL]` — `DELIVERED_VIA_CHANNEL` exists, but `STARTS_AT_TOUCHPOINT` is still planned |
+| 1 | `persona -> journeys -> steps -> screens -> stories` | `[EDGE/PARTIAL]` — `PERFORMED_BY_PERSONA`, `HAS_STEP`, `USES_SCREEN`, and `DELIVERS` are implemented; Persona→Journey begins as a reverse traversal |
+| 2 | `journey -> steps -> touchpoints -> channels` | `[EDGE]` — `STARTS_AT_TOUCHPOINT`, `DELIVERED_VIA_CHANNEL`, and `TARGETS` are implemented |
 | 3 | `channel -> touchpoints -> screens` | `[EDGE]` — `DELIVERED_VIA_CHANNEL` and `TARGETS` are implemented |
-| 4 | `screen -> interactions -> permissions` | `[PARTIAL]` — `REQUIRES_PERMISSION` exists, but the canonical screen-to-interaction path is not fully cleaned up yet |
+| 4 | `screen -> interactions -> permissions` | `[EDGE]` — `HAS_INTERACTION` and `REQUIRES_PERMISSION` are implemented end to end |
 | 5 | `interaction -> outcomes -> error codes` | `[PARTIAL]` — embedded Interaction outcomes and `ON_ERROR_SHOWS` now resolve to ErrorCode, but the outcome structure is still Tier 3 rather than a first-class node |
-| 6 | `screen -> stories` | `[STRING_REF]` — `storyRefs` on Screen still block a canonical `DELIVERS` edge walk |
+| 6 | `screen -> stories` | `[EDGE]` — `DELIVERS` is implemented and `ScreenResponse` prefers graph-backed delivered stories |
 | 7 | `bug -> affected screens` | `[EDGE]` — Bug now exists with `AFFECTS_SCREEN` |
 | 8 | `artifact -> source references` | `[PARTIAL]` — `HAS_SOURCE` now exists for Screen, UserStory, and Bug |
 | 9 | `external artifact -> domain objects` | `[EDGE/PARTIAL]` — ExternalArtifact now represents stories and bugs; broader sync hierarchy and dependency edges remain planned |

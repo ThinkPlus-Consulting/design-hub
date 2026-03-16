@@ -323,7 +323,7 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `PERFORMS_JOURNEY` | OUTGOING | Journey | 1:N | Yes | BLOCKING | `[PLANNED]` |
-| `USES_SCREEN` | OUTGOING | Screen | 1:N | No | OPTIONAL | `[STRING_REF]` — `personaIds` on Screen |
+| `USES_SCREEN` | OUTGOING | Screen | 1:N | No | OPTIONAL | `[REVERSE]` — traversable via Screen `USED_BY_PERSONA`; legacy `personaIds` remains on Screen for compatibility |
 | `AFFECTED_BY_FINDING` | INCOMING | Finding | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -352,7 +352,7 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `ACTS_IN_JOURNEY` | OUTGOING | Journey | N:M | No | OPTIONAL | `[PLANNED]` |
-| `CAN_ACCESS_SCREEN` | INCOMING | Screen | N:M | No | OPTIONAL | `[EDGE]` — Screen `ACCESSIBLE_BY_ROLE` now targets BusinessRole |
+| `CAN_ACCESS_SCREEN` | INCOMING | Screen | N:M | No | OPTIONAL | `[REVERSE]` — traversable via Screen `ACCESSIBLE_BY_ROLE` → BusinessRole; no own SDN annotation |
 | `OWNS_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -445,10 +445,10 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_JOURNEY` | INCOMING | Journey | N:1 | Yes | BLOCKING | `[EDGE]` — via Journey.HAS_STEP |
-| `USES_SCREEN` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `EXECUTES_INTERACTION` | OUTGOING | Interaction | N:1 | No | OPTIONAL | `[STRING_REF]` — `interactionRef` |
-| `STARTS_AT_TOUCHPOINT` | OUTGOING | Touchpoint | N:M | No | OPTIONAL | `[PLANNED]` |
+| `BELONGS_TO_JOURNEY` | INCOMING | Journey | N:1 | Yes | BLOCKING | `[REVERSE]` — traversable via Journey `HAS_STEP`; no own SDN annotation |
+| `USES_SCREEN` | OUTGOING | Screen | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `EXECUTES_INTERACTION` | OUTGOING | Interaction | N:1 | No | OPTIONAL | `[EDGE]` — legacy `interactionRef` retained for compatibility |
+| `STARTS_AT_TOUCHPOINT` | OUTGOING | Touchpoint | N:M | No | OPTIONAL | `[EDGE]` |
 | `REALIZES` | INCOMING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` — UserStory REALIZES JourneyStep |
 
 ---
@@ -624,14 +624,14 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `HAS_STORY` | INCOMING | Feature | N:1 | Yes | BLOCKING | `[EDGE]` — delivery spine: Feature HAS_STORY UserStory |
-| `USES_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[STRING_REF]` — `storyRefs` on Screen (reverse) |
+| `DELIVERS` | OUTGOING | Screen | N:M | No | OPTIONAL | `[EDGE]` — canonical four-verb edge; legacy `storyRefs` retained for compatibility |
 | `REQUIRES_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
 | `GOVERNED_BY_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[EDGE]` |
 | `HAS_CRITERION` | OUTGOING | AcceptanceCriterion | 1:N | Yes | BLOCKING | `[EDGE]` |
 | `REALIZES` | OUTGOING | ProcessActivity, JourneyStep | N:M | No | OPTIONAL | `[PLANNED]` |
-| `DELIVERS` | OUTGOING | Screen, ApiContract, DataEntity, Rule, Message | N:M | No | OPTIONAL | `[PLANNED]` |
+| `DELIVERS` | OUTGOING | Screen, ApiContract, DataEntity, Rule, Message | N:M | No | OPTIONAL | `[EDGE]` — Screen target implemented; additional deliverable targets continue to mature |
 | `HAS_TASK` | OUTGOING | Task | 1:N | No | OPTIONAL | `[EDGE]` |
-| `VERIFIED_BY` | OUTGOING | TestCase | 1:N | Yes | BLOCKING | `[PLANNED]` |
+| `VERIFIED_BY` | OUTGOING | TestCase | 1:N | Yes | BLOCKING | `[EDGE]` |
 
 ---
 
@@ -691,7 +691,7 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `HAS_TASK` | INCOMING | UserStory | N:1 | Yes | BLOCKING | `[EDGE]` |
-| `IMPLEMENTS` | OUTGOING | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | N:M | No | OPTIONAL | `[PLANNED]` |
+| `IMPLEMENTS` | OUTGOING | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | N:M | No | OPTIONAL | `[EDGE]` — targets CodeAsset and ApplicationComponent via SDN |
 | `DEPENDS_ON` | OUTGOING | Task | N:M | No | OPTIONAL | `[PLANNED]` |
 | `ASSIGNED_TO` | OUTGOING | Organization | N:1 | No | OPTIONAL | `[PLANNED]` |
 
@@ -758,7 +758,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_STORY` | INCOMING | UserStory | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `BELONGS_TO_STORY` | INCOMING | UserStory | N:1 | Yes | BLOCKING | `[REVERSE]` — traversable via UserStory `HAS_CRITERION`; no own SDN annotation |
 | `VERIFIED_BY` | OUTGOING | TestCase | 1:N | No | OPTIONAL | `[PLANNED]` — consistent with four-verb model |
 
 ---
@@ -937,7 +937,7 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `HAS_INTERACTION` | OUTGOING | Interaction | 1:N | Yes | BLOCKING | `[EDGE]` — replaces deprecated ON_SCREEN (direction reversed: Screen→Interaction) |
-| `DELIVERS` | INCOMING | UserStory | N:M | Yes | BLOCKING | `[STRING_REF]` — `storyRefs` (UserStory DELIVERS Screen) |
+| `DELIVERS` | INCOMING | UserStory | N:M | Yes | BLOCKING | `[EDGE]` — UserStory `DELIVERS` Screen; legacy `storyRefs` remains for compatibility |
 | `ACCESSIBLE_BY_ROLE` | OUTGOING | BusinessRole | N:M | No | OPTIONAL | `[EDGE]` — legacy `roleKeys` retained for migration compatibility |
 | `USED_BY_PERSONA` | OUTGOING | Persona | N:M | No | OPTIONAL | `[EDGE]` — legacy `personaIds` retained for migration compatibility |
 | `HAS_MESSAGE` | OUTGOING | Message | 1:N | No | OPTIONAL | `[EDGE]` |
@@ -1317,7 +1317,7 @@
 | `ASSET_FOR_ENTITY` | OUTGOING | DataEntity | N:M | No | OPTIONAL | `[EDGE]` |
 | `ASSET_FOR_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[EDGE]` |
 | `LOCATED_IN` | INCOMING | TestCase | N:1 | No | OPTIONAL | `[EDGE]` |
-| `IMPLEMENTS` | INCOMING | Task | N:M | No | OPTIONAL | `[PLANNED]` |
+| `IMPLEMENTS` | INCOMING | Task | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1701,12 +1701,12 @@
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `HAS_COMPONENT` | INCOMING | Application | N:1 | Yes | BLOCKING | `[EDGE]` |
-| `SUPPORTS_SCREEN` | OUTGOING | Screen | 1:N | No | OPTIONAL | `[PLANNED]` |
-| `EXPOSES` | OUTGOING | ApiContract | 1:N | No | OPTIONAL | `[PLANNED]` |
+| `SUPPORTS_SCREEN` | OUTGOING | Screen | 1:N | No | OPTIONAL | `[EDGE]` |
+| `EXPOSES` | OUTGOING | ApiContract | 1:N | No | OPTIONAL | `[EDGE]` |
 | `HOSTS` | INCOMING | Deployment | N:M | No | OPTIONAL | `[PLANNED]` |
-| `DEPENDS_ON_COMPONENT` | OUTGOING | ApplicationComponent | N:M | No | OPTIONAL | `[PLANNED]` — edge properties: dependencyType (SYNC_API, ASYNC_EVENT, SHARED_DB, SHARED_LIBRARY, GATEWAY_ROUTE), protocol, required |
-| `OWNS_DATA_ENTITY` | OUTGOING | DataEntity | 1:N | No | OPTIONAL | `[PLANNED]` — closes resolution dead-end for DELIVERS→DataEntity |
-| `ENFORCES_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[PLANNED]` — closes resolution dead-end for DELIVERS→Rule |
+| `DEPENDS_ON_COMPONENT` | OUTGOING | ApplicationComponent | N:M | No | OPTIONAL | `[EDGE]` — edge properties: dependencyType (SYNC_API, ASYNC_EVENT, SHARED_DB, SHARED_LIBRARY, GATEWAY_ROUTE), protocol, required |
+| `OWNS_DATA_ENTITY` | OUTGOING | DataEntity | 1:N | No | OPTIONAL | `[EDGE]` — closes resolution dead-end for DELIVERS→DataEntity |
+| `ENFORCES_RULE` | OUTGOING | Rule | N:M | No | OPTIONAL | `[EDGE]` — closes resolution dead-end for DELIVERS→Rule |
 
 ---
 
@@ -1869,7 +1869,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `REQUIRED_BY_INTERACTION` | INCOMING | Interaction | N:M | No | OPTIONAL | `[STRING_REF]` — `permission` string |
+| `REQUIRED_BY_INTERACTION` | INCOMING | Interaction | N:M | No | OPTIONAL | `[EDGE]` — Interaction `REQUIRES_PERMISSION` Permission; legacy `permission` remains for compatibility |
 
 ---
 
@@ -2067,7 +2067,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `IMPORTED_BY` | INCOMING | Importable T1 nodes | N:M | No | OPTIONAL | `[EDGE]` — materialized on source T1 nodes |
+| `IMPORTED_BY` | INCOMING | Importable T1 nodes | N:M | No | OPTIONAL | `[PLANNED]` — not yet materialized on source T1 nodes |
 
 **Note:** The IMPORTED_BY edge is modeled on source T1 nodes (outgoing from the importable entity, incoming to ImportSnapshot), not on ImportSnapshot itself. This follows the convention that the entity being described carries its own provenance edge.
 
@@ -2250,7 +2250,7 @@ Complete registry of all modeled relationships with implementation status.
 
 ### 6.1 Existing Graph Edges
 
-The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **97 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
+The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **103 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
 
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
@@ -2276,7 +2276,7 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `CALLS_API` | Interaction | ApiContract | `apiCalls` | OPTIONAL | `[EDGE]` |
 | `TRIGGERS_CONFIRMATION` | Interaction | ConfirmationDialog (T2) | `confirmationCode` | OPTIONAL | `[EDGE]` |
 | `DELIVERED_VIA_CHANNEL` | Touchpoint | Channel (T2) | `channelId` in EntryMode | BLOCKING | `[EDGE]` — legacy source field retained |
-| `EXECUTES_INTERACTION` | JourneyStep | Interaction | `interactionRef` | OPTIONAL | `[STRING_REF]` |
+| `EXECUTES_INTERACTION` | JourneyStep | Interaction | `interactionRef` | OPTIONAL | `[EDGE]` — legacy `interactionRef` retained |
 
 ### 6.3 Planned and Extension Relationships
 
@@ -2290,8 +2290,8 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `HAS_FIELD` | DataEntity | DataField | 1:N | BLOCKING | `[EDGE]` |
 | `HAS_SOURCE` | Screen, UserStory, Bug | SourceReference | N:M | OPTIONAL | `[EDGE]` |
 | `PERFORMS_JOURNEY` | Persona | Journey | 1:N | BLOCKING | `[PLANNED]` |
-| `USES_SCREEN` | JourneyStep | Screen | N:1 | BLOCKING | `[PLANNED]` |
-| `STARTS_AT_TOUCHPOINT` | JourneyStep | Touchpoint | N:M | OPTIONAL | `[PLANNED]` |
+| `USES_SCREEN` | JourneyStep | Screen | N:1 | BLOCKING | `[EDGE]` |
+| `STARTS_AT_TOUCHPOINT` | JourneyStep | Touchpoint | N:M | OPTIONAL | `[EDGE]` |
 | `HAS_MESSAGE` | Screen | Message | 1:N | OPTIONAL | `[EDGE]` |
 | `CAN_PRODUCE_ERROR` | Screen | ErrorCode (T2) | N:M | OPTIONAL | `[EDGE]` |
 | `ON_ERROR_SHOWS` | Interaction | ErrorCode (T2) | N:M | OPTIONAL | `[EDGE]` |
@@ -2301,9 +2301,9 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `TRACKED_IN_EXTERNAL_SYSTEM` | Bug | ExternalArtifact | N:1 | OPTIONAL | `[PLANNED]` |
 | `REPRESENTS_STORY` | ExternalArtifact | UserStory | N:1 | OPTIONAL | `[EDGE]` |
 | `REPRESENTS_BUG` | ExternalArtifact | Bug | N:1 | OPTIONAL | `[EDGE]` |
-| `BELONGS_TO_SCREEN` | ScreenState | Screen | N:1 | BLOCKING | `[PLANNED]` |
-| `FROM_SCREEN` | Transition | Screen | N:1 | BLOCKING | `[PLANNED]` |
-| `TO_SCREEN` | Transition | Screen | N:1 | BLOCKING | `[PLANNED]` |
+| `BELONGS_TO_SCREEN` | ScreenState | Screen | N:1 | BLOCKING | `[EDGE]` |
+| `FROM_SCREEN` | Transition | Screen | N:1 | BLOCKING | `[EDGE]` |
+| `TO_SCREEN` | Transition | Screen | N:1 | BLOCKING | `[EDGE]` |
 | `HAS_REQUEST` | ApiContract | RequestSchema | 1:1 | OPTIONAL | `[EDGE]` |
 | `HAS_RESPONSE` | ApiContract | ResponseSchema | 1:1 | OPTIONAL | `[EDGE]` |
 | `HAS_ERROR` | ApiContract | ErrorContract | 1:1 | OPTIONAL | `[EDGE]` |
@@ -2313,11 +2313,11 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `ENABLED_BY` | BusinessCapability | Application | 1:N | BLOCKING | `[PLANNED]` |
 | `REALIZES` | Feature | BusinessCapability | N:M | OPTIONAL | `[PLANNED]` — four-verb traceability |
 | `REQUIRES_CAPABILITY` | BusinessObjective | BusinessCapability | N:M | OPTIONAL | `[PLANNED]` |
-| `HAS_COMPONENT` | Application | ApplicationComponent | 1:N | BLOCKING | `[PLANNED]` |
+| `HAS_COMPONENT` | Application | ApplicationComponent | 1:N | BLOCKING | `[EDGE]` |
 | `REALIZES` | Application | Feature | 1:N | OPTIONAL | `[PLANNED]` |
 | `OWNS` | Organization | Application | 1:N | OPTIONAL | `[PLANNED]` |
-| `SUPPORTS_SCREEN` | ApplicationComponent | Screen | 1:N | OPTIONAL | `[PLANNED]` |
-| `EXPOSES` | ApplicationComponent | ApiContract | 1:N | OPTIONAL | `[PLANNED]` |
+| `SUPPORTS_SCREEN` | ApplicationComponent | Screen | 1:N | OPTIONAL | `[EDGE]` |
+| `EXPOSES` | ApplicationComponent | ApiContract | 1:N | OPTIONAL | `[EDGE]` |
 | `MAPPED_TO` | BusinessObject | DataEntity | 1:N | BLOCKING | `[PLANNED]` |
 | `STRUCTURED_IN` | BusinessObject | BusinessObject | 1:N | OPTIONAL | `[PLANNED]` |
 | `SOURCE_OF` | Application | InformationFlow | 1:N | BLOCKING | `[PLANNED]` |
@@ -2337,14 +2337,14 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `CALLS_PROCESS` | ProcessActivity | BusinessProcess | N:1 | OPTIONAL | `[EDGE]` |
 | `ATTACHED_TO` | ProcessEvent | ProcessActivity | N:1 | OPTIONAL | `[EDGE]` |
 | `REALIZES` | UserStory | ProcessActivity, JourneyStep | N:M | OPTIONAL | `[PLANNED]` |
-| `DELIVERS` | UserStory | Screen, ApiContract, DataEntity, Rule, Message | N:M | OPTIONAL | `[PLANNED]` |
-| `IMPLEMENTS` | Task | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | N:M | OPTIONAL | `[PLANNED]` |
-| `DEPENDS_ON_COMPONENT` | ApplicationComponent | ApplicationComponent | N:M | OPTIONAL | `[PLANNED]` — edge properties: dependencyType, protocol, required |
-| `OWNS_DATA_ENTITY` | ApplicationComponent | DataEntity | 1:N | OPTIONAL | `[PLANNED]` |
-| `ENFORCES_RULE` | ApplicationComponent | Rule | N:M | OPTIONAL | `[PLANNED]` |
+| `DELIVERS` | UserStory | Screen, ApiContract, DataEntity, Rule, Message | N:M | OPTIONAL | `[EDGE]` — Screen target implemented |
+| `IMPLEMENTS` | Task | Screen, ApiContract, DataEntity, Rule, Message, TestCase, ApplicationComponent | N:M | OPTIONAL | `[EDGE]` — targets CodeAsset and ApplicationComponent via SDN |
+| `DEPENDS_ON_COMPONENT` | ApplicationComponent | ApplicationComponent | N:M | OPTIONAL | `[EDGE]` |
+| `OWNS_DATA_ENTITY` | ApplicationComponent | DataEntity | 1:N | OPTIONAL | `[EDGE]` |
+| `ENFORCES_RULE` | ApplicationComponent | Rule | N:M | OPTIONAL | `[EDGE]` |
 | `GOVERNED_BY_RULE` | UserStory | Rule | N:M | OPTIONAL | `[EDGE]` |
-| `VERIFIED_BY` | UserStory | TestCase | 1:N | BLOCKING | `[PLANNED]` |
-| `VERIFIES` | TestCase | UserStory | N:M | OPTIONAL | `[PLANNED]` |
+| `VERIFIED_BY` | UserStory | TestCase | 1:N | BLOCKING | `[EDGE]` |
+| `VERIFIES` | TestCase | UserStory | N:M | OPTIONAL | `[EDGE]` |
 | `HAS_TASK` | UserStory | Task | 1:N | OPTIONAL | `[EDGE]` |
 | `DEPENDS_ON` | Task | Task | N:M | OPTIONAL | `[PLANNED]` |
 | `ASSIGNED_TO` | Task | Organization | N:1 | OPTIONAL | `[PLANNED]` |
@@ -2357,13 +2357,13 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `ASSET_FOR_ENTITY` | CodeAsset | DataEntity | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |
 | `ASSET_FOR_RULE` | CodeAsset | Rule | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 1 |
 | `IMPORTED_BY` | Importable T1 | ImportSnapshot (T2) | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 |
-| `IMPLEMENTS` | Task | CodeAsset | N:M | OPTIONAL | `[PLANNED]` — agent-ready Phase 1 (extends existing IMPLEMENTS targets) |
+| `IMPLEMENTS` | Task | CodeAsset | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 1 (extends existing IMPLEMENTS targets) |
 | `HAS_QUALITY_CONSTRAINT` | Screen, ApiContract, DataEntity, ApplicationComponent | QualityConstraint | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 2 |
 | `SATISFIED_BY` | QualityConstraint | TestCase | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 2 |
 | `GOVERNED_BY_CONVENTION` | Application, ApplicationComponent, CodeAsset | CodingConvention (T2) | N:M | OPTIONAL | `[EDGE]` — agent-ready Phase 2 |
 | `GOVERNED_BY_POLICY` | Application, ApplicationComponent | AgentPolicy (T2) | N:M | OPTIONAL | `[EDGE]` — operational near-zero-drift |
 | `BASELINED_BY` | Screen, ApiContract | EvidenceRecord (T2) | N:M | OPTIONAL | `[EDGE]` — operational near-zero-drift |
-| `DEPENDS_ON_ASSET` | CodeAsset | CodeAsset | N:M | OPTIONAL | `[PLANNED]` — operational near-zero-drift |
+| `DEPENDS_ON_ASSET` | CodeAsset | CodeAsset | N:M | OPTIONAL | `[EDGE]` — operational near-zero-drift |
 | `ASSESSES` | Assessment | Assessable T1 node | 1:1 | BLOCKING | `[CYPHER]` — capability/project meta-model |
 | `IDENTIFIES_GAP` | Assessment | Gap | 1:N | OPTIONAL | `[EDGE]` — capability/project meta-model |
 | `ADDRESSES_GAP` | ProjectInstance | Gap | 1:N | BLOCKING | `[EDGE]` — capability/project meta-model |
