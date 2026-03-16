@@ -72,4 +72,24 @@ class ScreenTest {
         assertEquals(1, screen.getCanProduceErrors().size());
         assertEquals("AGT-E-404", screen.getCanProduceErrors().get(0).getCode());
     }
+
+    @Test
+    void shouldLinkToSourceReferenceViaHasSource() {
+        SourceReference sourceReference = SourceReference.builder()
+                .sourceId("SRC-SCR-AUTH-001")
+                .artifactPath("documentation/vision-benchmark.md")
+                .section("Query 8")
+                .lineRef("401-410")
+                .status(Status.DEFINED)
+                .build();
+
+        Screen screen = Screen.builder()
+                .surfaceId("SCR-AUTH")
+                .status(Status.DEFINED)
+                .sourceReferences(List.of(sourceReference))
+                .build();
+
+        assertEquals(1, screen.getSourceReferences().size());
+        assertEquals("SRC-SCR-AUTH-001", screen.getSourceReferences().get(0).getSourceId());
+    }
 }

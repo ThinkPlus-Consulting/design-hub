@@ -595,6 +595,75 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    // ── D6a traceability seeds (Chunk 2) ─────────────────────────────
+
+    @Transactional
+    public void seedSourceReferences() {
+        neo4jClient.query("""
+                UNWIND [
+                  {id: 'SRC-US-AUTH-001', path: 'Documentation/.Requirements/CONSOLIDATED-STORY-INVENTORY.md', section: 'Authentication', line: '120-138', url: null},
+                  {id: 'SRC-SCR-AUTH-001', path: 'documentation/vision-benchmark.md', section: 'Query 8', line: '401-410', url: null},
+                  {id: 'SRC-BUG-001', path: 'Documentation/governance/ai-discussions/discussion-20260301-155248.md', section: 'Login refresh issue', line: '44-61', url: null}
+                ] AS src
+                MERGE (sr:SourceReference {sourceId: src.id})
+                SET sr.artifactPath = src.path,
+                    sr.section = src.section,
+                    sr.lineRef = src.line,
+                    sr.url = src.url,
+                    sr.status = 'DEFINED'
+                """).run();
+    }
+
+    @Transactional
+    public void seedExternalArtifacts() {
+        neo4jClient.query("""
+                UNWIND [
+                  {id: 'EXT-JIRA-001', system: 'JIRA', externalType: 'STORY', key: 'DH-101', url: 'https://jira.example.com/browse/DH-101', sync: 'SYNCED', syncedAt: '2026-03-16T08:00:00Z'},
+                  {id: 'EXT-AZDO-001', system: 'AZURE_DEVOPS', externalType: 'BUG', key: 'AB#245', url: 'https://dev.azure.com/example/designhub/_workitems/edit/245', sync: 'SYNCED', syncedAt: '2026-03-16T08:05:00Z'}
+                ] AS ext
+                MERGE (ea:ExternalArtifact {externalId: ext.id})
+                SET ea.system = ext.system,
+                    ea.externalType = ext.externalType,
+                    ea.key = ext.key,
+                    ea.url = ext.url,
+                    ea.syncStatus = ext.sync,
+                    ea.lastSyncedAt = datetime(ext.syncedAt),
+                    ea.status = 'DEFINED'
+                """).run();
+    }
+
+    @Transactional
+    public void seedTraceabilityEdges() {
+        neo4jClient.query("""
+                MERGE (story:UserStory {storyId: 'US-AUTH-001'})
+                ON CREATE SET story.label = 'User can sign in',
+                              story.module = 'core',
+                              story.domain = 'auth',
+                              story.storyNumber = 'US-AUTH-001'
+                MERGE (screen:Screen {surfaceId: 'SCR-AUTH'})
+                ON CREATE SET screen.label = 'Login / Sign In',
+                              screen.module = 'core',
+                              screen.routePath = '/login',
+                              screen.status = 'DEFINED'
+                MERGE (bug:Bug {bugId: 'BUG-001'})
+                SET bug.externalKey = 'AB#245',
+                    bug.summary = 'Session refresh banner stays visible after login retry',
+                    bug.severity = 'HIGH',
+                    bug.status = 'IDENTIFIED'
+                MATCH (storySrc:SourceReference {sourceId: 'SRC-US-AUTH-001'})
+                MATCH (screenSrc:SourceReference {sourceId: 'SRC-SCR-AUTH-001'})
+                MATCH (bugSrc:SourceReference {sourceId: 'SRC-BUG-001'})
+                MATCH (jiraStory:ExternalArtifact {externalId: 'EXT-JIRA-001'})
+                MATCH (azdoBug:ExternalArtifact {externalId: 'EXT-AZDO-001'})
+                MERGE (story)-[:HAS_SOURCE]->(storySrc)
+                MERGE (screen)-[:HAS_SOURCE]->(screenSrc)
+                MERGE (bug)-[:HAS_SOURCE]->(bugSrc)
+                MERGE (bug)-[:AFFECTS_SCREEN]->(screen)
+                MERGE (jiraStory)-[:REPRESENTS_STORY]->(story)
+                MERGE (azdoBug)-[:REPRESENTS_BUG]->(bug)
+                """).run();
+    }
+
     // ── Patches (existing) ─────────────────────────────────────────────
 
     @Transactional
@@ -702,5 +771,10 @@ public class RegistryGraphMigrationService {
         seedProcessExpansion();
         seedBoundaryEvent();
         seedStoryTasks();
+
+        // 8. Seed D6a traceability coverage
+        seedSourceReferences();
+        seedExternalArtifacts();
+        seedTraceabilityEdges();
     }
 }

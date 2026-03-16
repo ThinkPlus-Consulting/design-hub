@@ -12,11 +12,17 @@ class SourceReferenceTest {
         SourceReference sourceReference = SourceReference.builder()
                 .sourceId("SRC-001")
                 .artifactPath("documentation/vision-benchmark.md")
+                .section("Query 8")
+                .lineRef("401-410")
+                .url("https://example.com/spec")
                 .status(Status.DEFINED)
                 .build();
 
         assertEquals("SRC-001", sourceReference.getSourceId());
         assertEquals("documentation/vision-benchmark.md", sourceReference.getArtifactPath());
+        assertEquals("Query 8", sourceReference.getSection());
+        assertEquals("401-410", sourceReference.getLineRef());
+        assertEquals("https://example.com/spec", sourceReference.getUrl());
         assertEquals(Status.DEFINED, sourceReference.getStatus());
     }
 

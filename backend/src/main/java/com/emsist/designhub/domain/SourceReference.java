@@ -18,5 +18,8 @@ public class SourceReference {
     private String sourceId;
 
     private String artifactPath;
+    private String section;
+    private String lineRef;
+    private String url;
     private Status status;
 }

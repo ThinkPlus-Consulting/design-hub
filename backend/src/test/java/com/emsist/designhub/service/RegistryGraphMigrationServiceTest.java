@@ -542,6 +542,49 @@ class RegistryGraphMigrationServiceTest {
                 && ((String) cypher).contains("US-AUTH-001")));
     }
 
+    @Test
+    void shouldSeedSourceReferences() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedSourceReferences();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("SourceReference")
+                && ((String) cypher).contains("SRC-US-AUTH-001")
+                && ((String) cypher).contains("lineRef")));
+    }
+
+    @Test
+    void shouldSeedExternalArtifacts() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedExternalArtifacts();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("ExternalArtifact")
+                && ((String) cypher).contains("EXT-JIRA-001")
+                && ((String) cypher).contains("datetime")));
+    }
+
+    @Test
+    void shouldSeedTraceabilityEdges() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedTraceabilityEdges();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("REPRESENTS_STORY")
+                && ((String) cypher).contains("REPRESENTS_BUG")
+                && ((String) cypher).contains("AFFECTS_SCREEN")
+                && ((String) cypher).contains("HAS_SOURCE")));
+    }
+
     // ── Full migration orchestration ───────────────────────────────────
 
     @Test
@@ -553,7 +596,7 @@ class RegistryGraphMigrationServiceTest {
 
         service.runFullMigration();
 
-        // Existing 32 queries + D6a failure-path additions (4) = 36 minimum with empty apiCalls fetch
-        verify(neo4jClient, atLeast(36)).query(anyString());
+        // Existing 36 minimum + D6a traceability additions (3) = 39 minimum with empty apiCalls fetch
+        verify(neo4jClient, atLeast(39)).query(anyString());
     }
 }

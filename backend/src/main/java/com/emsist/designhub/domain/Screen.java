@@ -78,4 +78,7 @@ public class Screen {
 
     @Relationship(type = "CAN_PRODUCE_ERROR", direction = Relationship.Direction.OUTGOING)
     private List<ErrorCode> canProduceErrors;
+
+    @Relationship(type = "HAS_SOURCE", direction = Relationship.Direction.OUTGOING)
+    private List<SourceReference> sourceReferences;
 }

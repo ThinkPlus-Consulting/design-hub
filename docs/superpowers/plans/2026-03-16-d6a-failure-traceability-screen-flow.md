@@ -1,12 +1,12 @@
 # D6a Failure, Traceability, and Screen-Flow Closure Plan
 
-> **Status: IN PROGRESS** — Chunk 1 (failure path) is implemented and verified. Chunks 2-3 remain open.
+> **Status: IN PROGRESS** — Chunks 1-2 are implemented and verified. Chunk 3 remains open.
 
 **Goal:** Close the remaining high-signal query gaps by adding failure-path registries/edges, external traceability wiring, and first-class screen-flow semantics.
 
 **Implementation Baseline (pre-plan):** `61 @Node / 78 SDN @Relationship / 1 Cypher-only edge / 307 tests`
 
-**Current Baseline (after Chunk 1):** `62 @Node / 80 SDN @Relationship / 1 Cypher-only edge / 315 tests / 0 failures`
+**Current Baseline (after Chunk 2):** `63 @Node / 86 SDN @Relationship / 1 Cypher-only edge / 327 tests / 0 failures`
 
 **Planned D6a Scope**
 - **Chunk 1 — Failure path**
@@ -57,9 +57,9 @@
 
 ## Chunk 2 — Traceability
 
-- [ ] Add `ExternalArtifact.java` and builder tests
-- [ ] Wire `REPRESENTS_STORY`, `REPRESENTS_BUG`, `AFFECTS_SCREEN`, and `HAS_SOURCE`
-- [ ] Add seed and migration coverage
+- [x] Add `ExternalArtifact.java` and builder tests
+- [x] Wire `REPRESENTS_STORY`, `REPRESENTS_BUG`, `AFFECTS_SCREEN`, and `HAS_SOURCE`
+- [x] Add seed and migration coverage
 
 ## Chunk 3 — Screen Flow
 
