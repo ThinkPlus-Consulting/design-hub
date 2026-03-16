@@ -72,4 +72,7 @@ public class Screen {
 
     @Relationship(type = "BASELINED_BY", direction = Relationship.Direction.OUTGOING)
     private List<EvidenceRecord> baselines;
+
+    @Relationship(type = "ENFORCES_VALIDATION", direction = Relationship.Direction.OUTGOING)
+    private List<ValidationRule> validationRules;
 }

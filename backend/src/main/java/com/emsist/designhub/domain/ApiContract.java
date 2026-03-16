@@ -27,4 +27,13 @@ public class ApiContract {
 
     @Relationship(type = "BASELINED_BY", direction = Relationship.Direction.OUTGOING)
     private List<EvidenceRecord> baselines;
+
+    @Relationship(type = "HAS_REQUEST", direction = Relationship.Direction.OUTGOING)
+    private List<RequestSchema> requestSchemas;
+
+    @Relationship(type = "HAS_RESPONSE", direction = Relationship.Direction.OUTGOING)
+    private List<ResponseSchema> responseSchemas;
+
+    @Relationship(type = "HAS_ERROR", direction = Relationship.Direction.OUTGOING)
+    private List<ErrorContract> errorContracts;
 }

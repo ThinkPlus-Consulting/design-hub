@@ -6,22 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
-import java.util.List;
 
 @Node
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Rule {
+public class ErrorContract {
     @Id
-    private String ruleId;
-    private String name;
+    private String errorContractId;
+    private int httpStatus;
+    private String errorCode;
     private String description;
-    private String ruleType;
     private Status status;
-
-    @Relationship(type = "HAS_VALIDATION_RULE", direction = Relationship.Direction.OUTGOING)
-    private List<ValidationRule> validationRules;
 }

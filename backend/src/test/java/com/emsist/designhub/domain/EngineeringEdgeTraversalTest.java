@@ -66,4 +66,106 @@ class EngineeringEdgeTraversalTest {
 
         assertEquals("MSG-AI-001", screen.getMessages().get(0).getMessageId());
     }
+
+    @Test
+    void shouldTraverseApiContractToRequestSchema() {
+        RequestSchema request = RequestSchema.builder()
+                .schemaId("REQ-API-AGT-001")
+                .contentType("application/json")
+                .status(Status.DEFINED)
+                .build();
+
+        ApiContract contract = ApiContract.builder()
+                .contractId("API-AGT-001")
+                .path("/api/agents")
+                .method("POST")
+                .status(Status.DEFINED)
+                .requestSchemas(List.of(request))
+                .build();
+
+        assertEquals("REQ-API-AGT-001", contract.getRequestSchemas().get(0).getSchemaId());
+    }
+
+    @Test
+    void shouldTraverseApiContractToResponseSchema() {
+        ResponseSchema response = ResponseSchema.builder()
+                .schemaId("RES-API-AGT-001")
+                .contentType("application/json")
+                .statusCode(200)
+                .status(Status.DEFINED)
+                .build();
+
+        ApiContract contract = ApiContract.builder()
+                .contractId("API-AGT-001")
+                .path("/api/agents")
+                .method("GET")
+                .status(Status.DEFINED)
+                .responseSchemas(List.of(response))
+                .build();
+
+        assertEquals("RES-API-AGT-001", contract.getResponseSchemas().get(0).getSchemaId());
+    }
+
+    @Test
+    void shouldTraverseApiContractToErrorContract() {
+        ErrorContract error = ErrorContract.builder()
+                .errorContractId("EC-API-AGT-001")
+                .httpStatus(404)
+                .errorCode("AGENT_NOT_FOUND")
+                .status(Status.DEFINED)
+                .build();
+
+        ApiContract contract = ApiContract.builder()
+                .contractId("API-AGT-001")
+                .path("/api/agents/{id}")
+                .method("GET")
+                .status(Status.DEFINED)
+                .errorContracts(List.of(error))
+                .build();
+
+        assertEquals("EC-API-AGT-001", contract.getErrorContracts().get(0).getErrorContractId());
+    }
+
+    @Test
+    void shouldTraverseScreenToValidationRule() {
+        ValidationRule rule = ValidationRule.builder()
+                .validationRuleId("VR-AGENT-001")
+                .fieldPath("agentName")
+                .validationType("REQUIRED")
+                .expression("notBlank()")
+                .errorMessage("Agent name is required")
+                .status(Status.DEFINED)
+                .build();
+
+        Screen screen = Screen.builder()
+                .surfaceId("SCR-AGT-CREATE")
+                .label("Create Agent")
+                .status(Status.IN_IMPLEMENTATION)
+                .validationRules(List.of(rule))
+                .build();
+
+        assertEquals("VR-AGENT-001", screen.getValidationRules().get(0).getValidationRuleId());
+    }
+
+    @Test
+    void shouldTraverseRuleToValidationRule() {
+        ValidationRule valRule = ValidationRule.builder()
+                .validationRuleId("VR-NAMING-001")
+                .fieldPath("name")
+                .validationType("PATTERN")
+                .expression("^[A-Za-z][A-Za-z0-9_-]{2,50}$")
+                .errorMessage("Name must be alphanumeric, 3-50 chars")
+                .status(Status.DEFINED)
+                .build();
+
+        Rule rule = Rule.builder()
+                .ruleId("RULE-NAMING-001")
+                .name("Agent naming convention")
+                .ruleType("VALIDATION")
+                .status(Status.DEFINED)
+                .validationRules(List.of(valRule))
+                .build();
+
+        assertEquals("VR-NAMING-001", rule.getValidationRules().get(0).getValidationRuleId());
+    }
 }
