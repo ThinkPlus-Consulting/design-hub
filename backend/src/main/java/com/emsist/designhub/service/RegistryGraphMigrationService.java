@@ -664,6 +664,60 @@ public class RegistryGraphMigrationService {
                 """).run();
     }
 
+    // ── D6a screen-flow seeds (Chunk 3) ────────────────────────────────
+
+    @Transactional
+    public void seedScreenStates() {
+        neo4jClient.query("""
+                MATCH (authScreen:Screen {surfaceId: 'SCR-AUTH'})
+                MERGE (empty:ScreenState {stateId: 'STATE-SCR-AUTH-EMPTY'})
+                SET empty.name = 'Empty credentials',
+                    empty.stateType = 'EMPTY',
+                    empty.entryCondition = 'Page loads with no prior input',
+                    empty.exitCondition = 'User types in any field',
+                    empty.status = 'DEFINED'
+                MERGE (loading:ScreenState {stateId: 'STATE-SCR-AUTH-LOADING'})
+                SET loading.name = 'Authenticating',
+                    loading.stateType = 'LOADING',
+                    loading.entryCondition = 'User submits login form',
+                    loading.exitCondition = 'API response received',
+                    loading.status = 'DEFINED'
+                MERGE (error:ScreenState {stateId: 'STATE-SCR-AUTH-ERROR'})
+                SET error.name = 'Login failed',
+                    error.stateType = 'ERROR',
+                    error.entryCondition = 'API returns 401',
+                    error.exitCondition = 'User retries or navigates away',
+                    error.status = 'DEFINED'
+                MERGE (empty)-[:BELONGS_TO_SCREEN]->(authScreen)
+                MERGE (loading)-[:BELONGS_TO_SCREEN]->(authScreen)
+                MERGE (error)-[:BELONGS_TO_SCREEN]->(authScreen)
+                """).run();
+    }
+
+    @Transactional
+    public void seedTransitions() {
+        neo4jClient.query("""
+                MATCH (authScreen:Screen {surfaceId: 'SCR-AUTH'})
+                MERGE (dashScreen:Screen {surfaceId: 'SCR-DASHBOARD'})
+                ON CREATE SET dashScreen.label = 'Dashboard',
+                              dashScreen.module = 'core',
+                              dashScreen.routePath = '/dashboard',
+                              dashScreen.status = 'DEFINED'
+                MERGE (loginInt:Interaction {interactionId: 'INT-G-001'})
+                ON CREATE SET loginInt.element = 'Submit login',
+                              loginInt.trigger = 'CLICK',
+                              loginInt.surfaceId = 'SCR-AUTH'
+                MERGE (trn:Transition {transitionId: 'TRN-SCR-AUTH-TO-DASH'})
+                SET trn.name = 'Login success redirect',
+                    trn.transitionType = 'NAVIGATION',
+                    trn.guard = 'authenticated == true',
+                    trn.status = 'DEFINED'
+                MERGE (trn)-[:FROM_SCREEN]->(authScreen)
+                MERGE (trn)-[:TO_SCREEN]->(dashScreen)
+                MERGE (trn)-[:CAUSED_BY_INTERACTION]->(loginInt)
+                """).run();
+    }
+
     // ── Patches (existing) ─────────────────────────────────────────────
 
     @Transactional
@@ -776,5 +830,9 @@ public class RegistryGraphMigrationService {
         seedSourceReferences();
         seedExternalArtifacts();
         seedTraceabilityEdges();
+
+        // 9. Seed D6a screen-flow coverage
+        seedScreenStates();
+        seedTransitions();
     }
 }

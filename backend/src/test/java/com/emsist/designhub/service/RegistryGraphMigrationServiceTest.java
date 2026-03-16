@@ -585,6 +585,40 @@ class RegistryGraphMigrationServiceTest {
                 && ((String) cypher).contains("HAS_SOURCE")));
     }
 
+    // ── D6a screen-flow seed tests (Chunk 3) ──────────────────────────
+
+    @Test
+    void shouldSeedScreenStates() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedScreenStates();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("ScreenState")
+                && ((String) cypher).contains("BELONGS_TO_SCREEN")
+                && ((String) cypher).contains("STATE-SCR-AUTH-EMPTY")
+                && ((String) cypher).contains("STATE-SCR-AUTH-LOADING")
+                && ((String) cypher).contains("STATE-SCR-AUTH-ERROR")));
+    }
+
+    @Test
+    void shouldSeedTransitions() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedTransitions();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("Transition")
+                && ((String) cypher).contains("FROM_SCREEN")
+                && ((String) cypher).contains("TO_SCREEN")
+                && ((String) cypher).contains("CAUSED_BY_INTERACTION")
+                && ((String) cypher).contains("TRN-SCR-AUTH-TO-DASH")));
+    }
+
     // ── Full migration orchestration ───────────────────────────────────
 
     @Test
@@ -596,7 +630,7 @@ class RegistryGraphMigrationServiceTest {
 
         service.runFullMigration();
 
-        // Existing 36 minimum + D6a traceability additions (3) = 39 minimum with empty apiCalls fetch
-        verify(neo4jClient, atLeast(39)).query(anyString());
+        // Existing 39 + D6a screen-flow additions (2) = 41 minimum with empty apiCalls fetch
+        verify(neo4jClient, atLeast(41)).query(anyString());
     }
 }
