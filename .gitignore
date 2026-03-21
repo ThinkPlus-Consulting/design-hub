@@ -1,0 +1,3 @@
+backend/target/
+.env.external-sync.local
+.env.external-sync.*.local

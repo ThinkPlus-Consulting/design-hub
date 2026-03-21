@@ -9,7 +9,7 @@ Design Hub is a graph-backed product, architecture, and delivery intelligence ap
 - Seed data: enabled by default on backend startup
 - Delivery, automation, traceability, benchmark, channel, journey/persona, and business/application/data-architecture UI surfaces: implemented
 - Verification view, expanded Design Hub token audit, desktop/mobile detail baselines, graph-to-UI drift checks, and a GitHub Actions verification workflow: implemented
-- Localization and RTL coverage now includes non-shell graph-backed detail behavior plus Arabic desktop/mobile detail baselines; protected-branch CI enforcement still depends on GitHub repo visibility or plan support
+- Localization and RTL coverage now includes non-shell graph-backed detail behavior plus Arabic desktop/mobile detail baselines; GitHub Actions verification is enforced on protected `main`
 
 ## Prerequisites
 
@@ -92,13 +92,22 @@ Jira now supports direct Jira Cloud polling when `base-url`, `account email`, `t
 
 - `DESIGNHUB_EXTERNAL_SYNC_JIRA_POLL_PATH=/rest/api/3/search/jql`
 
+The fastest rollout path is:
+
+```bash
+./scripts/check-external-sync.sh --env-file .env.external-sync.local --source jira
+./scripts/check-external-sync.sh --env-file .env.external-sync.local --source jira --probe-jira
+```
+
+The first command validates the effective env, and the second issues a real authenticated GET against the configured Jira poll endpoint before you bring the backend up.
+
 Azure DevOps is still different. The current Azure polling client still expects an adapter-style `poll-path` that accepts `organization/project` plus `wiql` and optional `updatedSince`, so a plain Azure Portal home URL is not a complete polling configuration by itself.
 
 ## Blocker Helpers
 
-- Branch protection can be applied with [`scripts/configure-branch-protection.sh`](/Users/mksulty/Claude/Projects/design-hub/scripts/configure-branch-protection.sh) once the repo is public or the GitHub plan supports private-repo branch protection.
-- External-sync rollout can start from [`.env.external-sync.example`](/Users/mksulty/Claude/Projects/design-hub/.env.external-sync.example).
-- The current private GitHub repo is `https://github.com/ThinkPlus-Consulting/design-hub`.
+- Branch protection is active on `main`; use [`scripts/configure-branch-protection.sh`](/Users/mksulty/Claude/Projects/design-hub/scripts/configure-branch-protection.sh) if the required checks or review policy need to change.
+- External-sync rollout can start from [`.env.external-sync.example`](/Users/mksulty/Claude/Projects/design-hub/.env.external-sync.example) and [`scripts/check-external-sync.sh`](/Users/mksulty/Claude/Projects/design-hub/scripts/check-external-sync.sh).
+- The current public GitHub repo is `https://github.com/ThinkPlus-Consulting/design-hub`.
 
 ## Verification
 
@@ -109,7 +118,7 @@ cd backend
 ./mvnw test
 ```
 
-Current backend verification baseline: `489` passing tests.
+Current backend verification baseline: `491` passing tests.
 
 Current live benchmark baseline: `98.6` overall across the full `71` benchmarked node types and `664` live nodes, with all four dimensions green and `sourceTraceability` currently at `94.4` for the six-story seeded slice.
 
