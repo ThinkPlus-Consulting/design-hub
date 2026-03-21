@@ -38,8 +38,8 @@ Overall, the project is now best described as **roughly 80-85% complete**.
 | Cypher-only edges | `1` (`ASSESSES`) |
 | Backend tests | `489 passing` |
 | Frontend verification | `44 / 44 passing` |
-| Live benchmark slice | `100.0 overall` |
-| Benchmark dimensions | `attributeDepth 100.0`, `relationshipCoverage 100.0`, `sourceTraceability 100.0`, `queryability 100.0` |
+| Live benchmark slice | `98.6 overall` |
+| Benchmark dimensions | `attributeDepth 100.0`, `relationshipCoverage 99.9`, `sourceTraceability 94.4`, `queryability 100.0` |
 | Covered benchmark node types | `71` |
 | Total nodes in live benchmark slice | `full live slice verified` |
 | Seeded delivery stories | `US-AI-078`, `US-AI-090`, `US-AI-137`, `US-AI-139`, and `US-SCREEN-COVERAGE-001` resolve complete packs at `100`; `US-AUTH-001` remains intentionally incomplete at `0` |

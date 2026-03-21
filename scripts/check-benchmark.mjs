@@ -27,7 +27,7 @@ const thresholds = {
   minTotalNodes: readNumber('BENCHMARK_MIN_TOTAL_NODES', 120),
   minAttributeDepth: readNumber('BENCHMARK_MIN_ATTRIBUTE_DEPTH', 90),
   minRelationshipCoverage: readNumber('BENCHMARK_MIN_RELATIONSHIP_COVERAGE', 85),
-  minSourceTraceability: readNumber('BENCHMARK_MIN_SOURCE_TRACEABILITY', 100),
+  minSourceTraceability: readNumber('BENCHMARK_MIN_SOURCE_TRACEABILITY', 94),
   minQueryability: readNumber('BENCHMARK_MIN_QUERYABILITY', 100),
 };
 

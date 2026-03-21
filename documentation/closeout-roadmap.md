@@ -11,7 +11,7 @@ Design Hub is now a running, verified application rather than a foundation-only 
 
 - backend: `489` passing tests
 - frontend: `44 / 44` passing verification scenarios
-- benchmark gate: `100.0` overall on the full 71-type slice
+- benchmark gate: `98.6` overall on the full 71-type slice, with all four dimensions green
 - CI lanes: verification + release workflows active
 - runtime: Java 23, Node 25.8.1, Neo4j bootstrap via `docker compose`, backend Maven wrapper verified
 
@@ -56,7 +56,7 @@ An item only moves from `PLANNED` or `PARTIAL` to closed when all three are true
 - benchmark integrity gate with persisted benchmark artifact output
 - Neo4j live query rendering now uses Neo4j 5 `elementId(...)` instead of deprecated `id(...)`, and legacy unscoped `CALL { WITH ... }` subqueries have been rewritten to explicit scoped subqueries
 - frontend initial hydration no longer blocks the screen list on the heaviest optional benchmark/external summary bundle; those summaries now load after the core graph data is visible
-- benchmark improvements to `100.0` overall with all four dimensions green across the full 71-type benchmarkable slice
+- benchmark gate and docs now align to the current verified live slice at `98.6` overall with `attributeDepth 100.0`, `relationshipCoverage 99.9`, `sourceTraceability 94.4`, and `queryability 100.0`
 - generic graph object entry coverage expanded to 71 first-entry types, now also including journey-step, import-snapshot, evidence-record, enum, event, locale, and translation-key along with the previously closed topic, edge-case, exception-case, integration, open-question, governance, process, architecture, and verification families
 - governance coverage is now live: `Decision`, `Assumption`, `Constraint`, `Assessment`, and `Risk` have seeded graph evidence, typed traversal endpoints, object registry entry coverage, and benchmark support
 - upper-spine external normalization now reaches epic coverage, and external artifact traversal now shows that live mapping

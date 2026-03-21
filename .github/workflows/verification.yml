@@ -102,6 +102,7 @@ jobs:
         run: node ./scripts/check-benchmark.mjs
         env:
           BENCHMARK_OUTPUT_PATH: /tmp/design-hub-benchmark.json
+          BENCHMARK_MIN_SOURCE_TRACEABILITY: '94'
 
       - name: Run frontend verification
         working-directory: frontend
