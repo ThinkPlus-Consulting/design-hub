@@ -75,7 +75,7 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
     }
 
     .inventory__row--selected {
-      background: rgba(66, 129, 119, 0.12) !important;
+      background: color-mix(in srgb, var(--tp-primary) 12%, transparent) !important;
     }
 
     .inventory__badge {
@@ -86,17 +86,17 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
       text-transform: uppercase;
       white-space: nowrap;
 
-      &--complete { background: rgba(66, 129, 119, 0.15); color: var(--dh-complete); }
-      &--specified { background: rgba(152, 133, 97, 0.15); color: var(--dh-specified); }
-      &--not_started { background: rgba(185, 167, 121, 0.15); color: var(--dh-not-started); }
-      &--prototyped { background: rgba(66, 129, 119, 0.15); color: var(--dh-complete); }
-      &--integrated { background: rgba(66, 129, 119, 0.15); color: var(--dh-complete); }
-      &--tested { background: rgba(66, 129, 119, 0.22); color: var(--tp-primary-dark); }
+      &--complete { background: color-mix(in srgb, var(--dh-complete) 15%, transparent); color: var(--dh-complete); }
+      &--specified { background: color-mix(in srgb, var(--dh-specified) 15%, transparent); color: var(--dh-specified); }
+      &--not_started { background: color-mix(in srgb, var(--dh-not-started) 15%, transparent); color: var(--dh-not-started); }
+      &--prototyped { background: color-mix(in srgb, var(--dh-complete) 15%, transparent); color: var(--dh-complete); }
+      &--integrated { background: color-mix(in srgb, var(--dh-complete) 15%, transparent); color: var(--dh-complete); }
+      &--tested { background: color-mix(in srgb, var(--dh-complete) 22%, transparent); color: var(--tp-primary-dark); }
     }
 
     .inventory__gap-count {
-      background: rgba(107, 31, 42, 0.08);
-      color: var(--dh-gap, #6b1f2a);
+      background: color-mix(in srgb, var(--tp-danger) 8%, transparent);
+      color: var(--dh-gap);
       font-size: 0.72rem;
       font-weight: 700;
       padding: 2px 8px;

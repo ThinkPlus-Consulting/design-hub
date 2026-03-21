@@ -23,6 +23,10 @@ public class RequirementPortfolio {
     private String name;
     private String description;
     private Status status;
+    private String externalWorkflowState;
+    private String externalPriority;
+    private String externalOwner;
+    private List<String> externalRefs;
 
     @Relationship(type = "HAS_EPIC", direction = Relationship.Direction.OUTGOING)
     private List<Epic> epics;

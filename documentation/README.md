@@ -28,6 +28,7 @@ This documentation pack treats Design Hub as an implementation-readiness graph s
 - `design-testing-strategy.md`: strict Playwright-based design-verification and anti-drift testing model
 - `implementation-readiness-graph-model.md`: status versus readiness governance and implementation-driving artifact rules
 - `alfabet-alignment-matrix.md`: Alfabet-to-Design Hub alignment matrix — enterprise architecture object classification, three object families, cross-family edges, and priority phasing
+- `closeout-roadmap.md`: execution sequence for closing the remaining documented `PLANNED` and `PARTIAL` items
 
 ## Working Rule
 

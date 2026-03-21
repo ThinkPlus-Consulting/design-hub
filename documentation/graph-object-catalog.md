@@ -73,7 +73,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Recorded decision with rationale and status
-**Implementation Status**: `[IMPLEMENTED]` `domain/Message.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Decision.java`
 
 #### Attributes
 
@@ -92,9 +92,9 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `AFFECTS_FEATURE` | OUTGOING | Feature | N:M | No | OPTIONAL | `[PLANNED]` |
-| `AFFECTS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
-| `AFFECTS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
+| `AFFECTS_FEATURE` | OUTGOING | Feature | N:M | No | OPTIONAL | `[EDGE]` |
+| `AFFECTS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[EDGE]` |
+| `AFFECTS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -103,7 +103,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Stated assumption underlying design or scope
-**Implementation Status**: `[IMPLEMENTED]` `domain/SourceReference.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Assumption.java`
 
 #### Attributes
 
@@ -119,8 +119,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `UNDERLIES_FEATURE` | OUTGOING | Feature | N:M | No | OPTIONAL | `[PLANNED]` |
-| `UNDERLIES_STORY` | OUTGOING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` |
+| `UNDERLIES_FEATURE` | OUTGOING | Feature | N:M | No | OPTIONAL | `[EDGE]` |
+| `UNDERLIES_STORY` | OUTGOING | UserStory | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -129,7 +129,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Technical, business, or regulatory constraint
-**Implementation Status**: `[IMPLEMENTED]` `domain/Bug.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Constraint.java`
 
 #### Attributes
 
@@ -145,8 +145,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `CONSTRAINS_FEATURE` | OUTGOING | Feature | N:M | No | OPTIONAL | `[PLANNED]` |
-| `CONSTRAINS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
+| `CONSTRAINS_FEATURE` | OUTGOING | Feature | N:M | No | OPTIONAL | `[EDGE]` |
+| `CONSTRAINS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -155,7 +155,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Traceable provenance link to external artifact
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Risk.java`
 
 #### Attributes
 
@@ -213,7 +213,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Strategic & Governance
 **Purpose**: Review observation, issue, or concern discovered during human analysis
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Topic.java`
 
 #### Attributes
 
@@ -289,8 +289,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `THREATENS_FEATURE` | OUTGOING | Feature | N:M | No | OPTIONAL | `[PLANNED]` |
-| `THREATENS_STORY` | OUTGOING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` |
+| `THREATENS_FEATURE` | OUTGOING | Feature | N:M | No | OPTIONAL | `[EDGE]` |
+| `THREATENS_STORY` | OUTGOING | UserStory | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -324,7 +324,7 @@
 |-------------|-----------|--------|-------------|----------|----------|----------------|
 | `PERFORMS_JOURNEY` | OUTGOING | Journey | 1:N | Yes | BLOCKING | `[PLANNED]` |
 | `USES_SCREEN` | OUTGOING | Screen | 1:N | No | OPTIONAL | `[REVERSE]` — traversable via Screen `USED_BY_PERSONA`; legacy `personaIds` remains on Screen for compatibility |
-| `AFFECTED_BY_FINDING` | INCOMING | Finding | N:M | No | OPTIONAL | `[PLANNED]` |
+| `AFFECTED_BY_FINDING` | INCOMING | Finding | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -473,8 +473,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `GROUPS_JOURNEY` | OUTGOING | Journey | 1:N | No | OPTIONAL | `[PLANNED]` |
-| `GROUPS_FEATURE` | OUTGOING | Feature | 1:N | No | OPTIONAL | `[PLANNED]` |
+| `GROUPS_JOURNEY` | OUTGOING | Journey | 1:N | No | OPTIONAL | `[EDGE]` |
+| `GROUPS_FEATURE` | OUTGOING | Feature | 1:N | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -854,7 +854,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Non-happy-path scenario
-**Implementation Status**: `[IMPLEMENTED]` `domain/TestCase.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/EdgeCase.java`
 
 #### Attributes
 
@@ -870,9 +870,9 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `AFFECTS_STORY` | OUTGOING | UserStory | N:M | No | OPTIONAL | `[PLANNED]` |
-| `AFFECTS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[PLANNED]` |
-| `AFFECTS_JOURNEY_STEP` | OUTGOING | JourneyStep | N:M | No | OPTIONAL | `[PLANNED]` |
+| `AFFECTS_STORY` | OUTGOING | UserStory | N:M | No | OPTIONAL | `[EDGE]` |
+| `AFFECTS_SCREEN` | OUTGOING | Screen | N:M | No | OPTIONAL | `[EDGE]` |
+| `AFFECTS_JOURNEY_STEP` | OUTGOING | JourneyStep | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -881,7 +881,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Requirement & Design
 **Purpose**: Failure or exceptional path
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/ExceptionCase.java`
 
 #### Attributes
 
@@ -897,9 +897,9 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `AFFECTS_INTERACTION` | OUTGOING | Interaction | N:M | No | OPTIONAL | `[PLANNED]` |
-| `AFFECTS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
-| `AFFECTS_JOURNEY_STEP` | OUTGOING | JourneyStep | N:M | No | OPTIONAL | `[PLANNED]` |
+| `AFFECTS_INTERACTION` | OUTGOING | Interaction | N:M | No | OPTIONAL | `[EDGE]` |
+| `AFFECTS_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[EDGE]` |
+| `AFFECTS_JOURNEY_STEP` | OUTGOING | JourneyStep | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1219,7 +1219,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Engineering
 **Purpose**: Cross-system or cross-service integration point
-**Implementation Status**: `[IMPLEMENTED]` `domain/TestCase.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/Integration.java`
 
 #### Attributes
 
@@ -1237,7 +1237,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `USES_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[PLANNED]` |
+| `USES_API` | OUTGOING | ApiContract | N:M | No | OPTIONAL | `[EDGE]` |
 | `FIRES_EVENT` | OUTGOING | Event (T2) | N:M | No | OPTIONAL | `[PLANNED]` |
 
 ---
@@ -1360,7 +1360,7 @@
 **Tier**: 1 (First-Class Node)
 **Category**: Cross-cutting
 **Purpose**: Unresolved question blocking design or implementation
-**Implementation Status**: `[IMPLEMENTED]` `domain/Application.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/OpenQuestion.java`
 
 #### Attributes
 
@@ -1377,7 +1377,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BLOCKS_ARTIFACT` | OUTGOING | Any Tier 1 | N:M | No | OPTIONAL | `[PLANNED]` |
+| `BLOCKS_ARTIFACT` | OUTGOING | Any Tier 1 | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1930,7 +1930,7 @@
 **Tier**: 2 (Registry)
 **Category**: Data vocabulary
 **Purpose**: Controlled value sets for dropdown and select fields
-**Implementation Status**: `[IMPLEMENTED]` `domain/BusinessDomain.java`
+**Implementation Status**: `[IMPLEMENTED]` `domain/EnumDefinition.java`
 
 #### Attributes
 
@@ -1944,7 +1944,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `USED_BY_FIELD` | INCOMING | DataField | N:M | No | OPTIONAL | `[PLANNED]` |
+| `USED_BY_FIELD` | INCOMING | DataField | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1953,7 +1953,7 @@
 **Tier**: 2 (Registry)
 **Category**: Domain events
 **Purpose**: Named domain events referenced by integrations
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/DomainEvent.java`
 
 #### Attributes
 
@@ -1967,7 +1967,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `FIRED_BY_INTEGRATION` | INCOMING | Integration | N:M | No | OPTIONAL | `[PLANNED]` |
+| `FIRED_BY_INTEGRATION` | INCOMING | Integration | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1976,7 +1976,7 @@
 **Tier**: 2 (Registry)
 **Category**: Internationalization
 **Purpose**: Controlled language codes for i18n support
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/LocaleRegistry.java`
 
 #### Attributes
 
@@ -1990,7 +1990,7 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `HAS_TRANSLATIONS` | OUTGOING | TranslationKey | 1:N | No | OPTIONAL | `[PLANNED]` |
+| `HAS_TRANSLATIONS` | OUTGOING | TranslationKey | 1:N | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -1999,7 +1999,7 @@
 **Tier**: 2 (Registry)
 **Category**: Internationalization
 **Purpose**: Registry of translatable strings linking Locale to UI elements
-**Implementation Status**: `[PLANNED]`
+**Implementation Status**: `[IMPLEMENTED]` `domain/TranslationKeyEntry.java`
 
 #### Attributes
 
@@ -2013,8 +2013,8 @@
 
 | Relationship | Direction | Target | Cardinality | Required | Severity | Implementation |
 |-------------|-----------|--------|-------------|----------|----------|----------------|
-| `BELONGS_TO_LOCALE` | INCOMING | Locale | N:1 | Yes | BLOCKING | `[PLANNED]` |
-| `USED_BY_MESSAGE` | INCOMING | Message | N:M | No | OPTIONAL | `[PLANNED]` |
+| `BELONGS_TO_LOCALE` | INCOMING | Locale | N:1 | Yes | BLOCKING | `[EDGE]` |
+| `USED_BY_MESSAGE` | INCOMING | Message | N:M | No | OPTIONAL | `[EDGE]` |
 
 ---
 
@@ -2250,7 +2250,7 @@ Complete registry of all modeled relationships with implementation status.
 
 ### 6.1 Existing Graph Edges
 
-The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **103 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
+The table below shows the legacy/core implemented edges that were present earliest in the repo. The current implementation baseline is broader: **111 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**.
 
 | Relationship | Source | Target | Cardinality | Severity | Status |
 |-------------|--------|--------|-------------|----------|--------|
@@ -2296,7 +2296,7 @@ The table below shows the legacy/core implemented edges that were present earlie
 | `CAN_PRODUCE_ERROR` | Screen | ErrorCode (T2) | N:M | OPTIONAL | `[EDGE]` |
 | `ON_ERROR_SHOWS` | Interaction | ErrorCode (T2) | N:M | OPTIONAL | `[EDGE]` |
 | `GOVERNS_STORY` | Rule | UserStory | N:M | OPTIONAL | `[PLANNED]` |
-| `AFFECTS_SCREEN` | Finding | Screen | N:M | OPTIONAL | `[PLANNED]` |
+| `AFFECTS_SCREEN` | Finding | Screen | N:M | OPTIONAL | `[EDGE]` |
 | `AFFECTS_SCREEN` | Bug | Screen | N:M | OPTIONAL | `[EDGE]` |
 | `TRACKED_IN_EXTERNAL_SYSTEM` | Bug | ExternalArtifact | N:1 | OPTIONAL | `[PLANNED]` |
 | `REPRESENTS_STORY` | ExternalArtifact | UserStory | N:1 | OPTIONAL | `[EDGE]` |

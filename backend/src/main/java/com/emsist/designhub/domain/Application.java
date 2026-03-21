@@ -19,6 +19,7 @@ public class Application {
     private String applicationId;
     private String name;
     private String description;
+    private String applicationType;
     private String repoPath;
     private String repoUrl;
     private String workspaceType;

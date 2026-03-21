@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { Tabs } from 'primeng/tabs';
 import { TabList } from 'primeng/tabs';
 import { Tab } from 'primeng/tabs';
@@ -11,7 +11,14 @@ import { InventoryPanelComponent } from './panels/inventory-panel.component';
 import { TouchpointPanelComponent } from './panels/touchpoint-panel.component';
 import { InteractionPanelComponent } from './panels/interaction-panel.component';
 import { JourneyPanelComponent } from './panels/journey-panel.component';
+import { ArchitecturePanelComponent } from './panels/architecture-panel.component';
 import { CrosscuttingPanelComponent } from './panels/crosscutting-panel.component';
+import { DeliveryPanelComponent } from './panels/delivery-panel.component';
+import { AutomationPanelComponent } from './panels/automation-panel.component';
+import { TraceabilityPanelComponent } from './panels/traceability-panel.component';
+import { BenchmarkPanelComponent } from './panels/benchmark-panel.component';
+import { VerificationPanelComponent } from './panels/verification-panel.component';
+import { LocaleService } from '../../../../core/i18n/locale.service';
 
 @Component({
   selector: 'app-detail-panel',
@@ -27,33 +34,45 @@ import { CrosscuttingPanelComponent } from './panels/crosscutting-panel.componen
     TouchpointPanelComponent,
     InteractionPanelComponent,
     JourneyPanelComponent,
+    ArchitecturePanelComponent,
     CrosscuttingPanelComponent,
+    DeliveryPanelComponent,
+    AutomationPanelComponent,
+    TraceabilityPanelComponent,
+    BenchmarkPanelComponent,
+    VerificationPanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="detail" data-testid="detail-panel-root">
       <!-- Context bar -->
       <div class="detail__context" data-testid="detail-context">
-        <span class="detail__context-label">Selected:</span>
-        <span class="detail__context-name" data-testid="detail-context-name">{{ state.selectedScreen()?.label ?? 'None' }}</span>
-        @if (state.selectedScreen()) {
+        <span class="detail__context-label" data-testid="detail-context-label">{{ contextLabel() }}</span>
+        <span class="detail__context-name" data-testid="detail-context-name">{{ contextName() }}</span>
+        @if (hasContext()) {
           <button
             class="detail__close-btn"
             data-testid="detail-close"
-            (click)="state.selectScreen(null)"
-            aria-label="Close detail panel"
+            (click)="clearContext()"
+            [attr.aria-label]="locale.t('detail.close')"
           >x</button>
         }
       </div>
 
       <p-tabs [value]="state.activeTab()" (valueChange)="onTabChange($event)" class="detail__tabs">
         <p-tablist>
-          <p-tab value="detail" data-testid="tab-detail">Detail</p-tab>
-          <p-tab value="inventory" data-testid="tab-inventory">Inventory</p-tab>
-          <p-tab value="touchpoints" data-testid="tab-touchpoints">Touch</p-tab>
-          <p-tab value="interactions" data-testid="tab-interactions">Actions</p-tab>
-          <p-tab value="journeys" data-testid="tab-journeys">Journeys</p-tab>
-          <p-tab value="crosscutting" data-testid="tab-crosscutting">X-Cut</p-tab>
+          <p-tab value="detail" data-testid="tab-detail">{{ locale.t('tab.detail') }}</p-tab>
+          <p-tab value="inventory" data-testid="tab-inventory">{{ locale.t('tab.inventory') }}</p-tab>
+          <p-tab value="touchpoints" data-testid="tab-touchpoints">{{ locale.t('tab.touchpoints') }}</p-tab>
+          <p-tab value="interactions" data-testid="tab-interactions">{{ locale.t('tab.interactions') }}</p-tab>
+          <p-tab value="journeys" data-testid="tab-journeys">{{ locale.t('tab.journeys') }}</p-tab>
+          <p-tab value="architecture" data-testid="tab-architecture">{{ locale.t('tab.architecture') }}</p-tab>
+          <p-tab value="delivery" data-testid="tab-delivery">{{ locale.t('tab.delivery') }}</p-tab>
+          <p-tab value="automation" data-testid="tab-automation">{{ locale.t('tab.automation') }}</p-tab>
+          <p-tab value="traceability" data-testid="tab-traceability">{{ locale.t('tab.traceability') }}</p-tab>
+          <p-tab value="benchmark" data-testid="tab-benchmark">{{ locale.t('tab.benchmark') }}</p-tab>
+          <p-tab value="verification" data-testid="tab-verification">{{ locale.t('tab.verification') }}</p-tab>
+          <p-tab value="crosscutting" data-testid="tab-crosscutting">{{ locale.t('tab.crosscutting') }}</p-tab>
         </p-tablist>
         <p-tabpanels>
           <p-tabpanel value="detail"><app-screen-detail /></p-tabpanel>
@@ -61,6 +80,12 @@ import { CrosscuttingPanelComponent } from './panels/crosscutting-panel.componen
           <p-tabpanel value="touchpoints"><app-touchpoint-panel /></p-tabpanel>
           <p-tabpanel value="interactions"><app-interaction-panel /></p-tabpanel>
           <p-tabpanel value="journeys"><app-journey-panel /></p-tabpanel>
+          <p-tabpanel value="architecture"><app-architecture-panel /></p-tabpanel>
+          <p-tabpanel value="delivery"><app-delivery-panel /></p-tabpanel>
+          <p-tabpanel value="automation"><app-automation-panel /></p-tabpanel>
+          <p-tabpanel value="traceability"><app-traceability-panel /></p-tabpanel>
+          <p-tabpanel value="benchmark"><app-benchmark-panel /></p-tabpanel>
+          <p-tabpanel value="verification"><app-verification-panel /></p-tabpanel>
           <p-tabpanel value="crosscutting"><app-crosscutting-panel /></p-tabpanel>
         </p-tabpanels>
       </p-tabs>
@@ -78,7 +103,8 @@ import { CrosscuttingPanelComponent } from './panels/crosscutting-panel.componen
       align-items: center;
       gap: var(--tp-space-2);
       padding: var(--tp-space-3) var(--tp-space-4);
-      border-bottom: 1px solid rgba(152, 133, 97, 0.18);
+      border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 22%, transparent);
+      background: color-mix(in srgb, var(--tp-white) 34%, transparent);
     }
 
     .detail__context-label {
@@ -102,12 +128,19 @@ import { CrosscuttingPanelComponent } from './panels/crosscutting-panel.componen
       font-size: 1rem;
       cursor: pointer;
       color: var(--tp-text-muted);
-      padding: 2px 6px;
-      border-radius: 4px;
+      min-width: var(--tp-touch-target-min-size);
+      min-height: var(--tp-touch-target-min-size);
+      padding: var(--tp-space-1);
+      border-radius: var(--tp-space-3);
 
       &:hover {
-        background: rgba(107, 31, 42, 0.1);
+        background: var(--tp-danger-bg);
         color: var(--tp-danger);
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: var(--tp-focus-ring);
       }
     }
 
@@ -118,7 +151,8 @@ import { CrosscuttingPanelComponent } from './panels/crosscutting-panel.componen
 
     :host ::ng-deep .p-tablist .p-tab {
       font-size: 0.72rem;
-      padding: 0.5rem 0.65rem;
+      min-height: var(--tp-touch-target-min-size);
+      padding: var(--tp-space-3) var(--tp-space-4);
     }
 
     :host ::ng-deep .p-tabpanels {
@@ -129,14 +163,143 @@ import { CrosscuttingPanelComponent } from './panels/crosscutting-panel.componen
     :host ::ng-deep .p-tabpanel {
       padding: var(--tp-space-3);
     }
+
+    @media (max-width: 960px) {
+      .detail__context {
+        padding-inline: var(--tp-space-3);
+      }
+
+      :host ::ng-deep .p-tabpanel {
+        padding: var(--tp-space-2);
+      }
+    }
   `],
 })
 export class DetailPanelComponent {
   readonly state = inject(DesignHubStateService);
+  readonly locale = inject(LocaleService);
+  readonly contextLabel = computed(() => {
+    switch (this.state.activeTab()) {
+      case 'touchpoints':
+        return this.locale.t('detail.context.channel');
+      case 'journeys':
+        return this.locale.t('detail.context.journey');
+      case 'architecture':
+        if (this.state.selectedArchitectureView() === 'application') {
+          return this.locale.t('detail.context.application');
+        }
+        if (this.state.selectedArchitectureView() === 'data') {
+          return this.locale.t('detail.context.dataObject');
+        }
+        if (this.state.selectedArchitectureView() === 'infrastructure') {
+          return this.locale.t('detail.context.deployment');
+        }
+        return this.locale.t('detail.context.capability');
+      case 'delivery':
+      case 'automation':
+      case 'traceability':
+        return this.locale.t('detail.context.story');
+      case 'benchmark':
+        return this.locale.t('detail.context.benchmark');
+      case 'verification':
+        return this.locale.t('detail.context.verification');
+      default:
+        return this.locale.t('detail.context.screen');
+    }
+  });
+  readonly contextName = computed(() => {
+    if (this.state.activeTab() === 'touchpoints') {
+      return this.state.selectedChannelTraversal()?.displayName ?? this.state.selectedChannel()?.displayName ?? this.locale.t('detail.context.none');
+    }
+    if (this.state.activeTab() === 'journeys') {
+      return this.state.selectedJourneyTraversal()?.title ?? this.state.selectedJourney()?.title ?? this.locale.t('detail.context.none');
+    }
+    if (this.state.activeTab() === 'architecture') {
+      if (this.state.selectedArchitectureView() === 'application') {
+        return this.state.selectedApplicationArchitecture()?.name ?? this.state.selectedApplicationSummary()?.name ?? this.locale.t('detail.context.none');
+      }
+      if (this.state.selectedArchitectureView() === 'data') {
+        return this.state.selectedDataArchitecture()?.name ?? this.state.selectedDataObjectSummary()?.name ?? this.locale.t('detail.context.none');
+      }
+      if (this.state.selectedArchitectureView() === 'infrastructure') {
+        return this.state.selectedInfrastructureArchitecture()?.name ?? this.state.selectedInfrastructureDeployment()?.name ?? this.locale.t('detail.context.none');
+      }
+      return this.state.selectedBusinessArchitecture()?.name ?? this.state.selectedBusinessCapability()?.name ?? this.locale.t('detail.context.none');
+    }
+    if (this.state.activeTab() === 'delivery' || this.state.activeTab() === 'automation' || this.state.activeTab() === 'traceability') {
+      return this.state.selectedDeliveryStory()?.label ?? this.locale.t('detail.context.none');
+    }
+    if (this.state.activeTab() === 'benchmark') {
+      return this.locale.t('detail.context.globalCoverage');
+    }
+    if (this.state.activeTab() === 'verification') {
+      return this.locale.t('detail.context.liveEvidence');
+    }
+    return this.state.selectedScreen()?.label ?? this.locale.t('detail.context.none');
+  });
+  readonly hasContext = computed(() => {
+    if (this.state.activeTab() === 'touchpoints') {
+      return this.state.selectedChannelCode() !== null;
+    }
+    if (this.state.activeTab() === 'journeys') {
+      return this.state.selectedJourneyId() !== null;
+    }
+    if (this.state.activeTab() === 'architecture') {
+      if (this.state.selectedArchitectureView() === 'application') {
+        return this.state.selectedApplicationId() !== null;
+      }
+      if (this.state.selectedArchitectureView() === 'data') {
+        return this.state.selectedDataObjectId() !== null;
+      }
+      if (this.state.selectedArchitectureView() === 'infrastructure') {
+        return this.state.selectedDeploymentId() !== null;
+      }
+      return this.state.selectedBusinessCapabilityId() !== null;
+    }
+    if (this.state.activeTab() === 'delivery' || this.state.activeTab() === 'automation' || this.state.activeTab() === 'traceability') {
+      return this.state.selectedDeliveryStory() !== null;
+    }
+    if (this.state.activeTab() === 'benchmark' || this.state.activeTab() === 'verification') {
+      return false;
+    }
+    return this.state.selectedScreen() !== null;
+  });
 
   onTabChange(value: string | number | undefined): void {
     if (value != null) {
       this.state.setActiveTab(value as DetailTab);
     }
+  }
+
+  clearContext(): void {
+    if (this.state.activeTab() === 'touchpoints') {
+      this.state.selectChannel(null);
+      return;
+    }
+    if (this.state.activeTab() === 'journeys') {
+      this.state.selectJourney(null);
+      return;
+    }
+    if (this.state.activeTab() === 'architecture') {
+      if (this.state.selectedArchitectureView() === 'application') {
+        this.state.selectApplication(null);
+        return;
+      }
+      if (this.state.selectedArchitectureView() === 'data') {
+        this.state.selectDataObject(null);
+        return;
+      }
+      if (this.state.selectedArchitectureView() === 'infrastructure') {
+        this.state.selectInfrastructureDeployment(null);
+        return;
+      }
+      this.state.selectBusinessCapability(null);
+      return;
+    }
+    if (this.state.activeTab() === 'delivery' || this.state.activeTab() === 'traceability') {
+      this.state.selectDeliveryStory(null);
+      return;
+    }
+    this.state.selectScreen(null);
   }
 }

@@ -22,6 +22,11 @@ public class Task {
     private String taskType;
     private Status status;
     private String priority;
+    private String externalWorkflowState;
+    private String externalPriority;
+    private String externalOwner;
+    private List<String> externalLabels;
+    private List<String> externalRefs;
 
     @Relationship(type = "IMPLEMENTS", direction = Relationship.Direction.OUTGOING)
     private List<CodeAsset> implementsAssets;

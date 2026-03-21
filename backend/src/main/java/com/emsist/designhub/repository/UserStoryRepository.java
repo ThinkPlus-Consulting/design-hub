@@ -18,6 +18,11 @@ public interface UserStoryRepository extends Neo4jRepository<UserStory, String> 
                    u.module AS module,
                    u.domain AS domain,
                    u.storyNumber AS storyNumber,
+                   u.externalWorkflowState AS externalWorkflowState,
+                   u.externalPriority AS externalPriority,
+                   u.externalOwner AS externalOwner,
+                   coalesce(u.externalLabels, []) AS externalLabels,
+                   coalesce(u.externalRefs, []) AS externalRefs,
                    count(DISTINCT s) AS screenCount
             ORDER BY u.module, u.storyId
             """)
@@ -29,6 +34,11 @@ public interface UserStoryRepository extends Neo4jRepository<UserStory, String> 
         String getModule();
         String getDomain();
         String getStoryNumber();
+        String getExternalWorkflowState();
+        String getExternalPriority();
+        String getExternalOwner();
+        List<String> getExternalLabels();
+        List<String> getExternalRefs();
         long getScreenCount();
     }
 }

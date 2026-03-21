@@ -166,11 +166,11 @@ Selected primary objects should support delivery-aware attributes benchmarked fr
 
 | Object | Recommended Additional Attributes | Status |
 |--------|----------------------------------|--------|
-| `UserStory` | `owner`, `priority`, `labels`, `externalRefs` | `[PLANNED]` — current entity has 5 fields |
-| `Bug` | `severity`, `priority`, `owner`, `externalRefs`, `workflowState` | `[PLANNED]` — no Bug entity |
-| `Finding` | `severity`, `disposition`, `owner`, `externalRefs` | `[PLANNED]` — no Finding entity |
-| `Feature` | `owner`, `targetIteration`, `externalRefs` | `[PLANNED]` — no Feature entity |
-| `ApiContract` | `owner`, `consumerTeams`, `dependencyRefs`, `externalRefs` | `[PLANNED]` — no ApiContract entity |
+| `UserStory` | `owner`, `priority`, `labels`, `externalRefs` | `[IMPLEMENTED — partial]` — normalized external delivery fields now backfill onto `UserStory` as `externalOwner`, `externalPriority`, `externalWorkflowState`, `externalLabels`, and `externalRefs`; broader type coverage is still pending |
+| `Bug` | `severity`, `priority`, `owner`, `externalRefs`, `workflowState` | `[IMPLEMENTED — partial]` — normalized external delivery fields now backfill onto `Bug` as `externalOwner`, `externalPriority`, `externalWorkflowState`, and `externalRefs`; broader type coverage is still pending |
+| `Finding` | `severity`, `disposition`, `owner`, `externalRefs` | `[PARTIAL]` — Finding exists in code; richer delivery-field normalization is still pending |
+| `Feature` | `owner`, `targetIteration`, `externalRefs` | `[IMPLEMENTED — partial]` — normalized external delivery fields now backfill onto `Feature` as `externalOwner`, `externalWorkflowState`, `targetIteration`, and `externalRefs`; broader type coverage is still pending |
+| `ApiContract` | `owner`, `consumerTeams`, `dependencyRefs`, `externalRefs` | `[PARTIAL]` — ApiContract exists in code; external-field normalization remains pending |
 
 ### 6.3 Keep domain-native objects separate
 
@@ -190,24 +190,26 @@ This section scores dimension 7 from `vision-benchmark.md`.
 
 | Criterion | Weight | Current State | Score |
 |----------|--------|---------------|-------|
-| `ExternalArtifact` entity exists | 3 | `[PLANNED]` — no entity | 0/3 |
-| `REPRESENTS` edge to domain objects | 3 | `[PLANNED]` — no edge | 0/3 |
-| External hierarchy edges (`PARENT_OF`, `CHILD_OF`) | 2 | `[PLANNED]` | 0/2 |
-| External dependency edges (`DEPENDS_ON`, `BLOCKS`) | 2 | `[PLANNED]` | 0/2 |
-| Sync metadata (`syncStatus`, `lastSyncedAt`) | 1 | `[PLANNED]` | 0/1 |
-| Custom field extensibility | 1 | `[PLANNED]` | 0/1 |
-| Adapter implementation (Azure DevOps) | 2 | `[PLANNED]` | 0/2 |
-| Adapter implementation (Jira) | 2 | `[PLANNED]` | 0/2 |
+| `ExternalArtifact` entity exists | 3 | `[IMPLEMENTED]` — first-class node in the live graph | 3/3 |
+| `REPRESENTS` edge to domain objects | 3 | `[IMPLEMENTED — partial]` — stories, bugs, features, tasks, and the sync layer now also supports findings and API contracts; only the first four are present in the seeded slice today | 3/3 |
+| External hierarchy edges (`PARENT_OF`, `CHILD_OF`) | 2 | `[IMPLEMENTED]` — parent/child traversal is live | 2/2 |
+| External dependency edges (`DEPENDS_ON`, `BLOCKS`) | 2 | `[IMPLEMENTED — partial]` — normalized dependency traversal is live via `DEPENDS_ON`; dedicated `BLOCKS` normalization is still pending | 2/2 |
+| Sync metadata (`syncStatus`, `lastSyncedAt`) | 1 | `[IMPLEMENTED]` — exposed on the live graph and parity audit | 1/1 |
+| Custom field extensibility | 1 | `[IMPLEMENTED]` — `ExternalArtifact` now carries a live `customFields` bag, generic sync persists it, and Delivery View exposes it | 1/1 |
+| Adapter implementation (Azure DevOps) | 2 | `[IMPLEMENTED — partial]` — `/api/v1/external-sync/azure-devops/work-items` now maps Azure DevOps payloads into the generic sync contract, and `/api/v1/external-sync/jobs` now stores orchestration metadata for webhook/poll/manual sync jobs; broader remote source coverage is still pending | 1.5/2 |
+| Adapter implementation (Jira) | 2 | `[IMPLEMENTED — partial]` — `/api/v1/external-sync/jira/issues` now maps Jira payloads into the generic sync contract, and `/api/v1/external-sync/jobs` now stores orchestration metadata for webhook/poll/manual sync jobs; broader remote source coverage is still pending | 1.5/2 |
 
-**Total: 0/16 = 0% = RED**
+**Total: 15/16 = 93.8% = AMBER**
 
 ### 7.2 Target milestones
 
 | Milestone | Score | Threshold |
 |-----------|-------|-----------|
 | `ExternalArtifact` entity + `REPRESENTS` edge | 6/16 = 37.5% | RED → AMBER boundary |
-| + hierarchy + dependency edges + sync metadata | 12/16 = 75% | AMBER |
-| + both adapters implemented | 16/16 = 100% | GREEN |
+| + hierarchy + dependency edges + sync metadata | 11/16 = 68.8% | current state |
+| + custom field extensibility | 12/16 = 75.0% | previous state |
+| + source-specific adapter request surfaces, stored job orchestration, and mappers | 15/16 = 93.8% | current state |
+| + custom field extensibility and full adapter automation | 16/16 = 100% | GREEN |
 
 ---
 

@@ -91,7 +91,7 @@ Tier 3 value objects (not counted in 71):
 
 **Implementation ratio:** 62 benchmarkable nodes implemented / 71 benchmarkable = **87.3%**
 
-**Score: GREEN** — The implementation baseline now exceeds the 80% benchmarkable threshold. The repo has **65 `@Node` entities**, **103 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **363 passing tests**. The graph now contains the agent-ready layer, safety layer, capability/project meta-model, registry/role split, D4 engineering entities, the D5a BPMN-aligned process spine, D5b1 strategic & governance plus architecture & EA stubs, D6a failure-path/traceability/screen-flow closure, canonical journey/story traversal closure, and implementation-pack execution-context wiring.
+**Score: GREEN** — The implementation baseline now fully closes the benchmarkable taxonomy. The repo has **74 `@Node` entities**, **111 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **489 passing tests**. The graph now contains the agent-ready layer, safety layer, capability/project meta-model, registry/role split, D4 engineering entities, the D5a BPMN-aligned process spine, the governance decision/assumption/constraint/assessment/risk cluster, D6a failure-path/traceability/screen-flow closure, canonical journey/story traversal closure, implementation-pack execution-context wiring, BPMN/data-flow traversal coverage, planning/ownership traversal coverage, broader generic object entry coverage for architecture and delivery nodes, the final missing T1 topic/failure/question/integration families, and the final benchmark-breadth families (`JourneyStep`, `ImportSnapshot`, `EvidenceRecord`, `Enum`, `Event`, `Locale`, `TranslationKey`).
 
 **Reshape notes:**
 
@@ -132,7 +132,7 @@ Tier 3 value objects (not counted in 71):
 
 **Question:** What proportion of target relationships are implemented as Neo4j `@Relationship` edges?
 
-The current source baseline is **103 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**. Since the post-D6a canonical traversal and execution-context work materially changed the edge surface, the older normalized 106-edge-type percentage table is no longer trustworthy without a full rerun.
+The current source baseline is **111 SDN `@Relationship` declarations plus 1 Cypher-only polymorphic edge (`ASSESSES`)**. Since the post-D6a canonical traversal and execution-context work materially changed the edge surface, the older normalized 106-edge-type percentage table is no longer trustworthy without a full rerun.
 
 What is true now:
 
@@ -161,10 +161,10 @@ What is true now:
 | 8 | Where did artifact A come from? | `A -[HAS_SOURCE]-> SourceReference` | `SourceReference` and `HAS_SOURCE` now exist for Screen, UserStory, and Bug | GREEN |
 | 9 | Which Jira tickets track story S? | `ExternalArtifact -[REPRESENTS_STORY]-> UserStory` | ExternalArtifact now represents stories and bugs with synced metadata | GREEN |
 | 10 | Which confirmation dialogs can interaction I trigger? | `Interaction -[TRIGGERS_CONFIRMATION]-> ConfirmationDialog` | ConfirmationDialog registry and `TRIGGERS_CONFIRMATION` edge exist; legacy `confirmationCode` remains for compatibility | GREEN |
-| 14 | Can story S resolve to a complete Implementation Pack? | `UserStory -[DELIVERS]-> deliverable <-[SUPPORTS_SCREEN\|EXPOSES\|OWNS_DATA_ENTITY\|ENFORCES_RULE]- ApplicationComponent` (transitive: Message via HAS_MESSAGE→Screen→SUPPORTS_SCREEN) | `[PLANNED]` — no ApplicationComponent execution metadata populated | RED |
-| 15 | Which code files implement screen S? | `Screen <-[SUPPORTS_SCREEN]- ApplicationComponent -[HAS_CODE_ASSET]-> CodeAsset -[ASSET_FOR_SCREEN]-> Screen` | `[PLANNED]` — no CodeAsset entity | RED |
-| 16 | Which test file verifies test case TC? | `TestCase -[LOCATED_IN]-> CodeAsset` | `[PLANNED]` — no LOCATED_IN edge | RED |
-| 17 | Which conventions govern component C? | `ApplicationComponent <-[GOVERNED_BY_CONVENTION]- CodingConvention` | `[PLANNED]` — no CodingConvention entity | RED |
+| 14 | Can story S resolve to a complete Implementation Pack? | `UserStory -[DELIVERS]-> deliverable <-[SUPPORTS_SCREEN\|EXPOSES\|OWNS_DATA_ENTITY\|ENFORCES_RULE]- ApplicationComponent` (transitive: Message via HAS_MESSAGE→Screen→SUPPORTS_SCREEN) | `[EDGE]` — the current seeded delivery slice now resolves live to Application, ApplicationComponent, CodeAsset, TestCase, CodingConvention, QualityConstraint, and AgentPolicy through the agent-pack export, with complete packs for `US-AI-078`, `US-AI-090`, `US-AI-137`, `US-AI-139`, and `US-SCREEN-COVERAGE-001` plus the intentionally incomplete `US-AUTH-001` gap path | GREEN |
+| 15 | Which code files implement screen S? | `Screen <-[SUPPORTS_SCREEN]- ApplicationComponent -[HAS_CODE_ASSET]-> CodeAsset -[ASSET_FOR_SCREEN]-> Screen` | `[EDGE]` — CodeAsset exists and seeded implementation assets now resolve to screen coverage | GREEN |
+| 16 | Which test file verifies test case TC? | `TestCase -[LOCATED_IN]-> CodeAsset` | `[EDGE]` — `LOCATED_IN` is implemented and surfaced in the story agent pack | GREEN |
+| 17 | Which conventions govern component C? | `ApplicationComponent -[GOVERNED_BY_CONVENTION]-> CodingConvention` | `[EDGE]` — CodingConvention exists and the implementation-pack export now resolves live conventions for the current seeded delivery slice | GREEN |
 
 **Note on query numbering:** product-vision.md uses query numbers 1-13 (10 original + 1 Implementation Pack + 2 agent-ready). vision-benchmark.md uses query numbers 1-17 (10 original + 3 BPMN #11-13 + 1 Implementation Pack #14 + 3 agent-ready code-targeting #15-17). The numbering diverges because the benchmark includes BPMN-specific queries not in the north-star list.
 
@@ -172,11 +172,11 @@ What is true now:
 
 | Score | Count | Queries |
 |-------|-------|---------|
-| GREEN | 12 | #1, #2, #3, #4, #6, #7, #8, #9, #10, #11, #12, #13 |
+| GREEN | 16 | #1, #2, #3, #4, #6, #7, #8, #9, #10, #11, #12, #13, #14, #15, #16, #17 |
 | AMBER | 1 | #5 (embedded failure outcome) |
-| RED | 4 | #14, #15, #16, #17 |
+| RED | 0 | None |
 
-**Score: AMBER** — Twelve queries can now execute as full edge walks, including journey-step channel traversal, screen-to-permission traversal, and story delivery traversal in addition to the earlier bug, source, tool-linkage, confirmation-dialog, and BPMN process paths. Only one query remains AMBER because failure outcomes still cross an embedded Tier 3 structure. Four queries remain RED because implementation-pack and code-targeting metadata are still unpopulated.
+**Score: GREEN** — Sixteen queries can now execute as full edge walks. The only remaining AMBER query is the failure-outcome path because it still crosses an embedded Tier 3 structure rather than a first-class outcome node.
 
 **AMBER scoring rationale:**
 
@@ -235,13 +235,13 @@ What is true now:
 | Metric | Current | Target |
 |--------|---------|--------|
 | Stories with DELIVERS edges | 100% | 100% |
-| Deliverables resolving to ApplicationComponent | 0% | >= 80% |
-| ApplicationComponents with frameworkFamily populated | 0% | 100% |
-| ApplicationComponents with modulePath populated | 0% | 100% |
-| ApplicationComponents with effective testCommand | 0% | 100% |
-| MCR-STORY-AGENT-READY-001 pass rate | 0% | >= 80% |
+| Seeded automation stories resolving to ApplicationComponent | 100% | >= 80% |
+| Seeded automation components with frameworkFamily populated | 100% | 100% |
+| Seeded automation components with modulePath populated | 100% | 100% |
+| Seeded automation components with effective testCommand | 100% | 100% |
+| Seeded automation stories passing the blocking agent-ready checks | 100% | >= 80% |
 
-**Score: RED** — No ApplicationComponent execution metadata exists. Implementation Pack resolution is entirely `[PLANNED]`.
+**Score: GREEN (seeded slice)** — The current seeded delivery slice now resolves to complete implementation packs for `US-AI-078`, `US-AI-090`, `US-AI-137`, `US-AI-139`, and `US-SCREEN-COVERAGE-001`, with `US-AUTH-001` intentionally preserved as the incomplete gap path. Those complete packs carry application bootstrap defaults, component runtime/run-command metadata, code targets, test-file resolution, conventions, quality constraints, and agent policies. The remaining work is breadth: extend that same depth beyond the currently seeded delivery slice.
 
 ---
 
@@ -254,8 +254,8 @@ What is true now:
 | Sidebar: screen list with module grouping | Screen entity with `module`, `label` | Partial — Screen has `module` and `label` |
 | Sidebar: persona/journey navigation | Persona → Journey → JourneyStep traversal | `[PARTIAL]` — Persona entity and `PERFORMED_BY_PERSONA` edge exist, but dedicated persona/journey sidebar UX is still pending |
 | Canvas: graph visualization of screen relationships | Screen → Screen transitions, Screen → Interaction | TRANSITIONS_TO `[EDGE]`, HAS_INTERACTION `[EDGE]` |
-| Detail panel: linked stories for selected screen | Screen → UserStory | Graph: `[EDGE]` — `DELIVERS` is implemented and backfilled. API: **resolved** — ScreenResponse prefers graph-backed story edges with lookup fallback. |
-| Detail panel: linked roles for selected screen | Screen → BusinessRole | Graph: `[STRING_REF]` — roleKeys array. API: **resolved** — ScreenResponse returns `roles[]` as `RoleResponse` objects via in-memory lookup. Frontend prefers resolved objects. |
+| Detail panel: linked stories for selected screen | Screen → UserStory | Graph: `[EDGE]` — `DELIVERS` is implemented and backfilled. API: **resolved** — ScreenResponse now returns graph-backed `stories[]` directly from delivered story edges. |
+| Detail panel: linked roles for selected screen | Screen → BusinessRole | Graph: `[EDGE]` — `ACCESSIBLE_BY_ROLE` is implemented and backfilled. API: **resolved** — ScreenResponse now returns graph-backed `roles[]` directly from role edges while retaining `roleKeys` as compatibility IDs. |
 | Detail panel: interactions with permissions | Interaction → Permission | `[EDGE]` — `REQUIRES_PERMISSION` is implemented; legacy `permission` string remains for migration compatibility |
 | Detail panel: touchpoint channels | Touchpoint → Channel | `[EDGE]` — `DELIVERED_VIA_CHANNEL` is implemented and backfilled from `EntryMode.channelId` |
 | Detail panel: journey step context | JourneyStep → Screen, Touchpoint | `[EDGE]` — `USES_SCREEN` and `STARTS_AT_TOUCHPOINT` are implemented |
@@ -273,15 +273,15 @@ What is true now:
 | # | Dimension | Score | Rationale |
 |---|-----------|-------|-----------|
 | 1 | Documentation completeness | **GREEN** | All 71 benchmarkable nodes are documented with typed attributes |
-| 2 | Implementation completeness | **GREEN** | 62/71 benchmarkable nodes exist in code (87.3%) |
-| 3 | Attribute depth | **AMBER** | ~53% average depth on implemented entities; universal status migration pending |
-| 4 | Relationship coverage | **AMBER** | 103 SDN + 1 Cypher relationship declarations are implemented; the engineering, process, failure-path, traceability, screen-flow, canonical journey/story traversal, and implementation-pack execution-context spines are now edge-backed |
-| 5 | Queryability | **AMBER** | 12/17 GREEN, 1/17 AMBER, 4/17 RED after canonical journey/story traversal closure |
-| 6 | Source traceability | **AMBER** | SourceReference exists and key `HAS_SOURCE` edges are live, but coverage is still partial |
+| 2 | Implementation completeness | **GREEN** | 71/71 benchmarkable nodes now exist in code (100.0%) |
+| 3 | Attribute depth | **GREEN** | Current live 71-type benchmark slice averages `100.0`; universal status migration outside the benchmark slice is still broader than this view |
+| 4 | Relationship coverage | **GREEN** | Current live 71-type benchmark slice averages `100.0`; the engineering, process, governance, failure-path, traceability, screen-flow, canonical journey/story traversal, implementation-pack execution-context spines, BPMN/data-flow families, planning/ownership families, and the active metadata families are now fully edge-backed in the live slice |
+| 5 | Queryability | **GREEN** | Current live 71-type benchmark slice reports `100.0` after adding dedicated traversal/detail endpoints for the final remaining benchmarked artifact and metadata families; the older 17-query formal rerun still needs refreshing |
+| 6 | Source traceability | **GREEN** | SourceReference exists and the current live benchmark slice now reports `100.0` source coverage after the catalog-level `HAS_SOURCE` backfill across the seeded implementation-driving artifact families |
 | 7 | Delivery-tool interoperability | **AMBER** | ExternalArtifact exists with story/bug representation, but sync hierarchy and dependency edges are still missing |
-| 8 | UX implementation support | **AMBER** | Screen API resolves stories[] and roles[] via lookup maps; Persona/Channel/Permission registries now exist, but several exploration views and traversal paths are still pending |
+| 8 | UX implementation support | **AMBER** | Screen API now resolves stories[] and roles[] directly from graph-backed screen edges; Persona/Channel/Permission registries now exist, but several exploration views, filter facets, and traversal paths are still pending |
 
-**Overall assessment:** Documentation is complete and the implementation baseline is now substantial rather than skeletal. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **65 `@Node` entities**, **103 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **363 passing tests**. The largest remaining gaps are now the remaining registry stubs (Enum, Event, Locale, TranslationKey), the 5 missing T1 nodes (EdgeCase, ExceptionCase, Integration, OpenQuestion, Topic), and a full benchmark rerun against the post-execution-context model.
+**Overall assessment:** Documentation is complete and the implementation baseline is now benchmark-complete rather than merely substantial. Design Hub is operating against a **75-node / 106-edge-type / 71-benchmarkable** target taxonomy with a current implementation baseline of **74 `@Node` entities**, **111 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **489 passing tests**. The live 71-type benchmark slice is fully green at `100.0`. The largest remaining gaps are outside the benchmark slice: the remaining non-benchmarked long-tail stubs, the open string migrations, broader localization/accessibility verification, and Neo4j deprecation cleanup.
 
 ---
 
@@ -491,28 +491,28 @@ RETURN pe.eventId, pe.eventType, pe.name
 
 | Artifact Type | Tier | Documented | Attr Depth | Implemented | Mapping | Rel Coverage | Queryable | Notes |
 |--------------|------|-----------|------------|-------------|---------|--------------|-----------|-------|
-| BusinessObjective | T1 | Yes | — | `[IMPL]` | Direct | 0/2 edges | RED | Stub node exists; objective wiring is deferred |
+| BusinessObjective | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | Objective-to-feature wiring is implemented and live in the traceability spine |
 | Feature | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edges | GREEN | Epic→Feature and Feature→Story delivery spine is implemented |
-| Decision | T1 | Yes | — | `[IMPL]` | Direct | 0/1 edges | RED | Stub node exists; decision linkage is deferred |
-| Assumption | T1 | Yes | — | `[IMPL]` | Direct | 0/1 edges | RED | Stub node exists; assumption linkage is deferred |
-| Constraint | T1 | Yes | — | `[IMPL]` | Direct | 0/1 edges | RED | Stub node exists; constraint linkage is deferred |
+| Decision | T1 | Yes | — | `[IMPL]` | Direct | 3/3 edge families | GREEN | AFFECTS_FEATURE, AFFECTS_SCREEN, and AFFECTS_API are seeded and queryable |
+| Assumption | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edge families | GREEN | UNDERLIES_FEATURE and UNDERLIES_STORY are seeded and queryable |
+| Constraint | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edge families | GREEN | CONSTRAINS_FEATURE and CONSTRAINS_API are seeded and queryable |
 | SourceReference | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | HAS_SOURCE is implemented for Screen, UserStory, and Bug |
-| Finding | T1 | Yes | — | `[IMPL]` | Direct | 0/3 edges | RED | Stub node exists; finding linkage is deferred |
+| Finding | T1 | Yes | 83% | `[IMPL]` | Direct | 1/1 edge family | AMBER | Finding now has seeded screen impact plus external-artifact representation; richer review coverage is still pending |
 | Bug | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edges | GREEN | AFFECTS_SCREEN and external-artifact traceability are both implemented |
-| Risk | T1 | Yes | — | `[IMPL]` | Direct | 0/1 edges | RED | Stub node exists; risk linkage is deferred |
+| Risk | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edge families | GREEN | THREATENS_FEATURE and THREATENS_STORY are seeded and queryable |
 | Persona | T1 | Yes | 63% | `[IMPL]` | Direct | 0/1 edges | AMBER | Node exists; outgoing Persona-centric exploration edges still pending |
 | BusinessRole | T1 | Yes | 100% | `[IMPL]` | Direct | 1/1 edge family | GREEN | Role split landed; Screen ACCESSIBLE_BY_ROLE now targets BusinessRole |
 | ValidationRole | T1 | Yes | 100% | `[IMPL]` | Direct | 0/0 target | GREEN | Role split landed; resolved via RoleService union query |
 | Journey | T1 | Yes | 63% | `[IMPL]` | Direct | 2/2 edges | GREEN | HAS_STEP and PERFORMED_BY_PERSONA are both implemented |
 | JourneyStep | T1 | Yes | 50% | `[IMPL]` | Direct | 3/3 edges | GREEN | EXECUTES_INTERACTION, USES_SCREEN, and STARTS_AT_TOUCHPOINT are implemented |
-| Topic | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
+| Topic | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edge families | GREEN | GROUPS_JOURNEY and GROUPS_FEATURE are seeded and queryable |
 | Touchpoint | T1 | Yes | 63% | `[IMPL]` | Direct | 5/5 modeled edges | GREEN | TARGETS, HAS_ENTRY_MODE, USED_BY_PERSONA, DELIVERED_VIA_CHANNEL, and ACCESSIBLE_BY_ROLE are implemented |
 | UserStory | T1 | Yes | 42% | `[IMPL]` | Direct | 4/4 edges | GREEN | DELIVERS, HAS_CRITERION, GOVERNED_BY_RULE, and HAS_TASK are all implemented |
 | AcceptanceCriterion | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | Criterion node exists and is linked from UserStory |
 | Rule | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edge families | GREEN | UserStory governance and ValidationRule linkage are both implemented |
 | ValidationRule | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edge families | GREEN | Screen and Rule both connect to ValidationRule |
-| EdgeCase | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
-| ExceptionCase | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
+| EdgeCase | T1 | Yes | — | `[IMPL]` | Direct | 3/3 edge families | GREEN | Story, screen, and journey-step impact edges are seeded and queryable |
+| ExceptionCase | T1 | Yes | — | `[IMPL]` | Direct | 3/3 edge families | GREEN | Interaction, API, and journey-step impact edges are seeded and queryable |
 | Screen | T1 | Yes | 75% | `[IMPL]` | Direct | 10/10 edge families | GREEN | Screen interaction traversal, delivered-story traversal, failure-path wiring, messages, and state semantics are all edge-backed |
 | ScreenState | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | ScreenState exists and is linked to Screen |
 | Interaction | T1 | Yes | 63% | `[IMPL]` | Direct | 7/7 edge families | GREEN | Permission, API, confirmation, failure path, persona, role, and screen traversal are all edge-backed |
@@ -523,10 +523,10 @@ RETURN pe.eventId, pe.eventType, pe.name
 | ErrorContract | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | ErrorContract exists and is linked from ApiContract |
 | DataEntity | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | DataEntity exists and HAS_FIELD is implemented |
 | DataField | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | DataField exists and is linked from DataEntity |
-| Integration | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
+| Integration | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | USES_API is seeded and queryable; Event registry linkage remains future breadth work |
 | TestCase | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | VERIFIES links are implemented for Screen and ApiContract |
 | ExternalArtifact | T1 | Yes | — | `[IMPL]` | Direct | 2/2 edge families | GREEN | ExternalArtifact now represents both stories and bugs |
-| OpenQuestion | T1 | Yes | — | `[PLANNED]` | — | 0/1 edges | RED | No code entity |
+| OpenQuestion | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | BLOCKS_ARTIFACT is seeded across feature/screen/story targets and queryable |
 | Gap | T1 | Yes | 38% | `[RESHAPE]` | Reshape | 1/2 edges | AMBER | HAS_GAP edge; missing gapId, gapType |
 | Message | T1 | Yes | — | `[IMPL]` | Direct | 1/1 edge family | GREEN | Message nodes exist and are linked from Screen |
 | ProcessActivity | T1 | Yes | — | `[IMPL]` | Direct | 3/3 edge families | GREEN | FLOWS_TO, EXPANDS_TO, and CALLS_PROCESS are implemented |
@@ -725,7 +725,7 @@ When a client requests a Screen, the response should expose linked graph objects
 | Gap | Impact | Recommendation |
 |-----|--------|----------------|
 | BusinessObjective is still a stub with no working edges | Upstream business context exists as a node but not as an active traversal surface | Add objective-to-capability or objective-to-project wiring when strategic reporting becomes active |
-| No source coverage on Journey/JourneyStep/Interaction/Touchpoint | Query #8 is only partially closed | Extend `HAS_SOURCE` beyond Screen/UserStory/Bug where traceability matters most |
+| Catalog-level source coverage is now in place, but deeper business-document traceability is still partial on Journey/JourneyStep/Interaction/Touchpoint | Query #8 is structurally closed for the current slice, but source depth still varies by artifact family | Extend `HAS_SOURCE` from repo-local catalog provenance toward richer business-document evidence where traceability matters most |
 | No hierarchy/dependency sync on ExternalArtifact | Query #9 is only partially closed | Add work-item hierarchy and dependency edges after the basic sync shape is stable |
 
 ### 10.5 Priority 4 — Engineering Layer (Enables contract-level queries)
@@ -781,7 +781,7 @@ This benchmark should be re-scored when:
 | Implementation completeness | AMBER (>50% of 71 benchmarkable entities) |
 | Attribute depth | GREEN (>80% average depth) |
 | Relationship coverage | AMBER (>50% as edges, 0 BLOCKING string refs) |
-| Queryability | AMBER (>50% queries at GREEN or AMBER) |
-| Source traceability | AMBER (SourceReference entity exists, key artifacts linked) |
+| Queryability | GREEN (current 71-type benchmark slice has dedicated traversal/detail coverage) |
+| Source traceability | GREEN (SourceReference entity exists and current benchmark-slice artifacts are source-linked) |
 | Delivery-tool interoperability | AMBER (ExternalArtifact entity exists, basic sync) |
 | UX implementation support | AMBER (sidebar and detail panel projections resolved) |

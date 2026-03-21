@@ -65,7 +65,7 @@ const COLUMNS = 4;
             refY="3.5"
             orient="auto"
           >
-            <polygon points="0 0, 10 3.5, 0 7" fill="#3d3a3b" opacity="0.4" />
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--tp-text)" opacity="0.4" />
           </marker>
         </defs>
 
@@ -77,7 +77,7 @@ const COLUMNS = 4;
               [attr.y1]="arrow.from.y + 36"
               [attr.x2]="arrow.to.x"
               [attr.y2]="arrow.to.y + 36"
-              stroke="#3d3a3b"
+              stroke="var(--tp-text)"
               stroke-opacity="0.25"
               stroke-width="1.5"
               marker-end="url(#arrowhead)"
@@ -102,7 +102,7 @@ const COLUMNS = 4;
               rx="12"
               ry="12"
               [attr.fill]="getNodeColor(node.screen.designStatus)"
-              [attr.stroke]="node.screen.surfaceId === state.selectedScreenId() ? '#054239' : 'transparent'"
+              [attr.stroke]="node.screen.surfaceId === state.selectedScreenId() ? 'var(--tp-primary-dark)' : 'transparent'"
               stroke-width="2"
               opacity="0.9"
             />
@@ -142,7 +142,7 @@ const COLUMNS = 4;
                 cx="172"
                 cy="8"
                 r="10"
-                fill="#6b1f2a"
+                fill="var(--tp-danger)"
               />
               <text
                 x="172"
@@ -156,12 +156,12 @@ const COLUMNS = 4;
 
             <!-- Empty state indicator -->
             @if (state.displayOptions().showEmptyStates && node.screen._legacy.emptyState) {
-              <circle cx="12" cy="8" r="6" fill="#054239" />
+              <circle cx="12" cy="8" r="6" fill="var(--tp-primary-dark)" />
               <text x="12" y="11" text-anchor="middle" fill="white" font-size="7" font-weight="700">E</text>
             }
           </g>
         } @empty {
-          <text x="50%" y="50%" text-anchor="middle" fill="#3d3a3b" font-size="16">
+          <text x="50%" y="50%" text-anchor="middle" fill="var(--tp-text)" font-size="16">
             No screens loaded. Is the backend running?
           </text>
         }
@@ -179,7 +179,7 @@ const COLUMNS = 4;
       width: 100%;
       height: 100%;
       background:
-        radial-gradient(circle, rgba(152, 133, 97, 0.05) 1px, transparent 1px);
+        radial-gradient(circle, color-mix(in srgb, var(--tp-border) 22%, transparent) 1px, transparent 1px);
       background-size: 24px 24px;
       cursor: grab;
 
@@ -198,7 +198,7 @@ const COLUMNS = 4;
       padding: var(--tp-space-2) var(--tp-space-3);
       background: var(--tp-surface);
       border-radius: 0.72rem;
-      box-shadow: 0 4px 12px rgba(22, 22, 22, 0.08);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--tp-text-dark) 8%, transparent);
       z-index: 10;
     }
 
@@ -214,7 +214,7 @@ const COLUMNS = 4;
       font-family: inherit;
 
       &:hover {
-        background: rgba(66, 129, 119, 0.17);
+        background: var(--tp-primary-bg-hover);
       }
     }
 
@@ -292,13 +292,13 @@ export class FlowCanvasComponent {
   getNodeColor(status: string): string {
     switch (status) {
       case 'COMPLETE':
-        return '#428177';
+        return 'var(--dh-complete)';
       case 'SPECIFIED':
-        return '#988561';
+        return 'var(--dh-specified)';
       case 'NOT_STARTED':
-        return '#b9a779';
+        return 'var(--dh-not-started)';
       default:
-        return '#999';
+        return 'var(--tp-border)';
     }
   }
 

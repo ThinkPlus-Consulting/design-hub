@@ -19,13 +19,15 @@ This is necessary because the product is intended to serve as an implementation-
 
 ## Current State
 
-As of now:
+As of March 18, 2026:
 
-- there is no CI configuration in the repository
-- the backend has Maven test dependencies but no actual test sources
-- the frontend has build scripts but no test or Playwright harness
+- `.github/workflows/verification.yml` exists and runs on pull requests plus pushes to `main`
+- `.github/workflows/release-verification.yml` exists and runs on tags plus `workflow_dispatch`
+- the backend has a live Maven suite with `464` passing tests in the current local verification pass
+- the frontend has Angular build, token-audit, smoke, semantic, visual, graph-to-UI drift, and initial localization/RTL Playwright coverage
+- the current workflows run backend `./mvnw test`, a benchmark-integrity gate, frontend `npm run verify:ui`, release-readiness packaging, and artifact uploads against a Neo4j service
 
-That means Design Hub currently has no automated merge gate against drift.
+That means Design Hub now has both a merge-time drift gate and a repo-defined release-readiness lane, but CI adoption is still incomplete.
 
 ## CI Model
 
@@ -235,6 +237,7 @@ Required checks:
 - artifact counts in benchmark and catalog stay aligned
 - benchmark labels such as `[EDGE]`, `[STRING_REF]`, and `[PLANNED]` are used consistently
 - required benchmark dimensions are present
+- CI must fail if the live benchmark drops below the current enforced floor (`overall >= 90`, all current dimensions `GREEN`, current slice breadth intact)
 
 ### 3. Security and dependency hygiene
 
@@ -348,6 +351,8 @@ CI adoption is not complete until:
 - visual and semantic regressions are enforced
 - token and i18n drift are enforced
 - contract and graph-relationship drift are enforced
+
+Current repo state: frontend and backend verification workflows now exist in CI, but localization/RTL enforcement, protected-branch policy, release-lane checks, and broader contract/graph drift gates are still open.
 
 ## Implementation Sequence
 

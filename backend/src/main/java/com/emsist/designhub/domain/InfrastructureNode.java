@@ -18,5 +18,7 @@ public class InfrastructureNode {
     private String nodeId;
 
     private String name;
+    private String nodeType;
+    private String location;
     private Status status;
 }

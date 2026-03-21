@@ -1,14 +1,13 @@
 package com.emsist.designhub.service;
 
-import com.emsist.designhub.repository.BusinessRoleRepository;
 import com.emsist.designhub.repository.ScreenRepository;
-import com.emsist.designhub.repository.UserStoryRepository;
-import com.emsist.designhub.repository.ValidationRoleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.neo4j.core.Neo4jClient;
 
 import java.util.Map;
 
@@ -23,29 +22,27 @@ class ScreenServiceTest {
     @Mock
     private ScreenRepository screenRepository;
 
-    @Mock
-    private BusinessRoleRepository businessRoleRepository;
-
-    @Mock
-    private ValidationRoleRepository validationRoleRepository;
-
-    @Mock
-    private UserStoryRepository userStoryRepository;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private Neo4jClient neo4jClient;
 
     @InjectMocks
     private ScreenService screenService;
 
     @Test
     void shouldIncludeBusinessAndValidationRolesInStats() {
-        when(screenRepository.count()).thenReturn(66L);
+        when(neo4jClient.query("MATCH (n:Screen) RETURN count(n) AS total").fetch().one())
+                .thenReturn(java.util.Optional.of(Map.of("total", 66L)));
+        when(neo4jClient.query("MATCH (n:BusinessRole) RETURN count(n) AS total").fetch().one())
+                .thenReturn(java.util.Optional.of(Map.of("total", 6L)));
+        when(neo4jClient.query("MATCH (n:ValidationRole) RETURN count(n) AS total").fetch().one())
+                .thenReturn(java.util.Optional.of(Map.of("total", 2L)));
+        when(neo4jClient.query("MATCH (n:UserStory) RETURN count(n) AS total").fetch().one())
+                .thenReturn(java.util.Optional.of(Map.of("total", 139L)));
         when(screenRepository.countByDesignStatus("COMPLETE")).thenReturn(15L);
         when(screenRepository.countByDesignStatus("SPECIFIED")).thenReturn(51L);
         when(screenRepository.countByDesignStatus("NOT_STARTED")).thenReturn(0L);
         when(screenRepository.countByDeliveryStatus("INTEGRATED")).thenReturn(13L);
         when(screenRepository.countByDeliveryStatus("TESTED")).thenReturn(0L);
-        when(businessRoleRepository.count()).thenReturn(6L);
-        when(validationRoleRepository.count()).thenReturn(2L);
-        when(userStoryRepository.count()).thenReturn(139L);
 
         Map<String, Object> stats = screenService.getStats();
 
@@ -63,15 +60,19 @@ class ScreenServiceTest {
 
     @Test
     void shouldOmitPercentagesWhenNoScreensExist() {
-        when(screenRepository.count()).thenReturn(0L);
+        when(neo4jClient.query("MATCH (n:Screen) RETURN count(n) AS total").fetch().one())
+                .thenReturn(java.util.Optional.of(Map.of("total", 0L)));
+        when(neo4jClient.query("MATCH (n:BusinessRole) RETURN count(n) AS total").fetch().one())
+                .thenReturn(java.util.Optional.of(Map.of("total", 6L)));
+        when(neo4jClient.query("MATCH (n:ValidationRole) RETURN count(n) AS total").fetch().one())
+                .thenReturn(java.util.Optional.of(Map.of("total", 2L)));
+        when(neo4jClient.query("MATCH (n:UserStory) RETURN count(n) AS total").fetch().one())
+                .thenReturn(java.util.Optional.of(Map.of("total", 139L)));
         when(screenRepository.countByDesignStatus("COMPLETE")).thenReturn(0L);
         when(screenRepository.countByDesignStatus("SPECIFIED")).thenReturn(0L);
         when(screenRepository.countByDesignStatus("NOT_STARTED")).thenReturn(0L);
         when(screenRepository.countByDeliveryStatus("INTEGRATED")).thenReturn(0L);
         when(screenRepository.countByDeliveryStatus("TESTED")).thenReturn(0L);
-        when(businessRoleRepository.count()).thenReturn(6L);
-        when(validationRoleRepository.count()).thenReturn(2L);
-        when(userStoryRepository.count()).thenReturn(139L);
 
         Map<String, Object> stats = screenService.getStats();
 

@@ -6,7 +6,7 @@
 
 **Architecture:** Two-phase model extension (Phase 1: CodeAsset + ImportSnapshot + TestCase enrichment + MCR tightening; Phase 2: QualityConstraint + CodingConvention) with documentation propagation across 8 downstream files. Code entities depend on Track D prerequisites (ApplicationComponent, TestCase, etc.) — documentation propagation is independent and can execute immediately.
 
-**Tech Stack:** Spring Data Neo4j 7.x, Java 21, JUnit 5, Markdown documentation
+**Tech Stack:** Spring Data Neo4j 7.x, Java 23, JUnit 5, Markdown documentation
 
 **Scope:** This plan implements the **agent-ready information model** spec only. The second approved spec (operational near-zero-drift) — covering AgentPolicy, EvidenceRecord, DEPENDS_ON_ASSET, GOVERNED_BY_POLICY, BASELINED_BY, and the importer/scanner/pack/reconciliation capabilities — requires a separate implementation plan (Plan 2) to be written after this plan executes.
 

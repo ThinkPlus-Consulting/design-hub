@@ -24,6 +24,11 @@ public class UserStory {
     private String module;
     private String domain;
     private String storyNumber;
+    private String externalWorkflowState;
+    private String externalPriority;
+    private String externalOwner;
+    private List<String> externalLabels;
+    private List<String> externalRefs;
 
     @Relationship(type = "HAS_CRITERION", direction = Relationship.Direction.OUTGOING)
     private List<AcceptanceCriterion> criteria;

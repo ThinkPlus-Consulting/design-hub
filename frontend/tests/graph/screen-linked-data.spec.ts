@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
 import {
+  fetchChannels,
+  fetchChannelTraversal,
   fetchInteractions,
   fetchScreens,
-  fetchTouchpoints,
   gotoAndWaitForData,
   selectScreen,
 } from '../helpers/design-hub';
@@ -33,18 +34,24 @@ test('selected screen renders gap records when present', async ({ page, request 
 });
 
 test('interaction and touchpoint tabs render linked graph data', async ({ page, request }) => {
-  const touchpoints = await fetchTouchpoints(request);
   const interactions = await fetchInteractions(request);
-  const candidate = touchpoints.find((touchpoint) =>
-    interactions.some((interaction) => interaction.surfaceId === touchpoint.surfaceId)
-  );
+  const channels = await fetchChannels(request);
+  const candidate = channels.find((channel) => channel.touchpointCount > 0) ?? channels[0];
 
-  expect(candidate, 'Expected seeded data to contain a screen with touchpoints and interactions').toBeTruthy();
-  await selectScreen(page, candidate!.surfaceId);
+  expect(candidate, 'Expected seeded data to contain a channel with touchpoints').toBeTruthy();
+  const traversal = await fetchChannelTraversal(request, candidate!.channelCode);
+  const targetScreenId = traversal.screens[0]?.id
+    ?? traversal.touchpoints[0]?.targetScreen?.id
+    ?? interactions[0]?.surfaceId;
+
+  expect(targetScreenId, 'Expected a screen to be reachable for interaction verification').toBeTruthy();
+  await selectScreen(page, targetScreenId!);
 
   await page.getByTestId('tab-interactions').click();
   await expect(page.locator('[data-testid^="ix-"]').first()).toBeVisible();
 
   await page.getByTestId('tab-touchpoints').click();
+  await page.getByTestId(`channel-select-${candidate!.channelCode}`).click();
+  await expect(page.getByTestId('channel-title')).toHaveText(traversal.displayName);
   await expect(page.locator('[data-testid^="tp-"]').first()).toBeVisible();
 });

@@ -6,7 +6,7 @@
 
 **Architecture:** Four-phase rollout (Foundation → Safety → Intelligence → Scale). Phase 1 delivers the critical path: requirement linting, deterministic import, code/test scanning, agent pack resolution, and baseline context. Each capability is a Spring Boot service with REST endpoints, backed by Neo4j graph queries and the existing domain model from the agent-ready information model baseline (90 edges, 69 nodes).
 
-**Tech Stack:** Java 21, Spring Boot 3.4.1, Spring Data Neo4j 7.x, JUnit 5, Mockito, Jackson YAML (for frontmatter parsing), Neo4jClient (for dynamic Cypher)
+**Tech Stack:** Java 23, Spring Boot 3.4.1, Spring Data Neo4j 7.x, JUnit 5, Mockito, Jackson YAML (for frontmatter parsing), Neo4jClient (for dynamic Cypher)
 
 **Spec:** `docs/superpowers/specs/2026-03-14-operational-near-zero-drift.md`
 

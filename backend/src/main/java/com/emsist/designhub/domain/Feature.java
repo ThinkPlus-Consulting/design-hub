@@ -22,6 +22,10 @@ public class Feature {
 
     private String title;
     private String description;
+    private String externalWorkflowState;
+    private String externalOwner;
+    private String targetIteration;
+    private List<String> externalRefs;
     private Status status;
 
     @Relationship(type = "HAS_STORY", direction = Relationship.Direction.OUTGOING)

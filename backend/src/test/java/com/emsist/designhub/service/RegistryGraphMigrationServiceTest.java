@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 class RegistryGraphMigrationServiceTest {
 
     @Mock private Neo4jClient neo4jClient;
+    @Mock private ExternalArtifactSyncService externalArtifactSyncService;
 
     @InjectMocks
     private RegistryGraphMigrationService service;
@@ -80,6 +81,55 @@ class RegistryGraphMigrationServiceTest {
         verify(neo4jClient).query((String) argThat(cypher ->
                 ((String) cypher).contains("MERGE (r:ValidationRole")
                 && ((String) cypher).contains("HITL_REVIEWER")));
+    }
+
+    @Test
+    void shouldSeedProjectDeliveryAlignment() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedProjectDeliveryAlignment();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("ProjectInstance")
+                        && ((String) cypher).contains("PROJ-DH-AI-001")
+                        && ((String) cypher).contains("Milestone")
+                        && ((String) cypher).contains("MS-DH-AI-001")));
+    }
+
+    @Test
+    void shouldSeedMissingT1Coverage() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedTopicCoverage();
+        service.seedEdgeCaseCoverage();
+        service.seedExceptionCaseCoverage();
+        service.seedIntegrationCoverage();
+        service.seedOpenQuestionCoverage();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("MERGE (topicAi:Topic")
+                        && ((String) cypher).contains("TOP-001")
+                        && ((String) cypher).contains("GROUPS_JOURNEY")));
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("MERGE (builderEdge:EdgeCase")
+                        && ((String) cypher).contains("EDGE-001")
+                        && ((String) cypher).contains("AFFECTS_JOURNEY_STEP")));
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("MERGE (loginException:ExceptionCase")
+                        && ((String) cypher).contains("EXC-001")
+                        && ((String) cypher).contains("AFFECTS_API")));
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("MERGE (identityIntegration:Integration")
+                        && ((String) cypher).contains("INTG-001")
+                        && ((String) cypher).contains("USES_API")));
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("MERGE (questionAi:OpenQuestion")
+                        && ((String) cypher).contains("OQ-001")
+                        && ((String) cypher).contains("BLOCKS_ARTIFACT")));
     }
 
     // ── Existing backfill tests ────────────────────────────────────────
@@ -423,7 +473,8 @@ class RegistryGraphMigrationServiceTest {
         verify(neo4jClient).query((String) argThat(cypher ->
                 ((String) cypher).contains("AcceptanceCriterion")
                 && ((String) cypher).contains("HAS_CRITERION")
-                && ((String) cypher).contains("US-AUTH-001")));
+                && ((String) cypher).contains("US-AUTH-001")
+                && ((String) cypher).contains("US-AI-090")));
     }
 
     @Test
@@ -510,7 +561,25 @@ class RegistryGraphMigrationServiceTest {
         verify(neo4jClient).query((String) argThat(cypher ->
                 ((String) cypher).contains("GOVERNED_BY_RULE")
                 && ((String) cypher).contains("US-AUTH-001")
-                && ((String) cypher).contains("RULE-AUTH-001")));
+                && ((String) cypher).contains("RULE-AUTH-001")
+                && ((String) cypher).contains("US-AI-090")
+                && ((String) cypher).contains("RULE-AGT-BUILDER-001")));
+    }
+
+    @Test
+    void shouldSeedStoryReadinessCoverage() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedStoryReadinessCoverage();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("US-AUTH-001")
+                && ((String) cypher).contains("SCR-AUTH")
+                && ((String) cypher).contains("INT-AUTH-LOGIN-001")
+                && ((String) cypher).contains("API-POST-API-V1-AUTH-LOGIN")
+                && ((String) cypher).contains("VERIFIED_BY")));
     }
 
     @Test
@@ -610,6 +679,7 @@ class RegistryGraphMigrationServiceTest {
         verify(neo4jClient).query((String) argThat(cypher ->
                 ((String) cypher).contains("SourceReference")
                 && ((String) cypher).contains("SRC-US-AUTH-001")
+                && ((String) cypher).contains("SRC-US-AI-090-001")
                 && ((String) cypher).contains("lineRef")));
     }
 
@@ -641,6 +711,51 @@ class RegistryGraphMigrationServiceTest {
                 && ((String) cypher).contains("AFFECTS_SCREEN")
                 && ((String) cypher).contains("HAS_SOURCE")
                 && ((String) cypher).contains("WITH story, screen, bug")));
+    }
+
+    @Test
+    void shouldSeedExternalArtifactAlignment() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedExternalArtifactAlignment();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("REPRESENTS_EPIC")
+                && ((String) cypher).contains("REPRESENTS_FEATURE")
+                && ((String) cypher).contains("REPRESENTS_TASK")
+                && ((String) cypher).contains("PARENT_OF")
+                && ((String) cypher).contains("CHILD_OF")
+                && ((String) cypher).contains("DEPENDS_ON")
+                && ((String) cypher).contains("RELATES_TO")
+                && ((String) cypher).contains("DUPLICATES")));
+    }
+
+    @Test
+    void shouldSeedExternalFieldNormalization() {
+        service.seedExternalFieldNormalization();
+
+        verify(externalArtifactSyncService).normalizeRepresentedPrimaryNodes();
+    }
+
+    @Test
+    void shouldSeedImplementationSourceCoverage() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedImplementationSourceCoverage();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("US-AI-090")
+                && ((String) cypher).contains("SCR-AGT-BUILDER")
+                && ((String) cypher).contains("JRN-R05-001")
+                && ((String) cypher).contains("TP-AGT-DOCK")
+                && ((String) cypher).contains("INT-R05-BUILDER-001")
+                && ((String) cypher).contains("API-POST-API-V1-AGENTS-ID-PUBLISH")
+                && ((String) cypher).contains("DE-AGENT")
+                && ((String) cypher).contains("HAS_SOURCE")));
     }
 
     // ── D6a screen-flow seed tests (Chunk 3) ──────────────────────────
@@ -713,6 +828,44 @@ class RegistryGraphMigrationServiceTest {
     }
 
     @Test
+    void shouldSeedDataArchitectureAlignment() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedDataArchitectureAlignment();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("BusinessObject {objectId: 'BO-AGENT-CONFIG'}")
+                && ((String) cypher).contains("BusinessObject {objectId: 'BO-AGENT-PUBLISH-REQ'}")
+                && ((String) cypher).contains("InformationFlow {flowId: 'FLOW-AGENT-DRAFT'}")
+                && ((String) cypher).contains("InformationFlow {flowId: 'FLOW-AGENT-PUBLISH'}")
+                && ((String) cypher).contains("STRUCTURED_IN")
+                && ((String) cypher).contains("MAPPED_TO")
+                && ((String) cypher).contains("CARRIES")
+                && ((String) cypher).contains("EXPOSED_VIA")
+                && ((String) cypher).contains("SOURCE_APPLICATION")
+                && ((String) cypher).contains("TARGET_APPLICATION")));
+    }
+
+    @Test
+    void shouldSeedInfrastructureArchitectureAlignment() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedInfrastructureArchitectureAlignment();
+
+        verify(neo4jClient).query((String) argThat(cypher ->
+                ((String) cypher).contains("Deployment {deploymentId: 'DEP-DEV-001'}")
+                && ((String) cypher).contains("Deployment {deploymentId: 'DEP-DEV-002'}")
+                && ((String) cypher).contains("InfrastructureNode {nodeId: 'INF-AKS-DEV-001'}")
+                && ((String) cypher).contains("InfrastructureNode {nodeId: 'INF-AKS-DEV-002'}")
+                && ((String) cypher).contains("HOSTS")
+                && ((String) cypher).contains("DEPLOYED_ON")));
+    }
+
+    @Test
     void shouldSeedImplementationPackVerification() {
         var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
         when(neo4jClient.query(anyString())).thenReturn(spec);
@@ -730,6 +883,93 @@ class RegistryGraphMigrationServiceTest {
                 && ((String) cypher).contains("US-AI-090")));
     }
 
+    @Test
+    void shouldSeedUpperTraceabilitySpine() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedUpperTraceabilitySpine();
+
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("MERGE (objective:BusinessObjective {objectiveId: row.objectiveId})")
+                        && cypher.contains("objectiveId: 'OBJ-DH-AI-001'")
+                        && cypher.contains("HAS_FEATURE")
+                        && cypher.contains("RequirementPortfolio {portfolioId: 'PORT-DH-001'}")
+                        && cypher.contains("HAS_EPIC")
+                        && cypher.contains("HAS_STORY")
+                        && cypher.contains("US-AUTH-001")
+                        && cypher.contains("US-AI-090")));
+    }
+
+    @Test
+    void shouldSeedGovernanceCoverage() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedGovernanceCoverage();
+
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("MERGE (decision:Decision {decisionId: row.decisionId})")
+                        && cypher.contains("AFFECTS_FEATURE")
+                        && cypher.contains("AFFECTS_SCREEN")
+                        && cypher.contains("AFFECTS_API")
+                        && cypher.contains("DEC-001")));
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("MERGE (assumption:Assumption {assumptionId: row.assumptionId})")
+                        && cypher.contains("UNDERLIES_FEATURE")
+                        && cypher.contains("UNDERLIES_STORY")
+                        && cypher.contains("ASM-001")));
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("MERGE (constraint:Constraint {constraintId: row.constraintId})")
+                        && cypher.contains("CONSTRAINS_FEATURE")
+                        && cypher.contains("CONSTRAINS_API")
+                        && cypher.contains("CON-001")));
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("MERGE (risk:Risk {riskId: row.riskId})")
+                        && cypher.contains("THREATENS_FEATURE")
+                        && cypher.contains("THREATENS_STORY")
+                        && cypher.contains("RSK-001")));
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("MERGE (assessment:Assessment {assessmentId: row.assessmentId})")
+                        && cypher.contains("ASSESSES")
+                        && cypher.contains("IDENTIFIES_GAP")
+                        && cypher.contains("ASSESS-API-002")));
+    }
+
+    @Test
+    void shouldSeedRemainingBenchmarkBreadthCoverage() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedJourneyStepBenchmarkCoverage();
+        service.seedImportSnapshotCoverage();
+        service.seedEvidenceRecordCoverage();
+        service.seedRemainingRegistryCoverage();
+
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("JourneyStep")
+                        && cypher.contains("SRC-JS-R05-001")
+                        && cypher.contains("HAS_SOURCE")
+                        && cypher.contains("step.trigger")));
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("ImportSnapshot")
+                        && cypher.contains("IMPORTED_BY")
+                        && cypher.contains("IMP-20260318-001")));
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("EvidenceRecord")
+                        && cypher.contains("BASELINED_BY")
+                        && cypher.contains("EVR-SCR-AGT-BUILDER-001")));
+        verify(neo4jClient).query(argThat((String cypher) ->
+                cypher.contains("TranslationKey")
+                        && cypher.contains("HAS_TRANSLATIONS")
+                        && cypher.contains("USED_BY_MESSAGE")
+                        && cypher.contains("FIRED_BY_INTEGRATION")
+                        && cypher.contains("USED_BY_FIELD")));
+    }
+
     // ── Full migration orchestration ───────────────────────────────────
 
     @Test
@@ -743,5 +983,6 @@ class RegistryGraphMigrationServiceTest {
 
         // Existing 45 minimum + technical execution activation seeds (3) = 48 minimum with empty apiCalls fetch
         verify(neo4jClient, atLeast(48)).query(anyString());
+        verify(externalArtifactSyncService).normalizeRepresentedPrimaryNodes();
     }
 }

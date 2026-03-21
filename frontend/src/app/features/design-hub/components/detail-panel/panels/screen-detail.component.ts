@@ -40,7 +40,11 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
               @if (state.selectedScreenRoles().length > 0) {
                 <div class="screen-detail__chips">
                   @for (role of state.selectedScreenRoles(); track role.roleKey) {
-                    <span class="screen-detail__chip" [attr.title]="role.roleKey">
+                    <span
+                      class="screen-detail__chip"
+                      [attr.title]="role.roleKey"
+                      [attr.data-testid]="'role-chip-' + role.roleKey"
+                    >
                       <span class="screen-detail__chip-label">{{ role.displayName }}</span>
                       @if (role.roleGroup) {
                         <span class="screen-detail__chip-meta">{{ role.roleGroup }}</span>
@@ -62,17 +66,23 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
             <h4 class="screen-detail__heading">Stories</h4>
             <ul class="screen-detail__entity-list">
               @for (story of state.selectedScreenStories(); track story.storyId) {
-                <li class="screen-detail__entity-card" data-testid="story-item">
-                  <span class="screen-detail__entity-title">{{ story.storyId }}</span>
-                  <span class="screen-detail__entity-meta">
-                    {{ story.module || 'Unknown module' }}
-                    @if (story.domain) {
-                      <span> · {{ story.domain }}</span>
-                    }
-                    @if (story.storyNumber) {
-                      <span> · #{{ story.storyNumber }}</span>
-                    }
-                  </span>
+                <li>
+                  <button
+                    class="screen-detail__entity-card screen-detail__entity-card--button"
+                    data-testid="story-item"
+                    (click)="state.focusStory(story.storyId)"
+                  >
+                    <span class="screen-detail__entity-title">{{ story.storyId }}</span>
+                    <span class="screen-detail__entity-meta">
+                      {{ story.module || 'Unknown module' }}
+                      @if (story.domain) {
+                        <span> · {{ story.domain }}</span>
+                      }
+                      @if (story.storyNumber) {
+                        <span> · #{{ story.storyNumber }}</span>
+                      }
+                    </span>
+                  </button>
                 </li>
               }
             </ul>
@@ -182,7 +192,7 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
 
     .screen-detail__section {
       padding-bottom: var(--tp-space-3);
-      border-bottom: 1px solid rgba(152, 133, 97, 0.18);
+      border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 18%, transparent);
 
       &:last-child { border-bottom: none; }
     }
@@ -218,8 +228,8 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
       gap: 0.35rem;
       padding: 0.22rem 0.55rem;
       border-radius: 999px;
-      background: rgba(66, 129, 119, 0.08);
-      border: 1px solid rgba(66, 129, 119, 0.16);
+      background: var(--tp-primary-bg);
+      border: 1px solid color-mix(in srgb, var(--tp-primary) 16%, transparent);
       color: var(--tp-primary-dark);
       line-height: 1.2;
     }
@@ -242,12 +252,12 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
       border-radius: 10px;
       text-transform: uppercase;
 
-      &--complete { background: rgba(66, 129, 119, 0.15); color: var(--dh-complete); }
-      &--specified { background: rgba(152, 133, 97, 0.15); color: var(--dh-specified); }
-      &--not_started { background: rgba(185, 167, 121, 0.15); color: var(--dh-not-started); }
-      &--prototyped { background: rgba(66, 129, 119, 0.15); color: var(--dh-complete); }
-      &--integrated { background: rgba(66, 129, 119, 0.15); color: var(--dh-complete); }
-      &--tested { background: rgba(66, 129, 119, 0.22); color: var(--tp-primary-dark); }
+      &--complete { background: color-mix(in srgb, var(--dh-complete) 15%, transparent); color: var(--dh-complete); }
+      &--specified { background: color-mix(in srgb, var(--dh-specified) 15%, transparent); color: var(--dh-specified); }
+      &--not_started { background: color-mix(in srgb, var(--dh-not-started) 15%, transparent); color: var(--dh-not-started); }
+      &--prototyped { background: color-mix(in srgb, var(--dh-complete) 15%, transparent); color: var(--dh-complete); }
+      &--integrated { background: color-mix(in srgb, var(--dh-complete) 15%, transparent); color: var(--dh-complete); }
+      &--tested { background: color-mix(in srgb, var(--dh-complete) 22%, transparent); color: var(--tp-primary-dark); }
     }
 
     .screen-detail__list {
@@ -277,8 +287,21 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
       gap: 0.18rem;
       padding: 0.65rem 0.8rem;
       border-radius: 0.7rem;
-      background: rgba(66, 129, 119, 0.05);
-      border: 1px solid rgba(66, 129, 119, 0.12);
+      background: color-mix(in srgb, var(--tp-primary) 5%, transparent);
+      border: 1px solid color-mix(in srgb, var(--tp-primary) 12%, transparent);
+    }
+
+    .screen-detail__entity-card--button {
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      transition: border-color 120ms ease, transform 120ms ease;
+
+      &:hover {
+        border-color: color-mix(in srgb, var(--tp-primary) 38%, transparent);
+        transform: translateY(-1px);
+      }
     }
 
     .screen-detail__entity-title {
@@ -300,9 +323,9 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
       font-size: 0.78rem;
       margin-bottom: var(--tp-space-1);
 
-      &--warning { background: rgba(185, 167, 121, 0.18); }
-      &--error { background: rgba(107, 31, 42, 0.08); }
-      &--info { background: rgba(66, 129, 119, 0.12); }
+      &--warning { background: color-mix(in srgb, var(--tp-warning) 18%, transparent); }
+      &--error { background: color-mix(in srgb, var(--tp-danger) 8%, transparent); }
+      &--info { background: color-mix(in srgb, var(--tp-primary) 12%, transparent); }
     }
 
     .screen-detail__gap-severity {
@@ -324,7 +347,7 @@ import { DesignHubStateService } from '../../../services/design-hub-state.servic
       th, td {
         padding: var(--tp-space-1) var(--tp-space-2);
         text-align: left;
-        border-bottom: 1px solid rgba(152, 133, 97, 0.18);
+        border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 18%, transparent);
       }
 
       th {

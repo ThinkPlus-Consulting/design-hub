@@ -83,8 +83,8 @@ import { Interaction } from '../../../../../models';
     .interactions__item {
       padding: var(--tp-space-3);
       border-radius: 8px;
-      background: rgba(237, 235, 224, 0.56);
-      border: 1px solid rgba(152, 133, 97, 0.22);
+      background: color-mix(in srgb, var(--tp-surface) 56%, transparent);
+      border: 1px solid color-mix(in srgb, var(--tp-border) 22%, transparent);
     }
 
     .interactions__header {
@@ -104,7 +104,7 @@ import { Interaction } from '../../../../../models';
       font-size: 0.72rem;
       padding: 1px 6px;
       border-radius: 6px;
-      background: rgba(66, 129, 119, 0.17);
+      background: color-mix(in srgb, var(--tp-primary) 17%, transparent);
       color: var(--tp-primary-dark);
     }
 
@@ -119,7 +119,7 @@ import { Interaction } from '../../../../../models';
       font-size: 0.7rem;
       padding: 2px 6px;
       border-radius: 6px;
-      background: rgba(152, 133, 97, 0.1);
+      background: color-mix(in srgb, var(--tp-border) 10%, transparent);
       color: var(--tp-text);
     }
 
@@ -164,9 +164,9 @@ import { Interaction } from '../../../../../models';
       padding: 1px 6px;
       border-radius: 4px;
 
-      &--success { background: rgba(66, 129, 119, 0.1); color: var(--tp-success); }
-      &--error { background: rgba(107, 31, 42, 0.08); color: var(--tp-danger); }
-      &--loading { background: rgba(152, 133, 97, 0.1); color: var(--tp-warning); }
+      &--success { background: color-mix(in srgb, var(--tp-success) 10%, transparent); color: var(--tp-success); }
+      &--error { background: color-mix(in srgb, var(--tp-danger) 8%, transparent); color: var(--tp-danger); }
+      &--loading { background: color-mix(in srgb, var(--tp-warning) 10%, transparent); color: var(--tp-warning); }
     }
 
     .interactions__roles {

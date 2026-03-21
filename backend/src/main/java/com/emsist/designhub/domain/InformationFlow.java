@@ -18,5 +18,7 @@ public class InformationFlow {
     private String flowId;
 
     private String name;
+    private String description;
+    private String direction;
     private Status status;
 }

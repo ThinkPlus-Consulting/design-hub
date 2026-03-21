@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
   fetchScreens,
-  getVisibleScreenMetadata,
   gotoAndWaitForData,
   readNumericTestId,
   toStatusLabel,
@@ -10,6 +9,19 @@ import {
 test.beforeEach(async ({ page }) => {
   await gotoAndWaitForData(page);
 });
+
+async function getSidebarScreenMetadata(page: import('@playwright/test').Page): Promise<Array<{ surfaceId: string; module: string; designStatus: string }>> {
+  return page
+    .getByTestId('screen-list')
+    .locator('button[data-testid^="screen-"]:visible')
+    .evaluateAll((elements) =>
+      elements.map((element) => ({
+        surfaceId: (element.getAttribute('data-testid') ?? '').replace(/^screen-/, ''),
+        module: element.getAttribute('data-module') ?? '',
+        designStatus: element.getAttribute('data-design-status') ?? '',
+      }))
+    );
+}
 
 test('module filter narrows the visible screen list', async ({ page, request }) => {
   const screens = await fetchScreens(request);
@@ -26,7 +38,8 @@ test('module filter narrows the visible screen list', async ({ page, request }) 
   const [moduleName, moduleCount] = moduleEntry!;
   await page.getByTestId('module-filter').getByRole('button', { name: moduleName }).click();
 
-  const visibleScreens = await getVisibleScreenMetadata(page);
+  await expect(page.getByTestId('screen-list')).toContainText(`Screens (${moduleCount})`);
+  const visibleScreens = await getSidebarScreenMetadata(page);
   expect(visibleScreens).toHaveLength(moduleCount);
   expect(visibleScreens.every((screen) => screen.module === moduleName)).toBeTruthy();
 });
@@ -46,7 +59,8 @@ test('status filter narrows the visible screen list', async ({ page, request }) 
   const [status, statusCount] = statusEntry as [typeof screens[number]['designStatus'], number];
   await page.getByTestId('status-filter').getByRole('button', { name: toStatusLabel(status) }).click();
 
-  const visibleScreens = await getVisibleScreenMetadata(page);
+  await expect(page.getByTestId('screen-list')).toContainText(`Screens (${statusCount})`);
+  const visibleScreens = await getSidebarScreenMetadata(page);
   expect(visibleScreens).toHaveLength(statusCount);
   expect(visibleScreens.every((screen) => screen.designStatus === status)).toBeTruthy();
 });
@@ -65,7 +79,8 @@ test('search filter narrows and restores the visible list', async ({ page, reque
   await expect(page.getByTestId('screen-list-empty')).toBeVisible();
 
   await page.getByTestId('search-input').fill('');
-  const restoredCount = (await getVisibleScreenMetadata(page)).length;
   const totalCount = await readNumericTestId(page, 'stat-total');
+  await expect(page.getByTestId('screen-list')).toContainText(`Screens (${totalCount})`);
+  const restoredCount = (await getSidebarScreenMetadata(page)).length;
   expect(restoredCount).toBe(totalCount);
 });

@@ -1,12 +1,10 @@
 package com.emsist.designhub.service;
 
 import com.emsist.designhub.domain.Screen;
-import com.emsist.designhub.repository.BusinessRoleRepository;
 import com.emsist.designhub.repository.ScreenRepository;
-import com.emsist.designhub.repository.UserStoryRepository;
-import com.emsist.designhub.repository.ValidationRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +20,7 @@ import java.util.Optional;
 public class ScreenService {
 
     private final ScreenRepository screenRepository;
-    private final BusinessRoleRepository businessRoleRepository;
-    private final ValidationRoleRepository validationRoleRepository;
-    private final UserStoryRepository userStoryRepository;
+    private final Neo4jClient neo4jClient;
 
     public List<Screen> getAllScreens() {
         log.debug("Fetching all screens");
@@ -57,7 +53,7 @@ public class ScreenService {
 
     public Map<String, Object> getStats() {
         log.debug("Calculating screen stats");
-        long total = screenRepository.count();
+        long total = countNodes("Screen");
         long designComplete = screenRepository.countByDesignStatus("COMPLETE");
         long designSpecified = screenRepository.countByDesignStatus("SPECIFIED");
         long designNotStarted = screenRepository.countByDesignStatus("NOT_STARTED");
@@ -71,8 +67,8 @@ public class ScreenService {
         stats.put("designNotStarted", designNotStarted);
         stats.put("deliveryIntegrated", deliveryIntegrated);
         stats.put("deliveryTested", deliveryTested);
-        stats.put("totalRoles", businessRoleRepository.count() + validationRoleRepository.count());
-        stats.put("totalStories", userStoryRepository.count());
+        stats.put("totalRoles", countNodes("BusinessRole") + countNodes("ValidationRole"));
+        stats.put("totalStories", countNodes("UserStory"));
 
         if (total > 0) {
             stats.put("designCompletePercent", Math.round((double) designComplete / total * 100));
@@ -80,5 +76,13 @@ public class ScreenService {
         }
 
         return stats;
+    }
+
+    private long countNodes(String label) {
+        return neo4jClient.query("MATCH (n:%s) RETURN count(n) AS total".formatted(label))
+                .fetch()
+                .one()
+                .map(record -> ((Number) record.get("total")).longValue())
+                .orElse(0L);
     }
 }

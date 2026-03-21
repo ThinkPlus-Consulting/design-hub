@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+required_node_version="25.8.1"
+
+resolve_candidate_dir() {
+  local candidate_dir="$1"
+
+  if [ ! -x "$candidate_dir/node" ] || [ ! -x "$candidate_dir/npm" ]; then
+    return 1
+  fi
+
+  local detected_version
+  detected_version="$("$candidate_dir/node" -p "process.version.slice(1)" 2>/dev/null || true)"
+
+  if [ "$detected_version" != "$required_node_version" ]; then
+    return 1
+  fi
+
+  printf '%s\n' "$candidate_dir"
+}
+
+run_with_candidate_dir() {
+  local candidate_dir="$1"
+  shift
+
+  PATH="$candidate_dir:$PATH" exec "$candidate_dir/npm" "$@"
+}
+
+candidate_dirs=()
+
+current_node_path="$(command -v node 2>/dev/null || true)"
+if [ -n "$current_node_path" ]; then
+  candidate_dirs+=("$(dirname -- "$current_node_path")")
+fi
+
+candidate_dirs+=(
+  "/opt/homebrew/bin"
+  "$HOME/.nvm/versions/node/v$required_node_version/bin"
+)
+
+for candidate_dir in "${candidate_dirs[@]}"; do
+  if resolved_dir="$(resolve_candidate_dir "$candidate_dir")"; then
+    run_with_candidate_dir "$resolved_dir" "$@"
+  fi
+done
+
+cat >&2 <<EOF
+Design Hub frontend requires Node $required_node_version.
+
+Resolved candidates:
+- current PATH
+- /opt/homebrew/bin
+- \$HOME/.nvm/versions/node/v$required_node_version/bin
+
+Use one of:
+- nvm install $required_node_version && nvm use
+- ensure Node $required_node_version is available in /opt/homebrew/bin
+- rerun the command through ./npmw
+EOF
+
+exit 1

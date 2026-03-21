@@ -50,6 +50,38 @@ class TraceabilityEdgeTraversalTest {
     }
 
     @Test
+    void shouldTraverseExternalArtifactHierarchyAndDependencies() {
+        ExternalArtifact parent = ExternalArtifact.builder()
+                .externalId("EXT-JIRA-EPIC-001")
+                .system("JIRA")
+                .externalType("EPIC")
+                .key("DH-100")
+                .status(Status.DEFINED)
+                .build();
+
+        ExternalArtifact dependency = ExternalArtifact.builder()
+                .externalId("EXT-AZDO-001")
+                .system("AZURE_DEVOPS")
+                .externalType("BUG")
+                .key("AB#245")
+                .status(Status.DEFINED)
+                .build();
+
+        ExternalArtifact story = ExternalArtifact.builder()
+                .externalId("EXT-JIRA-001")
+                .system("JIRA")
+                .externalType("STORY")
+                .key("DH-101")
+                .status(Status.DEFINED)
+                .parents(List.of(parent))
+                .dependencies(List.of(dependency))
+                .build();
+
+        assertEquals("EXT-JIRA-EPIC-001", story.getParents().get(0).getExternalId());
+        assertEquals("EXT-AZDO-001", story.getDependencies().get(0).getExternalId());
+    }
+
+    @Test
     void shouldTraverseUserStoryToSourceReference() {
         SourceReference sourceReference = SourceReference.builder()
                 .sourceId("SRC-US-AUTH-001")

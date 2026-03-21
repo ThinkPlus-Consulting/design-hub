@@ -42,6 +42,11 @@ export interface UserStorySummary {
   domain: string | null;
   storyNumber: string | null;
   screenCount: number;
+  externalWorkflowState: string | null;
+  externalPriority: string | null;
+  externalOwner: string | null;
+  externalLabels: string[];
+  externalRefs: string[];
 }
 
 export interface ScreenLegacy {
@@ -75,7 +80,19 @@ export interface Screen {
   _legacy: ScreenLegacy;
 }
 
-export type DetailTab = 'detail' | 'inventory' | 'touchpoints' | 'interactions' | 'journeys' | 'crosscutting';
+export type DetailTab =
+  | 'detail'
+  | 'inventory'
+  | 'touchpoints'
+  | 'interactions'
+  | 'journeys'
+  | 'architecture'
+  | 'delivery'
+  | 'automation'
+  | 'traceability'
+  | 'benchmark'
+  | 'verification'
+  | 'crosscutting';
 
 export interface DisplayOptions {
   showTransitions: boolean;

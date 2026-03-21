@@ -1,6 +1,13 @@
 @use './app/core/theme/default-preset';
 
 :root {
+  /* EMSIST ThinkPLUS interaction and elevation tokens */
+  --tp-pattern-opacity: 0.05;
+  --tp-elevation-default: 0 4px 10px color-mix(in srgb, var(--tp-text-dark) 24%, transparent);
+  --tp-elevation-hover: 0 7px 16px color-mix(in srgb, var(--tp-text-dark) 30%, transparent);
+  --tp-elevation-pressed: inset 0 2px 6px color-mix(in srgb, var(--tp-text-dark) 22%, transparent);
+  --tp-touch-target-min-size: 44px;
+
   --tp-primary: #428177;
   --tp-primary-dark: #054239;
   --tp-primary-light: #b9a779;
@@ -17,6 +24,8 @@
   --tp-focus-ring: 0 0 0 3px color-mix(in srgb, var(--tp-primary) 35%, transparent);
 
   --nm-bg: #edebe0;
+  --nm-shadow-dark: rgba(152, 133, 97, 0.38);
+  --nm-shadow-light: rgba(255, 255, 255, 0.88);
   --nm-accent: #428177;
   --nm-radius: 16px;
   --nm-depth: 12px;
@@ -37,6 +46,23 @@
   --tp-error-bg: color-mix(in srgb, var(--tp-error) 10%, transparent);
   --tp-error-border: color-mix(in srgb, var(--tp-error) 30%, transparent);
   --tp-error-text: #b91c1c;
+
+  /* --- Toast / Banner severity tokens --- */
+  --tp-toast-success-bg: color-mix(in srgb, var(--tp-success) 8%, transparent);
+  --tp-toast-success-border: color-mix(in srgb, var(--tp-success) 12%, transparent);
+  --tp-toast-success-text: var(--tp-info);
+
+  --tp-toast-error-bg: color-mix(in srgb, var(--tp-error) 8%, transparent);
+  --tp-toast-error-border: color-mix(in srgb, var(--tp-error) 12%, transparent);
+  --tp-toast-error-text: var(--tp-error-text);
+
+  --tp-toast-warn-bg: color-mix(in srgb, var(--tp-warning) 8%, transparent);
+  --tp-toast-warn-border: color-mix(in srgb, var(--tp-warning) 12%, transparent);
+  --tp-toast-warn-text: var(--tp-warning-dark);
+
+  --tp-toast-info-bg: color-mix(in srgb, var(--tp-info) 8%, transparent);
+  --tp-toast-info-border: color-mix(in srgb, var(--tp-info) 12%, transparent);
+  --tp-toast-info-text: var(--tp-info);
 
   /* --- Icon sizing scale --- */
   --icon-size-xs: 14px;

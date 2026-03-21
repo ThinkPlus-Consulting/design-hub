@@ -23,6 +23,10 @@ public class Epic {
     private String title;
     private String description;
     private Status status;
+    private String externalWorkflowState;
+    private String externalPriority;
+    private String externalOwner;
+    private List<String> externalRefs;
 
     @Relationship(type = "HAS_FEATURE", direction = Relationship.Direction.OUTGOING)
     private List<Feature> features;

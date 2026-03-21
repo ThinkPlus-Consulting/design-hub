@@ -18,5 +18,6 @@ public class Organization {
     private String orgId;
 
     private String name;
+    private String organizationType;
     private Status status;
 }

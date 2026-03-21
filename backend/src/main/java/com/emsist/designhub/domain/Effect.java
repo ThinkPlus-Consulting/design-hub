@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
+import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 @Node
 @Data
@@ -18,8 +19,8 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 public class Effect {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(UUIDStringGenerator.class)
+    private String effectId;
 
     private String type;           // navigate, redirect, filter, mutation, toast, etc.
     private String target;

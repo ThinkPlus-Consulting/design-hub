@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,12 +39,14 @@ public class DataInitializer implements CommandLineRunner {
     private final InteractionRepository interactionRepository;
     private final JourneyRepository journeyRepository;
     private final RegistryGraphMigrationService registryGraphMigrationService;
+    private final Neo4jClient neo4jClient;
 
     @Override
     @Transactional
     public void run(String... args) {
-        if (screenRepository.count() > 0) {
-            log.info("Seed data already exists ({} screens). Skipping.", screenRepository.count());
+        long existingScreenCount = countNodes("Screen");
+        if (existingScreenCount > 0) {
+            log.info("Seed data already exists ({} screens). Skipping.", existingScreenCount);
             registryGraphMigrationService.runFullMigration();
             return;
         }
@@ -55,8 +58,16 @@ public class DataInitializer implements CommandLineRunner {
         seedJourneys();
         registryGraphMigrationService.runFullMigration();
         log.info("Seed complete: {} screens, {} touchpoints, {} interactions, {} journeys.",
-                screenRepository.count(), touchpointRepository.count(),
-                interactionRepository.count(), journeyRepository.count());
+                countNodes("Screen"), countNodes("Touchpoint"),
+                countNodes("Interaction"), countNodes("Journey"));
+    }
+
+    private long countNodes(String label) {
+        return neo4jClient.query("MATCH (n:%s) RETURN count(n) AS total".formatted(label))
+                .fetch()
+                .one()
+                .map(record -> ((Number) record.get("total")).longValue())
+                .orElse(0L);
     }
 
     private Map<String, Screen> seedScreens() {

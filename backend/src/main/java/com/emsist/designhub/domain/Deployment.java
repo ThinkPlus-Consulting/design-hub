@@ -18,5 +18,7 @@ public class Deployment {
     private String deploymentId;
 
     private String name;
+    private String environment;
+    private String description;
     private Status status;
 }

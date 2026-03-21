@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const frontendBaseUrl = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:4300';
+const useExternalFrontendServer = Boolean(process.env.PLAYWRIGHT_BASE_URL);
 
 export default defineConfig({
   testDir: './tests',
@@ -21,10 +22,12 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: {
-    command: 'npm run start',
-    url: frontendBaseUrl,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: useExternalFrontendServer
+    ? undefined
+    : {
+        command: 'npm run start',
+        url: frontendBaseUrl,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      },
 });

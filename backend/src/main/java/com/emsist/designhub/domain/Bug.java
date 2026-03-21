@@ -23,6 +23,10 @@ public class Bug {
     private String externalKey;
     private String summary;
     private String severity;
+    private String externalWorkflowState;
+    private String externalPriority;
+    private String externalOwner;
+    private List<String> externalRefs;
     private Status status;
 
     @Relationship(type = "AFFECTS_SCREEN", direction = Relationship.Direction.OUTGOING)

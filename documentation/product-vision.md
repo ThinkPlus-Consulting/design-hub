@@ -38,7 +38,7 @@ It connects:
 - **what is still missing** (findings, bugs, gaps, open questions, risks)
 - **where it is tracked** (external artifacts in Azure DevOps, Jira)
 
-The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 65 `@Node` entities, 103 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 363 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
+The approved graph model spans 75 elements across 3 tiers (58 first-class nodes, 13 registries, 4 value objects) with 71 benchmarkable objects and 106 edge types. The current implementation baseline is 74 `@Node` entities, 111 SDN `@Relationship` declarations, 1 Cypher-only polymorphic edge, and 489 passing tests. See `modeling-taxonomy.md` for classification rules and `graph-object-catalog.md` for the full inventory.
 
 ---
 
@@ -319,17 +319,17 @@ Design Hub treats Playwright as part of the anti-drift architecture, not just QA
 
 ## 14. Benchmark Summary
 
-Current state from `vision-benchmark.md`:
+Current live benchmark slice:
 
 | Dimension | Score |
 |-----------|-------|
 | Documentation completeness | **GREEN** |
-| Implementation completeness | **GREEN** (87.3% benchmarkable coverage; 65 `@Node` entities overall) |
-| Attribute depth | **AMBER** (~53%) |
-| Relationship coverage | **AMBER** (103 SDN + 1 Cypher relationship types implemented) |
-| Queryability | **AMBER** (12/17 GREEN, 1/17 AMBER) |
-| Source traceability | **AMBER** |
+| Implementation completeness | **GREEN** (100.0% benchmarkable coverage; 74 `@Node` entities overall) |
+| Attribute depth | **GREEN** (100.0 across the full 71-type live slice) |
+| Relationship coverage | **GREEN** (100.0 across the full 71-type live slice) |
+| Queryability | **GREEN** (100.0 across the full 71-type live slice) |
+| Source traceability | **GREEN** (100.0 across the full 71-type live slice) |
 | Delivery-tool interoperability | **AMBER** |
 | UX implementation support | **AMBER** |
 
-The documentation model is fully specified (71 benchmarkable objects across 58 T1 + 13 T2, with 106 edge types). Implementation now includes the D4 engineering entities, D5a BPMN-aligned process spine, and Playwright Layers 1-2. The main remaining gaps are the open string migrations (`storyRefs`, `interactionRef`), missing traceability/governance entities, and broader adoption of the universal status enum.
+The documentation model is fully specified (71 benchmarkable objects across 58 T1 + 13 T2, with 106 edge types). Implementation now includes the D4 engineering entities, D5a BPMN-aligned process spine, BPMN/data-flow traversal coverage, the governance decision/assumption/constraint/assessment/risk cluster, planning/ownership traversal coverage, the final missing T1 topic/failure/question/integration families, and the final benchmark-breadth closure for journey-step/import-snapshot/evidence-record/enum/event/locale/translation-key coverage. The main remaining gaps are the open string migrations (`storyRefs`, `interactionRef`), Neo4j deprecation cleanup, broader localization/accessibility verification, and the non-benchmarked long-tail registry/value-object stubs.

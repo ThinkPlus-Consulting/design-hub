@@ -18,5 +18,9 @@ public class Finding {
     private String findingId;
 
     private String summary;
+    private String externalWorkflowState;
+    private String externalPriority;
+    private String externalOwner;
+    private java.util.List<String> externalRefs;
     private Status status;
 }

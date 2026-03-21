@@ -2,11 +2,11 @@ package com.emsist.designhub.dto;
 
 import com.emsist.designhub.domain.ContentElement;
 import com.emsist.designhub.domain.Gap;
+import com.emsist.designhub.domain.BusinessRole;
 import com.emsist.designhub.domain.Screen;
 import com.emsist.designhub.domain.UserStory;
 
 import java.util.List;
-import java.util.Map;
 
 public record ScreenResponse(
         String surfaceId,
@@ -35,14 +35,6 @@ public record ScreenResponse(
 ) {
 
     public static ScreenResponse from(Screen screen) {
-        return from(screen, Map.of(), Map.of());
-    }
-
-    public static ScreenResponse from(
-            Screen screen,
-            Map<String, RoleResponse> roleLookup,
-            Map<String, UserStoryResponse> storyLookup
-    ) {
         return new ScreenResponse(
                 screen.getSurfaceId(),
                 screen.getLabel(),
@@ -60,9 +52,9 @@ public record ScreenResponse(
                 screen.getMessageRegistryCount(),
                 screen.getNotes(),
                 storyIds(screen),
-                resolveStories(screen, storyLookup),
-                safeList(screen.getRoleKeys()),
-                resolveRoles(screen.getRoleKeys(), roleLookup),
+                resolveStories(screen),
+                roleKeys(screen),
+                resolveRoles(screen),
                 safeList(screen.getPersonaIds()),
                 screen.getGaps() == null
                         ? List.of()
@@ -90,44 +82,64 @@ public record ScreenResponse(
         return safeList(screen.getStoryRefs());
     }
 
-    private static List<RoleResponse> resolveRoles(
-            List<String> roleKeys,
-            Map<String, RoleResponse> roleLookup
-    ) {
-        return safeList(roleKeys).stream()
-                .map(roleLookup::get)
-                .filter(role -> role != null)
-                .toList();
+    private static List<String> roleKeys(Screen screen) {
+        List<BusinessRole> accessibleByRoles = screen.getAccessibleByRoles();
+        if (accessibleByRoles != null && !accessibleByRoles.isEmpty()) {
+            return accessibleByRoles.stream()
+                    .map(BusinessRole::getRoleKey)
+                    .toList();
+        }
+        return safeList(screen.getRoleKeys());
     }
 
-    private static List<UserStoryResponse> resolveStories(
-            Screen screen,
-            Map<String, UserStoryResponse> storyLookup
-    ) {
+    private static List<RoleResponse> resolveRoles(Screen screen) {
+        List<BusinessRole> accessibleByRoles = screen.getAccessibleByRoles();
+        if (accessibleByRoles != null && !accessibleByRoles.isEmpty()) {
+            return accessibleByRoles.stream()
+                    .map(ScreenResponse::toRoleResponse)
+                    .toList();
+        }
+        return List.of();
+    }
+
+    private static RoleResponse toRoleResponse(BusinessRole role) {
+        return new RoleResponse(
+                role.getRoleKey(),
+                role.getDisplayName(),
+                role.getRoleGroup(),
+                role.getSortOrder(),
+                0,
+                0,
+                0,
+                0
+        );
+    }
+
+    private static List<UserStoryResponse> resolveStories(Screen screen) {
         List<UserStory> deliveredStories = screen.getDeliveredByStories();
         if (deliveredStories != null && !deliveredStories.isEmpty()) {
             return deliveredStories.stream()
-                    .map(story -> {
-                        UserStoryResponse resolved = storyLookup.get(story.getStoryId());
-                        if (resolved != null) {
-                            return resolved;
-                        }
-                        long screenCount = story.getDeliversScreens() == null ? 0 : story.getDeliversScreens().size();
-                        return new UserStoryResponse(
-                                story.getStoryId(),
-                                story.getLabel(),
-                                story.getModule(),
-                                story.getDomain(),
-                                story.getStoryNumber(),
-                                screenCount
-                        );
-                    })
+                    .map(ScreenResponse::toUserStoryResponse)
                     .toList();
         }
-        return safeList(screen.getStoryRefs()).stream()
-                .map(storyLookup::get)
-                .filter(story -> story != null)
-                .toList();
+        return List.of();
+    }
+
+    private static UserStoryResponse toUserStoryResponse(UserStory story) {
+        long screenCount = story.getDeliversScreens() == null ? 0 : story.getDeliversScreens().size();
+        return new UserStoryResponse(
+                story.getStoryId(),
+                story.getLabel(),
+                story.getModule(),
+                story.getDomain(),
+                story.getStoryNumber(),
+                screenCount,
+                story.getExternalWorkflowState(),
+                story.getExternalPriority(),
+                story.getExternalOwner(),
+                story.getExternalLabels() == null ? List.of() : List.copyOf(story.getExternalLabels()),
+                story.getExternalRefs() == null ? List.of() : List.copyOf(story.getExternalRefs())
+        );
     }
 
     public record GapResponse(

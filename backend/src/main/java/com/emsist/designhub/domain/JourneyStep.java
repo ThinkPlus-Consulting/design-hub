@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -18,15 +17,15 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 public class JourneyStep {
 
     @Id
-    @GeneratedValue
-    private Long id;
-
     private String stepId;
+    private String journeyId;
     private String label;
+    private String trigger;
     private String preCondition;
     private String postCondition;
     private String interactionRef;
     private int orderIndex;
+    private Status status;
 
     @Relationship(type = "EXECUTES_INTERACTION", direction = Relationship.Direction.OUTGOING)
     @JsonIgnoreProperties({"usedByPersonas", "accessibleByRoles", "requiresPermission", "callsApi",

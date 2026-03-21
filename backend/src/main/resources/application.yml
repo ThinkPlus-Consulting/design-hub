@@ -31,3 +31,39 @@ logging:
 
 designhub:
   seed-data: true
+  external-sync:
+    scheduler:
+      enabled: true
+      fixed-delay: ${DESIGNHUB_EXTERNAL_SYNC_SCHEDULER_FIXED_DELAY:PT1M}
+      requested-by: ${DESIGNHUB_EXTERNAL_SYNC_SCHEDULER_REQUESTED_BY:scheduler}
+    azure-devops:
+      enabled: true
+      base-url: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_BASE_URL:}
+      organization: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_ORGANIZATION:}
+      project: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_PROJECT:}
+      token: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_TOKEN:}
+      poll-path: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_POLL_PATH:}
+      webhook:
+        enabled: true
+        secret: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_WEBHOOK_SECRET:}
+      polling:
+        enabled: true
+        interval: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_POLLING_INTERVAL:PT15M}
+        dry-run: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_POLLING_DRY_RUN:true}
+        wiql: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_WIQL:}
+        updated-since: ${DESIGNHUB_EXTERNAL_SYNC_AZURE_DEVOPS_UPDATED_SINCE:}
+    jira:
+      enabled: true
+      base-url: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_BASE_URL:}
+      project-key: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_PROJECT_KEY:}
+      token: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_TOKEN:}
+      poll-path: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_POLL_PATH:}
+      webhook:
+        enabled: true
+        secret: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_WEBHOOK_SECRET:}
+      polling:
+        enabled: true
+        interval: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_POLLING_INTERVAL:PT15M}
+        dry-run: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_POLLING_DRY_RUN:true}
+        jql: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_JQL:}
+        updated-since: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_UPDATED_SINCE:}

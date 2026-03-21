@@ -18,5 +18,8 @@ public class BusinessObject {
     private String objectId;
 
     private String name;
+    private String domain;
+    private String description;
+    private String sensitivity;
     private Status status;
 }

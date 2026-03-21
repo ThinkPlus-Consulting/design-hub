@@ -121,10 +121,10 @@ See `modeling-taxonomy.md` for the full 3-tier classification (58 T1 + 13 T2 + 4
 
 The current code baseline is materially ahead of the original seed model:
 
-- **65 `@Node` entities**
-- **103 SDN `@Relationship` declarations**
+- **74 `@Node` entities**
+- **111 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **363 passing tests**
+- **489 passing tests**
 
 That implemented subset now includes the D4 engineering entity completion, the D5a BPMN-aligned process spine, D5b1 strategic & governance plus architecture & EA stubs, D6a failure-path/traceability/screen-flow closure, the canonical journey/story traversal edges, and the implementation-pack execution-context wiring.
 

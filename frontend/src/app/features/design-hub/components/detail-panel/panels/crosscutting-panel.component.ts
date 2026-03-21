@@ -97,7 +97,7 @@ interface CrosscuttingRow {
       th, td {
         padding: var(--tp-space-1) var(--tp-space-2);
         text-align: center;
-        border-bottom: 1px solid rgba(152, 133, 97, 0.18);
+        border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 18%, transparent);
       }
 
       th {

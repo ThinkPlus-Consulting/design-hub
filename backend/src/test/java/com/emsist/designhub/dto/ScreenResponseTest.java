@@ -1,5 +1,6 @@
 package com.emsist.designhub.dto;
 
+import com.emsist.designhub.domain.BusinessRole;
 import com.emsist.designhub.domain.Gap;
 import com.emsist.designhub.domain.Screen;
 import com.emsist.designhub.domain.Status;
@@ -7,7 +8,6 @@ import com.emsist.designhub.domain.UserStory;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -107,6 +107,11 @@ class ScreenResponseTest {
                 .module("R04")
                 .domain("definitions")
                 .storyNumber("US-DM-007")
+                .externalWorkflowState("READY")
+                .externalPriority("High")
+                .externalOwner("designer@example.com")
+                .externalLabels(List.of("catalog"))
+                .externalRefs(List.of("jira:US-DM-007"))
                 .build();
 
         Screen screen = Screen.builder()
@@ -117,14 +122,54 @@ class ScreenResponseTest {
                 .deliveredByStories(List.of(deliveredStory))
                 .build();
 
-        ScreenResponse response = ScreenResponse.from(
-                screen,
-                Map.of(),
-                Map.of("US-DM-007", new UserStoryResponse("US-DM-007", "View object types", "R04", "definitions", "US-DM-007", 1))
-        );
+        ScreenResponse response = ScreenResponse.from(screen);
 
         assertEquals(List.of("US-DM-007"), response.storyRefs());
         assertEquals(1, response.stories().size());
         assertEquals("US-DM-007", response.stories().get(0).storyId());
+        assertEquals("READY", response.stories().get(0).externalWorkflowState());
+        assertEquals(List.of("catalog"), response.stories().get(0).externalLabels());
+    }
+
+    @Test
+    void shouldPreferAccessibleRolesWhenGraphEdgesExist() {
+        BusinessRole role = BusinessRole.builder()
+                .roleKey("ADMIN")
+                .displayName("Administrator")
+                .roleGroup("platform")
+                .sortOrder(1)
+                .status(Status.APPROVED)
+                .build();
+
+        Screen screen = Screen.builder()
+                .surfaceId("SCR-ROLE")
+                .label("Role-aware screen")
+                .roleKeys(List.of("LEGACY-ROLE"))
+                .accessibleByRoles(List.of(role))
+                .build();
+
+        ScreenResponse response = ScreenResponse.from(screen);
+
+        assertEquals(List.of("ADMIN"), response.roleKeys());
+        assertEquals(1, response.roles().size());
+        assertEquals("ADMIN", response.roles().get(0).roleKey());
+        assertEquals("Administrator", response.roles().get(0).displayName());
+    }
+
+    @Test
+    void shouldNotProjectLegacyStoryOrRoleObjectsWhenGraphEdgesAreAbsent() {
+        Screen screen = Screen.builder()
+                .surfaceId("SCR-LEGACY")
+                .label("Legacy compatibility only")
+                .storyRefs(List.of("US-LEGACY-001"))
+                .roleKeys(List.of("ADMIN"))
+                .build();
+
+        ScreenResponse response = ScreenResponse.from(screen);
+
+        assertEquals(List.of("US-LEGACY-001"), response.storyRefs());
+        assertTrue(response.stories().isEmpty());
+        assertEquals(List.of("ADMIN"), response.roleKeys());
+        assertTrue(response.roles().isEmpty());
     }
 }

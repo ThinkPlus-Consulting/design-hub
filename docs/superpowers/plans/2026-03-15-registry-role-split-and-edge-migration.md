@@ -6,7 +6,7 @@
 
 **Architecture:** This is an implementation-only increment. The approved taxonomy already contains these nodes and edge types. The work is split into three layers: (1) new registry / split-node types, (2) edge declarations on current source entities, (3) seed and migration wiring that replaces the old Neo4j backfill service.
 
-**Tech Stack:** Java 21, Spring Boot 3.4.1, Spring Data Neo4j, Lombok, JUnit 5, Mockito, Neo4jClient
+**Tech Stack:** Java 23, Spring Boot 3.4.1, Spring Data Neo4j, Lombok, JUnit 5, Mockito, Neo4jClient
 
 **Implementation Baseline:** `31 @Node / 46 SDN @Relationship / 1 Cypher-only edge / 142 tests`
 

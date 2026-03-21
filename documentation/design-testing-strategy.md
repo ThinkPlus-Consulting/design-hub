@@ -16,10 +16,10 @@ Without this layer, documentation can improve while the shipped UI still diverge
 
 ## Current State
 
-- The backend graph baseline now includes **65 `@Node` entities**, **103 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **363 passing tests**.
-- A Playwright harness now exists in `frontend/` with Layers 1-2 implemented against the live backend.
-- The frontend only exposes Angular build and serve scripts in `frontend/package.json`.
-- The frontend still contains hardcoded colors and user-facing text in component files, which makes drift harder to detect mechanically.
+- The backend graph baseline now includes **74 `@Node` entities**, **111 SDN `@Relationship` declarations**, **1 Cypher-only polymorphic edge**, and **489 passing tests**.
+- A Playwright harness now exists in `frontend/` with semantic, visual, drift, mobile, keyboard-accessibility, external-sync breadth, and localization/RTL coverage against the live backend, plus approved baselines for the shell and high-signal detail panels, including Arabic RTL shell and delivery-detail baselines for desktop/mobile.
+- The frontend now exposes build, token-audit, visual, drift, and full verification scripts in `frontend/package.json`.
+- `npm run check:design-tokens` now audits the Design Hub UI surface and the broader frontend source tree, with raw color literals allowed only in approved token-source files and required EMSIST root tokens enforced in `src/styles.scss`.
 
 ## Testing Position
 
@@ -85,10 +85,10 @@ Examples:
 
 These tests verify:
 
-- all visible strings come from translation keys
+- shell-visible strings come from translation keys
 - Arabic locale flips the document direction to RTL
-- layout still works under RTL
-- icon direction and spacing remain correct under RTL
+- locale selection persists across reloads
+- layout still works under RTL for the currently verified shell and graph-backed detail surfaces
 
 ### 6. Drift detection against the graph model
 
@@ -141,6 +141,7 @@ frontend/
   tests/
     smoke/
     graph/
+    drift/
     process/
     visual/
     i18n/
@@ -152,6 +153,7 @@ Recommended test groups:
 
 - `smoke/`: boot, routes, empty states, API-available states
 - `graph/`: object selection, relation traversal, filter behavior
+- `drift/`: backend-to-UI parity checks for graph-backed counts, relationships, and readiness surfaces
 - `process/`: BusinessProcess flow traversal — activity/gateway/event sequence, FLOWS_TO edge integrity, process view rendering
 - `visual/`: screenshot baselines and component-region baselines
 - `i18n/`: English, Arabic, and RTL assertions
@@ -207,7 +209,7 @@ The following scenarios should be treated as mandatory:
 3. Screen detail renders linked roles and stories from graph-backed data.
 4. Journey and touchpoint views render linked relationships without relying on hardcoded placeholders.
 5. Empty and backend-unavailable states render the correct user-visible message.
-6. English and Arabic both render without clipping, overlap, or broken layout.
+6. English and Arabic shell surfaces both render without clipped or broken layout.
 7. Key views match approved visual baselines.
 8. Critical token-backed UI elements render the approved theme values.
 9. Process Flow View renders BusinessProcess flow nodes (ProcessActivity, ProcessGateway, ProcessEvent) and their `FLOWS_TO` sequence edges faithfully from graph-backed data.

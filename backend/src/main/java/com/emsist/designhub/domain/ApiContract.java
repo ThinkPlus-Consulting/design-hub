@@ -20,6 +20,9 @@ public class ApiContract {
     private String path;
     private String method;
     private String description;
+    private String externalWorkflowState;
+    private String externalOwner;
+    private List<String> externalRefs;
     private Status status;
 
     @Relationship(type = "HAS_QUALITY_CONSTRAINT", direction = Relationship.Direction.OUTGOING)

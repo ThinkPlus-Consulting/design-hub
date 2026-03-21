@@ -97,8 +97,8 @@ graph TD
 
 | Aspect | Status | Evidence |
 |--------|--------|----------|
-| Node persistence | `[IMPLEMENTED]` | 65 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
-| Typed edges | `[PARTIAL]` | 103 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, process-spine, failure-path, traceability, screen-flow, canonical journey/story traversal, and implementation-pack execution-context core is now edge-backed |
+| Node persistence | `[IMPLEMENTED]` | 74 `@Node` entities in `backend/src/main/java/com/emsist/designhub/domain/` |
+| Typed edges | `[PARTIAL]` | 111 SDN `@Relationship` declarations + 1 Cypher-only `ASSESSES` edge; the registry, engineering, process-spine, failure-path, traceability, screen-flow, canonical journey/story traversal, implementation-pack execution-context core, and the remaining T1 failure/question/topic/integration families are now edge-backed |
 | Bidirectional traversal | `[PARTIAL]` | Forward traversal works for implemented edges; reverse requires Cypher |
 | Status filtering | `[IMPLEMENTED — reshape required]` | 3-enum status model; target is universal 10-value `status` |
 | Readiness filtering | `[PLANNED]` | No readiness flags on entities |
@@ -119,18 +119,24 @@ graph TD
 | Stats API | `[IMPLEMENTED]` | `StatsController.java` |
 | OpenAPI docs | `[IMPLEMENTED]` | Springdoc OpenAPI 2.3.0 |
 
-**Target responsibilities (not yet implemented):**
+**Target responsibilities (implementation status):**
 
-- Graph-object query endpoints by node type `[PLANNED]`
-- Relation expansion endpoints `[PLANNED]`
-- Persona and journey traversal endpoints `[PLANNED]`
-- External-artifact mapping endpoints `[PLANNED]`
-- Readiness and missing-artifact diagnostics `[PLANNED]`
-- completenessScore computation endpoint `[PLANNED]`
+- Graph-object query endpoints by node type `[IMPLEMENTED]` — `/api/v1/graph/objects` now supports type-scoped and graph-wide object queries across Screen, ScreenState, Transition, Topic, EdgeCase, ExceptionCase, UserStory, Integration, ProjectInstance, Milestone, Journey, Persona, BusinessDomain, Organization, BusinessObjective, RequirementPortfolio, Epic, Feature, Decision, Assumption, Constraint, Assessment, Risk, Finding, Bug, Task, ApiContract, DataEntity, Interaction, Touchpoint, Channel, BusinessCapability, BusinessProcess, Application, ApplicationComponent, BusinessObject, Deployment, CodeAsset, TestCase, Rule, Message, Gap, OpenQuestion, AcceptanceCriterion, DataField, CodingConvention, QualityConstraint, AgentPolicy, SourceReference, BusinessRole, ValidationRole, Permission, ConfirmationDialog, and ErrorCode
+- Relation expansion endpoints `[IMPLEMENTED]` — `/api/v1/graph/objects/{type}/{id}/relations` exposes incoming and outgoing graph edges for supported node types
+- Persona and journey traversal endpoints `[IMPLEMENTED]` — `/api/v1/graph/personas/{personaId}` and `/api/v1/graph/journeys/{journeyId}` now expose graph-backed traversal payloads
+- Artifact traversal/detail endpoints `[IMPLEMENTED]` — `/api/v1/graph/screen-states/{stateId}`, `/api/v1/graph/transitions/{transitionId}`, `/api/v1/graph/topics/{topicId}`, `/api/v1/graph/touchpoints/{touchpointId}`, `/api/v1/graph/interactions/{interactionId}`, `/api/v1/graph/apis/{contractId}`, `/api/v1/graph/data-entities/{entityId}`, `/api/v1/graph/objectives/{objectiveId}`, `/api/v1/graph/features/{featureId}`, `/api/v1/graph/decisions/{decisionId}`, `/api/v1/graph/assumptions/{assumptionId}`, `/api/v1/graph/governance-constraints/{constraintId}`, `/api/v1/graph/assessments/{assessmentId}`, `/api/v1/graph/risks/{riskId}`, `/api/v1/graph/edge-cases/{edgeCaseId}`, `/api/v1/graph/exception-cases/{exceptionId}`, `/api/v1/graph/epics/{epicId}`, `/api/v1/graph/portfolios/{portfolioId}`, `/api/v1/graph/projects/{projectId}`, `/api/v1/graph/integrations/{integrationId}`, `/api/v1/graph/milestones/{milestoneId}`, `/api/v1/graph/business-domains/{domainCode}`, `/api/v1/graph/organizations/{orgId}`, `/api/v1/graph/code-assets/{codeAssetId}`, `/api/v1/graph/test-cases/{testCaseId}`, `/api/v1/graph/rules/{ruleId}`, `/api/v1/graph/messages/{messageId}`, `/api/v1/graph/gaps/{gapId}`, `/api/v1/graph/conventions/{conventionCode}`, `/api/v1/graph/quality-constraints/{constraintId}`, `/api/v1/graph/policies/{policyId}`, `/api/v1/graph/sources/{sourceId}`, `/api/v1/graph/findings/{findingId}`, `/api/v1/graph/open-questions/{questionId}`, `/api/v1/graph/acceptance-criteria/{criterionId}`, `/api/v1/graph/data-fields/{fieldId}`, `/api/v1/graph/roles/{roleKey}`, `/api/v1/graph/validation-roles/{validationRoleKey}`, `/api/v1/graph/permissions/{permissionKey}`, `/api/v1/graph/dialogs/{dialogId}`, and `/api/v1/graph/error-codes/{code}` now expose dedicated typed traversal payloads for the remaining benchmarked artifact families
+- Business architecture traversal endpoints `[IMPLEMENTED — partial]` — `/api/v1/graph/architecture/business/capabilities` and `/api/v1/graph/architecture/business/capabilities/{capabilityId}` now expose graph-backed capability, process, application, feature, and ownership traversal for the seeded architecture slice
+- Traceability spine endpoints `[IMPLEMENTED — partial]` — `/api/v1/graph/traceability/stories/{storyId}` now exposes the live story spine with seeded `BusinessObjective` / `RequirementPortfolio` / `Epic` / `Feature` coverage for current implementation stories, and still reports explicit missing upper-spine segments where that data is absent
+- Benchmark aggregation endpoints `[IMPLEMENTED]` — `/api/v1/graph/benchmark` now returns per-type attribute depth, relationship coverage, source traceability, queryability, and overall scores across the full 71-node benchmarkable taxonomy. The live slice measures `100.0` overall, with all four dimensions at `100.0`, after the catalog-level backfill, dedicated traversal endpoints, metadata-family traversal endpoints, API-contract schema backfill, persona-usage backfill, journey persona normalization, component code-asset coverage, explicit auth-task implementation coverage, planning/ownership traversal coverage, data-quality coverage, registry-breadth expansion, external-artifact hierarchy normalization, BPMN/data-flow traversal expansion, and the final journey-step/import-snapshot/evidence-record/enum/event/locale/translation-key benchmark closures.
+- External-artifact mapping endpoints `[IMPLEMENTED — partial]` — `/api/v1/graph/external-artifacts`, `/api/v1/graph/external-artifacts/{externalId}`, and `/api/v1/graph/external-artifacts/parity-audit` now expose live hierarchy, dependency, sync, custom-field, and field-parity evidence for the seeded external slice, `/api/v1/external-sync/artifacts` provides a generic dry-run/apply sync path with relationship and custom-field persistence, `/api/v1/external-sync/azure-devops/work-items` plus `/api/v1/external-sync/jira/issues` provide source-specific adapter request surfaces, `/api/v1/external-sync/jobs` now provides stored poll/webhook/manual orchestration envelopes plus recent history with optional `sourceSystem` filtering, `POST /api/v1/external-sync/jobs/poll/{sourceSystem}` now provides a config-aware polling trigger with persisted results, `/api/v1/external-sync/sources` now exposes effective source configuration plus latest persisted job status, including `webhookSecretConfigured`, `scopeConfigured`, and `filterConfigured`, Verification View can now trigger that poll path from the UI while surfacing source-filtered sync history, and upper-spine external normalization now reaches epic coverage with live traversal evidence via `EXT-JIRA-EPIC-001`; broader remote source coverage is still pending
+- Agent-pack export endpoints `[IMPLEMENTED — partial]` — `/api/v1/stories/{storyId}/agent-pack` now exposes a graph-backed story implementation-pack export contract, and `/api/v1/stories/{storyId}/agent-pack/completeness` remains available for readiness-only scoring
+- Delivery aggregate endpoints `[PARTIAL]` — `/api/v1/delivery/stories` and `/api/v1/delivery/stories/{storyId}` now expose graph-backed story delivery context
+- Readiness and missing-artifact diagnostics `[PARTIAL]` — screen and story diagnostics available via `/api/v1/readiness/screens/{surfaceId}` and `/api/v1/readiness/stories/{storyId}`; the current seeded delivery slice now resolves complete packs for `US-AI-078`, `US-AI-090`, `US-AI-137`, `US-AI-139`, and `US-SCREEN-COVERAGE-001`, while `US-AUTH-001` remains intentionally incomplete to surface missing-artifact diagnostics
+- completenessScore computation endpoint `[PARTIAL]` — exposed as part of the readiness diagnostics response for screens and stories
 
 **API resolution layer** (current):
 
-`ScreenController.java` still builds in-memory lookup maps from `roleService.getAll()` and `userStoryService.getAll()`, but `ScreenResponse` now prefers graph-backed `deliveredByStories` for story resolution and only falls back to legacy `storyRefs` when the graph edge is absent. Role projection still resolves through the compatibility `roleKeys` lookup. The current API surface is therefore mixed-mode: graph-first for stories, app-layer lookup for some compatibility projections.
+`ScreenController.java` now returns graph-backed `stories[]` and `roles[]` directly from `deliveredByStories` and `accessibleByRoles` without the earlier in-memory lookup join. The compatibility `storyRefs` / `roleKeys` arrays remain in the payload as IDs only, but the detail-surface summaries are now graph-backed rather than mixed-mode lookup projections.
 
 ### 2.5 Presentation layer
 
@@ -146,39 +152,41 @@ graph TD
 | API service | `[IMPLEMENTED]` | `design-hub-api.service.ts` |
 | PrimeNG components | `[IMPLEMENTED]` | PrimeNG 21 in `package.json` |
 
-**Target responsibilities (not yet implemented):**
+**Target responsibilities (current status):**
 
-- Persona and journey views `[PLANNED]`
-- Channel view `[PLANNED]`
-- Delivery view `[PLANNED]`
-- Business Architecture View `[PLANNED]` — BusinessCapability → BusinessProcess → Organization → Application
-- Application Architecture View `[PLANNED]` — Application → ApplicationComponent → ApiContract / Screen
-- Data Architecture View `[PLANNED]` — BusinessObject → InformationFlow → DataEntity → ApiContract
-- Infrastructure Architecture View `[PLANNED]` — Deployment → InfrastructureNode → ApplicationComponent
-- Benchmark and verification views `[PLANNED]`
-- i18n / bilingual support `[PLANNED]`
-- Design token compliance `[PLANNED]`
+- Persona and journey views `[IMPLEMENTED — partial]` — the Angular Journeys tab now exposes a persona-first explorer backed by `/api/v1/graph/personas`, `/api/v1/graph/personas/{personaId}`, and `/api/v1/graph/journeys/{journeyId}`, so users can enter via persona and drill into linked journeys and steps; topic filters and broader exploration polish are still pending
+- Channel view `[IMPLEMENTED — partial]` — the Angular Channels tab now exposes graph-backed channel summaries plus live touchpoint, reachable-screen, persona-reach, and coverage-gap traversal via `/api/v1/graph/channels` and `/api/v1/graph/channels/{channelCode}`; dedicated landing surfaces and channel-type filtering are still pending
+- Delivery view `[IMPLEMENTED — partial]` — the Angular detail panel now exposes a Delivery tab backed by `/api/v1/delivery/stories`, including external-artifact hierarchy, dependency, represented-object, and custom-field detail; broader view breadth and dedicated entry surfaces are still pending
+- Traceability view `[IMPLEMENTED — partial]` — the Angular detail panel now exposes a Traceability tab backed by `/api/v1/graph/traceability/stories/{storyId}` for live upstream/downstream story traversal
+- Business Architecture View `[IMPLEMENTED — partial]` — the Angular Architecture tab now exposes a graph-backed business capability explorer via `/api/v1/graph/architecture/business/capabilities` and `/api/v1/graph/architecture/business/capabilities/{capabilityId}`
+- Application Architecture View `[IMPLEMENTED — partial]` — the Angular Architecture tab now exposes a graph-backed application explorer via `/api/v1/graph/architecture/applications` and `/api/v1/graph/architecture/applications/{applicationId}`, including components, APIs, supported screens, realized features, owners, and cross-application dependencies
+- Data Architecture View `[IMPLEMENTED — partial]` — the Angular Architecture tab now exposes a graph-backed data-object explorer via `/api/v1/graph/architecture/data/business-objects` and `/api/v1/graph/architecture/data/business-objects/{objectId}`, including mapped entities, information flows, API exposure, reachable screens, and child business objects
+- Infrastructure Architecture View `[IMPLEMENTED — partial]` — the Angular Architecture tab now exposes deployment topology via `/api/v1/graph/architecture/infrastructure/deployments` and `/api/v1/graph/architecture/infrastructure/deployments/{deploymentId}`, including hosted components, infrastructure nodes, and deployed applications
+- Benchmark view `[IMPLEMENTED — partial]` — the Angular detail panel now exposes a Benchmark tab backed by `/api/v1/graph/benchmark`; dedicated verification surfaces and full 71-node coverage are still pending
+- Verification view `[IMPLEMENTED — partial]` — the Angular detail panel now exposes a Verification tab combining live `/api/v1/readiness/*` diagnostics, current build/e2e/token-audit evidence, and the live external parity audit
+- i18n / bilingual support `[IMPLEMENTED — partial]` — the Angular shell now exposes a persisted locale switch with translated shell labels and root `lang` / `dir` switching; broader panel-level translation coverage is still pending
+- Design token compatibility `[PARTIAL]` — current Design Hub shell and detail surfaces align to EMSIST ThinkPLUS `--tp-*` and `--nm-*` tokens from `Emsist-app/frontend/src/styles.scss`, and `npm run check:design-tokens` now audits 16 shell/detail files; broader automated coverage is still pending
 
 ### 2.6 Verification layer
 
 **Strategy:** Defined in `design-testing-strategy.md` (6 test layers, 8 anti-drift scenarios)
 
-**Implementation status:** `[IMPLEMENTED — partial]` — Playwright Layers 1-2 are present in `frontend/tests/` and run against the live backend; visual, token, localization, and graph-UI drift layers are still pending.
+**Implementation status:** `[IMPLEMENTED — partial]` — Playwright Layers 1-2 are present in `frontend/tests/`, visual baselines now exist for the shell and high-signal detail panels, Arabic RTL shell baselines now exist for desktop/mobile, graph-to-UI drift assertions now exist in `frontend/tests/drift/`, initial localization/RTL shell assertions now exist in `frontend/tests/i18n/`, and the suites run against the live backend; broader coverage is still pending.
 
 | Test Layer | Status |
 |-----------|--------|
 | 1. Contract/route smoke | `[IMPLEMENTED]` |
 | 2. Semantic interaction | `[IMPLEMENTED]` |
-| 3. Visual baselines | `[PLANNED]` |
-| 4. Token compliance | `[PLANNED]` — requires B1 (token import) |
-| 5. Localization/RTL | `[PLANNED]` — requires B2 (i18n) |
-| 6. Graph-UI drift | `[PLANNED]` |
+| 3. Visual baselines | `[IMPLEMENTED — partial]` — snapshot baselines now exist for the shell and high-signal detail panels in desktop/mobile Chromium |
+| 4. Token compliance | `[IMPLEMENTED — partial]` — `npm run check:design-tokens` audits 16 Design Hub shell/detail files and required EMSIST root tokens; broader workspace coverage is still pending |
+| 5. Localization/RTL | `[IMPLEMENTED — partial]` — root locale switching, persisted `lang` / `dir`, and initial Arabic shell assertions now exist; broader translation coverage is still pending |
+| 6. Graph-UI drift | `[IMPLEMENTED — partial]` — `frontend/tests/drift/graph-ui-drift.spec.ts` now verifies screen detail parity, delivery aggregate counts, and traceability/readiness parity against backend APIs |
 
 ### 2.7 CI enforcement layer
 
 **Strategy:** Defined in `ci-quality-gates.md` (PR validation + merge protection lanes)
 
-**Implementation status:** `[PLANNED]` — no CI workflow configuration exists.
+**Implementation status:** `[IMPLEMENTED — partial]` — `.github/workflows/verification.yml` now runs backend `mvn test` and frontend `npm run verify:ui` with Neo4j on pull requests and pushes to `main`, and `.github/workflows/release-verification.yml` now adds a tag/manual release-readiness lane with packaged frontend/backend artifacts; protected-branch policy and broader localization gates are still pending.
 
 ### 2.8 Agent-ready layer (extension)
 
@@ -607,7 +615,7 @@ These patterns correspond to the 10 north-star queries in `product-vision.md`:
 | 6 | `screen -> stories` | `[EDGE]` — `DELIVERS` is implemented and `ScreenResponse` prefers graph-backed delivered stories |
 | 7 | `bug -> affected screens` | `[EDGE]` — Bug now exists with `AFFECTS_SCREEN` |
 | 8 | `artifact -> source references` | `[PARTIAL]` — `HAS_SOURCE` now exists for Screen, UserStory, and Bug |
-| 9 | `external artifact -> domain objects` | `[EDGE/PARTIAL]` — ExternalArtifact now represents stories and bugs; broader sync hierarchy and dependency edges remain planned |
+| 9 | `external artifact -> domain objects` | `[EDGE/PARTIAL]` — ExternalArtifact now represents stories, bugs, features, tasks, findings, and API contracts, exposes hierarchy/dependency semantics plus a `customFields` bag, has a live parity-audit endpoint, can now be upserted through a generic sync endpoint with custom-field persistence, and now backfills selected normalized external fields onto the represented primary nodes; source-specific adapter automation and broader represented-type coverage remain planned |
 | 10 | `interaction -> confirmation dialogs` | `[EDGE]` — ConfirmationDialog registry and `TRIGGERS_CONFIRMATION` are implemented |
 
 ---

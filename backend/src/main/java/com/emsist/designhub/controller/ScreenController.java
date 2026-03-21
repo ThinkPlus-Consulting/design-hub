@@ -1,11 +1,7 @@
 package com.emsist.designhub.controller;
 
-import com.emsist.designhub.dto.RoleResponse;
 import com.emsist.designhub.dto.ScreenResponse;
-import com.emsist.designhub.dto.UserStoryResponse;
-import com.emsist.designhub.service.RoleService;
 import com.emsist.designhub.service.ScreenService;
-import com.emsist.designhub.service.UserStoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/design-hub/screens")
@@ -31,8 +24,6 @@ import java.util.stream.Collectors;
 public class ScreenController {
 
     private final ScreenService screenService;
-    private final RoleService roleService;
-    private final UserStoryService userStoryService;
 
     @GetMapping
     @Operation(summary = "Get all screens")
@@ -43,10 +34,8 @@ public class ScreenController {
     @GetMapping("/{surfaceId}")
     @Operation(summary = "Get single screen with full graph (gaps, content, transitions)")
     public ResponseEntity<ScreenResponse> getScreen(@PathVariable String surfaceId) {
-        Map<String, RoleResponse> roleLookup = roleLookup();
-        Map<String, UserStoryResponse> storyLookup = storyLookup();
         return screenService.getScreen(surfaceId)
-                .map(screen -> ScreenResponse.from(screen, roleLookup, storyLookup))
+                .map(ScreenResponse::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -65,11 +54,7 @@ public class ScreenController {
             @PathVariable String surfaceId,
             @RequestBody Map<String, String> body) {
         String text = body.getOrDefault("text", "");
-        return ResponseEntity.ok(ScreenResponse.from(
-                screenService.saveNotes(surfaceId, text),
-                roleLookup(),
-                storyLookup()
-        ));
+        return ResponseEntity.ok(ScreenResponse.from(screenService.saveNotes(surfaceId, text)));
     }
 
     @GetMapping("/{surfaceId}/notes")
@@ -81,28 +66,8 @@ public class ScreenController {
     }
 
     private List<ScreenResponse> toScreenResponses(List<com.emsist.designhub.domain.Screen> screens) {
-        Map<String, RoleResponse> roleLookup = roleLookup();
-        Map<String, UserStoryResponse> storyLookup = storyLookup();
         return screens.stream()
-                .map(screen -> ScreenResponse.from(screen, roleLookup, storyLookup))
+                .map(ScreenResponse::from)
                 .toList();
-    }
-
-    private Map<String, RoleResponse> roleLookup() {
-        return roleService.getAll().stream().collect(Collectors.toMap(
-                RoleResponse::roleKey,
-                Function.identity(),
-                (left, right) -> left,
-                LinkedHashMap::new
-        ));
-    }
-
-    private Map<String, UserStoryResponse> storyLookup() {
-        return userStoryService.getAll().stream().collect(Collectors.toMap(
-                UserStoryResponse::storyId,
-                Function.identity(),
-                (left, right) -> left,
-                LinkedHashMap::new
-        ));
     }
 }

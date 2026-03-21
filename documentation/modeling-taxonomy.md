@@ -238,10 +238,10 @@ Tier 3 objects are NOT counted in the 71 benchmarkable nodes. Their attributes a
 
 The implemented graph no longer resembles the original 11-entity seed. The current code baseline is:
 
-- **65 `@Node` entities**
-- **103 SDN `@Relationship` declarations**
+- **74 `@Node` entities**
+- **111 SDN `@Relationship` declarations**
 - **1 Cypher-only polymorphic edge** (`ASSESSES`)
-- **363 passing tests**
+- **489 passing tests**
 
 This section highlights the remaining shape mismatches that still matter for benchmark scoring.
 
@@ -265,9 +265,9 @@ This section highlights the remaining shape mismatches that still matter for ben
 The current implementation baseline is materially ahead of the original seed model, but benchmark gaps still cluster in four areas:
 
 - **Legacy compatibility fields**: `storyRefs` and `interactionRef` remain on the model for compatibility, but the canonical traversals now run through `DELIVERS` and `EXECUTES_INTERACTION`. `journeyStepRefs` remains a frontend-side compatibility field.
-- **Registry completion**: `Enum`, `Event`, `Locale`, and `TranslationKey` remain planned (4 of 13 T2 registries).
-- **Missing T1 nodes**: `EdgeCase`, `ExceptionCase`, `Integration`, `OpenQuestion`, and `Topic` remain unimplemented (5 of 58 T1 nodes). `InteractionOutcome` (T3) is also unimplemented.
-- **EA nodes exist but lack edges**: `Organization`, `BusinessObject`, `InformationFlow`, `Deployment`, and `InfrastructureNode` are implemented as stubs (@Node only, no @Relationship edges yet).
+- **Registry completion**: `Enum`, `Event`, `Locale`, and `TranslationKey` are now implemented, closing the full 13-of-13 T2 registry set.
+- **Benchmark breadth closure**: the live aggregation now covers the full 71 benchmarked node types at `100.0`.
+- **Tier 3 completion**: `InteractionOutcome` (T3) remains unimplemented.
 
 ---
 

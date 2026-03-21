@@ -22,8 +22,8 @@ Design Hub should ingest canonical requirement and design sources, normalize the
 
 **Primary objects** (8 T1 nodes):
 
-- `SourceReference` `[PLANNED]`
-- `BusinessObjective` `[PLANNED]`
+- `SourceReference` `[IMPLEMENTED]`
+- `BusinessObjective` `[PARTIAL]`
 - `UserStory` `[IMPLEMENTED]`
 - `Persona` `[IMPLEMENTED]`
 - `Journey` `[IMPLEMENTED]`
@@ -42,11 +42,11 @@ The platform should maintain a first-class graph object registry covering 71 ben
 | Capability | Status | Evidence |
 |-----------|--------|----------|
 | Stable object identity | `[IMPLEMENTED]` | `stableId` / `surfaceId` / `storyId` on implemented entities |
-| Typed relationships | `[PARTIAL]` | 103 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; a smaller residual set of deferred relationships remains |
+| Typed relationships | `[PARTIAL]` | 111 SDN `@Relationship` declarations plus 1 Cypher-only edge exist; a smaller residual set of deferred relationships remains |
 | Object status tracking | `[IMPLEMENTED — reshape required]` | 3-enum model exists; target is universal 10-value `status` |
 | Selective readiness flags | `[PLANNED]` | No readiness flags in current entities |
-| Source traceability | `[IMPLEMENTED]` | `SourceReference` entity exists; `HAS_SOURCE` edges on `UserStory`, `Screen`, `Bug` |
-| Cross-artifact search | `[PARTIAL]` | REST endpoints exist per entity; no graph-wide search |
+| Source traceability | `[IMPLEMENTED]` | `SourceReference` entity exists, and `HAS_SOURCE` is now backfilled across the current implementation-driving benchmark slice (`UserStory`, `Screen`, `Journey`, `Interaction`, `Touchpoint`, `ApiContract`, `DataEntity`) |
+| Cross-artifact search | `[IMPLEMENTED]` | `/api/v1/graph/objects` now provides graph-wide typed object search across the full 71 first-entry graph types in the benchmarkable taxonomy, including journey-step, import-snapshot, evidence-record, enum, event, locale, and translation-key along with the previously closed delivery, governance, architecture, traceability, verification, and process families. Dedicated traversal entry points exist for those same families, and `/api/v1/graph/benchmark` now returns the full 71-node benchmark aggregation. |
 
 ### 1.3 Persona and journey exploration
 
@@ -59,13 +59,13 @@ Selecting a persona should reveal journeys, steps, screens, stories, and related
 | `Persona` | T1 | `[IMPLEMENTED]` |
 | `Journey` | T1 | `[IMPLEMENTED]` |
 | `JourneyStep` | T1 | `[IMPLEMENTED]` |
-| `Topic` | T1 | `[PLANNED]` |
+| `Topic` | T1 | `[IMPLEMENTED]` |
 | `Screen` | T1 | `[IMPLEMENTED]` |
 | `UserStory` | T1 | `[IMPLEMENTED]` |
 
 **Key traversal**: `Persona <- PERFORMED_BY_PERSONA <- Journey -> HAS_STEP -> JourneyStep -> USES_SCREEN -> Screen`
 
-**Current gap**: the core `Journey -> Persona -> JourneyStep -> Screen/Touchpoint` traversal is now present in the graph, but dedicated Persona exploration views are still missing.
+**Current gap**: the core `Journey -> Persona -> JourneyStep -> Screen/Touchpoint` traversal is now present in the graph, backend traversal payloads exist via `/api/v1/graph/personas`, `/api/v1/graph/personas/{personaId}`, and `/api/v1/graph/journeys/{journeyId}`, `Topic` is now a first-class graph object, and the Angular Journeys tab now exposes a persona-first journey explorer. Remaining scope is topic/channel filtering and broader explorer polish, not first-entry coverage.
 
 ### 1.4 Screen and interaction exploration
 
@@ -81,10 +81,10 @@ Selecting a screen should reveal its route, states, interactions, messages, vali
 | `Transition` | T1 | `[IMPLEMENTED]` |
 | `Message` | T1 | `[IMPLEMENTED]` |
 | `ValidationRule` | T1 | `[IMPLEMENTED]` |
-| `Finding` | T1 | `[PLANNED]` |
+| `Finding` | T1 | `[IMPLEMENTED]` |
 | `ErrorCode` | T2 | `[IMPLEMENTED]` |
 
-**Current gap**: Screen now has canonical `DELIVERS` and `HAS_INTERACTION` graph traversal support, but roles still resolve through a compatibility lookup layer and the broader exploration views remain incomplete.
+**Current gap**: Screen now has canonical `DELIVERS`, `ACCESSIBLE_BY_ROLE`, and `HAS_INTERACTION` graph traversal support, and the detail surface resolves story and role summaries directly from those graph edges. The remaining gap is broader exploration/filter coverage plus eventual retirement of compatibility-only ID arrays where they no longer add value.
 
 ### 1.5 Story and delivery exploration
 
@@ -95,11 +95,13 @@ Selecting a story, bug, finding, or API should show the connected screens, journ
 | Object | Tier | Status |
 |--------|------|--------|
 | `UserStory` | T1 | `[IMPLEMENTED]` |
-| `Bug` | T1 | `[PLANNED]` |
-| `Finding` | T1 | `[PLANNED]` |
+| `Bug` | T1 | `[IMPLEMENTED]` |
+| `Finding` | T1 | `[IMPLEMENTED]` |
 | `ApiContract` | T1 | `[IMPLEMENTED]` |
 | `DataEntity` | T1 | `[IMPLEMENTED]` |
 | `Rule` | T1 | `[IMPLEMENTED]` |
+
+**Current gap**: delivery, traceability, benchmark, channel, business-architecture, application-architecture, data-architecture, and infrastructure-architecture backend slices now exist via `/api/v1/delivery/stories`, `/api/v1/graph/objects/{type}/{id}/relations`, `/api/v1/graph/traceability/stories/{storyId}`, `/api/v1/graph/benchmark`, `/api/v1/graph/channels/{channelCode}`, `/api/v1/graph/architecture/business/capabilities/{capabilityId}`, `/api/v1/graph/architecture/applications/{applicationId}`, `/api/v1/graph/architecture/data/business-objects/{objectId}`, and `/api/v1/graph/architecture/infrastructure/deployments/{deploymentId}`. The Angular UI now exposes delivery, traceability, benchmark, verification, persona-first journey exploration, channel, and business/application/data/infrastructure architecture surfaces. Remaining scope is broader traceability breadth beyond the current seeded stories plus topic/filter refinement.
 
 ### 1.6 Readiness and governance
 
@@ -109,9 +111,9 @@ The system should separate universal object `status` from implementation-facing 
 
 | Capability | Status |
 |-----------|--------|
-| Missing-link detection | `[PLANNED]` — requires completenessScore engine |
-| Unresolved-findings view | `[PLANNED]` — requires Finding entity |
-| Readiness gate evaluation | `[PLANNED]` — requires readiness flags on entities |
+| Missing-link detection | `[PARTIAL]` — screen and story diagnostics now expose violated MCR rules and missing artifacts via `/api/v1/readiness/*`; broader graph coverage is still pending |
+| Unresolved-findings view | `[PARTIAL]` — Finding entity and traversal now exist; unresolved-only filtering remains pending |
+| Readiness gate evaluation | `[PARTIAL]` — screen and story readiness gates are computed on demand via `/api/v1/readiness/screens/{surfaceId}` and `/api/v1/readiness/stories/{storyId}`; the current seeded delivery slice now resolves complete packs for `US-AI-078`, `US-AI-090`, `US-AI-137`, `US-AI-139`, and `US-SCREEN-COVERAGE-001`, while `US-AUTH-001` remains intentionally incomplete to surface missing-artifact diagnostics, and entity-level readiness persistence is still pending |
 | Governance-state reporting | `[PLANNED]` — requires status migration |
 
 ### 1.7 External delivery-tool alignment
@@ -122,9 +124,9 @@ The system should benchmark and link to external tool objects from Azure DevOps 
 
 | Capability | Status |
 |-----------|--------|
-| External artifact reference mapping | `[PARTIAL]` — `ExternalArtifact` exists for story/bug traceability; hierarchy and dependency sync are still planned |
-| Work-item and issue-link synchronization | `[PLANNED]` |
-| Field parity audit | `[PLANNED]` |
+| External artifact reference mapping | `[IMPLEMENTED]` — `ExternalArtifact` now represents stories, bugs, features, epics, tasks, findings, and API contracts with source-system metadata, hierarchy, dependency, duplicate, and related-link semantics |
+| Work-item and issue-link synchronization | `[IMPLEMENTED — partial]` — `/api/v1/graph/external-artifacts` and `/api/v1/graph/external-artifacts/{externalId}` now expose the live external hierarchy, sync state, custom-field detail, and represented-object traversal used by Delivery View, `/api/v1/external-sync/artifacts` provides the generic dry-run/apply sync path, `/api/v1/external-sync/azure-devops/work-items` plus `/api/v1/external-sync/jira/issues` now provide source-specific adapter request surfaces and mappers, `/api/v1/external-sync/jobs` now adds a stored orchestration envelope plus recent sync history with optional `sourceSystem` filtering for poll/webhook/manual sync jobs, `POST /api/v1/external-sync/jobs/poll/{sourceSystem}` now provides a config-aware polling trigger with persisted results, and Verification View now exposes live source status, source-filtered sync history, a manual poll action, and adapter-readiness fields for webhook secret, scope, and query-filter coverage; broader remote source coverage is still pending |
+| Field parity audit | `[IMPLEMENTED — partial]` — `/api/v1/graph/external-artifacts/parity-audit` now reports live field coverage, weakest fields by source system, and relationship-link coverage, `ExternalArtifact` now carries a `customFields` bag surfaced in Delivery View, and selected external fields now normalize onto represented story/bug/feature/task/finding/api-contract/epic primary nodes; broader represented-type coverage is still pending |
 | Attribute superset design | `[DOCUMENTED]` — specified in `azure-jira-benchmark.md` |
 
 ### 1.8 Design verification and anti-drift testing
@@ -136,10 +138,10 @@ The platform should include strict design verification so rendered UI stays alig
 | Capability | Status |
 |-----------|--------|
 | Semantic end-to-end verification | `[IMPLEMENTED]` — Playwright Layers 1-2 smoke and semantic suites are running against the live backend |
-| Visual baseline comparison | `[PLANNED]` |
-| Token-compliance verification | `[PLANNED]` — requires B1 (token import) first |
-| Localization and RTL verification | `[PLANNED]` — requires B2 (i18n) first |
-| Graph-to-UI drift detection | `[PLANNED]` |
+| Visual baseline comparison | `[IMPLEMENTED — partial]` — Playwright snapshot baselines now exist for the shell and high-signal detail panels in desktop/mobile Chromium; wider breakpoint/locale coverage is still pending |
+| Token-compliance verification | `[IMPLEMENTED — partial]` — `npm run check:design-tokens` now audits 16 Design Hub shell/detail files for hardcoded color drift and required EMSIST root tokens; broader workspace coverage is still pending |
+| Localization and RTL verification | `[IMPLEMENTED — partial]` — the Angular shell now exposes a persisted locale switch with translated shell labels plus root `lang` / `dir` switching, and `tests/i18n/locale-direction.spec.ts` verifies Arabic/RTL behavior for the current shell surfaces; broader translation coverage is still pending |
+| Graph-to-UI drift detection | `[IMPLEMENTED — partial]` — `tests/drift/graph-ui-drift.spec.ts` now checks screen detail parity, delivery aggregate counts, and traceability/readiness parity against the live backend; broader view coverage is still pending |
 
 ### 1.9 Code targeting (agent-ready extension)
 
@@ -148,7 +150,7 @@ Agents must be able to resolve from a UserStory to the exact code files and test
 **Objects:** CodeAsset (T1), ImportSnapshot (T2)
 **Edges:** HAS_CODE_ASSET, LOCATED_IN, ASSET_FOR_SCREEN, ASSET_FOR_API, ASSET_FOR_ENTITY, ASSET_FOR_RULE, IMPORTED_BY, IMPLEMENTS→CodeAsset
 **Enables:** Agent can resolve from UserStory to exact code files and test files
-**Status:** `[IMPLEMENTED]` — CodeAsset and ImportSnapshot exist in code; broader story-to-pack resolution is still maturing
+**Status:** `[IMPLEMENTED — partial]` — CodeAsset and ImportSnapshot exist in code, and `/api/v1/stories/{storyId}/agent-pack` now exports a graph-backed story implementation pack with readiness checks, application bootstrap defaults, component runtime metadata, code targets, tests, conventions, quality constraints, and agent policies; broader story-to-pack resolution is still maturing
 
 ### 1.10 Convention compliance (agent-ready extension)
 
@@ -207,12 +209,12 @@ graph TD
 
 | Phase | Scope | Benchmark Status | Key Artifacts |
 |-------|-------|-----------------|---------------|
-| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 65 `@Node` entities in code, 103 SDN edges + 1 Cypher edge, 363 tests | Screen, ScreenState, Transition, Journey, JourneyStep, UserStory, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, ConfirmationDialog, ErrorCode, Gap, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset, AcceptanceCriterion, Rule, ValidationRule, Message, ApiContract, RequestSchema, ResponseSchema, ErrorContract, DataEntity, DataField, TestCase, BusinessDomain, BusinessCapability, BusinessProcess, ProcessActivity, ProcessGateway, ProcessEvent, Task, SourceReference, ExternalArtifact, Bug, plus the previously delivered governance and architecture stubs |
-| 2. Exploration | Persona, journey, screen, and story traversal views | `[PARTIAL]` — Persona/role/channel nodes and screen-flow graph objects now exist; Topic and dedicated exploration views still missing | Persona View, Journey View, Screen Flow View |
-| 3. Delivery intelligence | Findings, bugs, readiness gaps, API and data dependencies | `[PLANNED]` — requires Bug, Finding, ApiContract, DataEntity | Delivery View, completenessScore engine |
-| 4. External alignment | Azure DevOps and Jira mapping, sync objects, benchmark reporting | `[PARTIAL]` — ExternalArtifact exists for story/bug representation; sync hierarchy and dependency semantics are still missing | Benchmark View |
-| 5. Verification | Playwright-based design testing, visual baselines, and anti-drift gates | `[PARTIAL]` — Layers 1-2 are implemented; visual, token, and i18n layers still require B1+B2 completion | Verification View |
-| 6. Automation | Agent-facing query patterns, export contracts, generation workflows | `[PLANNED]` | Agent API, export contracts |
+| 1. Foundation | Graph object catalog, source references, status/readiness rules, baseline screen and story graph | `[IMPLEMENTED]` — 74 `@Node` entities in code, 111 SDN edges + 1 Cypher edge, 489 tests | Screen, ScreenState, Transition, Topic, EdgeCase, ExceptionCase, Journey, JourneyStep, UserStory, Integration, Interaction, Touchpoint, Persona, BusinessRole, ValidationRole, Channel, Permission, ConfirmationDialog, ErrorCode, Gap, OpenQuestion, Assessment, RequirementPortfolio, ProjectInstance, Milestone, Application, ApplicationComponent, CodeAsset, AcceptanceCriterion, Rule, ValidationRule, Message, ApiContract, RequestSchema, ResponseSchema, ErrorContract, DataEntity, DataField, TestCase, BusinessDomain, BusinessCapability, BusinessProcess, ProcessActivity, ProcessGateway, ProcessEvent, Task, SourceReference, ExternalArtifact, Bug, ImportSnapshot, EvidenceRecord, Enum, Event, Locale, TranslationKey, plus the previously delivered governance and architecture stubs |
+| 2. Exploration | Persona, journey, screen, story, and channel traversal views | `[PARTIAL]` — Persona/role/channel nodes and screen-flow graph objects now exist, the Angular Journeys tab now exposes a persona-first journey explorer, and the Angular Channels tab now exposes graph-backed channel traversal; Topic filtering and broader exploration polish are still pending | Persona View, Journey View, Channel View, Screen Flow View |
+| 3. Delivery intelligence | Findings, bugs, readiness gaps, API and data dependencies | `[PARTIAL]` — delivery aggregate queries now expose stories with linked screens, APIs, bugs, external artifacts, and readiness diagnostics; dedicated findings coverage and full UI breadth are still pending | Delivery View, completenessScore engine |
+| 4. External alignment | Azure DevOps and Jira mapping, sync objects, benchmark reporting | `[PARTIAL]` — ExternalArtifact now carries workflow/ownership metadata plus a `customFields` bag and hierarchy/dependency/duplicate/related traversal via `/api/v1/graph/external-artifacts`, `/api/v1/graph/external-artifacts/parity-audit` exposes live field-coverage evidence in Verification View, `/api/v1/external-sync/artifacts` provides a generic sync path with custom-field persistence, source-specific Azure DevOps/Jira sync endpoints now exist, `/api/v1/external-sync/jobs` now provides a stored orchestration envelope for poll/webhook/manual syncs, `POST /api/v1/external-sync/jobs/poll/{sourceSystem}` now provides a persisted config-aware polling trigger, selected external fields now normalize onto represented story/bug/feature/task/finding/api-contract/epic primary nodes, and the live external epic slice now traverses to both the internal epic and feature it represents; full 71-node parity and broader represented-type coverage remain missing | Benchmark View, Delivery View, Verification View |
+| 5. Verification | Playwright-based design testing, visual baselines, and anti-drift gates | `[PARTIAL]` — semantic, visual, token, localization/RTL shell coverage, Arabic shell baselines, and initial graph-to-UI drift layers are implemented; broader coverage is still pending | Verification View |
+| 6. Automation | Agent-facing query patterns, export contracts, generation workflows | `[PARTIAL]` — `/api/v1/stories/{storyId}/agent-pack` now exposes a graph-backed export contract for seeded story implementation packs, including application bootstrap context and agent policies; broader generation workflows remain open | Agent API, export contracts |
 
 ```mermaid
 gantt
@@ -387,16 +389,19 @@ ORDER BY p.name
 **Required projections**:
 
 ```
-GET /api/personas/{personaId}
-→ PersonaResponse {
-    personaId, name, description, roleType, status,
-    journeys: JourneyResponse[],
-    roles: BusinessRole[],
-    channelReach: Channel[],
+GET /api/v1/graph/personas/{personaId}
+→ PersonaTraversalResponse {
+    personaId, name, summary, status,
+    roleKeys: string[],
+    journeys: JourneySummary[],
+    roles: GraphNodeReference[],
+    channelReach: GraphNodeReference[],
     screenCount: number,
     storyCount: number
   }
 ```
+
+**Current implementation status**: `[IMPLEMENTED — partial]` — the Angular Journeys tab now consumes `/api/v1/graph/personas`, `/api/v1/graph/personas/{personaId}`, and `/api/v1/graph/journeys/{journeyId}` to provide a persona-first entry surface with subordinate journey selection, linked role/channel coverage, and live step traversal. Topic filtering and broader explorer polish are still pending.
 
 **Anti-drift test expectations** (Playwright — `tests/graph/persona-view.spec.ts`):
 
@@ -457,21 +462,22 @@ ORDER BY j.title
 **Required projections**:
 
 ```
-GET /api/journeys/{journeyId}
-→ JourneyResponse {
-    journeyId, title, description, module, status, readiness?,
-    persona: { personaId, name }?,    // resolved from edge
-    steps: JourneyStepResponse[],     // ordered by stepOrder
-    topic: Topic?,
-    completenessScore?: number
+GET /api/v1/graph/journeys/{journeyId}
+→ JourneyTraversalResponse {
+    journeyId, title, goalStatement, status,
+    persona: GraphNodeReference?,
+    steps: StepSummary[]              // ordered by orderIndex
   }
 
-JourneyStepResponse {
-    stepId, stepOrder, action, expectedOutcome, channel?,
-    screen: { surfaceId, title }?,    // resolved from USES_SCREEN edge
-    touchpoint: TouchpointResponse?,  // resolved from STARTS_AT_TOUCHPOINT edge
+StepSummary {
+    stepId, label, orderIndex,
+    screen: GraphNodeReference?,
+    touchpoint: GraphNodeReference?,
+    interaction: GraphNodeReference?
   }
 ```
+
+**Current implementation status**: `[PARTIAL]` — the Angular Journeys tab now exposes a graph-backed journey explorer using `/api/v1/graph/journeys/{journeyId}` with ordered steps plus linked screen, touchpoint, and interaction context. Topic grouping and a dedicated journey-first landing surface are still pending.
 
 **Anti-drift test expectations** (Playwright — `tests/graph/journey-view.spec.ts`):
 
@@ -486,6 +492,8 @@ JourneyStepResponse {
 #### 4.2.4 Channel View
 
 **Purpose**: Explore channel reach, associated touchpoints, and reachable screens. Surface coverage gaps where a channel has touchpoints but no linked screens.
+
+**Current status**: `[IMPLEMENTED — partial]` — the Angular Channels tab now consumes `/api/v1/graph/channels` and `/api/v1/graph/channels/{channelCode}` to render channel summaries, touchpoints, reachable screens, persona reach, and coverage gaps. Dedicated landing surfaces and channel-type filters are still pending.
 
 **Primary axis**: Channel (T2)
 
@@ -666,24 +674,35 @@ ORDER BY us.status, us.priority
 | APIs | `ApiContract` nodes reachable through screen interactions |
 | Readiness | Readiness flags with dependency chain visualization |
 | Gaps | Missing artifacts detected by completenessScore engine |
-| Bugs | `Bug` nodes linked via `AFFECTS_STORY` |
+| Bugs | `Bug` nodes reachable from linked screens via `AFFECTS_SCREEN` |
 | External | `ExternalArtifact` nodes linked via `REPRESENTS` |
 | completenessScore | Severity-weighted diagnostic score |
 
 **Required projections**:
 
 ```
-GET /api/stories/{storyId}
-→ UserStoryResponse {
-    storyId, title, description, status, priority, module, readiness?,
-    feature: { featureId, name }?,
-    screens: { surfaceId, title }[],
-    apis: { contractId, method, path }[],
-    bugs: BugResponse[],
+GET /api/v1/delivery/stories
+→ DeliveryStoryResponse[]
+
+GET /api/v1/delivery/stories/{storyId}
+→ DeliveryStoryResponse {
+    storyId, label, module, domain, storyNumber, status, ready,
+    feature?: { featureId, title, status },
+    screens: { surfaceId, label, routePath, status }[],
+    apis: { contractId, method, path, status }[],
+    bugs: { bugId, externalKey, summary, severity, status }[],
     findings: FindingResponse[],
-    externalArtifacts: ExternalArtifactResponse[],
-    completenessScore?: number,
-    missingArtifacts?: { type, rule, severity }[]
+    gaps: { gapId, gapType, severity, description, status }[],
+    externalArtifacts: { externalId, system, externalType, key, url, syncStatus, status }[],
+    diagnostics: {
+      readiness,
+      completenessScore,
+      completenessLevel,
+      missingBlockingRules,
+      missingOptionalRules,
+      missingArtifacts,
+      advisoryRulesViolated
+    }
   }
 ```
 
@@ -732,6 +751,8 @@ ORDER BY bo.name, f.name, us.title
 
 **Required projections**: Spine query endpoint returning hierarchical objective → feature → story → screen → API tree.
 
+**Current implementation status**: `[PARTIAL]` — `/api/v1/graph/traceability/stories/{storyId}` now returns the live story → screen → interaction → API spine plus upstream `BusinessObjective` / `RequirementPortfolio` / `Epic` / `Feature` segments. The Angular detail panel now exposes a dedicated Traceability tab on top of that payload, and the current six-story seeded delivery slice resolves those segments live. Remaining scope is broader entry/query breadth, not the initial traceability surface.
+
 **Anti-drift test expectations**: At least one test verifying the full spine traversal renders from objective through API.
 
 ---
@@ -755,6 +776,8 @@ ORDER BY bo.name, f.name, us.title
 **Selection behavior**: Clicking an artifact type shows its per-dimension scores.
 
 **Detail panel behavior**: Shows attribute depth (populated/target), relationship coverage (edge/string/planned), queryability test results, and gap recommendations.
+
+**Current implementation status**: `[IMPLEMENTED]` — `/api/v1/graph/benchmark` now returns live benchmark aggregation for the full 71-node benchmarkable taxonomy, including attribute depth, relationship coverage, source traceability, queryability, and overall scores. The live slice measures `100.0` overall with `attributeDepth 100.0`, `relationshipCoverage 100.0`, `sourceTraceability 100.0`, and `queryability 100.0` after the catalog-level source backfill, dedicated artifact traversal endpoints, metadata-family traversal endpoints, API-contract schema backfill, persona-usage backfill, journey persona normalization, component code-asset coverage, explicit auth-task implementation coverage, data-quality coverage, registry-breadth expansion, external-artifact hierarchy normalization, BPMN/data-flow family expansion, and the final journey-step/import-snapshot/evidence-record/enum/event/locale/translation-key benchmark closures. The Angular detail panel exposes a dedicated Benchmark tab for type drilldown and remediation visibility.
 
 **Required projections**: Benchmark aggregation endpoint returning per-type and per-dimension scores.
 
@@ -784,6 +807,8 @@ ORDER BY bo.name, f.name, us.title
 
 **Required projections**: Test execution report endpoint or static report file.
 
+**Current implementation status**: `[PARTIAL]` — the Angular detail panel now exposes a Verification tab that combines a checked-in verification snapshot (`build`, `e2e`, `token audit`) with live story/screen readiness diagnostics from `/api/v1/readiness/*` and live external parity evidence from `/api/v1/graph/external-artifacts/parity-audit`. Visual baselines, Arabic shell baselines, graph-to-UI drift coverage, and initial localization/RTL shell evidence now exist in Playwright, while broader translation coverage and drift write-back are still pending.
+
 **Anti-drift test expectations**: At least one test verifying the verification view renders test results correctly.
 
 ---
@@ -799,6 +824,8 @@ Architecture views provide enterprise context lenses over the same graph. They s
 #### 4.4.1 Business Architecture View
 
 **Purpose**: Explore business capabilities, processes, organizational ownership, and the services/applications that support them.
+
+**Current status**: `[IMPLEMENTED — partial]` — the Angular Architecture tab now consumes `/api/v1/graph/architecture/business/capabilities` and `/api/v1/graph/architecture/business/capabilities/{capabilityId}` to render capability summaries plus linked processes, applications, realizing features, and owning organizations. The business slice is live; the remaining open architecture scope is now infrastructure depth rather than business/application/data explorer availability.
 
 **Primary axis**: BusinessCapability → BusinessProcess → Organization → Application (BusinessService is optional — included only if service catalog layer is absorbed)
 
@@ -872,6 +899,8 @@ GET /api/capabilities/{capabilityId}
 #### 4.4.2 Application Architecture View
 
 **Purpose**: Explore applications, their components, exposed APIs, supported screens, and inter-application dependencies.
+
+**Current status**: `[IMPLEMENTED — partial]` — the Angular Architecture tab now consumes `/api/v1/graph/architecture/applications` and `/api/v1/graph/architecture/applications/{applicationId}` to render application summaries plus linked components, exposed APIs, supported screens, realized features, owners, and cross-application dependencies. Deployment linkage is now closed through the Infrastructure Architecture View.
 
 **Primary axis**: Application → ApplicationComponent → ApiContract / Screen / UserStory
 
@@ -949,6 +978,8 @@ GET /api/applications/{applicationId}
 
 **Purpose**: Explore business-level data concepts, information flows between applications, and their mapping to engineering-level data entities and API contracts.
 
+**Current status**: `[IMPLEMENTED — partial]` — the Angular Architecture tab now consumes `/api/v1/graph/architecture/data/business-objects` and `/api/v1/graph/architecture/data/business-objects/{objectId}` to render business-object summaries plus mapped entities, information flows, exposed APIs, reachable screens, and child business-object structure. Deployment topology is now closed through the Infrastructure Architecture View.
+
 **Primary axis**: BusinessObject → InformationFlow → DataEntity → DataField → ApiContract
 
 **Entry node**: `BusinessObject`
@@ -1021,6 +1052,8 @@ GET /api/business-objects/{objectId}
 #### 4.4.4 Infrastructure Architecture View
 
 **Purpose**: Explore deployment topology — which components are deployed where, on what infrastructure, and how they relate to applications and screens.
+
+**Current status**: `[IMPLEMENTED — partial]` — the Angular Architecture tab now consumes `/api/v1/graph/architecture/infrastructure/deployments` and `/api/v1/graph/architecture/infrastructure/deployments/{deploymentId}` to render deployment summaries plus hosted components, infrastructure nodes, deployed applications, and the current empty-state for optional deployment elements.
 
 **Primary axis**: Application / ApplicationComponent → Deployment → InfrastructureNode (DeploymentElement is optional — included only if fine-grained deployment topology is absorbed)
 

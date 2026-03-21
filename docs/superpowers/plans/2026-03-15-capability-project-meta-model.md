@@ -6,7 +6,7 @@
 
 **Architecture:** New @Node entities follow the existing Lombok + Spring Data Neo4j pattern (manual String @Id, Status enum, @Relationship for edges). The plan is split into 3 phases: (1) foundation entities with no cross-references, (2) container entities that reference phase 1, (3) wiring edges onto existing entities. Each phase produces independently testable, committable code.
 
-**Tech Stack:** Java 21, Spring Boot 3.4.1, Spring Data Neo4j, Lombok, JUnit 5 + Mockito
+**Tech Stack:** Java 23, Spring Boot 3.4.1, Spring Data Neo4j, Lombok, JUnit 5 + Mockito
 
 **Baseline:** 75 nodes / 106 edge types / 71 benchmarkable / 97 tests
 

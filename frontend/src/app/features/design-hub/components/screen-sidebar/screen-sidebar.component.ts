@@ -1,44 +1,57 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectButton } from 'primeng/selectbutton';
-import { Checkbox } from 'primeng/checkbox';
-import { InputText } from 'primeng/inputtext';
-import { IconField } from 'primeng/iconfield';
-import { InputIcon } from 'primeng/inputicon';
 import { DesignHubStateService } from '../../services/design-hub-state.service';
 import { DisplayOptions } from '../../../../models';
+import { LocaleService } from '../../../../core/i18n/locale.service';
 
 @Component({
   selector: 'app-screen-sidebar',
   standalone: true,
-  imports: [FormsModule, SelectButton, Checkbox, InputText, IconField, InputIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="sidebar" data-testid="sidebar-root">
       <!-- Stats summary -->
       <div class="sidebar__stats" data-testid="stats-summary">
-        <h3 class="sidebar__title">Design Hub</h3>
+        <div class="sidebar__header">
+          <div>
+            <div class="sidebar__locale-label">{{ locale.t('locale.label') }}</div>
+            <h3 class="sidebar__title" data-testid="sidebar-title">{{ locale.t('sidebar.title') }}</h3>
+          </div>
+          <div class="sidebar__locale-switch" data-testid="locale-switch">
+            @for (option of locale.localeOptions; track option.value) {
+              <button
+                type="button"
+                class="sidebar__locale-button"
+                [class.sidebar__locale-button--active]="locale.isActive(option.value)"
+                [attr.aria-pressed]="locale.isActive(option.value)"
+                [attr.data-testid]="'locale-option-' + option.value"
+                (click)="locale.setLocale(option.value)"
+              >
+                {{ locale.t(option.labelKey) }}
+              </button>
+            }
+          </div>
+        </div>
         <div class="sidebar__stat-row">
-          <span class="sidebar__stat-label">Screens</span>
+          <span class="sidebar__stat-label">{{ locale.t('sidebar.stats.screens') }}</span>
           <span class="sidebar__stat-value" data-testid="stat-total">{{ stats().totalScreens }}</span>
         </div>
         <div class="sidebar__stat-row">
           <span class="sidebar__stat-dot sidebar__stat-dot--complete"></span>
-          <span class="sidebar__stat-label">Complete</span>
+          <span class="sidebar__stat-label">{{ locale.t('sidebar.stats.complete') }}</span>
           <span class="sidebar__stat-value" data-testid="stat-complete">{{ stats().completeCount }}</span>
         </div>
         <div class="sidebar__stat-row">
           <span class="sidebar__stat-dot sidebar__stat-dot--specified"></span>
-          <span class="sidebar__stat-label">Specified</span>
+          <span class="sidebar__stat-label">{{ locale.t('sidebar.stats.specified') }}</span>
           <span class="sidebar__stat-value" data-testid="stat-specified">{{ stats().specifiedCount }}</span>
         </div>
         <div class="sidebar__stat-row">
           <span class="sidebar__stat-dot sidebar__stat-dot--not-started"></span>
-          <span class="sidebar__stat-label">Not Started</span>
+          <span class="sidebar__stat-label">{{ locale.t('sidebar.stats.notStarted') }}</span>
           <span class="sidebar__stat-value" data-testid="stat-not-started">{{ stats().notStartedCount }}</span>
         </div>
         <div class="sidebar__stat-row">
-          <span class="sidebar__stat-label">Gaps</span>
+          <span class="sidebar__stat-label">{{ locale.t('sidebar.stats.gaps') }}</span>
           <span class="sidebar__stat-value sidebar__stat-value--gap" data-testid="stat-gaps">{{ stats().totalGaps }}</span>
         </div>
         <div class="sidebar__coverage" data-testid="stat-coverage">
@@ -48,77 +61,85 @@ import { DisplayOptions } from '../../../../models';
               [style.width.%]="stats().coveragePercent"
             ></div>
           </div>
-          <span class="sidebar__coverage-label">{{ stats().coveragePercent }}% coverage</span>
+          <span class="sidebar__coverage-label">{{ locale.format('sidebar.stats.coverage', { percent: stats().coveragePercent }) }}</span>
         </div>
       </div>
 
       <!-- Module filter -->
       <div class="sidebar__section" data-testid="module-filter">
-        <h4 class="sidebar__section-title">Module</h4>
-        <p-selectbutton
-          [options]="moduleButtonOptions()"
-          [ngModel]="state.selectedModule()"
-          (ngModelChange)="state.setModuleFilter($event)"
-          [allowEmpty]="false"
-          optionLabel="label"
-          optionValue="value"
-          size="small"
-          data-testid="module-select"
-        />
+        <h4 class="sidebar__section-title">{{ locale.t('sidebar.section.module') }}</h4>
+        <div class="sidebar__button-group" data-testid="module-select">
+          @for (option of moduleButtonOptions(); track option.value) {
+            <button
+              type="button"
+              class="sidebar__filter-button"
+              [class.sidebar__filter-button--active]="state.selectedModule() === option.value"
+              [attr.aria-pressed]="state.selectedModule() === option.value"
+              [attr.data-testid]="'module-option-' + option.value"
+              (click)="state.setModuleFilter(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
       </div>
 
       <!-- Status filter -->
       <div class="sidebar__section" data-testid="status-filter">
-        <h4 class="sidebar__section-title">Design Status</h4>
-        <p-selectbutton
-          [options]="statusOptions"
-          [ngModel]="state.selectedDesignStatus()"
-          (ngModelChange)="state.setDesignStatusFilter($event)"
-          [allowEmpty]="false"
-          optionLabel="label"
-          optionValue="value"
-          size="small"
-          data-testid="status-select"
-        />
+        <h4 class="sidebar__section-title">{{ locale.t('sidebar.section.status') }}</h4>
+        <div class="sidebar__button-group" data-testid="status-select">
+          @for (option of statusOptions(); track option.value) {
+            <button
+              type="button"
+              class="sidebar__filter-button"
+              [class.sidebar__filter-button--active]="state.selectedDesignStatus() === option.value"
+              [attr.aria-pressed]="state.selectedDesignStatus() === option.value"
+              [attr.data-testid]="'status-option-' + option.value"
+              (click)="state.setDesignStatusFilter(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
       </div>
 
       <!-- Search -->
       <div class="sidebar__section" data-testid="search-section">
-        <h4 class="sidebar__section-title">Search</h4>
-        <p-iconfield>
-          <p-inputicon styleClass="pi pi-search" />
+        <h4 class="sidebar__section-title">{{ locale.t('sidebar.section.search') }}</h4>
+        <label class="sidebar__search-field">
+          <span class="sidebar__search-icon" aria-hidden="true" data-testid="sidebar-search-icon">{{ locale.t('sidebar.search.icon') }}</span>
           <input
             type="text"
-            pInputText
-            placeholder="Search screens..."
-            [ngModel]="state.searchTerm()"
-            (ngModelChange)="state.searchTerm.set($event)"
+            [placeholder]="locale.t('sidebar.search.placeholder')"
+            [value]="state.searchTerm()"
+            (input)="state.searchTerm.set(($any($event.target)).value)"
             data-testid="search-input"
             class="sidebar__search-input"
           />
-        </p-iconfield>
+        </label>
       </div>
 
       <!-- Display options -->
       <div class="sidebar__section" data-testid="display-options">
-        <h4 class="sidebar__section-title">Display</h4>
-        @for (opt of displayOptionsList; track opt.key) {
-          <div class="sidebar__checkbox-row">
-            <p-checkbox
-              [binary]="true"
-              [ngModel]="state.displayOptions()[opt.key]"
-              (ngModelChange)="state.toggleDisplayOption(opt.key)"
-              [inputId]="opt.key"
+        <h4 class="sidebar__section-title">{{ locale.t('sidebar.section.display') }}</h4>
+        @for (opt of displayOptionsList(); track opt.key) {
+          <label class="sidebar__checkbox-row" [for]="opt.key">
+            <input
+              type="checkbox"
+              class="sidebar__checkbox-input"
+              [id]="opt.key"
+              [checked]="state.displayOptions()[opt.key]"
               [attr.data-testid]="'display-' + opt.key"
+              (change)="state.toggleDisplayOption(opt.key)"
             />
-            <label [for]="opt.key" class="sidebar__checkbox-label">{{ opt.label }}</label>
-          </div>
+            <span class="sidebar__checkbox-label">{{ opt.label }}</span>
+          </label>
         }
       </div>
 
       <!-- Screen list -->
       <div class="sidebar__section sidebar__screen-list" data-testid="screen-list">
-        <h4 class="sidebar__section-title">Screens ({{ state.filteredScreens().length }})</h4>
+        <h4 class="sidebar__section-title">{{ locale.format('sidebar.section.screens', { count: state.filteredScreens().length }) }}</h4>
         @for (screen of state.filteredScreens(); track screen.surfaceId) {
           <button
             class="sidebar__screen-item"
@@ -142,7 +163,7 @@ import { DisplayOptions } from '../../../../models';
             <span class="sidebar__screen-module" [attr.data-testid]="'screen-module-' + screen.surfaceId">{{ screen.module }}</span>
           </button>
         } @empty {
-          <p class="sidebar__empty" data-testid="screen-list-empty">No screens match filters</p>
+          <p class="sidebar__empty" data-testid="screen-list-empty">{{ locale.t('sidebar.empty.noScreens') }}</p>
         }
       </div>
     </div>
@@ -155,16 +176,65 @@ import { DisplayOptions } from '../../../../models';
       gap: var(--tp-space-4);
     }
 
+    .sidebar__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--tp-space-3);
+      margin-bottom: var(--tp-space-3);
+    }
+
+    .sidebar__locale-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--tp-text-muted);
+      margin-bottom: var(--tp-space-1);
+    }
+
     .sidebar__title {
       font-size: 1.25rem;
       font-weight: 700;
       color: var(--tp-primary-dark);
-      margin-bottom: var(--tp-space-3);
+      margin-bottom: 0;
     }
 
     .sidebar__stats {
       padding-bottom: var(--tp-space-4);
-      border-bottom: 1px solid rgba(152, 133, 97, 0.18);
+      border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 18%, transparent);
+    }
+
+    .sidebar__locale-switch {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: var(--tp-space-1);
+      max-width: 50%;
+    }
+
+    .sidebar__locale-button {
+      min-height: calc(var(--tp-touch-target-min-size) - 8px);
+      padding: 0.3rem 0.6rem;
+      border: 1px solid color-mix(in srgb, var(--tp-border) 28%, transparent);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--tp-white) 92%, transparent);
+      color: var(--tp-text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .sidebar__locale-button:hover {
+      border-color: color-mix(in srgb, var(--tp-primary) 28%, transparent);
+      color: var(--tp-text-dark);
+    }
+
+    .sidebar__locale-button--active {
+      border-color: color-mix(in srgb, var(--tp-primary) 36%, transparent);
+      background: var(--tp-primary-bg);
+      color: var(--tp-primary-dark);
     }
 
     .sidebar__stat-row {
@@ -205,7 +275,7 @@ import { DisplayOptions } from '../../../../models';
     .sidebar__coverage-bar {
       height: 6px;
       border-radius: 3px;
-      background: rgba(152, 133, 97, 0.15);
+      background: color-mix(in srgb, var(--tp-border) 15%, transparent);
       overflow: hidden;
     }
 
@@ -234,9 +304,77 @@ import { DisplayOptions } from '../../../../models';
       }
     }
 
+    .sidebar__screen-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar__button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--tp-space-2);
+    }
+
+    .sidebar__filter-button {
+      min-height: var(--tp-touch-target-min-size);
+      padding: 0.35rem 0.65rem;
+      border: 1px solid color-mix(in srgb, var(--tp-border) 28%, transparent);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--tp-white) 92%, transparent);
+      color: var(--tp-text-muted);
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .sidebar__filter-button:hover {
+      border-color: color-mix(in srgb, var(--tp-primary) 28%, transparent);
+      color: var(--tp-text-dark);
+    }
+
+    .sidebar__filter-button--active {
+      border-color: color-mix(in srgb, var(--tp-primary) 36%, transparent);
+      background: var(--tp-primary-bg);
+      color: var(--tp-primary-dark);
+    }
+
+    .sidebar__filter-button:focus-visible,
+    .sidebar__checkbox-input:focus-visible,
+    .sidebar__search-input:focus-visible {
+      outline: none;
+      box-shadow: var(--tp-focus-ring);
+    }
+
+    .sidebar__search-field {
+      position: relative;
+      display: block;
+    }
+
+    .sidebar__search-icon {
+      position: absolute;
+      inset-inline-start: var(--tp-space-3);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--tp-text-muted);
+      pointer-events: none;
+    }
+
     .sidebar__search-input {
       width: 100%;
-      font-size: 0.8rem;
+      min-height: var(--tp-touch-target-min-size);
+      padding-block: 0.7rem;
+      padding-inline-start: 4.7rem;
+      padding-inline-end: var(--tp-space-3);
+      border: 1px solid color-mix(in srgb, var(--tp-border) 24%, transparent);
+      border-radius: 0.9rem;
+      background: color-mix(in srgb, var(--tp-white) 94%, transparent);
+      color: var(--tp-text);
+      font-size: 0.82rem;
     }
 
     .sidebar__checkbox-row {
@@ -244,16 +382,19 @@ import { DisplayOptions } from '../../../../models';
       align-items: center;
       gap: var(--tp-space-2);
       padding: var(--tp-space-1) 0;
+      cursor: pointer;
+    }
+
+    .sidebar__checkbox-input {
+      width: 1rem;
+      height: 1rem;
+      margin: 0;
+      accent-color: var(--tp-primary);
     }
 
     .sidebar__checkbox-label {
       font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    .sidebar__screen-list {
-      flex: 1;
-      overflow-y: auto;
+      color: var(--tp-text);
     }
 
     .sidebar__screen-item {
@@ -266,17 +407,17 @@ import { DisplayOptions } from '../../../../models';
       border-radius: 0.72rem;
       background: transparent;
       cursor: pointer;
-      text-align: left;
+      text-align: start;
       transition: background 0.15s ease;
       font-family: inherit;
 
       &:hover {
-        background: rgba(66, 129, 119, 0.17);
+        background: color-mix(in srgb, var(--tp-primary) 17%, transparent);
       }
 
       &--selected {
-        background: rgba(66, 129, 119, 0.12);
-        box-shadow: inset 0 0 0 1px rgba(66, 129, 119, 0.25);
+        background: color-mix(in srgb, var(--tp-primary) 12%, transparent);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tp-primary) 25%, transparent);
       }
     }
 
@@ -328,44 +469,33 @@ import { DisplayOptions } from '../../../../models';
       padding: var(--tp-space-4);
       text-align: center;
     }
-
-    :host ::ng-deep .p-selectbutton {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2px;
-    }
-
-    :host ::ng-deep .p-selectbutton .p-togglebutton {
-      font-size: 0.72rem;
-      padding: 0.3rem 0.5rem;
-    }
-
-    :host ::ng-deep .p-iconfield {
-      width: 100%;
-    }
   `],
 })
 export class ScreenSidebarComponent {
   readonly state = inject(DesignHubStateService);
+  readonly locale = inject(LocaleService);
 
   readonly stats = this.state.computedStats;
 
-  readonly statusOptions: { label: string; value: string }[] = [
-    { label: 'All', value: 'all' },
-    { label: 'Complete', value: 'COMPLETE' },
-    { label: 'Specified', value: 'SPECIFIED' },
-    { label: 'Not Started', value: 'NOT_STARTED' },
-  ];
+  readonly statusOptions = computed(() => [
+    { label: this.locale.t('filters.all'), value: 'all' },
+    { label: this.locale.t('sidebar.stats.complete'), value: 'COMPLETE' },
+    { label: this.locale.t('sidebar.stats.specified'), value: 'SPECIFIED' },
+    { label: this.locale.t('sidebar.stats.notStarted'), value: 'NOT_STARTED' },
+  ]);
 
-  readonly displayOptionsList: { key: keyof DisplayOptions; label: string }[] = [
-    { key: 'showTransitions', label: 'Transitions' },
-    { key: 'showGaps', label: 'Gaps' },
-    { key: 'showErrorCodes', label: 'Error Codes' },
-    { key: 'showDialogs', label: 'Dialogs' },
-    { key: 'showEmptyStates', label: 'Empty States' },
-  ];
+  readonly displayOptionsList = computed<{ key: keyof DisplayOptions; label: string }[]>(() => [
+    { key: 'showTransitions', label: this.locale.t('display.transitions') },
+    { key: 'showGaps', label: this.locale.t('display.gaps') },
+    { key: 'showErrorCodes', label: this.locale.t('display.errorCodes') },
+    { key: 'showDialogs', label: this.locale.t('display.dialogs') },
+    { key: 'showEmptyStates', label: this.locale.t('display.emptyStates') },
+  ]);
 
   readonly moduleButtonOptions = computed(() =>
-    this.state.modules().map((m) => ({ label: m === 'all' ? 'All' : m, value: m }))
+    this.state.modules().map((moduleName) => ({
+      label: moduleName === 'all' ? this.locale.t('filters.all') : moduleName,
+      value: moduleName,
+    }))
   );
 }

@@ -29,6 +29,7 @@ public interface ScreenRepository extends Neo4jRepository<Screen, String> {
             OPTIONAL MATCH (s)-[transitionRel:TRANSITIONS_TO]->(t:Screen)
             OPTIONAL MATCH (story:UserStory)-[storyRel:DELIVERS]->(s)
             OPTIONAL MATCH (s)-[interactionRel:HAS_INTERACTION]->(interaction:Interaction)
+            OPTIONAL MATCH (s)-[roleRel:ACCESSIBLE_BY_ROLE]->(role:BusinessRole)
             RETURN s,
                    collect(DISTINCT gapRel),
                    collect(DISTINCT g),
@@ -39,7 +40,9 @@ public interface ScreenRepository extends Neo4jRepository<Screen, String> {
                    collect(DISTINCT storyRel),
                    collect(DISTINCT story),
                    collect(DISTINCT interactionRel),
-                   collect(DISTINCT interaction)
+                   collect(DISTINCT interaction),
+                   collect(DISTINCT roleRel),
+                   collect(DISTINCT role)
             """)
     Optional<Screen> findFullGraph(@Param("surfaceId") String surfaceId);
 
