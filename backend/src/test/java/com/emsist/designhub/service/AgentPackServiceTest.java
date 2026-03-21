@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.neo4j.core.Neo4jClient;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -226,7 +228,7 @@ class AgentPackServiceTest {
                 Map.entry("id", "POL-DH-AGENT-001"),
                 Map.entry("name", "Design Hub bounded automation policy"),
                 Map.entry("allowedRepos", List.of(".", "frontend")),
-                Map.entry("allowedCommands", List.of("npm run build", "npm run test:e2e")),
+                Map.entry("allowedCommands", List.of("npm run test:e2e", "npm run build")),
                 Map.entry("forbiddenCommands", List.of("git reset --hard")),
                 Map.entry("allowedEnvironments", List.of("LOCAL_DEV", "CI")),
                 Map.entry("secretScopes", List.of("neo4j", "jira")),
@@ -252,15 +254,14 @@ class AgentPackServiceTest {
                 Map.entry("status", "APPROVED")
         )));
 
-        when(readinessService.assessAgentReadiness("US-AI-090"))
-                .thenReturn(Map.of(
-                        "repoPath", true,
-                        "effectiveBuildCommand", true,
-                        "manifestPath", true,
-                        "codeAssetPresence", true,
-                        "testFileResolution", true,
-                        "entrypointPath", true
-                ));
+        Map<String, Boolean> readinessChecks = new LinkedHashMap<>();
+        readinessChecks.put("repoPath", true);
+        readinessChecks.put("effectiveBuildCommand", true);
+        readinessChecks.put("manifestPath", true);
+        readinessChecks.put("codeAssetPresence", true);
+        readinessChecks.put("testFileResolution", true);
+        readinessChecks.put("entrypointPath", true);
+        when(readinessService.assessAgentReadiness("US-AI-090")).thenReturn(readinessChecks);
 
         AgentPackExportResponse pack = packService.buildPack("US-AI-090").orElseThrow();
 
@@ -282,9 +283,21 @@ class AgentPackServiceTest {
         assertEquals(1, pack.testCases().size());
         assertEquals(1, pack.policies().size());
         assertEquals(Integer.valueOf(40), pack.policies().get(0).maxFilesTouched());
+        assertEquals(List.of("npm run build", "npm run test:e2e"), pack.policies().get(0).allowedCommands());
         assertEquals(1, pack.conventions().size());
         assertEquals(1, pack.qualityConstraints().size());
         assertTrue(pack.readinessChecks().get("repoPath"));
+        assertEquals(
+                List.of(
+                        "repoPath",
+                        "effectiveBuildCommand",
+                        "manifestPath",
+                        "codeAssetPresence",
+                        "testFileResolution",
+                        "entrypointPath"
+                ),
+                new ArrayList<>(pack.readinessChecks().keySet())
+        );
     }
 
     @Test
