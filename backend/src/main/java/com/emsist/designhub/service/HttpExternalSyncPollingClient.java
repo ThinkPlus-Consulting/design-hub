@@ -125,13 +125,31 @@ public class HttpExternalSyncPollingClient implements ExternalSyncPollingClient 
         String authHeader = switch (sourceSystem) {
             case "AZURE_DEVOPS" -> "Basic " + Base64.getEncoder()
                     .encodeToString((":" + token.trim()).getBytes(StandardCharsets.UTF_8));
-            case "JIRA" -> "Bearer " + token.trim();
+            case "JIRA" -> jiraAuthenticationHeader(sourceProperties, token.trim());
             default -> null;
         };
 
         if (authHeader != null) {
             requestBuilder.header("Authorization", authHeader);
         }
+    }
+
+    private String jiraAuthenticationHeader(
+            ExternalSyncProperties.SourceProperties sourceProperties,
+            String token
+    ) {
+        String baseUrl = sourceProperties.getBaseUrl();
+        String accountEmail = sourceProperties.getAccountEmail();
+        boolean directAtlassianHost = baseUrl != null
+                && !baseUrl.isBlank()
+                && (baseUrl.contains(".atlassian.net") || baseUrl.contains("api.atlassian.com"));
+
+        if (directAtlassianHost && accountEmail != null && !accountEmail.isBlank()) {
+            return "Basic " + Base64.getEncoder()
+                    .encodeToString((accountEmail.trim() + ":" + token).getBytes(StandardCharsets.UTF_8));
+        }
+
+        return "Bearer " + token;
     }
 
     private void applyConfiguredHeaders(

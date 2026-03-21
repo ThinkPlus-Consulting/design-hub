@@ -56,6 +56,7 @@ designhub:
       enabled: true
       base-url: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_BASE_URL:}
       project-key: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_PROJECT_KEY:}
+      account-email: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_ACCOUNT_EMAIL:}
       token: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_TOKEN:}
       poll-path: ${DESIGNHUB_EXTERNAL_SYNC_JIRA_POLL_PATH:}
       webhook:

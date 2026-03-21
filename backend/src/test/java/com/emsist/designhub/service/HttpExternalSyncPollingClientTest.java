@@ -56,6 +56,36 @@ class HttpExternalSyncPollingClientTest {
     }
 
     @Test
+    void shouldBuildDirectJiraCloudRequestWithBasicAuth() throws Exception {
+        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponse);
+        when(httpResponse.statusCode()).thenReturn(200);
+        when(httpResponse.body()).thenReturn("{\"issues\":[]}");
+
+        ExternalSyncProperties.SourceProperties sourceProperties = new ExternalSyncProperties.SourceProperties();
+        sourceProperties.setBaseUrl("https://thinkplus.atlassian.net");
+        sourceProperties.setPollPath("/rest/api/3/search/jql");
+        sourceProperties.setProjectKey("DPAA");
+        sourceProperties.setAccountEmail("info@thinkplus.ae");
+        sourceProperties.setToken("jira-cloud-token");
+        sourceProperties.getPolling().setJql("project = DPAA ORDER BY updated DESC");
+        sourceProperties.getPolling().setUpdatedSince("2026-03-18T00:00:00Z");
+
+        HttpExternalSyncPollingClient client = new HttpExternalSyncPollingClient(httpClient);
+
+        client.fetchPayload("JIRA", sourceProperties);
+
+        ArgumentCaptor<HttpRequest> requestCaptor = ArgumentCaptor.forClass(HttpRequest.class);
+        verify(httpClient).send(requestCaptor.capture(), any(HttpResponse.BodyHandler.class));
+        HttpRequest request = requestCaptor.getValue();
+
+        assertEquals(
+                "https://thinkplus.atlassian.net/rest/api/3/search/jql?projectKey=DPAA&jql=project+%3D+DPAA+ORDER+BY+updated+DESC&updatedSince=2026-03-18T00%3A00%3A00Z",
+                request.uri().toString()
+        );
+        assertTrue(request.headers().firstValue("Authorization").orElseThrow().startsWith("Basic "));
+    }
+
+    @Test
     void shouldBuildAzureDevOpsRequestWithScopeFiltersAndHeaders() throws Exception {
         when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponse);
         when(httpResponse.statusCode()).thenReturn(200);

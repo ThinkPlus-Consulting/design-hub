@@ -86,8 +86,13 @@ Use [`.env.external-sync.example`](/Users/mksulty/Claude/Projects/design-hub/.en
 
 - `DESIGNHUB_EXTERNAL_SYNC_JIRA_BASE_URL=https://thinkplus.atlassian.net`
 - `DESIGNHUB_EXTERNAL_SYNC_JIRA_PROJECT_KEY=DPAA`
+- `DESIGNHUB_EXTERNAL_SYNC_JIRA_ACCOUNT_EMAIL=info@thinkplus.ae`
 
-The remaining live-source blocker is not just authentication. The current polling client expects an adapter-style `poll-path` that accepts `projectKey` or `organization/project` plus `jql` or `wiql` and optional `updatedSince`, so a plain Jira board URL or Azure Portal home URL is not a complete polling configuration by itself.
+Jira now supports direct Jira Cloud polling when `base-url`, `account email`, `token`, and `poll-path` are set. The checked-in default is:
+
+- `DESIGNHUB_EXTERNAL_SYNC_JIRA_POLL_PATH=/rest/api/3/search/jql`
+
+Azure DevOps is still different. The current Azure polling client still expects an adapter-style `poll-path` that accepts `organization/project` plus `wiql` and optional `updatedSince`, so a plain Azure Portal home URL is not a complete polling configuration by itself.
 
 ## Blocker Helpers
 
