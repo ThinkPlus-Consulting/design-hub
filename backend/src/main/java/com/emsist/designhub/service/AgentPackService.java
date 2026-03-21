@@ -11,6 +11,35 @@ import java.util.*;
 public class AgentPackService {
 
     private static final int PACK_VERSION = 2;
+    private static final Comparator<String> NULL_SAFE_STRING = Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER);
+    private static final Comparator<GraphNodeReference> NODE_REFERENCE_ORDER = Comparator
+            .comparing(GraphNodeReference::displayName, NULL_SAFE_STRING)
+            .thenComparing(GraphNodeReference::nodeType, NULL_SAFE_STRING)
+            .thenComparing(GraphNodeReference::id, NULL_SAFE_STRING);
+    private static final Comparator<AgentPackExportResponse.ApplicationTargetSummary> APPLICATION_TARGET_ORDER = Comparator
+            .comparing(AgentPackExportResponse.ApplicationTargetSummary::name, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.ApplicationTargetSummary::id, NULL_SAFE_STRING);
+    private static final Comparator<AgentPackExportResponse.ComponentTargetSummary> COMPONENT_TARGET_ORDER = Comparator
+            .comparing(AgentPackExportResponse.ComponentTargetSummary::displayName, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.ComponentTargetSummary::applicationName, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.ComponentTargetSummary::id, NULL_SAFE_STRING);
+    private static final Comparator<AgentPackExportResponse.CodeTargetSummary> CODE_TARGET_ORDER = Comparator
+            .comparing(AgentPackExportResponse.CodeTargetSummary::displayName, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.CodeTargetSummary::filePath, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.CodeTargetSummary::id, NULL_SAFE_STRING);
+    private static final Comparator<AgentPackExportResponse.TestCaseSummary> TEST_CASE_ORDER = Comparator
+            .comparing(AgentPackExportResponse.TestCaseSummary::displayName, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.TestCaseSummary::testFilePath, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.TestCaseSummary::id, NULL_SAFE_STRING);
+    private static final Comparator<AgentPackExportResponse.PolicySummary> POLICY_ORDER = Comparator
+            .comparing(AgentPackExportResponse.PolicySummary::name, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.PolicySummary::id, NULL_SAFE_STRING);
+    private static final Comparator<AgentPackExportResponse.ConventionSummary> CONVENTION_ORDER = Comparator
+            .comparing(AgentPackExportResponse.ConventionSummary::name, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.ConventionSummary::id, NULL_SAFE_STRING);
+    private static final Comparator<AgentPackExportResponse.QualityConstraintSummary> QUALITY_CONSTRAINT_ORDER = Comparator
+            .comparing(AgentPackExportResponse.QualityConstraintSummary::name, NULL_SAFE_STRING)
+            .thenComparing(AgentPackExportResponse.QualityConstraintSummary::id, NULL_SAFE_STRING);
 
     private static final List<String> BLOCKING_CHECKS = List.of(
             "repoPath", "effectiveBuildCommand", "manifestPath",
@@ -334,7 +363,7 @@ public class AgentPackService {
                 Instant.now(),
                 toNodeReference(storyRecord.get()),
                 completeness,
-                Map.copyOf(readinessChecks),
+                Collections.unmodifiableMap(new LinkedHashMap<>(readinessChecks)),
                 toNodeReferences(fetchAll(TASK_QUERY, storyId)),
                 toNodeReferences(fetchAll(SCREEN_QUERY, storyId)),
                 toNodeReferences(fetchAll(API_QUERY, storyId)),
@@ -416,7 +445,7 @@ public class AgentPackService {
             }
             nodes.put(node.id(), node);
         }
-        return List.copyOf(nodes.values());
+        return sortedCopy(nodes.values(), NODE_REFERENCE_ORDER);
     }
 
     private List<AgentPackExportResponse.ApplicationTargetSummary> toApplicationTargets(List<Map<String, Object>> rows) {
@@ -438,7 +467,7 @@ public class AgentPackService {
                     stringList(row, "bootstrapSteps")
             ));
         }
-        return List.copyOf(applications.values());
+        return sortedCopy(applications.values(), APPLICATION_TARGET_ORDER);
     }
 
     private List<AgentPackExportResponse.ComponentTargetSummary> toComponentTargets(List<Map<String, Object>> rows) {
@@ -467,12 +496,12 @@ public class AgentPackService {
                     string(row, "testCommand"),
                     string(row, "entrypointPath"),
                     string(row, "localRunCommand"),
-                    stringList(row, "secretPrerequisites"),
-                    stringList(row, "fixturePrerequisites"),
-                    stringList(row, "localRunPrerequisites")
+                    sortedStrings(row, "secretPrerequisites"),
+                    sortedStrings(row, "fixturePrerequisites"),
+                    sortedStrings(row, "localRunPrerequisites")
             ));
         }
-        return List.copyOf(components.values());
+        return sortedCopy(components.values(), COMPONENT_TARGET_ORDER);
     }
 
     private List<AgentPackExportResponse.CodeTargetSummary> toCodeTargets(List<Map<String, Object>> rows) {
@@ -498,7 +527,7 @@ public class AgentPackService {
                     string(row, "applicationName")
             ));
         }
-        return List.copyOf(codeTargets.values());
+        return sortedCopy(codeTargets.values(), CODE_TARGET_ORDER);
     }
 
     private List<AgentPackExportResponse.TestCaseSummary> toTestCases(List<Map<String, Object>> rows) {
@@ -519,7 +548,7 @@ public class AgentPackService {
                     string(row, "locatedInPath")
             ));
         }
-        return List.copyOf(testCases.values());
+        return sortedCopy(testCases.values(), TEST_CASE_ORDER);
     }
 
     private List<AgentPackExportResponse.PolicySummary> toPolicies(List<Map<String, Object>> rows) {
@@ -532,17 +561,17 @@ public class AgentPackService {
             policies.put(id, new AgentPackExportResponse.PolicySummary(
                     id,
                     string(row, "name"),
-                    stringList(row, "allowedRepos"),
-                    stringList(row, "allowedCommands"),
-                    stringList(row, "forbiddenCommands"),
-                    stringList(row, "allowedEnvironments"),
-                    stringList(row, "secretScopes"),
+                    sortedStrings(row, "allowedRepos"),
+                    sortedStrings(row, "allowedCommands"),
+                    sortedStrings(row, "forbiddenCommands"),
+                    sortedStrings(row, "allowedEnvironments"),
+                    sortedStrings(row, "secretScopes"),
                     integer(row, "maxFilesTouched"),
                     bool(row, "requiresHumanApproval"),
                     string(row, "approvalThreshold")
             ));
         }
-        return List.copyOf(policies.values());
+        return sortedCopy(policies.values(), POLICY_ORDER);
     }
 
     private List<AgentPackExportResponse.ConventionSummary> toConventions(List<Map<String, Object>> rows) {
@@ -562,7 +591,7 @@ public class AgentPackService {
                     string(row, "activeStatus")
             ));
         }
-        return List.copyOf(conventions.values());
+        return sortedCopy(conventions.values(), CONVENTION_ORDER);
     }
 
     private List<AgentPackExportResponse.QualityConstraintSummary> toQualityConstraints(List<Map<String, Object>> rows) {
@@ -581,7 +610,7 @@ public class AgentPackService {
                     string(row, "status")
             ));
         }
-        return List.copyOf(constraints.values());
+        return sortedCopy(constraints.values(), QUALITY_CONSTRAINT_ORDER);
     }
 
     private Map<String, Object> map(Map<String, Object> record) {
@@ -601,6 +630,18 @@ public class AgentPackService {
         return values.stream()
                 .filter(Objects::nonNull)
                 .map(String::valueOf)
+                .toList();
+    }
+
+    private List<String> sortedStrings(Map<String, Object> record, String key) {
+        return stringList(record, key).stream()
+                .sorted(NULL_SAFE_STRING)
+                .toList();
+    }
+
+    private <T> List<T> sortedCopy(Collection<T> values, Comparator<? super T> comparator) {
+        return values.stream()
+                .sorted(comparator)
                 .toList();
     }
 

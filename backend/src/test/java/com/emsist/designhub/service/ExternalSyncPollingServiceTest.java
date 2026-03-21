@@ -122,6 +122,83 @@ class ExternalSyncPollingServiceTest {
     }
 
     @Test
+    void shouldBuildJiraPollingJobFromDirectJiraCloudPayload() {
+        externalSyncProperties.getJira().setBaseUrl("https://thinkplus.atlassian.net");
+        externalSyncProperties.getJira().setPollPath("/rest/api/3/search/jql");
+        externalSyncProperties.getJira().setAccountEmail("info@thinkplus.ae");
+        when(externalSyncPollingClient.fetchPayload(eq("JIRA"), any())).thenReturn("""
+                {
+                  "issues": [
+                    {
+                      "id": "10001",
+                      "key": "DPAA-101",
+                      "fields": {
+                        "summary": "Story sync",
+                        "updated": "2026-03-18T10:00:00.000+0000",
+                        "labels": ["design-hub"],
+                        "issuetype": {"name": "Story"},
+                        "project": {"key": "DPAA"},
+                        "status": {"name": "In Progress"},
+                        "priority": {"name": "High"},
+                        "assignee": {"displayName": "Aisha Coleman"},
+                        "reporter": {"displayName": "Marco Lane"},
+                        "parent": {"key": "DPAA-100"},
+                        "customfield_10016": 5,
+                        "issuelinks": [
+                          {
+                            "type": {"name": "Blocks", "outward": "blocks", "inward": "is blocked by"},
+                            "outwardIssue": {"key": "DPAA-102"}
+                          },
+                          {
+                            "type": {"name": "Relates", "outward": "relates to", "inward": "relates to"},
+                            "inwardIssue": {"key": "DPAA-103"}
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+                """);
+        ExternalSyncJobResponse success = new ExternalSyncJobResponse(
+                "XSJ-POLL0003",
+                "JIRA",
+                "POLL",
+                "poll-jira-4",
+                "system",
+                "2026-03-18T12:00:00Z",
+                "poll/jira/rest/api/3/search/jql",
+                false,
+                "SUCCESS",
+                1,
+                List.of(),
+                new ExternalSyncResult(false, "SUCCESS", 1, 1, 0, 0, 0, List.of())
+        );
+        when(externalSyncOrchestrationService.submit(any(ExternalSyncJobRequest.class))).thenReturn(success);
+
+        ExternalSyncJobResponse response = service.pollNow("JIRA", false, "system", null);
+
+        assertEquals("SUCCESS", response.status());
+        verify(externalSyncOrchestrationService).submit(org.mockito.ArgumentMatchers.argThat(job -> {
+            if (job.jiraRequest() == null || job.jiraRequest().issues().size() != 1) {
+                return false;
+            }
+
+            var issue = job.jiraRequest().issues().get(0);
+            return !job.jiraRequest().dryRun()
+                    && "DPAA-101".equals(issue.issueKey())
+                    && "Story".equals(issue.issueType())
+                    && "DPAA".equals(issue.projectKey())
+                    && "In Progress".equals(issue.status())
+                    && "Aisha Coleman".equals(issue.assignee())
+                    && "https://thinkplus.atlassian.net/browse/DPAA-101".equals(issue.url())
+                    && "DPAA-100".equals(issue.parentIssueKey())
+                    && issue.blocksIssueKeys().contains("DPAA-102")
+                    && issue.relatedIssueKeys().contains("DPAA-103")
+                    && "5".equals(issue.customFields().get("customfield_10016"));
+        }));
+    }
+
+    @Test
     void shouldRunScheduledPollOncePerInterval() {
         externalSyncProperties.getJira().setBaseUrl("https://jira.example.com");
         externalSyncProperties.getJira().setPollPath("/api/design-hub/issues");

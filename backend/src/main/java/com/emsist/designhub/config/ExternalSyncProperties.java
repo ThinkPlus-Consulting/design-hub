@@ -37,6 +37,7 @@ public class ExternalSyncProperties {
         private String organization;
         private String project;
         private String projectKey;
+        private String accountEmail;
         private String token;
         private String pollPath;
         private Map<String, String> headers = new LinkedHashMap<>();
