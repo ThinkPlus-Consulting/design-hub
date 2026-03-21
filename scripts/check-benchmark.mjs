@@ -4,6 +4,8 @@ import https from 'node:https';
 
 const benchmarkUrl = process.env.BENCHMARK_URL ?? 'http://localhost:8091/api/v1/graph/benchmark';
 const outputPath = process.env.BENCHMARK_OUTPUT_PATH;
+const benchmarkTimeoutMs = readNumber('BENCHMARK_TIMEOUT_MS', 120000);
+const benchmarkPollIntervalMs = readNumber('BENCHMARK_POLL_INTERVAL_MS', 2000);
 
 function readNumber(name, fallback) {
   const raw = process.env[name];
@@ -32,6 +34,12 @@ const thresholds = {
 function fail(message) {
   console.error(message);
   process.exit(1);
+}
+
+function sleep(milliseconds) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
 }
 
 function fetchJson(urlString) {
@@ -77,15 +85,13 @@ function findDimension(payload, name) {
   return payload.summary?.dimensions?.find((dimension) => dimension.dimension === name);
 }
 
-try {
-  const payload = await fetchJson(benchmarkUrl);
-
-  if (outputPath) {
-    await writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
-  }
-
+function evaluatePayload(payload) {
   if (!payload?.summary || !Array.isArray(payload.summary.dimensions)) {
-    fail(`Benchmark endpoint ${benchmarkUrl} returned an unexpected payload shape.`);
+    return {
+      payload,
+      failures: [`Benchmark endpoint ${benchmarkUrl} returned an unexpected payload shape.`],
+      summaryLine: null,
+    };
   }
 
   const summary = payload.summary;
@@ -149,8 +155,10 @@ try {
     failures.push(`queryability ${dimensions.queryability.score.toFixed(1)} < ${thresholds.minQueryability.toFixed(1)}`);
   }
 
-  console.log(
-    [
+  return {
+    payload,
+    failures,
+    summaryLine: [
       `Benchmark gate summary`,
       `overall=${summary.overallScore.toFixed(1)}`,
       `coveredNodeTypes=${summary.coveredNodeTypes}`,
@@ -160,11 +168,39 @@ try {
       `sourceTraceability=${dimensions.sourceTraceability?.score.toFixed(1) ?? 'n/a'}`,
       `queryability=${dimensions.queryability?.score.toFixed(1) ?? 'n/a'}`,
     ].join(' | '),
-  );
-
-  if (failures.length > 0) {
-    fail(`Benchmark integrity gate failed:\n- ${failures.join('\n- ')}`);
-  }
-} catch (error) {
-  fail(`Benchmark integrity gate failed: ${error instanceof Error ? error.message : String(error)}`);
+  };
 }
+
+let lastFailureMessage = `Benchmark integrity gate failed: no benchmark response received from ${benchmarkUrl}.`;
+
+for (let attempt = 1; ; attempt += 1) {
+  try {
+    const payload = await fetchJson(benchmarkUrl);
+    const evaluation = evaluatePayload(payload);
+
+    if (outputPath) {
+      await writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+    }
+
+    if (evaluation.summaryLine) {
+      console.log(evaluation.summaryLine);
+    }
+
+    if (evaluation.failures.length === 0) {
+      process.exit(0);
+    }
+
+    lastFailureMessage = `Benchmark integrity gate failed:\n- ${evaluation.failures.join('\n- ')}`;
+  } catch (error) {
+    lastFailureMessage = `Benchmark integrity gate failed: ${error instanceof Error ? error.message : String(error)}`;
+  }
+
+  const elapsedMs = attempt * benchmarkPollIntervalMs;
+  if (elapsedMs >= benchmarkTimeoutMs) {
+    break;
+  }
+
+  await sleep(benchmarkPollIntervalMs);
+}
+
+fail(lastFailureMessage);
