@@ -4,6 +4,8 @@ import com.emsist.designhub.dto.GraphObjectSummaryResponse;
 import com.emsist.designhub.dto.GraphRelationExpansionResponse;
 import com.emsist.designhub.dto.GraphBenchmarkResponse;
 import com.emsist.designhub.dto.JourneyTraversalResponse;
+import com.emsist.designhub.dto.ObjectDefinitionDetailResponse;
+import com.emsist.designhub.dto.ObjectDefinitionSummaryResponse;
 import com.emsist.designhub.dto.PersonaSummaryResponse;
 import com.emsist.designhub.dto.PersonaTraversalResponse;
 import com.emsist.designhub.dto.ApplicationArchitectureResponse;
@@ -22,6 +24,7 @@ import com.emsist.designhub.dto.InfrastructureArchitectureResponse;
 import com.emsist.designhub.dto.TraceabilityStoryResponse;
 import com.emsist.designhub.service.BenchmarkQueryService;
 import com.emsist.designhub.service.ExternalAlignmentAuditService;
+import com.emsist.designhub.service.GraphObjectDefinitionCatalogService;
 import com.emsist.designhub.service.GraphQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,6 +47,7 @@ import java.util.List;
 public class GraphController {
 
     private final GraphQueryService graphQueryService;
+    private final GraphObjectDefinitionCatalogService graphObjectDefinitionCatalogService;
     private final BenchmarkQueryService benchmarkQueryService;
     private final ExternalAlignmentAuditService externalAlignmentAuditService;
 
@@ -77,6 +81,20 @@ public class GraphController {
         } catch (IllegalArgumentException exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
         }
+    }
+
+    @GetMapping("/object-definitions")
+    @Operation(summary = "List object definitions across the Design Hub metamodel")
+    public ResponseEntity<List<ObjectDefinitionSummaryResponse>> getObjectDefinitions() {
+        return ResponseEntity.ok(graphObjectDefinitionCatalogService.listObjectDefinitions());
+    }
+
+    @GetMapping("/object-definitions/{type}")
+    @Operation(summary = "Get a single object definition with attributes, relationships, and instances")
+    public ResponseEntity<ObjectDefinitionDetailResponse> getObjectDefinition(@PathVariable String type) {
+        return graphObjectDefinitionCatalogService.getObjectDefinition(type)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/personas/{personaId}")

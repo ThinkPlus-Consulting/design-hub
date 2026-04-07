@@ -5,6 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKEND_DIR="$ROOT_DIR/backend"
 FRONTEND_DIR="$ROOT_DIR/frontend"
 NEO4J_CONTAINER_NAME="design-hub-neo4j"
+NEO4J_HTTP_PORT="${DESIGN_HUB_NEO4J_HTTP_PORT:-27484}"
+NEO4J_BOLT_PORT="${DESIGN_HUB_NEO4J_BOLT_PORT:-27697}"
 BACKEND_HEALTH_URL="http://localhost:8091/actuator/health"
 BENCHMARK_URL="http://localhost:8091/api/v1/graph/benchmark"
 FRONTEND_URL="http://localhost:4300"
@@ -246,7 +248,8 @@ else
 fi
 
 log "Startup proof passed."
-log "Neo4j: http://localhost:7474"
+log "Neo4j: http://localhost:${NEO4J_HTTP_PORT}"
+log "Neo4j Bolt: bolt://localhost:${NEO4J_BOLT_PORT}"
 log "Backend: $BACKEND_HEALTH_URL"
 log "Frontend: $FRONTEND_URL"
 log "Logs: $LOG_DIR"

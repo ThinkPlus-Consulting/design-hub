@@ -1,3 +1,4 @@
 backend/target/
+.worktrees/
 .env.external-sync.local
 .env.external-sync.*.local

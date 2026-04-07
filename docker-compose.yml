@@ -3,8 +3,8 @@ services:
     image: neo4j:5-community
     container_name: design-hub-neo4j
     ports:
-      - "7474:7474"
-      - "7687:7687"
+      - "${DESIGN_HUB_NEO4J_HTTP_PORT:-27484}:7474"
+      - "${DESIGN_HUB_NEO4J_BOLT_PORT:-27697}:7687"
     environment:
       NEO4J_AUTH: neo4j/password
       NEO4J_server_memory_heap_initial__size: 256M

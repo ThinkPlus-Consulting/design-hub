@@ -38,11 +38,16 @@ import {
   ExternalArtifactSummary,
   GraphBenchmark,
   GraphNodeReference,
+  GraphNodeReferenceWithSummary,
   InfrastructureArchitecture,
   InfrastructureDeploymentSummary,
   InfrastructureNodeSummary,
   JourneyTraversal,
   JourneyTraversalStep,
+  ObjectDefinitionAttribute,
+  ObjectDefinitionDetail,
+  ObjectDefinitionRelationship,
+  ObjectDefinitionSummary,
   PersonaSummary,
   PersonaJourneySummary,
   PersonaTraversal,
@@ -416,6 +421,55 @@ interface RawGraphNodeReference {
   nodeType?: string;
   displayName?: string;
   status?: string | null;
+  module?: string | null;
+  domain?: string | null;
+  routePath?: string | null;
+  relationCount?: number;
+}
+
+interface RawObjectDefinitionSummary {
+  type?: string;
+  label?: string;
+  displayName?: string;
+  category?: string;
+  tier?: string;
+  benchmarkable?: boolean;
+  instanceCount?: number;
+  relationshipTypeCount?: number;
+}
+
+interface RawObjectDefinitionAttribute {
+  name?: string;
+  type?: string;
+  required?: boolean;
+  description?: string;
+  constraints?: string;
+}
+
+interface RawObjectDefinitionRelationship {
+  name?: string;
+  direction?: string;
+  target?: string;
+  cardinality?: string;
+  required?: boolean;
+  severity?: string;
+  implementation?: string;
+}
+
+interface RawObjectDefinitionDetail {
+  type?: string;
+  label?: string;
+  displayName?: string;
+  category?: string;
+  tier?: string;
+  benchmarkable?: boolean;
+  purpose?: string;
+  implementationStatus?: string;
+  aliases?: string[];
+  attributes?: RawObjectDefinitionAttribute[];
+  relationships?: RawObjectDefinitionRelationship[];
+  instanceCount?: number;
+  instances?: RawGraphNodeReference[];
 }
 
 interface RawAgentPackCompleteness {
@@ -918,6 +972,18 @@ export class DesignHubApiService {
     return this.http
       .get<RawGraphBenchmark>(`${this.graphUrl}/benchmark`)
       .pipe(map((benchmark) => this.adaptBenchmark(benchmark)));
+  }
+
+  getObjectDefinitions(): Observable<ObjectDefinitionSummary[]> {
+    return this.http
+      .get<RawObjectDefinitionSummary[]>(`${this.graphUrl}/object-definitions`)
+      .pipe(map((definitions) => definitions.map((definition) => this.adaptObjectDefinitionSummary(definition))));
+  }
+
+  getObjectDefinition(type: string): Observable<ObjectDefinitionDetail> {
+    return this.http
+      .get<RawObjectDefinitionDetail>(`${this.graphUrl}/object-definitions/${encodeURIComponent(type)}`)
+      .pipe(map((definition) => this.adaptObjectDefinitionDetail(definition)));
   }
 
   getExternalArtifacts(system?: string, syncStatus?: string): Observable<ExternalArtifactSummary[]> {
@@ -1496,6 +1562,72 @@ export class DesignHubApiService {
       nodeType: node.nodeType ?? '',
       displayName: node.displayName ?? node.id,
       status: node.status ?? null,
+    };
+  }
+
+  private adaptNodeReferenceWithSummary(node: RawGraphNodeReference): GraphNodeReferenceWithSummary {
+    return {
+      id: node.id ?? '',
+      nodeType: node.nodeType ?? '',
+      displayName: node.displayName ?? node.id ?? '',
+      status: node.status ?? null,
+      module: node.module ?? null,
+      domain: node.domain ?? null,
+      routePath: node.routePath ?? null,
+      relationCount: node.relationCount ?? 0,
+    };
+  }
+
+  private adaptObjectDefinitionSummary(definition: RawObjectDefinitionSummary): ObjectDefinitionSummary {
+    return {
+      type: definition.type ?? '',
+      label: definition.label ?? '',
+      displayName: definition.displayName ?? definition.label ?? definition.type ?? '',
+      category: definition.category ?? '',
+      tier: definition.tier ?? '',
+      benchmarkable: definition.benchmarkable ?? false,
+      instanceCount: definition.instanceCount ?? 0,
+      relationshipTypeCount: definition.relationshipTypeCount ?? 0,
+    };
+  }
+
+  private adaptObjectDefinitionDetail(definition: RawObjectDefinitionDetail): ObjectDefinitionDetail {
+    return {
+      type: definition.type ?? '',
+      label: definition.label ?? '',
+      displayName: definition.displayName ?? definition.label ?? definition.type ?? '',
+      category: definition.category ?? '',
+      tier: definition.tier ?? '',
+      benchmarkable: definition.benchmarkable ?? false,
+      purpose: definition.purpose ?? '',
+      implementationStatus: definition.implementationStatus ?? '',
+      aliases: definition.aliases ?? [],
+      attributes: (definition.attributes ?? []).map((attribute) => this.adaptObjectDefinitionAttribute(attribute)),
+      relationships: (definition.relationships ?? []).map((relationship) => this.adaptObjectDefinitionRelationship(relationship)),
+      instanceCount: definition.instanceCount ?? 0,
+      instances: (definition.instances ?? []).map((instance) => this.adaptNodeReferenceWithSummary(instance)),
+    };
+  }
+
+  private adaptObjectDefinitionAttribute(attribute: RawObjectDefinitionAttribute): ObjectDefinitionAttribute {
+    return {
+      name: attribute.name ?? '',
+      type: attribute.type ?? '',
+      required: attribute.required ?? false,
+      description: attribute.description ?? '',
+      constraints: attribute.constraints ?? '',
+    };
+  }
+
+  private adaptObjectDefinitionRelationship(relationship: RawObjectDefinitionRelationship): ObjectDefinitionRelationship {
+    return {
+      name: relationship.name ?? '',
+      direction: relationship.direction ?? '',
+      target: relationship.target ?? '',
+      cardinality: relationship.cardinality ?? '',
+      required: relationship.required ?? false,
+      severity: relationship.severity ?? '',
+      implementation: relationship.implementation ?? '',
     };
   }
 

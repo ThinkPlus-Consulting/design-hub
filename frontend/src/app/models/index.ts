@@ -6,4 +6,5 @@ export * from './automation.model';
 export * from './delivery.model';
 export * from './external-artifact.model';
 export * from './graph.model';
+export * from './object-definition.model';
 export * from './verification.model';

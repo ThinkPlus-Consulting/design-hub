@@ -21,6 +21,8 @@ import {
   InfrastructureArchitecture,
   InfrastructureDeploymentSummary,
   JourneyTraversal,
+  ObjectDefinitionDetail,
+  ObjectDefinitionSummary,
   PersonaSummary,
   PersonaTraversal,
   ReadinessDiagnostics,
@@ -71,6 +73,8 @@ export class DesignHubStateService {
   readonly externalSyncSourceStatuses = signal<ExternalSyncSourceStatus[]>([]);
   readonly externalSyncJobs = signal<ExternalSyncJobResult[]>([]);
   readonly stats = signal<DesignHubStats | null>(null);
+  readonly objectDefinitions = signal<ObjectDefinitionSummary[]>([]);
+  readonly selectedObjectDefinition = signal<ObjectDefinitionDetail | null>(null);
   readonly loading = signal(true);
 
   // --- Filter signals ---
@@ -90,6 +94,8 @@ export class DesignHubStateService {
   readonly selectedPersonaId = signal<string | null>(null);
   readonly selectedJourneyId = signal<string | null>(null);
   readonly selectedBenchmarkNodeType = signal<string | null>(null);
+  readonly selectedObjectDefinitionType = signal<string | null>(null);
+  readonly definitionSearchTerm = signal('');
 
   // --- Display options ---
   readonly showTransitions = signal(true);
@@ -216,7 +222,40 @@ export class DesignHubStateService {
     return { totalScreens: total, completeCount, specifiedCount, notStartedCount, totalGaps, coveragePercent };
   });
 
+  readonly filteredObjectDefinitions = computed(() => {
+    const search = this.definitionSearchTerm().trim().toLowerCase();
+    if (!search) {
+      return this.objectDefinitions();
+    }
+
+    return this.objectDefinitions().filter((definition) =>
+      definition.displayName.toLowerCase().includes(search)
+      || definition.label.toLowerCase().includes(search)
+      || definition.category.toLowerCase().includes(search)
+      || definition.type.toLowerCase().includes(search)
+    );
+  });
+
   // --- Actions ---
+  loadObjectDefinitions(): void {
+    this.loading.set(true);
+    this.api.getObjectDefinitions()
+      .pipe(catchError(() => of([] as ObjectDefinitionSummary[])))
+      .subscribe({
+        next: (definitions) => {
+          this.objectDefinitions.set(definitions);
+          const selectedType = this.selectedObjectDefinitionType() ?? definitions[0]?.type ?? null;
+          this.selectedObjectDefinitionType.set(selectedType);
+          this.loadObjectDefinitionDetail(selectedType);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Failed to load object definitions', err);
+          this.loading.set(false);
+        },
+      });
+  }
+
   loadAll(): void {
     this.loading.set(true);
     forkJoin({
@@ -422,6 +461,15 @@ export class DesignHubStateService {
     this.activeTab.set(tab);
   }
 
+  selectObjectDefinition(type: string | null): void {
+    this.selectedObjectDefinitionType.set(type);
+    this.loadObjectDefinitionDetail(type);
+  }
+
+  setDefinitionSearchTerm(value: string): void {
+    this.definitionSearchTerm.set(value);
+  }
+
   setSelectedBenchmarkNodeType(nodeType: string): void {
     this.selectedBenchmarkNodeType.set(nodeType);
   }
@@ -620,6 +668,19 @@ export class DesignHubStateService {
       .pipe(catchError(() => of(null)))
       .subscribe((architecture) => {
         this.selectedInfrastructureArchitecture.set(architecture);
+      });
+  }
+
+  private loadObjectDefinitionDetail(type: string | null): void {
+    if (!type) {
+      this.selectedObjectDefinition.set(null);
+      return;
+    }
+
+    this.api.getObjectDefinition(type)
+      .pipe(catchError(() => of(null)))
+      .subscribe((definition) => {
+        this.selectedObjectDefinition.set(definition);
       });
   }
 
