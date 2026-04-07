@@ -2131,6 +2131,8 @@ public class RegistryGraphMigrationService {
                          ELSE 'MEDIUM'
                      END AS gapSeverity
                 WHERE gapDescription IS NOT NULL
+                  AND screen.surfaceId IS NOT NULL
+                  AND trim(toString(screen.surfaceId)) <> ''
                 MERGE (gap:Gap {gapId: 'GAP-' + screen.surfaceId + '-AUTO'})
                 SET gap.gapType = 'MISSING_RELATIONSHIP',
                     gap.severity = gapSeverity,
@@ -2177,6 +2179,8 @@ public class RegistryGraphMigrationService {
         neo4jClient.query("""
                 MATCH (screen:Screen)
                 WHERE NOT EXISTS { (screen)-[:HAS_GAP]->(:Gap) }
+                  AND screen.surfaceId IS NOT NULL
+                  AND trim(toString(screen.surfaceId)) <> ''
                 MERGE (gap:Gap {gapId: 'GAP-' + screen.surfaceId + '-BENCHMARK'})
                 SET gap.gapType = 'COVERAGE_REVIEW',
                     gap.description = 'Benchmark closure placeholder to preserve explicit remediation tracking for this surface.',
@@ -2191,6 +2195,8 @@ public class RegistryGraphMigrationService {
         neo4jClient.query("""
                 MATCH (screen:Screen)
                 WHERE NOT EXISTS { (screen)-[:HAS_MESSAGE]->(:Message) }
+                  AND screen.surfaceId IS NOT NULL
+                  AND trim(toString(screen.surfaceId)) <> ''
                 MERGE (message:Message {messageId: 'MSG-' + screen.surfaceId + '-AUTO'})
                 SET message.messageText =
                         CASE toString(screen.status)
@@ -2216,6 +2222,8 @@ public class RegistryGraphMigrationService {
     public void patchScreenBenchmarkAttributes() {
         neo4jClient.query("""
                 MATCH (screen:Screen)
+                WHERE screen.surfaceId IS NOT NULL
+                  AND trim(toString(screen.surfaceId)) <> ''
                 SET screen.routePath = coalesce(
                         screen.routePath,
                         CASE
@@ -2988,6 +2996,8 @@ public class RegistryGraphMigrationService {
                 MATCH (fallbackSource:SourceReference {sourceId: 'SRC-INTERACTION-CATALOG-001'})
                 MATCH (screen:Screen)
                 WHERE NOT EXISTS { (screen)-[:HAS_INTERACTION]->(:Interaction) }
+                  AND screen.surfaceId IS NOT NULL
+                  AND trim(toString(screen.surfaceId)) <> ''
                 MERGE (interaction:Interaction {interactionId: 'INT-AUTO-' + screen.surfaceId})
                 SET interaction.surfaceId = screen.surfaceId,
                     interaction.element = 'Auto coverage interaction',

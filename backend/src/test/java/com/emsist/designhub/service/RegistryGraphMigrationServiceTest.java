@@ -970,6 +970,22 @@ class RegistryGraphMigrationServiceTest {
                         && cypher.contains("USED_BY_FIELD")));
     }
 
+    @Test
+    void shouldGuardAutoScreenCoverageSeedsAgainstBlankSurfaceIds() {
+        var spec = mock(Neo4jClient.UnboundRunnableSpec.class, RETURNS_DEEP_STUBS);
+        when(neo4jClient.query(anyString())).thenReturn(spec);
+        when(spec.run()).thenReturn(null);
+
+        service.seedScreenCoverageGaps();
+        service.seedScreenCoverageMessages();
+        service.patchScreenBenchmarkAttributes();
+        service.seedScreenCoverageInteractions();
+
+        verify(neo4jClient, atLeast(4)).query(argThat((String cypher) ->
+                cypher.contains("screen.surfaceId IS NOT NULL")
+                        && cypher.contains("trim(toString(screen.surfaceId)) <> ''")));
+    }
+
     // ── Full migration orchestration ───────────────────────────────────
 
     @Test
