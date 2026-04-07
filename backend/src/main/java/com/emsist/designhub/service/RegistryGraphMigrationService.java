@@ -58,15 +58,16 @@ public class RegistryGraphMigrationService {
     public void seedBusinessRoles() {
         neo4jClient.query("""
                 UNWIND [
-                  {key: 'SUPER_ADMIN',    name: 'Super Admin',    grp: 'platform',  sort: 0},
-                  {key: 'ADMIN',          name: 'Administrator',  grp: 'tenant',    sort: 1},
-                  {key: 'ARCHITECT',      name: 'Architect',      grp: 'design',    sort: 2},
-                  {key: 'AGENT_DESIGNER', name: 'Agent Designer', grp: 'design',    sort: 3},
-                  {key: 'USER',           name: 'User',           grp: 'operational', sort: 4},
-                  {key: 'VIEWER',         name: 'Viewer',         grp: 'operational', sort: 5}
+                  {key: 'SUPER_ADMIN',    name: 'Super Admin',    grp: 'platform',   sort: 0, copyRestricted: false},
+                  {key: 'ADMIN',          name: 'Administrator',  grp: 'tenant',     sort: 1, copyRestricted: false},
+                  {key: 'ARCHITECT',      name: 'Architect',      grp: 'design',     sort: 2, copyRestricted: false},
+                  {key: 'AGENT_DESIGNER', name: 'Agent Designer', grp: 'design',     sort: 3, copyRestricted: false},
+                  {key: 'USER',           name: 'User',           grp: 'operational', sort: 4, copyRestricted: false},
+                  {key: 'VIEWER',         name: 'Viewer',         grp: 'operational', sort: 5, copyRestricted: true}
                 ] AS r
                 MERGE (br:BusinessRole {roleKey: r.key})
                 SET br.displayName = r.name, br.roleGroup = r.grp, br.sortOrder = r.sort,
+                    br.copyRestricted = r.copyRestricted,
                     br.status = 'DEFINED'
                 """).run();
     }

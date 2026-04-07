@@ -28,6 +28,7 @@ export interface RoleSummary {
   roleKey: string;
   displayName: string;
   roleGroup: string | null;
+  copyRestricted: boolean;
   sortOrder: number | null;
   screenCount: number;
   touchpointCount: number;

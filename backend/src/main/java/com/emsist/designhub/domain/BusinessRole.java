@@ -23,6 +23,7 @@ public class BusinessRole {
     private String roleGroup;     // platform, tenant, design, operational
     private String scope;
     private Integer sortOrder;
+    private Boolean copyRestricted;
     private Status status;
     private List<String> sourceRefs;
 }

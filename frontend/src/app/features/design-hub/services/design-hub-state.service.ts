@@ -78,6 +78,7 @@ export class DesignHubStateService {
   readonly selectedDesignStatus = signal<string>('all');
   readonly searchTerm = signal('');
   readonly selectedScreenId = signal<string | null>(null);
+  readonly selectedRoleKey = signal<string | null>(null);
   readonly selectedArchitectureView = signal<ArchitectureView>('business');
   readonly selectedBusinessCapabilityId = signal<string | null>(null);
   readonly selectedApplicationId = signal<string | null>(null);
@@ -199,6 +200,13 @@ export class DesignHubStateService {
     return screen?.stories ?? [];
   });
 
+  readonly selectedRole = computed<RoleSummary | null>(() => {
+    const roleKey = this.selectedRoleKey();
+    return roleKey ? this.roles().find((role) => role.roleKey === roleKey) ?? null : null;
+  });
+
+  readonly copyRestricted = computed<boolean>(() => this.selectedRole()?.copyRestricted ?? false);
+
   readonly modules = computed(() => {
     const mods = [...new Set(this.screens().map((s) => s.module))].sort();
     return ['all', ...mods];
@@ -238,6 +246,10 @@ export class DesignHubStateService {
       next: (data) => {
         this.screens.set(data.screens);
         this.roles.set(data.roles);
+        const activeRoleKey = this.selectedRoleKey();
+        if (activeRoleKey && !data.roles.some((role) => role.roleKey === activeRoleKey)) {
+          this.selectedRoleKey.set(null);
+        }
         this.stories.set(data.stories);
         this.channels.set(data.channels);
         this.personas.set(data.personas);
@@ -416,6 +428,10 @@ export class DesignHubStateService {
 
   setDesignStatusFilter(status: string): void {
     this.selectedDesignStatus.set(status);
+  }
+
+  setSelectedRole(roleKey: string | null): void {
+    this.selectedRoleKey.set(roleKey);
   }
 
   setActiveTab(tab: DetailTab): void {

@@ -1,0 +1,173 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mfa-shell {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--nm-radius-lg);
+  display: grid;
+  place-items: center;
+  padding: 1.75rem;
+  background: transparent;
+}
+
+.overlay-background-container,
+.overlay-background {
+  display: none;
+}
+
+.overlay-background {
+  backdrop-filter: blur(6px);
+}
+
+.overlay-background-color-layer,
+.overlay-background-pattern-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.overlay-background-color-layer {
+  background: var(--ssg-screen-background-color, color-mix(in srgb, var(--tp-primary-dark) 42%, transparent));
+}
+
+.overlay-background-pattern-layer {
+  opacity: var(--ssg-screen-background-pattern-opacity, 0.13);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23FAF8F5' stroke-width='1.2'%3E%3Cpath d='M60 8L70 30L92 20L82 42L112 60L82 78L92 100L70 90L60 112L50 90L28 100L38 78L8 60L38 42L28 20L50 30Z'/%3E%3Cpath d='M50 30L70 30L82 42L82 78L70 90L50 90L38 78L38 42Z'/%3E%3Cpath d='M60 38L74 60L60 82L46 60Z'/%3E%3Crect x='50' y='50' width='20' height='20' transform='rotate(45 60 60)'/%3E%3Cpath d='M0 0L10 22L22 10Z M120 0L110 22L98 10Z M0 120L10 98L22 110Z M120 120L110 98L98 110Z'/%3E%3Cpath d='M60 0L70 10L60 20L50 10Z M60 100L70 110L60 120L50 110Z M0 60L10 50L20 60L10 70Z M100 60L110 50L120 60L110 70Z'/%3E%3Cpath d='M22 10L38 42 M98 10L82 42 M22 110L38 78 M98 110L82 78'/%3E%3Cpath d='M10 22L42 38 M10 98L42 78 M110 22L78 38 M110 98L78 78'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  background-repeat: repeat;
+}
+
+.mfa-modal {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 32rem);
+}
+
+.mfa-modal-surface {
+  width: 100%;
+  padding: 2rem 1.75rem 1.6rem;
+  border-radius: 24px;
+  display: grid;
+  gap: 1.1rem;
+  background: var(--tp-primary);
+  border: 1px solid color-mix(in srgb, var(--tp-surface-light) 12%, transparent);
+  box-shadow:
+    14px 14px 28px color-mix(in srgb, var(--tp-primary-dark) 42%, transparent),
+    -8px -8px 20px color-mix(in srgb, var(--tp-primary) 16%, transparent);
+}
+
+.mfa-modal-header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.mfa-modal h2 {
+  margin: 0;
+  color: var(--ssg-shell-accent-text);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.02;
+  font-weight: 600;
+}
+
+.mfa-modal-header p {
+  margin: 0;
+  color: var(--ssg-shell-accent-text);
+  font-size: var(--tp-font-md);
+}
+
+.status-message-container {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.auth-banner {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 18px;
+  font-size: var(--tp-font-sm);
+  color: var(--ssg-shell-accent-text);
+  background: color-mix(in srgb, var(--tp-primary) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tp-surface-light) 10%, transparent);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--tp-primary-dark) 18%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--tp-primary) 12%, transparent);
+}
+
+.otp-grid {
+  display: grid;
+}
+
+:host ::ng-deep .otp-grid .p-inputotp {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.custom-otp-input {
+  min-height: 60px;
+  border: 1px solid color-mix(in srgb, var(--tp-surface-light) 12%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--tp-primary-dark) 14%, transparent);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--tp-primary-dark) 18%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--tp-primary) 12%, transparent);
+  color: var(--ssg-shell-accent-text);
+  text-align: center;
+  padding: 0;
+  font-weight: 700;
+  font-size: 1.3rem;
+  width: 100%;
+}
+
+.otp-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ssg-shell-accent-text);
+  font-size: 1rem;
+}
+
+.mfa-action-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.auth-btn {
+  min-height: 58px;
+  padding: 0 1.25rem;
+  font-size: var(--tp-font-lg);
+  border: 1px solid var(--ssg-login-primary-button-border);
+  border-radius: var(--ssg-login-primary-button-radius);
+  background: var(--tp-primary);
+  color: var(--ssg-login-primary-button-text);
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    7px 7px 14px color-mix(in srgb, var(--tp-primary-dark) 52%, transparent),
+    -6px -6px 12px color-mix(in srgb, var(--tp-primary) 24%, transparent);
+}
+
+.mfa-action-bar .auth-btn {
+  min-width: 140px;
+  min-height: 44px;
+  font-size: var(--tp-font-md);
+}
+
+.auth-btn.secondary {
+  color: var(--ssg-login-secondary-button-text);
+}
+
+:host ::ng-deep .mfa-action-bar .p-button {
+  min-height: 58px;
+}

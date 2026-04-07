@@ -103,6 +103,35 @@ import { LocaleService } from '../../../../core/i18n/locale.service';
         </div>
       </div>
 
+      <div class="sidebar__section" data-testid="role-filter">
+        <h4 class="sidebar__section-title">Access role</h4>
+        <label class="sidebar__select-field">
+          <span class="sidebar__select-label">Active role</span>
+          <select
+            class="sidebar__select-input"
+            [value]="state.selectedRoleKey() ?? ''"
+            data-testid="role-select"
+            (change)="state.setSelectedRole(($any($event.target)).value || null)"
+          >
+            <option value="">Open access</option>
+            @for (role of roleOptions(); track role.roleKey) {
+              <option [value]="role.roleKey">
+                {{ role.displayName }}@if (role.copyRestricted) { · Copy Restricted }
+              </option>
+            }
+          </select>
+        </label>
+        @if (state.selectedRole(); as role) {
+          <p class="sidebar__role-hint" data-testid="role-copy-policy">
+            @if (role.copyRestricted) {
+              Copy and text selection are blocked for {{ role.displayName }}.
+            } @else {
+              Copy is allowed for {{ role.displayName }}.
+            }
+          </p>
+        }
+      </div>
+
       <!-- Search -->
       <div class="sidebar__section" data-testid="search-section">
         <h4 class="sidebar__section-title">{{ locale.t('sidebar.section.search') }}</h4>
@@ -293,6 +322,35 @@ import { LocaleService } from '../../../../core/i18n/locale.service';
       display: block;
     }
 
+    .sidebar__select-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--tp-space-2);
+    }
+
+    .sidebar__select-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--tp-text-muted);
+    }
+
+    .sidebar__select-input {
+      min-height: var(--tp-touch-target-min-size);
+      border: 1px solid color-mix(in srgb, var(--tp-border) 28%, transparent);
+      border-radius: 0.8rem;
+      background: var(--tp-surface);
+      color: var(--tp-text-dark);
+      padding: 0.7rem 0.9rem;
+      font: inherit;
+    }
+
+    .sidebar__role-hint {
+      margin: var(--tp-space-2) 0 0;
+      font-size: 0.76rem;
+      line-height: 1.5;
+      color: var(--tp-text-muted);
+    }
+
     .sidebar__section {
       &-title {
         font-size: 0.75rem;
@@ -476,6 +534,13 @@ export class ScreenSidebarComponent {
   readonly locale = inject(LocaleService);
 
   readonly stats = this.state.computedStats;
+  readonly roleOptions = computed(() =>
+    [...this.state.roles()].sort((left, right) => {
+      const leftSort = left.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      const rightSort = right.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      return leftSort - rightSort || left.displayName.localeCompare(right.displayName);
+    })
+  );
 
   readonly statusOptions = computed(() => [
     { label: this.locale.t('filters.all'), value: 'all' },

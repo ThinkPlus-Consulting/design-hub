@@ -12,7 +12,11 @@ import { DetailPanelComponent } from './components/detail-panel/detail-panel.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="design-hub-viewport" data-testid="design-hub-root">
-      <div class="design-hub-layout" [style.zoom]="state.pageZoom()">
+      <div
+        class="design-hub-layout"
+        [class.design-hub-layout--copy-restricted]="state.copyRestricted()"
+        [style.zoom]="state.pageZoom()"
+      >
         <aside class="dh-sidebar" data-testid="sidebar">
           <app-screen-sidebar />
         </aside>
@@ -47,6 +51,18 @@ import { DetailPanelComponent } from './components/detail-panel/detail-panel.com
       grid-template-columns: minmax(248px, 280px) minmax(0, 1fr) minmax(320px, 380px);
       min-height: 100%;
       transform-origin: top left;
+    }
+
+    .design-hub-layout--copy-restricted {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .design-hub-layout--copy-restricted input,
+    .design-hub-layout--copy-restricted textarea,
+    .design-hub-layout--copy-restricted [contenteditable="true"] {
+      user-select: text;
+      -webkit-user-select: text;
     }
 
     .dh-sidebar {
@@ -113,6 +129,14 @@ export class DesignHubPage implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   onWindowKeydown(event: KeyboardEvent): void {
+    if (this.state.copyRestricted() && (event.metaKey || event.ctrlKey) && !this.isEditableTarget(event.target)) {
+      const normalizedKey = event.key.toLowerCase();
+      if (normalizedKey === 'a' || normalizedKey === 'c' || normalizedKey === 'x') {
+        event.preventDefault();
+        return;
+      }
+    }
+
     if (!(event.metaKey || event.ctrlKey) || this.isEditableTarget(event.target)) {
       return;
     }
@@ -132,6 +156,27 @@ export class DesignHubPage implements OnInit {
     if (event.key === '0' || event.code === 'Numpad0') {
       event.preventDefault();
       this.state.resetPageZoom();
+    }
+  }
+
+  @HostListener('document:copy', ['$event'])
+  onCopy(event: ClipboardEvent): void {
+    if (this.state.copyRestricted() && !this.isEditableTarget(event.target)) {
+      event.preventDefault();
+    }
+  }
+
+  @HostListener('document:cut', ['$event'])
+  onCut(event: ClipboardEvent): void {
+    if (this.state.copyRestricted() && !this.isEditableTarget(event.target)) {
+      event.preventDefault();
+    }
+  }
+
+  @HostListener('document:selectstart', ['$event'])
+  onSelectStart(event: Event): void {
+    if (this.state.copyRestricted() && !this.isEditableTarget(event.target)) {
+      event.preventDefault();
     }
   }
 
