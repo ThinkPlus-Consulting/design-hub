@@ -40,7 +40,7 @@ public class SystemShellGraphSeedService implements CommandLineRunner {
 
     private final Neo4jClient neo4jClient;
     private final ObjectMapper objectMapper;
-    @Value("${designhub.seed-data:true}")
+    @Value("${systemshellgraph.seed-data:true}")
     private boolean seedDataEnabled;
 
     @Override
@@ -953,6 +953,7 @@ public class SystemShellGraphSeedService implements CommandLineRunner {
                 "description", description,
                 "id", stableIdForCode(normalizedCode),
                 "guid", requiresGuid(family) ? stableGuidForCode(normalizedCode) : null,
+                "backgroundImagePath", "",
                 "status", "active",
                 "graphScope", GRAPH_SCOPE
         );

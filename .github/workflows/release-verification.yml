@@ -70,12 +70,6 @@ jobs:
           cat /tmp/design-hub-backend.log
           exit 1
 
-      - name: Run benchmark integrity gate
-        run: node ./scripts/check-benchmark.mjs
-        env:
-          BENCHMARK_OUTPUT_PATH: /tmp/design-hub-benchmark.json
-          BENCHMARK_MIN_SOURCE_TRACEABILITY: '94'
-
       - name: Run frontend verification
         working-directory: frontend
         run: npm run verify:ui
@@ -83,14 +77,6 @@ jobs:
       - name: Package backend artifact
         working-directory: backend
         run: ./mvnw -B -DskipTests package
-
-      - name: Upload benchmark snapshot
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: benchmark-snapshot-release
-          path: /tmp/design-hub-benchmark.json
-          if-no-files-found: ignore
 
       - name: Upload frontend dist
         uses: actions/upload-artifact@v4

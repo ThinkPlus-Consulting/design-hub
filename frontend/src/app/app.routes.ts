@@ -4,27 +4,17 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./features/landing/design-hub-landing.page').then((m) => m.DesignHubLandingPage),
-  },
-  {
-    path: 'object-definitions',
-    loadComponent: () =>
-      import('./features/design-hub/design-hub.page').then((m) => m.DesignHubPage),
-  },
-  {
-    path: 'system-shell',
-    loadComponent: () =>
       import('./features/system-shell-graph/system-shell-graph.page').then((m) => m.SystemShellGraphPage),
   },
   {
-    path: 'system-shell-graph',
-    redirectTo: 'system-shell',
+    path: 'system-shell',
+    redirectTo: '',
     pathMatch: 'full',
   },
   {
-    path: 'workspace',
-    loadComponent: () =>
-      import('./features/design-hub/design-hub-workspace.page').then((m) => m.DesignHubWorkspacePage),
+    path: 'system-shell-graph',
+    redirectTo: '',
+    pathMatch: 'full',
   },
   { path: '**', redirectTo: '' },
 ];
