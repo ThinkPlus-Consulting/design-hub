@@ -171,6 +171,7 @@ interface RawRole {
   roleKey?: string;
   displayName?: string;
   roleGroup?: string | null;
+  copyRestricted?: boolean;
   sortOrder?: number | null;
   screenCount?: number;
   touchpointCount?: number;
@@ -1306,6 +1307,7 @@ export class DesignHubApiService {
       roleKey: role.roleKey ?? '',
       displayName: role.displayName ?? role.roleKey ?? '',
       roleGroup: role.roleGroup ?? null,
+      copyRestricted: role.copyRestricted ?? false,
       sortOrder: role.sortOrder ?? null,
       screenCount: role.screenCount ?? 0,
       touchpointCount: role.touchpointCount ?? 0,

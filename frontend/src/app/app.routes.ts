@@ -14,12 +14,17 @@ export const routes: Routes = [
   {
     path: 'system-shell',
     loadComponent: () =>
-      import('./features/design-hub/design-hub-workspace.page').then((m) => m.DesignHubWorkspacePage),
+      import('./features/system-shell-graph/system-shell-graph.page').then((m) => m.SystemShellGraphPage),
+  },
+  {
+    path: 'system-shell-graph',
+    redirectTo: 'system-shell',
+    pathMatch: 'full',
   },
   {
     path: 'workspace',
-    redirectTo: 'system-shell',
-    pathMatch: 'full',
+    loadComponent: () =>
+      import('./features/design-hub/design-hub-workspace.page').then((m) => m.DesignHubWorkspacePage),
   },
   { path: '**', redirectTo: '' },
 ];

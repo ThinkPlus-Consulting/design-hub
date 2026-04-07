@@ -1,0 +1,403 @@
+<section
+  class="tenant-list"
+  data-testid="tenant-list"
+  data-dom-ref="tenant-list-screen"
+  [attr.source-object-id]="sourceObjectId('SHL02.SCN02')" [attr.guid]="guid('SHL02.SCN02')"
+  data-inspect-id="tenant-list-screen"
+  [class.ssg-focused]="isFocused('SHL02.SCN02')"
+>
+  <div class="list-page-card">
+    <header
+      class="list-page-card-header"
+      data-dom-ref="tenant-list-header"
+      [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC01')" [attr.guid]="guid('SHL02.SCN02.SEC01')"
+      data-inspect-id="tenant-list-header"
+      [class.ssg-focused]="isFocused('SHL02.SCN02.SEC01')"
+    >
+      <h1
+        class="tenant-list-title"
+        data-dom-ref="tenant-list-title"
+        [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC01.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC01.ELT01')"
+        data-inspect-id="tenant-list-title"
+        [class.ssg-focused]="isFocused('SHL02.SCN02.SEC01.ELT01')"
+      >
+        Tenant Manager
+      </h1>
+    </header>
+
+    <div
+      class="toolbar toolbar-panel"
+      data-testid="filter-bar"
+      data-dom-ref="tenant-list-toolbar"
+      [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02')" [attr.guid]="guid('SHL02.SCN02.SEC02')"
+      data-inspect-id="tenant-list-toolbar"
+      [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02')"
+    >
+        <div
+          class="search-bar"
+          data-dom-ref="tenant-list-search-section"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02.SEC01')" [attr.guid]="guid('SHL02.SCN02.SEC02.SEC01')"
+          data-inspect-id="tenant-list-search-section"
+          [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02.SEC01')"
+        >
+          <span class="search-icon pi pi-search"></span>
+          <input
+            pInputText
+            type="text"
+            class="search-input"
+            aria-label="Search tenants"
+            placeholder="Search tenants..."
+            [value]="searchText()"
+            (input)="onSearchChange($any($event.target).value)"
+            data-testid="input-search-tenants"
+            data-dom-ref="tenant-list-search-input"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02.SEC01.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC02.SEC01.ELT01')"
+            data-inspect-id="tenant-list-search-input"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02.SEC01.ELT01')"
+          />
+        </div>
+        <div
+          data-dom-ref="tenant-list-filter-toggle-section"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02.SEC02')" [attr.guid]="guid('SHL02.SCN02.SEC02.SEC02')"
+          data-inspect-id="tenant-list-filter-toggle-section"
+          [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02.SEC02')"
+        >
+          <p-button
+            icon="pi pi-filter"
+            severity="secondary"
+            [outlined]="true"
+            [rounded]="true"
+            ariaLabel="Toggle filters"
+            (onClick)="toggleFilters()"
+            [styleClass]="showFilters() ? 'filter-icon-active' : ''"
+            data-testid="btn-toggle-filters"
+            data-dom-ref="tenant-list-filter-toggle-action"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02.SEC02.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC02.SEC02.ELT01')"
+            data-inspect-id="tenant-list-filter-toggle-action"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02.SEC02.ELT01')"
+          />
+        </div>
+        <span class="toolbar-spacer"></span>
+        <div
+          data-dom-ref="tenant-list-view-mode-section"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02.SEC03')" [attr.guid]="guid('SHL02.SCN02.SEC02.SEC03')"
+          data-inspect-id="tenant-list-view-mode-section"
+          [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02.SEC03')"
+        >
+          <p-toggleButton
+            [ngModel]="effectiveViewMode() === 'table'"
+            (ngModelChange)="viewMode.set($event ? 'table' : 'grid')"
+            onLabel="Table"
+            offLabel="Grid"
+            onIcon="pi pi-list"
+            offIcon="pi pi-objects-column"
+            ariaLabel="Toggle view mode"
+            data-testid="view-toggle"
+            data-dom-ref="tenant-list-view-toggle"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02.SEC03.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC02.SEC03.ELT01')"
+            data-inspect-id="tenant-list-view-toggle"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02.SEC03.ELT01')"
+          />
+        </div>
+        <div
+          data-dom-ref="tenant-list-create-action-section"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02.SEC04')" [attr.guid]="guid('SHL02.SCN02.SEC02.SEC04')"
+          data-inspect-id="tenant-list-create-action-section"
+          [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02.SEC04')"
+        >
+          <p-button
+            label="New Tenant"
+            icon="pi pi-plus"
+            data-testid="btn-create-tenant"
+            (onClick)="onCreateTenant()"
+            data-dom-ref="tenant-list-create-action"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC02.SEC04.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC02.SEC04.ELT01')"
+            data-inspect-id="tenant-list-create-action"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC02.SEC04.ELT01')"
+          />
+        </div>
+    </div>
+
+    @if (showFilters()) {
+      <div
+        class="filter-row"
+        data-testid="filter-row"
+        data-dom-ref="tenant-list-filter-row"
+        [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC03')" [attr.guid]="guid('SHL02.SCN02.SEC03')"
+        data-inspect-id="tenant-list-filter-row"
+        [class.ssg-focused]="isFocused('SHL02.SCN02.SEC03')"
+      >
+        <p-select
+          [options]="typeOptions"
+          optionLabel="label"
+          optionValue="value"
+          ariaLabel="Filter by tenant type"
+          [ngModel]="activeTypeFilter()"
+          (ngModelChange)="onTypeFilterChange($event)"
+          placeholder="All Types"
+          styleClass="filter-select"
+          data-testid="filter-type-select"
+          data-dom-ref="tenant-list-type-filter"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC03.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC03.ELT01')"
+          data-inspect-id="tenant-list-type-filter"
+          [class.ssg-focused]="isFocused('SHL02.SCN02.SEC03.ELT01')"
+        />
+        <p-select
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          ariaLabel="Filter by tenant status"
+          [ngModel]="activeStatusFilter()"
+          (ngModelChange)="onStatusFilterChange($event)"
+          placeholder="All Statuses"
+          styleClass="filter-select"
+          data-testid="filter-status-select"
+          data-dom-ref="tenant-list-status-filter"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC03.ELT02')" [attr.guid]="guid('SHL02.SCN02.SEC03.ELT02')"
+          data-inspect-id="tenant-list-status-filter"
+          [class.ssg-focused]="isFocused('SHL02.SCN02.SEC03.ELT02')"
+        />
+        @if (hasActiveFilters()) {
+          <p-button
+            label="Clear"
+            icon="pi pi-filter-slash"
+            severity="secondary"
+            [text]="true"
+            size="small"
+            (onClick)="clearFilters()"
+            data-testid="btn-clear-filters"
+            data-dom-ref="tenant-list-clear-filters-action"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC03.ELT03')" [attr.guid]="guid('SHL02.SCN02.SEC03.ELT03')"
+            data-inspect-id="tenant-list-clear-filters-action"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC03.ELT03')"
+          />
+        }
+      </div>
+    }
+
+    @if (isEmpty()) {
+      <div
+        class="empty-state"
+        role="status"
+        data-testid="empty-state"
+        data-dom-ref="tenant-list-empty-state"
+        [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC04')" [attr.guid]="guid('SHL02.SCN02.SEC04')"
+        data-inspect-id="tenant-list-empty-state"
+        [class.ssg-focused]="isFocused('SHL02.SCN02.SEC04')"
+      >
+        <i class="pi pi-inbox empty-state-icon"></i>
+        <h3
+          class="empty-state-title"
+          data-dom-ref="tenant-list-empty-state-title"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC04.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC04.ELT01')"
+          data-inspect-id="tenant-list-empty-state-title"
+          [class.ssg-focused]="isFocused('SHL02.SCN02.SEC04.ELT01')"
+        >
+          No tenants found
+        </h3>
+        <p
+          class="empty-state-message"
+          data-dom-ref="tenant-list-empty-state-message"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC04.ELT02')" [attr.guid]="guid('SHL02.SCN02.SEC04.ELT02')"
+          data-inspect-id="tenant-list-empty-state-message"
+          [class.ssg-focused]="isFocused('SHL02.SCN02.SEC04.ELT02')"
+        >
+          @if (hasActiveFilters() || searchText()) {
+            No tenants match your current filters. Try adjusting your search or clearing filters.
+          } @else {
+            No tenants have been created yet. Click "New Tenant" to get started.
+          }
+        </p>
+        @if (hasActiveFilters() || searchText()) {
+          <p-button
+            label="Clear Filters"
+            severity="secondary"
+            icon="pi pi-filter-slash"
+            (onClick)="clearFilters()"
+            data-testid="btn-empty-clear-filters"
+            data-dom-ref="tenant-list-empty-state-action"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC04.ELT03')" [attr.guid]="guid('SHL02.SCN02.SEC04.ELT03')"
+            data-inspect-id="tenant-list-empty-state-action"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC04.ELT03')"
+          />
+        }
+      </div>
+    } @else {
+      <div
+        data-dom-ref="tenant-list-result-surface"
+        [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC05')" [attr.guid]="guid('SHL02.SCN02.SEC05')"
+        data-inspect-id="tenant-list-result-surface"
+        [class.ssg-focused]="isFocused('SHL02.SCN02.SEC05')"
+      >
+        @if (effectiveViewMode() === 'grid') {
+          <div
+            class="tenant-grid"
+            data-testid="tenant-grid"
+            data-dom-ref="tenant-list-grid-view"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC05.SEC01')" [attr.guid]="guid('SHL02.SCN02.SEC05.SEC01')"
+            data-inspect-id="tenant-list-grid-view"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC05.SEC01')"
+          >
+            @for (tenant of paginatedTenants(); track tenant.shortName; let first = $first) {
+              <article
+                class="tenant-card"
+                tabindex="0"
+                role="button"
+                [attr.aria-label]="'View tenant ' + tenant.name"
+                (click)="onCardClick(tenant)"
+                (keydown.enter)="onCardClick(tenant)"
+                (keydown.space)="onCardClick(tenant)"
+                [attr.data-testid]="'tenant-card-' + tenant.shortName"
+                [attr.data-dom-ref]="first ? 'tenant-list-card' : null"
+                [attr.source-object-id]="sourceObjectId(first ? 'SHL02.SCN02.SEC05.SEC01.ELT01' : null)" [attr.guid]="guid(first ? 'SHL02.SCN02.SEC05.SEC01.ELT01' : null)"
+                [attr.data-inspect-id]="first ? 'tenant-list-card' : null"
+                [class.ssg-focused]="first && isFocused('SHL02.SCN02.SEC05.SEC01.ELT01')"
+              >
+                <div class="tenant-card-header">
+                  <div class="tenant-avatar" [class]="getAvatarClass(tenant.type)">
+                    {{ getInitials(tenant.name) }}
+                  </div>
+                  <div class="tenant-info">
+                    <span class="tenant-name">{{ tenant.name }}</span>
+                    <span class="tenant-short-name">{{ tenant.shortName }}</span>
+                  </div>
+                </div>
+
+                <div class="tenant-card-badges">
+                  <p-tag
+                    [value]="tenant.type"
+                    [severity]="getTypeSeverity(tenant.type)"
+                    [rounded]="true"
+                    [attr.data-dom-ref]="first ? 'tenant-list-card-type-badge' : null"
+                    [attr.source-object-id]="sourceObjectId(first ? 'SHL02.SCN02.SEC05.SEC01.ELT02' : null)" [attr.guid]="guid(first ? 'SHL02.SCN02.SEC05.SEC01.ELT02' : null)"
+                    [attr.data-inspect-id]="first ? 'tenant-list-card-type-badge' : null"
+                    [class.ssg-focused]="first && isFocused('SHL02.SCN02.SEC05.SEC01.ELT02')"
+                  />
+                  <span class="status-badge">
+                    <span class="status-dot" [class]="getStatusDotClass(tenant.status)"></span>
+                    {{ getStatusLabel(tenant.status) }}
+                  </span>
+                  @if (tenant.health) {
+                    <span class="health-badge" [class]="getHealthClass(tenant.health)" [title]="getHealthLabel(tenant.health)">
+                      <i [class]="getHealthIcon(tenant.health)"></i>
+                    </span>
+                  }
+                </div>
+
+                <div class="tenant-card-stats">
+                  <span class="stat">{{ tenant.stats.users }} Users</span>
+                  <span class="stat-separator"></span>
+                  <span class="stat">{{ tenant.stats.agents }} Agents</span>
+                  <span class="stat-separator"></span>
+                  <span class="stat">{{ tenant.stats.types }} Types</span>
+                </div>
+              </article>
+            }
+          </div>
+        }
+
+        @if (effectiveViewMode() === 'table') {
+          <div
+            data-dom-ref="tenant-list-table-view"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC05.SEC02')" [attr.guid]="guid('SHL02.SCN02.SEC05.SEC02')"
+            data-inspect-id="tenant-list-table-view"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC05.SEC02')"
+          >
+            <p-table
+              [value]="[...paginatedTenants()]"
+              [rowHover]="true"
+              [tableStyle]="{ 'min-width': '50rem' }"
+              data-testid="tenant-table"
+              styleClass="tenant-data-table"
+              data-dom-ref="tenant-list-table"
+              [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC05.SEC02.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC05.SEC02.ELT01')"
+              data-inspect-id="tenant-list-table"
+              [class.ssg-focused]="isFocused('SHL02.SCN02.SEC05.SEC02.ELT01')"
+            >
+              <ng-template #header>
+                <tr>
+                  <th pSortableColumn="name">Tenant <p-sortIcon field="name" /></th>
+                  <th pSortableColumn="type">Type <p-sortIcon field="type" /></th>
+                  <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                  <th>Health</th>
+                  <th pSortableColumn="stats.users">Users <p-sortIcon field="stats.users" /></th>
+                  <th pSortableColumn="stats.agents">Agents <p-sortIcon field="stats.agents" /></th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-tenant let-rowIndex="rowIndex">
+                <tr
+                  class="clickable-row"
+                  (click)="onCardClick(tenant)"
+                  [attr.data-testid]="'tenant-row-' + tenant.shortName"
+                >
+                  <td>
+                    <div class="table-tenant-cell">
+                      <div class="tenant-avatar tenant-avatar-sm" [class]="getAvatarClass(tenant.type)">
+                        {{ getInitials(tenant.name) }}
+                      </div>
+                      <div class="table-tenant-info">
+                        <span class="tenant-name">{{ tenant.name }}</span>
+                        <span class="tenant-short-name">{{ tenant.shortName }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <p-tag
+                      [value]="tenant.type"
+                      [severity]="getTypeSeverity(tenant.type)"
+                      [rounded]="true"
+                      [attr.data-dom-ref]="rowIndex === 0 ? 'tenant-list-table-type-badge' : null"
+                      [attr.source-object-id]="sourceObjectId(rowIndex === 0 ? 'SHL02.SCN02.SEC05.SEC02.ELT02' : null)" [attr.guid]="guid(rowIndex === 0 ? 'SHL02.SCN02.SEC05.SEC02.ELT02' : null)"
+                      [attr.data-inspect-id]="rowIndex === 0 ? 'tenant-list-table-type-badge' : null"
+                      [class.ssg-focused]="rowIndex === 0 && isFocused('SHL02.SCN02.SEC05.SEC02.ELT02')"
+                    />
+                  </td>
+                  <td>
+                    <span class="status-badge">
+                      <span class="status-dot" [class]="getStatusDotClass(tenant.status)"></span>
+                      {{ getStatusLabel(tenant.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    @if (tenant.health) {
+                      <span class="health-badge-inline" [class]="getHealthClass(tenant.health)">
+                        <i [class]="getHealthIcon(tenant.health)"></i>
+                        {{ getHealthLabel(tenant.health) }}
+                      </span>
+                    } @else {
+                      <span class="text-muted">—</span>
+                    }
+                  </td>
+                  <td>{{ tenant.stats.users }}</td>
+                  <td>{{ tenant.stats.agents }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        }
+
+        @if (totalRecords() > 0) {
+          <div
+            data-dom-ref="tenant-list-pagination"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC05.SEC03')" [attr.guid]="guid('SHL02.SCN02.SEC05.SEC03')"
+            data-inspect-id="tenant-list-pagination"
+            [class.ssg-focused]="isFocused('SHL02.SCN02.SEC05.SEC03')"
+          >
+            <p-paginator
+              [rows]="pageSize()"
+              [totalRecords]="totalRecords()"
+              [rowsPerPageOptions]="[10, 20, 50, 100]"
+              [first]="currentPage() * pageSize()"
+              (onPageChange)="onPageChange($event)"
+              data-testid="tenant-paginator"
+              data-dom-ref="tenant-list-paginator"
+              [attr.source-object-id]="sourceObjectId('SHL02.SCN02.SEC05.SEC03.ELT01')" [attr.guid]="guid('SHL02.SCN02.SEC05.SEC03.ELT01')"
+              data-inspect-id="tenant-list-paginator"
+              [class.ssg-focused]="isFocused('SHL02.SCN02.SEC05.SEC03.ELT01')"
+            />
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

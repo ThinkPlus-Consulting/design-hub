@@ -107,6 +107,7 @@ public record ScreenResponse(
                 role.getRoleKey(),
                 role.getDisplayName(),
                 role.getRoleGroup(),
+                Boolean.TRUE.equals(role.getCopyRestricted()),
                 role.getSortOrder(),
                 0,
                 0,

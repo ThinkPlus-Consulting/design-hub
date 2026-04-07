@@ -32,11 +32,11 @@ class RoleServiceTest {
         // Simulate two rows: one BusinessRole, one ValidationRole
         Collection<Map<String, Object>> rows = List.of(
                 Map.of("roleKey", "ADMIN", "displayName", "Administrator",
-                        "roleGroup", "tenant", "sortOrder", 1,
+                        "roleGroup", "tenant", "copyRestricted", false, "sortOrder", 1,
                         "screenCount", 5L, "touchpointCount", 2L,
                         "interactionCount", 3L, "journeyCount", 1L),
                 Map.of("roleKey", "HITL_REVIEWER", "displayName", "HITL Reviewer",
-                        "roleGroup", "review",
+                        "roleGroup", "review", "copyRestricted", false,
                         "screenCount", 1L, "touchpointCount", 0L,
                         "interactionCount", 0L, "journeyCount", 0L)
         );
@@ -50,12 +50,14 @@ class RoleServiceTest {
                 .filter(r -> "ADMIN".equals(r.roleKey())).findFirst().orElseThrow();
         assertEquals("Administrator", admin.displayName());
         assertEquals("tenant", admin.roleGroup());
+        assertFalse(admin.copyRestricted());
         assertEquals(1, admin.sortOrder());
 
         RoleResponse hitl = results.stream()
                 .filter(r -> "HITL_REVIEWER".equals(r.roleKey())).findFirst().orElseThrow();
         assertEquals("HITL Reviewer", hitl.displayName());
         assertEquals("review", hitl.roleGroup());  // scope mapped to roleGroup
+        assertFalse(hitl.copyRestricted());
     }
 
     @Test

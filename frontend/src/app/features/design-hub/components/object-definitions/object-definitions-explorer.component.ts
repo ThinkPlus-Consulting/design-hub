@@ -206,7 +206,7 @@ import { DesignHubStateService } from '../../services/design-hub-state.service';
                           @if (definition.type === 'screen') {
                             <a
                               class="app-btn app-btn--secondary"
-                              [routerLink]="['/system-shell']"
+                              [routerLink]="['/workspace']"
                               [queryParams]="{ screen: instance.id }"
                             >
                               Open Screen

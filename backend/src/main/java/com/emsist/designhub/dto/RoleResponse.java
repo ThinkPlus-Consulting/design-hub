@@ -4,6 +4,7 @@ public record RoleResponse(
         String roleKey,
         String displayName,
         String roleGroup,
+        boolean copyRestricted,
         Integer sortOrder,
         long screenCount,
         long touchpointCount,
