@@ -8,10 +8,9 @@
     "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test:e2e": "playwright test",
-    "test:visual": "playwright test tests/visual",
-    "test:drift": "playwright test tests/drift",
-    "check:design-tokens": "node ./scripts/check-design-tokens.mjs",
-    "verify:ui": "npm run check:design-tokens && npm run build && npm run test:e2e"
+    "test:system-shell-graph": "playwright test tests/smoke/system-shell-graph.spec.ts",
+    "test:smoke": "playwright test tests/smoke",
+    "verify:ui": "npm run build && npm run test:e2e"
   },
   "private": true,
   "engines": {

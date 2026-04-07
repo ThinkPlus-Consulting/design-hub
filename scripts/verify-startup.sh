@@ -5,8 +5,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKEND_DIR="$ROOT_DIR/backend"
 FRONTEND_DIR="$ROOT_DIR/frontend"
 NEO4J_CONTAINER_NAME="design-hub-neo4j"
+NEO4J_HTTP_PORT="${DESIGN_HUB_NEO4J_HTTP_PORT:-27484}"
+NEO4J_BOLT_PORT="${DESIGN_HUB_NEO4J_BOLT_PORT:-27697}"
 BACKEND_HEALTH_URL="http://localhost:8091/actuator/health"
-BENCHMARK_URL="http://localhost:8091/api/v1/graph/benchmark"
+GRAPH_URL="http://localhost:8091/api/v1/system-shell-graph/graph"
 FRONTEND_URL="http://localhost:4300"
 
 KEEP_RUNNING=false
@@ -15,7 +17,7 @@ STARTED_BACKEND=false
 STARTED_FRONTEND=false
 BACKEND_PID=""
 FRONTEND_PID=""
-LOG_DIR="$(mktemp -d "${TMPDIR:-/tmp}/design-hub-startup.XXXXXX")"
+LOG_DIR="$(mktemp -d "${TMPDIR:-/tmp}/system-shell-graph-startup.XXXXXX")"
 BACKEND_LOG="$LOG_DIR/backend.log"
 FRONTEND_LOG="$LOG_DIR/frontend.log"
 BACKEND_PID_FILE="$LOG_DIR/backend.pid"
@@ -85,12 +87,12 @@ probe_backend_health() {
   curl -fsS "$BACKEND_HEALTH_URL" 2>/dev/null | grep -q '"status":"UP"'
 }
 
-probe_benchmark() {
-  curl -fsS "$BENCHMARK_URL" 2>/dev/null | grep -q '"overallScore":100'
+probe_graph() {
+  curl -fsS "$GRAPH_URL" 2>/dev/null | grep -q '"graphScope":"SYSTEM_FRONTEND_GRAPH"'
 }
 
 probe_frontend() {
-  curl -fsS "$FRONTEND_URL" 2>/dev/null | grep -q '<title>Design Hub</title>'
+  curl -fsS "$FRONTEND_URL" 2>/dev/null | grep -q '<title>System Shell Graph</title>'
 }
 
 wait_for_probe() {
@@ -209,7 +211,7 @@ if probe_backend_health; then
   log "Reusing existing backend at $BACKEND_HEALTH_URL."
 else
   if port_listening 8091; then
-    fail "Port 8091 is already in use, but Design Hub backend health is not reporting UP."
+    fail "Port 8091 is already in use, but the System Shell Graph backend health is not reporting UP."
   fi
 
   log "Starting backend from $BACKEND_DIR."
@@ -218,7 +220,7 @@ else
   wait_for_probe probe_backend_health 120 "$BACKEND_PID" "$BACKEND_LOG"
 fi
 
-probe_benchmark || fail "Benchmark endpoint did not report the expected live overall score."
+probe_graph || fail "System shell graph endpoint did not respond with seeded data."
 
 if [ ! -d "$FRONTEND_DIR/node_modules" ]; then
   if [ "$SKIP_FRONTEND_INSTALL" = true ]; then
@@ -236,7 +238,7 @@ if probe_frontend; then
   log "Reusing existing frontend at $FRONTEND_URL."
 else
   if port_listening 4300; then
-    fail "Port 4300 is already in use, but the Design Hub frontend shell did not respond as expected."
+    fail "Port 4300 is already in use, but the System Shell Graph frontend did not respond as expected."
   fi
 
   log "Starting frontend from $FRONTEND_DIR."
@@ -246,7 +248,8 @@ else
 fi
 
 log "Startup proof passed."
-log "Neo4j: http://localhost:7474"
+log "Neo4j: http://localhost:${NEO4J_HTTP_PORT}"
+log "Neo4j Bolt: bolt://localhost:${NEO4J_BOLT_PORT}"
 log "Backend: $BACKEND_HEALTH_URL"
 log "Frontend: $FRONTEND_URL"
 log "Logs: $LOG_DIR"

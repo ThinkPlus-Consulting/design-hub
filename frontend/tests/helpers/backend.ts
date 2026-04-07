@@ -29,7 +29,7 @@ export async function ensureBackendUp(timeoutMs = 15_000): Promise<void> {
 
   throw new Error(
     `Backend precondition failed at ${backendBaseUrl}${HEALTHCHECK_PATH}. `
-    + `Start the Spring backend on port 8091 before running Playwright. `
-    + `Last failure: ${lastFailure}`
+      + `Start the Spring backend on port 8091 before running Playwright. `
+      + `Last failure: ${lastFailure}`,
   );
 }
