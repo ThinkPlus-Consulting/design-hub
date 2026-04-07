@@ -1,6 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LocaleService } from './core/i18n/locale.service';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +8,4 @@ import { LocaleService } from './core/i18n/locale.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<router-outlet />',
 })
-export class AppComponent {
-  readonly locale = inject(LocaleService);
-}
+export class AppComponent {}

@@ -1,0 +1,104 @@
+<div
+  class="app-shell"
+  data-dom-ref="app-shell"
+  [attr.source-object-id]="sourceObjectId('SHL02.SCN01')" [attr.guid]="guid('SHL02.SCN01')"
+  data-inspect-id="app-shell"
+  [class.ssg-focused]="isFocused('SHL02.SCN01')"
+  [style.--ssg-app-shell-background]="backgroundColorStyle()"
+>
+  <div class="administration-screen-root">
+    <header
+      class="app-shell-header app-shell-header-panel"
+      data-dom-ref="app-shell-header"
+      [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC01')" [attr.guid]="guid('SHL02.SCN01.SEC01')"
+      data-inspect-id="app-shell-header"
+      [class.ssg-focused]="isFocused('SHL02.SCN01.SEC01')"
+    >
+        <div class="app-shell-brand">
+          <span
+            class="app-shell-title"
+            data-dom-ref="app-shell-title"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC01.ELT01')" [attr.guid]="guid('SHL02.SCN01.SEC01.ELT01')"
+            data-inspect-id="app-shell-title"
+            [class.ssg-focused]="isFocused('SHL02.SCN01.SEC01.ELT01')"
+          >
+            Administration
+          </span>
+        </div>
+        <div
+          class="app-shell-actions"
+          data-dom-ref="app-shell-actions"
+          [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC01.ELT02')" [attr.guid]="guid('SHL02.SCN01.SEC01.ELT02')"
+          data-inspect-id="app-shell-actions"
+          [class.ssg-focused]="isFocused('SHL02.SCN01.SEC01.ELT02')"
+        >
+          Notifications · Help · Sign out
+        </div>
+    </header>
+
+    <div class="app-shell-body">
+      <aside
+        class="app-shell-dock app-shell-dock-panel"
+        data-dom-ref="app-shell-dock"
+        [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC02')" [attr.guid]="guid('SHL02.SCN01.SEC02')"
+        data-inspect-id="app-shell-dock"
+        [class.ssg-focused]="isFocused('SHL02.SCN01.SEC02')"
+      >
+          <div
+            class="app-shell-dock-label"
+            data-dom-ref="app-shell-dock-label"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC02.ELT01')" [attr.guid]="guid('SHL02.SCN01.SEC02.ELT01')"
+            data-inspect-id="app-shell-dock-label"
+            [class.ssg-focused]="isFocused('SHL02.SCN01.SEC02.ELT01')"
+          >
+            Navigation Dock
+          </div>
+          <div
+            class="app-shell-active-module"
+            data-dom-ref="app-shell-active-module"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC02.ELT02')" [attr.guid]="guid('SHL02.SCN01.SEC02.ELT02')"
+            data-inspect-id="app-shell-active-module"
+            [class.ssg-focused]="isFocused('SHL02.SCN01.SEC02.ELT02')"
+          >
+            Administration
+          </div>
+          <ul class="app-shell-dock-items" aria-hidden="true">
+            <li>Tenant Manager</li>
+            <li>License Manager</li>
+            <li>Master Locale</li>
+            <li>Master Definitions</li>
+          </ul>
+      </aside>
+
+      <main
+        class="app-shell-workspace app-shell-workspace-panel"
+        data-dom-ref="app-shell-workspace"
+        [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC03')" [attr.guid]="guid('SHL02.SCN01.SEC03')"
+        data-inspect-id="app-shell-workspace"
+        [class.ssg-focused]="isFocused('SHL02.SCN01.SEC03')"
+      >
+          <h1
+            class="app-shell-workspace-title"
+            data-dom-ref="app-shell-workspace-title"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC03.ELT01')" [attr.guid]="guid('SHL02.SCN01.SEC03.ELT01')"
+            data-inspect-id="app-shell-workspace-title"
+            [class.ssg-focused]="isFocused('SHL02.SCN01.SEC03.ELT01')"
+          >
+            Administration Workspace
+          </h1>
+          <p
+            class="app-shell-workspace-description"
+            data-dom-ref="app-shell-workspace-description"
+            [attr.source-object-id]="sourceObjectId('SHL02.SCN01.SEC03.ELT02')" [attr.guid]="guid('SHL02.SCN01.SEC03.ELT02')"
+            data-inspect-id="app-shell-workspace-description"
+            [class.ssg-focused]="isFocused('SHL02.SCN01.SEC03.ELT02')"
+          >
+            Authenticated shell layout with header actions, dock navigation, and a routed content surface.
+          </p>
+          <section class="app-shell-workspace-card">
+            <div class="workspace-card-chip">Administration / Tenant Manager</div>
+            <div class="workspace-card-title">Tenant registry and management surfaces render here.</div>
+          </section>
+      </main>
+    </div>
+</div>

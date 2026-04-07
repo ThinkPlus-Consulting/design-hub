@@ -25,7 +25,12 @@ Design Hub is a graph-backed product, architecture, and delivery intelligence ap
 docker compose up -d neo4j
 ```
 
-The local Neo4j container is tuned for a smaller Docker Desktop footprint via `docker-compose.yml` (`256M` heap, `128M` page cache) so the seeded graph and verification flows stay stable on constrained local environments.
+The local Neo4j container is tuned for a smaller Docker Desktop footprint via `docker-compose.yml` (`256M` heap, `128M` page cache) so the seeded graph and verification flows stay stable on constrained local environments. It also uses non-default host ports by default to avoid collisions with other local Emsist/Neo4j stacks:
+
+- HTTP: `27484 -> 7474`
+- Bolt: `27697 -> 7687`
+
+Override them if needed with `DESIGN_HUB_NEO4J_HTTP_PORT` and `DESIGN_HUB_NEO4J_BOLT_PORT`.
 
 2. Start the backend on port `8091`:
 
@@ -49,7 +54,7 @@ cd frontend
 - Frontend: `http://localhost:4300`
 - Backend health: `http://localhost:8091/actuator/health`
 - Swagger UI: `http://localhost:8091/swagger-ui.html`
-- Neo4j Browser: `http://localhost:7474`
+- Neo4j Browser: `http://localhost:27484`
 
 For a repo-level startup proof that bootstraps Neo4j, starts the backend and frontend if needed, and probes the live endpoints, run:
 
@@ -64,7 +69,7 @@ This startup proof also passed from a clean isolated temp copy on this machine w
 
 The backend reads Neo4j settings from [`backend/src/main/resources/application.yml`](/Users/mksulty/Claude/Projects/design-hub/backend/src/main/resources/application.yml):
 
-- `NEO4J_URI=bolt://localhost:7687`
+- `NEO4J_URI=bolt://localhost:27697`
 - `NEO4J_USER=neo4j`
 - `NEO4J_PASSWORD=password`
 - `NEO4J_DATABASE=neo4j`

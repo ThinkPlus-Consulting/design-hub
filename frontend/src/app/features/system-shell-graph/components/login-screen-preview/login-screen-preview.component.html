@@ -1,0 +1,206 @@
+<div
+  class="login-shell"
+  data-dom-ref="login-shell"
+  [attr.source-object-id]="sourceObjectId('SHL01.SCN01')" [attr.guid]="guid('SHL01.SCN01')"
+  data-inspect-id="login-shell"
+  [class.ssg-focused]="isFocused('SHL01.SCN01')"
+  [style.--ssg-screen-background-color]="backgroundColorStyle()"
+  [style.--ssg-screen-background-pattern-opacity]="backgroundPatternOpacity()"
+>
+  <div class="shell-background-container">
+    <div class="shell-background shell-background-color"></div>
+    @if (showPattern()) {
+      <div class="shell-background shell-background-pattern"></div>
+    }
+  </div>
+  <div class="login-shell-inner">
+    <section class="welcome-container" data-dom-ref="welcome-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC01')" [attr.guid]="guid('SHL01.SCN01.SEC01')" data-inspect-id="welcome-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC01')">
+      <div class="welcome-copy">
+        <p-message
+          class="welcome-title-message"
+          severity="secondary"
+          variant="simple"
+          data-dom-ref="welcome-title"
+          [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC01.ELT01')"
+          [attr.guid]="guid('SHL01.SCN01.SEC01.ELT01')"
+          data-inspect-id="welcome-title"
+          [class.ssg-focused]="isFocused('SHL01.SCN01.SEC01.ELT01')"
+        >
+          ObjectsLogic
+        </p-message>
+        <p-message
+          class="welcome-subtitle-message"
+          severity="secondary"
+          variant="simple"
+          data-dom-ref="welcome-subtitle"
+          [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC01.ELT02')"
+          [attr.guid]="guid('SHL01.SCN01.SEC01.ELT02')"
+          data-inspect-id="welcome-subtitle"
+          [class.ssg-focused]="isFocused('SHL01.SCN01.SEC01.ELT02')"
+        >
+          Empower. Transform. Succeed.
+        </p-message>
+      </div>
+    </section>
+
+    <section class="logo-container" data-dom-ref="logo-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC02')" [attr.guid]="guid('SHL01.SCN01.SEC02')" data-inspect-id="logo-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC02')">
+      <img
+        class="svg-logo-renderer"
+        data-dom-ref="svg-logo-renderer"
+        [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC02.ELT01')"
+        [attr.guid]="guid('SHL01.SCN01.SEC02.ELT01')"
+        data-inspect-id="svg-logo-renderer"
+        [class.ssg-focused]="isFocused('SHL01.SCN01.SEC02.ELT01')"
+        src="assets/images/thinkplus-logo-colored.svg"
+        alt="ThinkPLUS"
+      />
+    </section>
+
+    <div class="auth-region auth-region-panel sign-in-surface-active" data-dom-ref="auth-region" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03')" [attr.guid]="guid('SHL01.SCN01.SEC03')" data-inspect-id="auth-region" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03')">
+        <section class="auth-step-container step-active" data-dom-ref="tenant-selection-step-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC01')" data-inspect-id="tenant-selection-step-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC01')">
+          <div class="step-header-container" data-dom-ref="tenant-selection-header-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC01.SEC01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC01.SEC01')" data-inspect-id="tenant-selection-header-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC01.SEC01')">
+            <div class="step-indicator" data-dom-ref="tenant-selection-step-indicator" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC01.SEC01.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC01.SEC01.ELT01')" data-inspect-id="tenant-selection-step-indicator" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC01.SEC01.ELT01')">1</div>
+            <h2 class="step-title" data-dom-ref="tenant-selection-step-title" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC01.SEC01.ELT02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC01.SEC01.ELT02')" data-inspect-id="tenant-selection-step-title" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC01.SEC01.ELT02')">Select Tenant</h2>
+          </div>
+          <div class="step-content-container auth-top" data-dom-ref="tenant-selection-content-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC01.SEC02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC01.SEC02')" data-inspect-id="tenant-selection-content-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC01.SEC02')">
+            <div class="tenant-registry-dropdown" data-dom-ref="tenant-registry-dropdown" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC01.SEC02.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC01.SEC02.ELT01')" data-inspect-id="tenant-registry-dropdown" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC01.SEC02.ELT01')">
+              <button
+                type="button"
+                class="tenant-dropdown-trigger"
+              >
+                <span class="tenant-chip-list" data-inspect-id="tenant-registry-chips">Select tenant</span>
+                <span class="tenant-dropdown-caret" data-inspect-id="tenant-registry-dropdown-caret" aria-hidden="true">▾</span>
+              </button>
+              <div class="tenant-dropdown-panel hidden" data-inspect-id="tenant-registry-dropdown-panel">
+                <div class="tenant-dropdown-filter-row" data-inspect-id="tenant-registry-dropdown-filter-row">
+                  <input
+                    class="tenant-dropdown-filter"
+                    aria-label="Search tenant registry"
+                    type="search"
+                    placeholder="Search tenant registry"
+                    autocomplete="off"
+                    data-inspect-id="tenant-registry-dropdown-filter"
+                  >
+                </div>
+                <div class="tenant-dropdown-options" data-inspect-id="tenant-registry-dropdown-options-list"></div>
+              </div>
+            </div>
+            <label class="remember-selection-control" data-dom-ref="remember-selection-checkbox" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC01.SEC02.ELT02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC01.SEC02.ELT02')" data-inspect-id="remember-selection-checkbox" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC01.SEC02.ELT02')">
+              <input type="checkbox">
+              <span data-inspect-id="remember-selection-label">Remember tenant selection</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="auth-step-container step-disabled" data-dom-ref="authentication-method-step-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02')" data-inspect-id="authentication-method-step-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02')">
+          <div class="step-header-container" data-dom-ref="authentication-method-header-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC01')" data-inspect-id="authentication-method-header-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC01')">
+            <div class="step-indicator" data-dom-ref="authentication-method-step-indicator" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC01.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC01.ELT01')" data-inspect-id="authentication-method-step-indicator" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC01.ELT01')">2</div>
+            <h2 class="step-title" data-dom-ref="authentication-method-step-title" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC01.ELT02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC01.ELT02')" data-inspect-id="authentication-method-step-title" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC01.ELT02')">Select Login Method</h2>
+          </div>
+
+          <div class="status-message-container" data-dom-ref="status-message-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC02')" data-inspect-id="status-message-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC02')">
+            <div class="auth-banner" data-dom-ref="auth-banner" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC02.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC02.ELT01')" data-inspect-id="auth-banner" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC02.ELT01')">
+              Status message area for authentication-method validation and system feedback.
+            </div>
+          </div>
+
+          <div class="step-content-container provider-selection-container" data-dom-ref="provider-selection-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03')" data-inspect-id="providers-view" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03')">
+            <div class="step-content-container no-auth-container state-panel" data-dom-ref="no-auth-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01')" data-inspect-id="no-auth-container" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01')">
+              <h4 data-dom-ref="no-auth-title" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01.ELT01')" data-inspect-id="no-auth-title" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01.ELT01')">No auth provider message</h4>
+              <p data-dom-ref="no-auth-text" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01.ELT02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01.ELT02')" data-inspect-id="no-auth-text" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC01.ELT02')">Shown when backend returns no authentication methods for the selected tenant.</p>
+            </div>
+
+            <article class="provider-option-panel provider-option-surface auth-provider-container" data-dom-ref="auth-provider-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02')" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02')">
+                  <div class="provider-button-header provider-header-container provider-header-surface" data-dom-ref="provider-header-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01')" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01')">
+                      <div class="provider-ident">
+                        <span class="provider-logo" data-dom-ref="auth-provider-logo" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT01')" data-inspect-id="auth-provider-logo" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT01')">LA</span>
+                        <strong class="provider-title" data-dom-ref="auth-method-name" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT02')" data-inspect-id="auth-method-name" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT02')">LDAP / AD</strong>
+                      </div>
+                      <label class="provider-remember" data-dom-ref="remember-me-selection" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT03')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT03')" data-inspect-id="remember-me-selection" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT03')">
+                        <input type="radio" name="remember-provider">
+                        <span>Remember me</span>
+                      </label>
+                      <button type="button" class="expand-action provider-expand-toggle" data-dom-ref="expand-action" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT04')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT04')" data-inspect-id="expand-action" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC01.ELT04')">−</button>
+                  </div>
+
+                  <div class="step-content-container interaction-body-container" data-inspect-id="interaction-body-container">
+                    <form class="provider-variant-container provider-variant-form" data-dom-ref="provider-variant-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02')" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02')">
+                      <div class="neo-field field-container" data-dom-ref="user-name-field-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01')" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01')">
+                        <label for="login-username-input" class="neo-field-label" data-dom-ref="identifier-label" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01.ELT01')" data-inspect-id="identifier-label" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01.ELT01')">User name</label>
+                        <div class="neo-input-wrap" data-dom-ref="identifier-input" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01.ELT02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01.ELT02')" data-inspect-id="identifier-input" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC01.ELT02')">
+                          <input
+                            id="login-username-input"
+                            class="neo-input"
+                            type="text"
+                            value="jane.doe"
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                          >
+                          <span class="neo-icon" aria-hidden="true">
+                            <svg viewBox="0 0 512 512">
+                              <path d="M256 0c-74.439 0-135 60.561-135 135s60.561 135 135 135 135-60.561 135-135S330.439 0 256 0zM423.966 358.195C387.006 320.667 338.009 300 286 300h-60c-52.008 0-101.006 20.667-137.966 58.195C51.255 395.539 31 444.833 31 497c0 8.284 6.716 15 15 15h420c8.284 0 15-6.716 15-15 0-52.167-20.255-101.461-57.034-138.805z"/>
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="neo-field field-container password-field-container" data-dom-ref="password-field-container" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02')" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02')">
+                        <label for="login-password-input" class="neo-field-label" data-dom-ref="password-label" [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT01')" data-inspect-id="password-label" [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT01')">Password</label>
+                        <input
+                          id="login-password-input"
+                          class="neo-input neo-input-password"
+                          type="password"
+                          value="password"
+                          placeholder="Enter your password"
+                          autocomplete="current-password"
+                          data-dom-ref="password-input"
+                          [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT02')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT02')"
+                          data-inspect-id="password-input"
+                          [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT02')"
+                        >
+                        <span class="neo-icon" aria-hidden="true">
+                          <svg viewBox="0 0 384 512">
+                            <path d="M336 192h-16v-64C320 57.406 262.594 0 192 0S64 57.406 64 128v64H48c-26.453 0-48 21.523-48 48v224c0 26.477 21.547 48 48 48h288c26.453 0 48-21.523 48-48V240c0-26.477-21.547-48-48-48zm-229.332-64c0-47.063 38.27-85.332 85.332-85.332s85.332 38.27 85.332 85.332v64H106.668z"/>
+                          </svg>
+                        </span>
+                        <button
+                          type="button"
+                          class="password-toggle"
+                          aria-label="Show password"
+                          title="Show password"
+                          data-dom-ref="password-toggle"
+                          [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT03')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT03')"
+                          data-inspect-id="password-toggle"
+                          [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC02.ELT03')"
+                        >
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                        </button>
+                      </div>
+                      <div
+                        class="sign-in-action-container"
+                        data-dom-ref="sign-in-action-container"
+                        [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC03')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC03')"
+                        data-inspect-id="sign-in-action-container"
+                        [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC03')"
+                      >
+                        <button
+                          type="submit"
+                          class="auth-btn provider-inline-submit"
+                          data-dom-ref="sign-in-action"
+                          [attr.source-object-id]="sourceObjectId('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC03.ELT01')" [attr.guid]="guid('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC03.ELT01')"
+                          data-inspect-id="sign-in-action"
+                          [class.ssg-focused]="isFocused('SHL01.SCN01.SEC03.SEC02.SEC03.SEC02.SEC02.SEC03.ELT01')"
+                        >
+                          Sign In
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+              </article>
+          </div>
+        </section>
+    </div>
+  </div>
+</div>
