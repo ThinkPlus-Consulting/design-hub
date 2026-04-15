@@ -121,7 +121,7 @@
 - [ ] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Persona.java backend/src/main/java/com/emsist/designhub/domain/Channel.java backend/src/main/java/com/emsist/designhub/domain/Permission.java backend/src/test/java/com/emsist/designhub/domain/PersonaTest.java backend/src/test/java/com/emsist/designhub/domain/ChannelTest.java backend/src/test/java/com/emsist/designhub/domain/PermissionTest.java && git commit -m "feat: add persona channel and permission nodes"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Persona.java backend/src/main/java/com/emsist/designhub/domain/Channel.java backend/src/main/java/com/emsist/designhub/domain/Permission.java backend/src/test/java/com/emsist/designhub/domain/PersonaTest.java backend/src/test/java/com/emsist/designhub/domain/ChannelTest.java backend/src/test/java/com/emsist/designhub/domain/PermissionTest.java && git commit -m "feat: add persona channel and permission nodes"
 ```
 
 ### Task 2: Add `BusinessRole` and `ValidationRole`
@@ -135,7 +135,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [ ] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/BusinessRole.java backend/src/main/java/com/emsist/designhub/domain/ValidationRole.java backend/src/test/java/com/emsist/designhub/domain/BusinessRoleTest.java backend/src/test/java/com/emsist/designhub/domain/ValidationRoleTest.java && git commit -m "feat: add business and validation role nodes"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/BusinessRole.java backend/src/main/java/com/emsist/designhub/domain/ValidationRole.java backend/src/test/java/com/emsist/designhub/domain/BusinessRoleTest.java backend/src/test/java/com/emsist/designhub/domain/ValidationRoleTest.java && git commit -m "feat: add business and validation role nodes"
 ```
 
 ### Task 3: Add Repositories for the Five New Nodes
@@ -151,7 +151,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [ ] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/repository/PersonaRepository.java backend/src/main/java/com/emsist/designhub/repository/ChannelRepository.java backend/src/main/java/com/emsist/designhub/repository/PermissionRepository.java backend/src/main/java/com/emsist/designhub/repository/BusinessRoleRepository.java backend/src/main/java/com/emsist/designhub/repository/ValidationRoleRepository.java && git commit -m "feat: add repositories for registry and split role nodes"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/repository/PersonaRepository.java backend/src/main/java/com/emsist/designhub/repository/ChannelRepository.java backend/src/main/java/com/emsist/designhub/repository/PermissionRepository.java backend/src/main/java/com/emsist/designhub/repository/BusinessRoleRepository.java backend/src/main/java/com/emsist/designhub/repository/ValidationRoleRepository.java && git commit -m "feat: add repositories for registry and split role nodes"
 ```
 
 ### Task 4: Verify Chunk 1 Baseline
@@ -183,7 +183,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [ ] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Journey.java backend/src/main/java/com/emsist/designhub/domain/Screen.java backend/src/main/java/com/emsist/designhub/domain/Touchpoint.java backend/src/test/java/com/emsist/designhub/domain/PersonaTest.java backend/src/test/java/com/emsist/designhub/domain/BusinessRoleTest.java && git commit -m "feat: wire persona channel and business role edges"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Journey.java backend/src/main/java/com/emsist/designhub/domain/Screen.java backend/src/main/java/com/emsist/designhub/domain/Touchpoint.java backend/src/test/java/com/emsist/designhub/domain/PersonaTest.java backend/src/test/java/com/emsist/designhub/domain/BusinessRoleTest.java && git commit -m "feat: wire persona channel and business role edges"
 ```
 
 ### Task 6: Wire `Interaction -> Permission`
@@ -197,7 +197,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [ ] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Interaction.java backend/src/test/java/com/emsist/designhub/domain/PermissionTest.java && git commit -m "feat: wire interaction permission edge"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Interaction.java backend/src/test/java/com/emsist/designhub/domain/PermissionTest.java && git commit -m "feat: wire interaction permission edge"
 ```
 
 ### Task 7: Add a Focused Traversal Regression Test
@@ -213,7 +213,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [ ] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/test/java/com/emsist/designhub/domain && git commit -m "test: cover core registry and role traversal shapes"
+cd <repo-root> && git add backend/src/test/java/com/emsist/designhub/domain && git commit -m "test: cover core registry and role traversal shapes"
 ```
 
 ---
@@ -240,7 +240,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/test/java/co
 - [ ] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java backend/src/test/java/com/emsist/designhub/service/RegistryGraphMigrationServiceTest.java && git commit -m "feat: add registry graph migration service"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java backend/src/test/java/com/emsist/designhub/service/RegistryGraphMigrationServiceTest.java && git commit -m "feat: add registry graph migration service"
 ```
 
 ### Task 9: Rewire `DataInitializer` and Remove Legacy Backfill
@@ -259,7 +259,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [ ] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/config/DataInitializer.java backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java backend/src/test/java/com/emsist/designhub/service/RegistryGraphMigrationServiceTest.java && git rm backend/src/main/java/com/emsist/designhub/service/GraphMetadataService.java backend/src/main/java/com/emsist/designhub/domain/Role.java && git commit -m "refactor: retire legacy role backfill service and role node"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/config/DataInitializer.java backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java backend/src/test/java/com/emsist/designhub/service/RegistryGraphMigrationServiceTest.java && git rm backend/src/main/java/com/emsist/designhub/service/GraphMetadataService.java backend/src/main/java/com/emsist/designhub/domain/Role.java && git commit -m "refactor: retire legacy role backfill service and role node"
 ```
 
 ### Task 10: Final Verification and Count Check
@@ -267,7 +267,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [ ] Run serial full-suite verification:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -q
+cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -q
 ```
 
 - [ ] Verify implementation metrics:

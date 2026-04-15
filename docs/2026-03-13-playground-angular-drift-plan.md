@@ -8,11 +8,11 @@ This document turns the current mismatch between the prototype playground and th
 
 Source of truth candidates reviewed:
 
-- Playground data and UI behavior: `/Users/mksulty/Claude/Projects/Emsist-app/Documentation/prototypes/screen-flow-playground.html`
-- Remediation spec: `/Users/mksulty/Claude/Projects/Emsist-app/docs/superpowers/specs/2026-03-13-screen-flow-playground-remediation.md`
-- Angular hub models and adapter: `/Users/mksulty/Claude/Projects/design-hub/frontend/src/app/models/*.ts`
-- Angular hub API adapter and state: `/Users/mksulty/Claude/Projects/design-hub/frontend/src/app/features/design-hub/services/*.ts`
-- Backend graph model and seed: `/Users/mksulty/Claude/Projects/design-hub/backend/src/main/java/com/emsist/designhub/**`
+- Playground data and UI behavior: `<Emsist-app-root>/Documentation/prototypes/screen-flow-playground.html`
+- Remediation spec: `<Emsist-app-root>/docs/superpowers/specs/2026-03-13-screen-flow-playground-remediation.md`
+- Angular hub models and adapter: `<repo-root>/frontend/src/app/models/*.ts`
+- Angular hub API adapter and state: `<repo-root>/frontend/src/app/features/design-hub/services/*.ts`
+- Backend graph model and seed: `<repo-root>/backend/src/main/java/com/emsist/designhub/**`
 
 ## Validation Method
 
@@ -51,7 +51,7 @@ The backend `Screen` node currently stores only:
 Evidence:
 
 - Playground schema and records carry the extra fields near the screen definitions in `screen-flow-playground.html`.
-- Backend screen model does not include those fields in `/Users/mksulty/Claude/Projects/design-hub/backend/src/main/java/com/emsist/designhub/domain/Screen.java`.
+- Backend screen model does not include those fields in `<repo-root>/backend/src/main/java/com/emsist/designhub/domain/Screen.java`.
 
 Impact:
 
@@ -80,8 +80,8 @@ The backend seed for `SCR-02-MAT` currently creates:
 
 Evidence:
 
-- Seed definition in `/Users/mksulty/Claude/Projects/design-hub/backend/src/main/java/com/emsist/designhub/config/DataInitializer.java`
-- Playground record in `/Users/mksulty/Claude/Projects/Emsist-app/Documentation/prototypes/screen-flow-playground.html`
+- Seed definition in `<repo-root>/backend/src/main/java/com/emsist/designhub/config/DataInitializer.java`
+- Playground record in `<Emsist-app-root>/Documentation/prototypes/screen-flow-playground.html`
 
 Impact:
 
@@ -100,7 +100,7 @@ Impact:
 
 ### 4. Angular adapter currently hardcodes missing fields away
 
-Current adapter behavior in `/Users/mksulty/Claude/Projects/design-hub/frontend/src/app/features/design-hub/services/design-hub-api.service.ts`:
+Current adapter behavior in `<repo-root>/frontend/src/app/features/design-hub/services/design-hub-api.service.ts`:
 
 - `uxSpecRef: ''`
 - `gapRefs: []`

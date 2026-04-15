@@ -187,13 +187,13 @@ public enum MilestoneType {
 
 - [ ] **Step 2: Run tests to verify no regressions**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 97 tests, 0 failures
 
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/TargetKind.java backend/src/main/java/com/emsist/designhub/domain/AssessmentType.java backend/src/main/java/com/emsist/designhub/domain/MaturityLevel.java backend/src/main/java/com/emsist/designhub/domain/MilestoneType.java && git commit -m "feat: add frozen enums (TargetKind, AssessmentType, MaturityLevel, MilestoneType)"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/TargetKind.java backend/src/main/java/com/emsist/designhub/domain/AssessmentType.java backend/src/main/java/com/emsist/designhub/domain/MaturityLevel.java backend/src/main/java/com/emsist/designhub/domain/MilestoneType.java && git commit -m "feat: add frozen enums (TargetKind, AssessmentType, MaturityLevel, MilestoneType)"
 ```
 
 ---
@@ -312,7 +312,7 @@ class AssessmentTest {
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentTest -pl . -q`
 Expected: FAIL — `Assessment` class not found
 
 - [ ] **Step 3: Write Assessment entity**
@@ -361,18 +361,18 @@ Note: The ASSESSES edge (Assessment → assessable T1) is polymorphic in Neo4j. 
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentTest -pl . -q`
 Expected: 5 tests, 0 failures
 
 - [ ] **Step 5: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 102 tests, 0 failures
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Assessment.java backend/src/test/java/com/emsist/designhub/domain/AssessmentTest.java && git commit -m "feat: add Assessment T1 entity with TargetKind discrimination and IDENTIFIES_GAP edge"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Assessment.java backend/src/test/java/com/emsist/designhub/domain/AssessmentTest.java && git commit -m "feat: add Assessment T1 entity with TargetKind discrimination and IDENTIFIES_GAP edge"
 ```
 
 ---
@@ -442,7 +442,7 @@ class GapExtensionTest {
 
 - [ ] **Step 2: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=GapExtensionTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=GapExtensionTest -pl . -q`
 Expected: 3 tests, 0 failures (Gap.java already supports any string gapType)
 
 - [ ] **Step 3: Update Gap.java comment to document extended values**
@@ -458,13 +458,13 @@ to:
 
 - [ ] **Step 4: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 105 tests, 0 failures
 
 - [ ] **Step 5: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Gap.java backend/src/test/java/com/emsist/designhub/domain/GapExtensionTest.java && git commit -m "feat: extend Gap with CAPABILITY_GAP and PROCESS_GAP types + regression tests"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Gap.java backend/src/test/java/com/emsist/designhub/domain/GapExtensionTest.java && git commit -m "feat: extend Gap with CAPABILITY_GAP and PROCESS_GAP types + regression tests"
 ```
 
 ---
@@ -527,7 +527,7 @@ class BusinessCapabilityTest {
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=BusinessCapabilityTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=BusinessCapabilityTest -pl . -q`
 Expected: FAIL — `BusinessCapability` class not found
 
 - [ ] **Step 3: Write BusinessCapability entity**
@@ -560,18 +560,18 @@ public class BusinessCapability {
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=BusinessCapabilityTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=BusinessCapabilityTest -pl . -q`
 Expected: 3 tests, 0 failures
 
 - [ ] **Step 5: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 108 tests, 0 failures
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/BusinessCapability.java backend/src/test/java/com/emsist/designhub/domain/BusinessCapabilityTest.java && git commit -m "feat: add BusinessCapability T1 entity"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/BusinessCapability.java backend/src/test/java/com/emsist/designhub/domain/BusinessCapabilityTest.java && git commit -m "feat: add BusinessCapability T1 entity"
 ```
 
 ---
@@ -645,7 +645,7 @@ class EpicTest {
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=EpicTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=EpicTest -pl . -q`
 Expected: FAIL — `Epic` class not found
 
 - [ ] **Step 3: Write Feature entity first (Epic depends on it)**
@@ -720,18 +720,18 @@ public class Epic {
 
 - [ ] **Step 5: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=EpicTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=EpicTest -pl . -q`
 Expected: 3 tests, 0 failures
 
 - [ ] **Step 6: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 111 tests, 0 failures
 
 - [ ] **Step 7: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Epic.java backend/src/main/java/com/emsist/designhub/domain/Feature.java backend/src/test/java/com/emsist/designhub/domain/EpicTest.java && git commit -m "feat: add Epic and Feature T1 entities with HAS_FEATURE and HAS_STORY edges"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Epic.java backend/src/main/java/com/emsist/designhub/domain/Feature.java backend/src/test/java/com/emsist/designhub/domain/EpicTest.java && git commit -m "feat: add Epic and Feature T1 entities with HAS_FEATURE and HAS_STORY edges"
 ```
 
 ---
@@ -800,18 +800,18 @@ class FeatureTest {
 
 - [ ] **Step 2: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=FeatureTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=FeatureTest -pl . -q`
 Expected: 3 tests, 0 failures
 
 - [ ] **Step 3: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 114 tests, 0 failures
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/test/java/com/emsist/designhub/domain/FeatureTest.java && git commit -m "test: add Feature entity tests including HAS_STORY edge to UserStory"
+cd <repo-root> && git add backend/src/test/java/com/emsist/designhub/domain/FeatureTest.java && git commit -m "test: add Feature entity tests including HAS_STORY edge to UserStory"
 ```
 
 ---
@@ -918,7 +918,7 @@ class RequirementPortfolioTest {
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=RequirementPortfolioTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=RequirementPortfolioTest -pl . -q`
 Expected: FAIL — `RequirementPortfolio` class not found
 
 - [ ] **Step 3: Write RequirementPortfolio entity**
@@ -957,18 +957,18 @@ public class RequirementPortfolio {
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=RequirementPortfolioTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=RequirementPortfolioTest -pl . -q`
 Expected: 4 tests, 0 failures
 
 - [ ] **Step 5: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 118 tests, 0 failures
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/RequirementPortfolio.java backend/src/test/java/com/emsist/designhub/domain/RequirementPortfolioTest.java && git commit -m "feat: add RequirementPortfolio T1 entity with HAS_EPIC edge to Epic"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/RequirementPortfolio.java backend/src/test/java/com/emsist/designhub/domain/RequirementPortfolioTest.java && git commit -m "feat: add RequirementPortfolio T1 entity with HAS_EPIC edge to Epic"
 ```
 
 ---
@@ -1075,7 +1075,7 @@ class MilestoneTest {
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=MilestoneTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=MilestoneTest -pl . -q`
 Expected: FAIL — `Milestone` class not found
 
 - [ ] **Step 3: Write Milestone entity**
@@ -1118,18 +1118,18 @@ public class Milestone {
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=MilestoneTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=MilestoneTest -pl . -q`
 Expected: 5 tests, 0 failures
 
 - [ ] **Step 5: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 123 tests, 0 failures
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Milestone.java backend/src/test/java/com/emsist/designhub/domain/MilestoneTest.java && git commit -m "feat: add Milestone T1 entity with HAS_TASK edge (optional scheduling)"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Milestone.java backend/src/test/java/com/emsist/designhub/domain/MilestoneTest.java && git commit -m "feat: add Milestone T1 entity with HAS_TASK edge (optional scheduling)"
 ```
 
 ---
@@ -1368,7 +1368,7 @@ class ProjectInstanceTest {
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=ProjectInstanceTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=ProjectInstanceTest -pl . -q`
 Expected: FAIL — `ProjectInstance` class not found
 
 - [ ] **Step 3: Write ProjectInstance entity**
@@ -1446,18 +1446,18 @@ public class ProjectInstance {
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=ProjectInstanceTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=ProjectInstanceTest -pl . -q`
 Expected: 10 tests, 0 failures
 
 - [ ] **Step 5: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 133 tests, 0 failures
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/ProjectInstance.java backend/src/test/java/com/emsist/designhub/domain/ProjectInstanceTest.java && git commit -m "feat: add ProjectInstance T1 entity with all 10 outbound edges"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/ProjectInstance.java backend/src/test/java/com/emsist/designhub/domain/ProjectInstanceTest.java && git commit -m "feat: add ProjectInstance T1 entity with all 10 outbound edges"
 ```
 
 ---
@@ -1603,18 +1603,18 @@ class SpineTraversalTest {
 
 - [ ] **Step 2: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=SpineTraversalTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=SpineTraversalTest -pl . -q`
 Expected: 4 tests, 0 failures
 
 - [ ] **Step 3: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: 137 tests, 0 failures
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/test/java/com/emsist/designhub/domain/SpineTraversalTest.java && git commit -m "test: add spine traversal integration tests (backlog, execution, assessment, application)"
+cd <repo-root> && git add backend/src/test/java/com/emsist/designhub/domain/SpineTraversalTest.java && git commit -m "test: add spine traversal integration tests (backlog, execution, assessment, application)"
 ```
 
 ---
@@ -1747,7 +1747,7 @@ class AssessmentServiceTest {
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentServiceTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentServiceTest -pl . -q`
 Expected: FAIL — `AssessmentService` class not found
 
 - [ ] **Step 3: Write AssessmentService**
@@ -1844,18 +1844,18 @@ Note: The `targetLabel` and `targetIdField` are injected into the Cypher via `St
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentServiceTest -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -Dtest=AssessmentServiceTest -pl . -q`
 Expected: 5 tests, 0 failures
 
 - [ ] **Step 5: Run full suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: ≥142 tests, 0 failures
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/service/AssessmentService.java backend/src/test/java/com/emsist/designhub/service/AssessmentServiceTest.java && git commit -m "feat: add AssessmentService with ASSESSES polymorphic edge via Neo4jClient"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/service/AssessmentService.java backend/src/test/java/com/emsist/designhub/service/AssessmentServiceTest.java && git commit -m "feat: add AssessmentService with ASSESSES polymorphic edge via Neo4jClient"
 ```
 
 ---
@@ -1866,17 +1866,17 @@ This is a verification-only task. No new code. Confirms the plan delivered what 
 
 - [ ] **Step 1: Run full test suite**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
+Run: `cd <repo-root>/backend && JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home mvn test -pl . -q`
 Expected: ≥142 tests, 0 failures
 
 - [ ] **Step 2: Count @Node entities**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && grep -rl "@Node" src/main/java/com/emsist/designhub/domain/ | wc -l`
+Run: `cd <repo-root>/backend && grep -rl "@Node" src/main/java/com/emsist/designhub/domain/ | wc -l`
 Expected: 31 (24 existing + 7 new: Assessment, BusinessCapability, Epic, Feature, RequirementPortfolio, ProjectInstance, Milestone. TargetKind is an enum, not @Node.)
 
 - [ ] **Step 3: Count @Relationship edges**
 
-Run: `cd /Users/mksulty/Claude/Projects/design-hub/backend && grep -c '@Relationship' src/main/java/com/emsist/designhub/domain/*.java | grep -v ':0$'`
+Run: `cd <repo-root>/backend && grep -c '@Relationship' src/main/java/com/emsist/designhub/domain/*.java | grep -v ':0$'`
 Expected: ≥42 (was 31 + 11 new edges declared in Java: IDENTIFIES_GAP, HAS_FEATURE, HAS_STORY, HAS_EPIC, HAS_TASK(Milestone), TARGETS_CAPABILITY, ADDRESSES_GAP, HAS_PORTFOLIO, HAS_TASK(Project), HAS_MILESTONE, CREATES_APPLICATION, ENHANCES_APPLICATION, INTEGRATES_WITH, CREATES_COMPONENT, ENHANCES_COMPONENT = 15 new. But ASSESSES is Cypher-only = not counted. Total: 31 + 14 = 45)
 
 Count by entity: Assessment(1) + Epic(1) + Feature(1) + RequirementPortfolio(1) + Milestone(1) + ProjectInstance(10) = 15 new @Relationship declarations. Total: 31 + 15 = 46.

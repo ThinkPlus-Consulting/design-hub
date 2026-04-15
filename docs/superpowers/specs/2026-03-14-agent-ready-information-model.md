@@ -161,10 +161,10 @@ resolvedPath = Application.repoPath + ApplicationComponent.modulePath + CodeAsse
 ```
 
 Example:
-- `Application.repoPath = /Users/dev/design-hub`
+- `Application.repoPath = <repo-root>`
 - `ApplicationComponent.modulePath = backend/src/main/java`
 - `CodeAsset.filePath = com/emsist/designhub/domain/Screen.java`
-- Resolved: `/Users/dev/design-hub/backend/src/main/java/com/emsist/designhub/domain/Screen.java`
+- Resolved: `<repo-root>/backend/src/main/java/com/emsist/designhub/domain/Screen.java`
 
 #### Traversal: Story to Code File
 
@@ -553,14 +553,14 @@ The following files must be updated to reflect the counts and objects introduced
 
 | # | File | Priority | Key Changes |
 |---|------|----------|-------------|
-| 1 | `documentation/modeling-taxonomy.md` | P0 | Add CodeAsset to Engineering category (T1=53→54 full), add ImportSnapshot to T2 registry (T2=10→11 full), add QualityConstraint to Requirement & Design, add CodingConvention to Cross-cutting T2. Update tier counts per phase |
-| 2 | `documentation/graph-object-catalog.md` | P0 | Add CodeAsset, ImportSnapshot, QualityConstraint, CodingConvention full specs. Add 8 Phase 1 edges + 3 Phase 2 edges to relationship registry. Enrich TestCase spec with 7 new attributes + LOCATED_IN. Remove 7 deprecated edges. Update total edge count 79→87 (Phase 1) / 90 (full) |
-| 3 | `documentation/vision-benchmark.md` | P1 | Update benchmarkable count references. Add agent-ready benchmarkable metric (63/65). Add code-asset queryability tests. Add test-file resolution queryability test |
-| 4 | `documentation/implementation-readiness-graph-model.md` | P1 | Add tightened MCR-STORY-AGENT-READY-001. Add CodeAsset to applicability matrix. Update completenessScore formula to include code-asset edges. Add ImportSnapshot to completeness checks |
-| 5 | `documentation/product-vision.md` | P2 | Reference agent-ready extension. Update node/edge counts. Add code-targeting and convention resolution to north-star queries |
-| 6 | `documentation/feature-capability-map.md` | P2 | Add Code Targeting capability. Add Convention Compliance capability. Update capability-to-artifact mapping for 63/65 agent-ready benchmarkable |
-| 7 | `documentation/architecture-blueprint.md` | P2 | Add CodeAsset to engineering layer. Add RequirementSyncContract to governance layer. Reference drift detection protocol |
-| 8 | `documentation/design-testing-strategy.md` | P2 | Add LOCATED_IN resolution tests. Add drift detection test scenarios |
+| 1 | `docs/reference/modeling-taxonomy.md` | P0 | Add CodeAsset to Engineering category (T1=53→54 full), add ImportSnapshot to T2 registry (T2=10→11 full), add QualityConstraint to Requirement & Design, add CodingConvention to Cross-cutting T2. Update tier counts per phase |
+| 2 | `docs/reference/graph-object-catalog.md` | P0 | Add CodeAsset, ImportSnapshot, QualityConstraint, CodingConvention full specs. Add 8 Phase 1 edges + 3 Phase 2 edges to relationship registry. Enrich TestCase spec with 7 new attributes + LOCATED_IN. Remove 7 deprecated edges. Update total edge count 79→87 (Phase 1) / 90 (full) |
+| 3 | `docs/reference/vision-benchmark.md` | P1 | Update benchmarkable count references. Add agent-ready benchmarkable metric (63/65). Add code-asset queryability tests. Add test-file resolution queryability test |
+| 4 | `docs/reference/implementation-readiness-graph-model.md` | P1 | Add tightened MCR-STORY-AGENT-READY-001. Add CodeAsset to applicability matrix. Update completenessScore formula to include code-asset edges. Add ImportSnapshot to completeness checks |
+| 5 | `docs/reference/product-vision.md` | P2 | Reference agent-ready extension. Update node/edge counts. Add code-targeting and convention resolution to north-star queries |
+| 6 | `docs/reference/feature-capability-map.md` | P2 | Add Code Targeting capability. Add Convention Compliance capability. Update capability-to-artifact mapping for 63/65 agent-ready benchmarkable |
+| 7 | `docs/reference/architecture-blueprint.md` | P2 | Add CodeAsset to engineering layer. Add RequirementSyncContract to governance layer. Reference drift detection protocol |
+| 8 | `docs/reference/design-testing-strategy.md` | P2 | Add LOCATED_IN resolution tests. Add drift detection test scenarios |
 
 **Rule:** Each file edit must explicitly state what baseline it is moving FROM and TO (e.g., "edges 79→87" not just "87 edges").
 

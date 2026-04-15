@@ -1,0 +1,15 @@
+@if (activeShellRenderer() === 'login-shell') {
+  <app-login-shell-preview
+    [selectedGuid]="selectedGuid()"
+    [backgroundConfig]="backgroundConfig()"
+    [shellObjectId]="shellObjectId()"
+    [activeScreenObjectId]="activeScreenObjectId()"
+  />
+} @else if (activeShellRenderer() === 'application-shell') {
+  <app-application-shell-preview
+    [selectedGuid]="selectedGuid()"
+    [backgroundConfig]="backgroundConfig()"
+    [shellObjectId]="shellObjectId()"
+    [activeScreenObjectId]="activeScreenObjectId()"
+  />
+}

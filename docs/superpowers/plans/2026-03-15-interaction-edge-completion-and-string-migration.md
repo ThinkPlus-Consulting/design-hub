@@ -106,7 +106,7 @@
 - [x] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/ConfirmationDialog.java backend/src/main/java/com/emsist/designhub/repository/ConfirmationDialogRepository.java backend/src/test/java/com/emsist/designhub/domain/ConfirmationDialogTest.java && git commit -m "feat: add confirmation dialog registry node"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/ConfirmationDialog.java backend/src/main/java/com/emsist/designhub/repository/ConfirmationDialogRepository.java backend/src/test/java/com/emsist/designhub/domain/ConfirmationDialogTest.java && git commit -m "feat: add confirmation dialog registry node"
 ```
 
 ### Task 2: Complete `Interaction` Edge Surface
@@ -123,7 +123,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [x] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Interaction.java backend/src/test/java/com/emsist/designhub/domain/InteractionEdgeTraversalTest.java && git commit -m "feat: add interaction persona role api and confirmation edges"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Interaction.java backend/src/test/java/com/emsist/designhub/domain/InteractionEdgeTraversalTest.java && git commit -m "feat: add interaction persona role api and confirmation edges"
 ```
 
 ### Task 3: Complete `Touchpoint` and `Journey` Compatibility Cleanup
@@ -140,7 +140,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [x] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/domain/Touchpoint.java backend/src/main/java/com/emsist/designhub/domain/Journey.java backend/src/test/java/com/emsist/designhub/domain/InteractionEdgeTraversalTest.java && git commit -m "feat: complete touchpoint role edge and journey role cleanup"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/domain/Touchpoint.java backend/src/main/java/com/emsist/designhub/domain/Journey.java backend/src/test/java/com/emsist/designhub/domain/InteractionEdgeTraversalTest.java && git commit -m "feat: complete touchpoint role edge and journey role cleanup"
 ```
 
 ---
@@ -164,7 +164,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [x] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java backend/src/test/java/com/emsist/designhub/service/RegistryGraphMigrationServiceTest.java backend/src/main/java/com/emsist/designhub/repository/ApiContractRepository.java && git commit -m "feat: seed confirmation dialogs and upsert api contracts"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java backend/src/test/java/com/emsist/designhub/service/RegistryGraphMigrationServiceTest.java backend/src/main/java/com/emsist/designhub/repository/ApiContractRepository.java && git commit -m "feat: seed confirmation dialogs and upsert api contracts"
 ```
 
 ### Task 5: Backfill Remaining String-to-Edge Migrations
@@ -182,7 +182,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [x] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java backend/src/test/java/com/emsist/designhub/service/RegistryGraphMigrationServiceTest.java && git commit -m "feat: backfill remaining interaction and touchpoint edges"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java backend/src/test/java/com/emsist/designhub/service/RegistryGraphMigrationServiceTest.java && git commit -m "feat: backfill remaining interaction and touchpoint edges"
 ```
 
 ### Task 6: Fresh-Seed Alignment in `DataInitializer`
@@ -196,7 +196,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [x] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/config/DataInitializer.java && git commit -m "feat: align fresh seed data for interaction edge migration"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/config/DataInitializer.java && git commit -m "feat: align fresh seed data for interaction edge migration"
 ```
 
 ---
@@ -220,7 +220,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/co
 - [x] Commit with:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add backend/src/main/java/com/emsist/designhub/repository/InteractionRepository.java backend/src/main/java/com/emsist/designhub/service/InteractionService.java backend/src/test/java/com/emsist/designhub/service && git commit -m "feat: load interaction graph for new runtime edges"
+cd <repo-root> && git add backend/src/main/java/com/emsist/designhub/repository/InteractionRepository.java backend/src/main/java/com/emsist/designhub/service/InteractionService.java backend/src/test/java/com/emsist/designhub/service && git commit -m "feat: load interaction graph for new runtime edges"
 ```
 
 ### Task 8: Runtime Smoke Verification

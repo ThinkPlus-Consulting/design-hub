@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <rect width="24" height="24" rx="12" fill="#fff" />
+  <path d="M0 3h24v2H0zm0 4h24v2H0zm0 4h24v2H0zm0 4h24v2H0zm0 4h24v2H0z" fill="#B22234" />
+  <path d="M0 5h24v2H0zm0 4h24v2H0zm0 4h24v2H0zm0 4h24v2H0z" fill="#fff" />
+  <path d="M0 0h11v11H0z" fill="#3C3B6E" />
+  <g fill="#fff">
+    <circle cx="2.2" cy="2.1" r=".55" />
+    <circle cx="4.6" cy="2.1" r=".55" />
+    <circle cx="7" cy="2.1" r=".55" />
+    <circle cx="9.4" cy="2.1" r=".55" />
+    <circle cx="3.4" cy="3.9" r=".55" />
+    <circle cx="5.8" cy="3.9" r=".55" />
+    <circle cx="8.2" cy="3.9" r=".55" />
+    <circle cx="2.2" cy="5.7" r=".55" />
+    <circle cx="4.6" cy="5.7" r=".55" />
+    <circle cx="7" cy="5.7" r=".55" />
+    <circle cx="9.4" cy="5.7" r=".55" />
+    <circle cx="3.4" cy="7.5" r=".55" />
+    <circle cx="5.8" cy="7.5" r=".55" />
+    <circle cx="8.2" cy="7.5" r=".55" />
+    <circle cx="2.2" cy="9.3" r=".55" />
+    <circle cx="4.6" cy="9.3" r=".55" />
+    <circle cx="7" cy="9.3" r=".55" />
+    <circle cx="9.4" cy="9.3" r=".55" />
+  </g>
+</svg>

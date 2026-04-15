@@ -1,0 +1,822 @@
+<div
+  class="tenant-factsheet-screen"
+  data-dom-ref="tenant-factsheet-screen"
+  [attr.source-object-id]="sourceObjectId('screen')" [attr.guid]="guid('screen')"
+  data-inspect-id="tenant-factsheet-screen"
+  [class.ssg-focused]="isFocused('screen')"
+>
+  <!-- ─── Banner Hero ───────────────────────────────────────────────────────── -->
+
+  <header
+    class="banner"
+    data-dom-ref="tenant-factsheet-banner"
+    [attr.source-object-id]="sourceObjectId('banner')" [attr.guid]="guid('banner')"
+    data-inspect-id="tenant-factsheet-banner"
+    [class.ssg-focused]="isFocused('banner')"
+    data-testid="factsheet-banner"
+  >
+    <div class="banner-panel">
+      <section
+        class="banner-left"
+        data-dom-ref="tenant-factsheet-identity-section"
+        [attr.source-object-id]="sourceObjectId('identitySection')" [attr.guid]="guid('identitySection')"
+        data-inspect-id="tenant-factsheet-identity-section"
+        [class.ssg-focused]="isFocused('identitySection')"
+      >
+    <!-- Logo / Initials -->
+    <div
+      class="banner-logo"
+      data-dom-ref="tenant-factsheet-logo"
+      [attr.source-object-id]="sourceObjectId('logo')" [attr.guid]="guid('logo')"
+      data-inspect-id="tenant-factsheet-logo"
+      [class.ssg-focused]="isFocused('logo')"
+      data-testid="factsheet-logo"
+    >
+      @if (tenant().logoUrl) {
+        <img [src]="tenant().logoUrl!" [alt]="tenant().name + ' logo'" class="banner-logo-img" />
+      } @else {
+        <span class="banner-logo-initials">{{ initials() }}</span>
+      }
+    </div>
+
+    <!-- Name + Slug + Badges -->
+    <div class="banner-info">
+      <div class="banner-title-row">
+        <h1
+          class="banner-name"
+          data-dom-ref="tenant-factsheet-name"
+          [attr.source-object-id]="sourceObjectId('name')" [attr.guid]="guid('name')"
+          data-inspect-id="tenant-factsheet-name"
+          [class.ssg-focused]="isFocused('name')"
+          data-testid="factsheet-name"
+        >
+          {{ tenant().name }}
+        </h1>
+
+        <div class="banner-badges">
+          <span
+            data-dom-ref="tenant-factsheet-type-badge"
+            [attr.source-object-id]="sourceObjectId('typeBadge')" [attr.guid]="guid('typeBadge')"
+            data-inspect-id="tenant-factsheet-type-badge"
+            [class.ssg-focused]="isFocused('typeBadge')"
+          >
+            <p-tag
+              [value]="tenant().type"
+              [severity]="typeSeverity(tenant().type)"
+              data-testid="factsheet-type-badge"
+            />
+          </span>
+
+          <span
+            class="status-badge"
+            data-dom-ref="tenant-factsheet-status-badge"
+            [attr.source-object-id]="sourceObjectId('statusBadge')" [attr.guid]="guid('statusBadge')"
+            data-inspect-id="tenant-factsheet-status-badge"
+            [class.ssg-focused]="isFocused('statusBadge')"
+            data-testid="factsheet-status-badge"
+          >
+            <span class="status-dot" [style.background]="statusColor(tenant().status)"></span>
+            {{ tenant().status }}
+          </span>
+
+          <span
+            data-dom-ref="tenant-factsheet-health-badge"
+            [attr.source-object-id]="sourceObjectId('healthBadge')" [attr.guid]="guid('healthBadge')"
+            data-inspect-id="tenant-factsheet-health-badge"
+            [class.ssg-focused]="isFocused('healthBadge')"
+          >
+            <p-tag
+              [value]="tenant().health"
+              [severity]="healthSeverity(tenant().health)"
+              [icon]="'pi pi-heart-fill'"
+              data-testid="factsheet-health-badge"
+            />
+          </span>
+        </div>
+      </div>
+
+      <span
+        class="banner-short-name"
+        data-dom-ref="tenant-factsheet-short-name"
+        [attr.source-object-id]="sourceObjectId('shortName')" [attr.guid]="guid('shortName')"
+        data-inspect-id="tenant-factsheet-short-name"
+        [class.ssg-focused]="isFocused('shortName')"
+        data-testid="factsheet-short-name"
+      >
+        {{ tenant().shortName }}
+      </span>
+
+      <!-- KPI Chips -->
+      <div class="banner-kpis" data-testid="factsheet-kpis">
+        @for (kpi of tenant().kpis; track kpi.label; let index = $index) {
+          <p-chip
+            class="kpi-chip"
+            [label]="kpi.value + ' ' + kpi.label"
+            [icon]="kpi.icon"
+            data-testid="factsheet-kpi"
+            [attr.data-dom-ref]="'tenant-factsheet-kpi-' + index"
+            [attr.source-object-id]="sourceObjectId(kpiSlot(index))" [attr.guid]="guid(kpiSlot(index))"
+            [attr.data-inspect-id]="'tenant-factsheet-kpi-' + index"
+            [class.ssg-focused]="isFocused(kpiSlot(index))"
+          />
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Actions -->
+      <section
+        class="banner-actions"
+        data-dom-ref="tenant-factsheet-actions-section"
+        [attr.source-object-id]="sourceObjectId('actionsSection')" [attr.guid]="guid('actionsSection')"
+        data-inspect-id="tenant-factsheet-actions-section"
+        [class.ssg-focused]="isFocused('actionsSection')"
+        data-testid="factsheet-actions"
+      >
+      <div
+        data-dom-ref="tenant-factsheet-back-action"
+        [attr.source-object-id]="sourceObjectId('backAction')" [attr.guid]="guid('backAction')"
+        data-inspect-id="tenant-factsheet-back-action"
+        [class.ssg-focused]="isFocused('backAction')"
+      >
+        <p-button
+          [label]="backLabel()"
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="onBack()"
+          data-testid="factsheet-back-btn"
+        />
+      </div>
+      <div
+        data-dom-ref="tenant-factsheet-edit-action"
+        [attr.source-object-id]="sourceObjectId('editAction')" [attr.guid]="guid('editAction')"
+        data-inspect-id="tenant-factsheet-edit-action"
+        [class.ssg-focused]="isFocused('editAction')"
+      >
+        <p-button
+          [label]="editLabel()"
+          icon="pi pi-pencil"
+          severity="secondary"
+          data-testid="factsheet-edit-btn"
+        />
+      </div>
+    @if (lifecycleActionDef(); as lca) {
+      <div
+        data-dom-ref="tenant-factsheet-lifecycle-action"
+        [attr.source-object-id]="sourceObjectId('lifecycleActionNode')" [attr.guid]="guid('lifecycleActionNode')"
+        data-inspect-id="tenant-factsheet-lifecycle-action"
+        [class.ssg-focused]="isFocused('lifecycleActionNode')"
+      >
+        <p-button
+          [label]="lca.label"
+          [icon]="lca.icon"
+          [severity]="lca.severity"
+          styleClass="factsheet-lifecycle-action"
+          (onClick)="onLifecycleAction()"
+          data-testid="factsheet-lifecycle-btn"
+        />
+      </div>
+    }
+      </section>
+    </div>
+  </header>
+
+  <!-- ─── Tab Bar + Content ────────────────────────────────────────────────── -->
+
+  <div
+    class="tabs-card"
+    data-dom-ref="tenant-factsheet-tabs"
+    [attr.source-object-id]="sourceObjectId('tabs')" [attr.guid]="guid('tabs')"
+    data-inspect-id="tenant-factsheet-tabs"
+    [class.ssg-focused]="isFocused('tabs')"
+    data-testid="factsheet-tabs"
+  >
+  <div class="tabs-card-panel">
+  <div
+    data-dom-ref="tenant-factsheet-tabs-element"
+    [attr.source-object-id]="sourceObjectId('tabsElement')" [attr.guid]="guid('tabsElement')"
+    data-inspect-id="tenant-factsheet-tabs-element"
+    [class.ssg-focused]="isFocused('tabsElement')"
+  >
+  <p-tabs [value]="activeTab()" (valueChange)="onTabChange($any($event))">
+    <p-tablist>
+      @for (tab of tabs(); track tab.value) {
+        <p-tab [value]="tab.value" [attr.data-testid]="'tab-' + tab.value">
+          <span class="tab-trigger">
+            <span class="tab-label">{{ tab.label }}</span>
+            @if (tab.count !== null) {
+              <span class="tab-count">{{ tab.count }}</span>
+            }
+          </span>
+        </p-tab>
+      }
+    </p-tablist>
+
+    <p-tabpanels>
+      <!-- ── Users Tab ──────────────────────────────────────────────────────── -->
+      <p-tabpanel value="users">
+        <div
+          class="tab-section-layout"
+          data-dom-ref="tenant-factsheet-users-tab"
+          [attr.source-object-id]="sourceObjectId('usersTab')" [attr.guid]="guid('usersTab')"
+          data-inspect-id="tenant-factsheet-users-tab"
+          [class.ssg-focused]="isFocused('usersTab')"
+        >
+          <!-- Toolbar: search + filter icon | spacer | invite -->
+          <section
+            class="tab-section-toolbar"
+            data-dom-ref="tenant-factsheet-users-toolbar"
+            [attr.source-object-id]="sourceObjectId('usersToolbar')" [attr.guid]="guid('usersToolbar')"
+            data-inspect-id="tenant-factsheet-users-toolbar"
+            [class.ssg-focused]="isFocused('usersToolbar')"
+          >
+            <div class="tab-section-toolbar-panel">
+              <div
+                class="search-bar"
+                data-dom-ref="tenant-factsheet-users-search-input"
+                [attr.source-object-id]="sourceObjectId('usersSearchInput')" [attr.guid]="guid('usersSearchInput')"
+                data-inspect-id="tenant-factsheet-users-search-input"
+                [class.ssg-focused]="isFocused('usersSearchInput')"
+              >
+                <span class="search-icon pi pi-search"></span>
+                <input
+                  pInputText
+                  type="text"
+                  class="search-input"
+                  [ariaLabel]="usersSearchAriaLabel()"
+                  [placeholder]="usersSearchPlaceholder()"
+                  [value]="usersSearch()"
+                  (input)="usersSearch.set($any($event.target).value)"
+                  data-testid="input-search-users"
+                />
+              </div>
+              <div
+                data-dom-ref="tenant-factsheet-users-filter-toggle"
+                [attr.source-object-id]="sourceObjectId('usersFilterToggle')" [attr.guid]="guid('usersFilterToggle')"
+                data-inspect-id="tenant-factsheet-users-filter-toggle"
+                [class.ssg-focused]="isFocused('usersFilterToggle')"
+              >
+                <p-button
+                  icon="pi pi-filter"
+                  severity="secondary"
+                  [outlined]="true"
+                  [rounded]="true"
+                  [ariaLabel]="usersFilterToggleAriaLabel()"
+                  (onClick)="usersFiltersVisible.update(v => !v)"
+                  [styleClass]="usersFiltersVisible() ? 'factsheet-icon-action filter-icon-active' : 'factsheet-icon-action'"
+                  data-testid="btn-toggle-user-filters"
+                />
+              </div>
+              <span class="toolbar-spacer"></span>
+              <div
+                data-dom-ref="tenant-factsheet-users-invite-action"
+                [attr.source-object-id]="sourceObjectId('inviteUserAction')" [attr.guid]="guid('inviteUserAction')"
+                data-inspect-id="tenant-factsheet-users-invite-action"
+                [class.ssg-focused]="isFocused('inviteUserAction')"
+              >
+                <p-button [label]="inviteUserLabel()" icon="pi pi-user-plus" styleClass="factsheet-primary-action" data-testid="invite-user-btn" />
+              </div>
+            </div>
+          </section>
+
+          <section
+            data-dom-ref="tenant-factsheet-users-results"
+            [attr.source-object-id]="sourceObjectId('usersResults')" [attr.guid]="guid('usersResults')"
+            data-inspect-id="tenant-factsheet-users-results"
+            [class.ssg-focused]="isFocused('usersResults')"
+          >
+            <!-- DataTable -->
+            <div
+              data-dom-ref="tenant-factsheet-users-table"
+              [attr.source-object-id]="sourceObjectId('usersTable')" [attr.guid]="guid('usersTable')"
+              data-inspect-id="tenant-factsheet-users-table"
+              [class.ssg-focused]="isFocused('usersTable')"
+            >
+              <p-table
+                [value]="[...users()]"
+                [rowHover]="true"
+                [tableStyle]="{ 'min-width': '40rem' }"
+                styleClass="factsheet-table"
+                data-testid="users-table"
+              >
+                <ng-template #header>
+                  <tr>
+                    <th>{{ usersColumns()?.name }}</th>
+                    <th>{{ usersColumns()?.email }}</th>
+                    <th>{{ usersColumns()?.role }}</th>
+                    <th>{{ usersColumns()?.status }}</th>
+                    <th>{{ usersColumns()?.lastActive }}</th>
+                  </tr>
+                </ng-template>
+                <ng-template #body let-user let-rowIndex="rowIndex">
+                  <tr>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>
+                      <p-tag
+                        [value]="user.status"
+                        [severity]="userStatusSeverity(user.status)"
+                        [attr.data-dom-ref]="rowIndex === 0 ? 'tenant-factsheet-user-status-badge' : null"
+                        [attr.source-object-id]="sourceObjectId(rowIndex === 0 ? 'userStatusBadge' : null)" [attr.guid]="guid(rowIndex === 0 ? 'userStatusBadge' : null)"
+                        [attr.data-inspect-id]="rowIndex === 0 ? 'tenant-factsheet-user-status-badge' : null"
+                        [class.ssg-focused]="rowIndex === 0 && isFocused('userStatusBadge')"
+                      />
+                    </td>
+                    <td class="text-muted">{{ user.lastActive }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+
+            <!-- Paginator -->
+            <div
+              data-dom-ref="tenant-factsheet-users-paginator"
+              [attr.source-object-id]="sourceObjectId('usersPaginator')" [attr.guid]="guid('usersPaginator')"
+              data-inspect-id="tenant-factsheet-users-paginator"
+              [class.ssg-focused]="isFocused('usersPaginator')"
+            >
+              <p-paginator
+                [rows]="10"
+                [totalRecords]="users().length"
+                [rowsPerPageOptions]="[10, 20, 50]"
+                data-testid="users-paginator"
+              />
+            </div>
+          </section>
+        </div>
+      </p-tabpanel>
+
+      <!-- ── Branding Tab ───────────────────────────────────────────────────── -->
+      <p-tabpanel value="branding">
+        <div class="tab-header">
+          <h2 class="tab-title">{{ brandingSection()?.title }}</h2>
+          <p class="tab-description">{{ brandingSection()?.description }}</p>
+        </div>
+        <div class="branding-content">
+          <div class="branding-section">
+            <h3 class="section-subtitle">{{ brandingSection()?.swatchTitle }}</h3>
+            <div class="color-swatches" data-testid="branding-swatches">
+              <div class="swatch" style="background: var(--tp-primary)">
+                <span class="swatch-label">{{ brandingSection()?.swatchLabels?.[0] }}</span>
+              </div>
+              <div class="swatch" style="background: var(--tp-primary-dark)">
+                <span class="swatch-label">{{ brandingSection()?.swatchLabels?.[1] }}</span>
+              </div>
+              <div class="swatch" style="background: var(--tp-success)">
+                <span class="swatch-label">{{ brandingSection()?.swatchLabels?.[2] }}</span>
+              </div>
+              <div class="swatch" style="background: var(--tp-warning)">
+                <span class="swatch-label">{{ brandingSection()?.swatchLabels?.[3] }}</span>
+              </div>
+              <div class="swatch" style="background: var(--tp-danger)">
+                <span class="swatch-label">{{ brandingSection()?.swatchLabels?.[4] }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="branding-section">
+            <h3 class="section-subtitle">{{ brandingSection()?.logoUploadTitle }}</h3>
+            <div class="logo-upload-placeholder" data-testid="branding-logo-upload">
+              <i class="pi pi-cloud-upload"></i>
+              <span>{{ brandingSection()?.logoUploadPlaceholder }}</span>
+            </div>
+          </div>
+          <div class="branding-actions">
+            <p-button
+              [label]="brandingSection()?.previewLabel ?? ''"
+              icon="pi pi-eye"
+              severity="secondary"
+              data-testid="branding-preview-btn"
+            />
+            <p-button [label]="brandingSection()?.publishLabel ?? ''" icon="pi pi-check" data-testid="branding-publish-btn" />
+          </div>
+        </div>
+      </p-tabpanel>
+
+      <!-- ── Integrations Tab ───────────────────────────────────────────────── -->
+      <p-tabpanel value="integrations">
+        <div class="tab-section-layout">
+          <!-- Toolbar -->
+          <div class="tab-section-toolbar">
+            <div class="search-bar">
+              <span class="search-icon pi pi-search"></span>
+              <input
+                pInputText
+                type="text"
+                class="search-input"
+                [ariaLabel]="integrationsSection()?.searchAriaLabel ?? ''"
+                [placeholder]="integrationsSection()?.searchPlaceholder ?? ''"
+                [value]="integrationsSearch()"
+                (input)="integrationsSearch.set($any($event.target).value)"
+                data-testid="input-search-integrations"
+              />
+            </div>
+            <p-button
+              icon="pi pi-filter"
+              severity="secondary"
+              [outlined]="true"
+              [rounded]="true"
+              [ariaLabel]="integrationsSection()?.filterToggleAriaLabel ?? ''"
+              (onClick)="integrationsFiltersVisible.update(v => !v)"
+              [styleClass]="integrationsFiltersVisible() ? 'factsheet-icon-action filter-icon-active' : 'factsheet-icon-action'"
+            />
+            <span class="toolbar-spacer"></span>
+            <p-toggleButton
+              [ngModel]="integrationsViewMode() === 'table'"
+              (ngModelChange)="integrationsViewMode.set($event ? 'table' : 'grid')"
+              [onLabel]="integrationsSection()?.viewMode?.tableLabel ?? ''"
+              [offLabel]="integrationsSection()?.viewMode?.gridLabel ?? ''"
+              onIcon="pi pi-list"
+              offIcon="pi pi-objects-column"
+              [ariaLabel]="integrationsSection()?.viewToggleAriaLabel ?? ''"
+              data-testid="integrations-view-toggle"
+            />
+          </div>
+
+          <!-- Cards Grid -->
+          <div class="cards-grid" data-testid="integrations-grid">
+            @for (integ of integrations(); track integ.id) {
+              <div class="integration-card" [attr.data-testid]="'integration-' + integ.id">
+                <div class="integration-header">
+                  <i [class]="integ.icon" class="integration-icon"></i>
+                  <span class="integration-name">{{ integ.name }}</span>
+                </div>
+                <div class="integration-meta">
+                  <p-tag [value]="integ.protocol" severity="info" />
+                  <p-tag
+                    [value]="integ.enabled ? (integrationsSection()?.enabledLabel ?? '') : (integrationsSection()?.disabledLabel ?? '')"
+                    [severity]="integ.enabled ? 'success' : 'danger'"
+                  />
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Paginator -->
+          <p-paginator
+            [rows]="10"
+            [totalRecords]="integrations().length"
+            [rowsPerPageOptions]="[10, 20, 50]"
+            data-testid="integrations-paginator"
+          />
+        </div>
+      </p-tabpanel>
+
+      <!-- ── Dictionary Tab ─────────────────────────────────────────────────── -->
+      <p-tabpanel value="dictionary">
+        <div class="tab-section-layout">
+          <!-- Toolbar -->
+          <div class="tab-section-toolbar">
+            <div class="search-bar">
+              <span class="search-icon pi pi-search"></span>
+              <input
+                pInputText
+                type="text"
+                class="search-input"
+                [ariaLabel]="dictionarySection()?.searchAriaLabel ?? ''"
+                [placeholder]="dictionarySection()?.searchPlaceholder ?? ''"
+                [value]="dictionarySearch()"
+                (input)="dictionarySearch.set($any($event.target).value)"
+                data-testid="input-search-dictionary"
+              />
+            </div>
+            <p-button
+              icon="pi pi-filter"
+              severity="secondary"
+              [outlined]="true"
+              [rounded]="true"
+              [ariaLabel]="dictionarySection()?.filterToggleAriaLabel ?? ''"
+              (onClick)="dictionaryFiltersVisible.update(v => !v)"
+              [styleClass]="dictionaryFiltersVisible() ? 'factsheet-icon-action filter-icon-active' : 'factsheet-icon-action'"
+            />
+            <span class="toolbar-spacer"></span>
+            <p-toggleButton
+              [ngModel]="dictionaryViewMode() === 'table'"
+              (ngModelChange)="dictionaryViewMode.set($event ? 'table' : 'grid')"
+              [onLabel]="dictionarySection()?.viewMode?.tableLabel ?? ''"
+              [offLabel]="dictionarySection()?.viewMode?.gridLabel ?? ''"
+              onIcon="pi pi-list"
+              offIcon="pi pi-objects-column"
+              [ariaLabel]="dictionarySection()?.viewToggleAriaLabel ?? ''"
+              data-testid="dictionary-view-toggle"
+            />
+          </div>
+
+          <!-- DataTable -->
+          <p-table
+            [value]="[...dictionary()]"
+            [rowHover]="true"
+            [tableStyle]="{ 'min-width': '30rem' }"
+            styleClass="factsheet-table"
+            data-testid="dictionary-table"
+          >
+            <ng-template #header>
+              <tr>
+                <th>{{ dictionarySection()?.tableColumns?.objectType }}</th>
+                <th>{{ dictionarySection()?.tableColumns?.attributeCount }}</th>
+                <th>{{ dictionarySection()?.tableColumns?.origin }}</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-entry>
+              <tr>
+                <td>{{ entry.objectType }}</td>
+                <td>{{ entry.attributeCount }}</td>
+                <td>
+                  <p-tag
+                    [value]="entry.origin"
+                    [severity]="entry.origin === 'Seeded' ? 'info' : 'warn'"
+                  />
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          <!-- Paginator -->
+          <p-paginator
+            [rows]="10"
+            [totalRecords]="dictionary().length"
+            [rowsPerPageOptions]="[10, 20, 50]"
+            data-testid="dictionary-paginator"
+          />
+        </div>
+      </p-tabpanel>
+
+      <!-- ── Agents Tab ─────────────────────────────────────────────────────── -->
+      <p-tabpanel value="agents">
+        <div class="tab-header">
+          <h2 class="tab-title">{{ agentsSection()?.title }}</h2>
+          <p class="tab-description">{{ agentsSection()?.description }}</p>
+        </div>
+        <div class="cards-grid" data-testid="agents-grid">
+          @for (agent of agents(); track agent.id) {
+            <div class="agent-card" [attr.data-testid]="'agent-' + agent.id">
+              <div class="agent-header">
+                <i class="pi pi-android agent-icon"></i>
+                <span class="agent-name">{{ agent.name }}</span>
+              </div>
+              <div class="agent-meta">
+                <p-tag
+                  [value]="agent.status"
+                  [severity]="agent.status === 'Deployed' ? 'success' : 'secondary'"
+                />
+                <span class="agent-skills">{{ agent.skillCount }} {{ agentsSection()?.skillsSuffix }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </p-tabpanel>
+
+      <!-- ── Studio Tab ─────────────────────────────────────────────────────── -->
+      <p-tabpanel value="studio">
+        <div class="tab-section-layout">
+          <!-- Toolbar -->
+          <div class="tab-section-toolbar">
+            <div class="search-bar">
+              <span class="search-icon pi pi-search"></span>
+              <input
+                pInputText
+                type="text"
+                class="search-input"
+                [ariaLabel]="studioSection()?.searchAriaLabel ?? ''"
+                [placeholder]="studioSection()?.searchPlaceholder ?? ''"
+                data-testid="input-search-studio"
+              />
+            </div>
+            <span class="toolbar-spacer"></span>
+            <p-button
+              [label]="studioSection()?.openStudioLabel ?? ''"
+              icon="pi pi-external-link"
+              severity="secondary"
+              data-testid="open-studio-btn"
+            />
+          </div>
+
+          <!-- Placeholder -->
+          <div class="studio-placeholder" data-testid="studio-placeholder">
+            <i class="pi pi-sitemap studio-placeholder-icon"></i>
+            <p>{{ studioSection()?.configuredProcessesText }}</p>
+            <p class="text-muted">{{ studioSection()?.helperText }}</p>
+          </div>
+        </div>
+      </p-tabpanel>
+
+      <!-- ── Audit Log Tab ──────────────────────────────────────────────────── -->
+      <p-tabpanel value="audit">
+        <div class="tab-section-layout">
+          <!-- Toolbar -->
+          <div class="tab-section-toolbar">
+            <div class="search-bar">
+              <span class="search-icon pi pi-search"></span>
+              <input
+                pInputText
+                type="text"
+                class="search-input"
+                [ariaLabel]="auditSection()?.searchAriaLabel ?? ''"
+                [placeholder]="auditSection()?.searchPlaceholder ?? ''"
+                [value]="auditSearch()"
+                (input)="auditSearch.set($any($event.target).value)"
+                data-testid="input-search-audit"
+              />
+            </div>
+            <p-button
+              icon="pi pi-filter"
+              severity="secondary"
+              [outlined]="true"
+              [rounded]="true"
+              [ariaLabel]="auditSection()?.filterToggleAriaLabel ?? ''"
+              (onClick)="auditFiltersVisible.update(v => !v)"
+              [styleClass]="auditFiltersVisible() ? 'factsheet-icon-action filter-icon-active' : 'factsheet-icon-action'"
+            />
+            <span class="toolbar-spacer"></span>
+            <p-toggleButton
+              [ngModel]="auditViewMode() === 'table'"
+              (ngModelChange)="auditViewMode.set($event ? 'table' : 'grid')"
+              [onLabel]="auditSection()?.viewMode?.tableLabel ?? ''"
+              [offLabel]="auditSection()?.viewMode?.gridLabel ?? ''"
+              onIcon="pi pi-list"
+              offIcon="pi pi-objects-column"
+              [ariaLabel]="auditSection()?.viewToggleAriaLabel ?? ''"
+              data-testid="audit-view-toggle"
+            />
+          </div>
+
+          <!-- DataTable -->
+          <p-table
+            [value]="[...auditLog()]"
+            [rowHover]="true"
+            [tableStyle]="{ 'min-width': '40rem' }"
+            styleClass="factsheet-table"
+            data-testid="audit-table"
+          >
+            <ng-template #header>
+              <tr>
+                <th>{{ auditSection()?.tableColumns?.timestamp }}</th>
+                <th>{{ auditSection()?.tableColumns?.actor }}</th>
+                <th>{{ auditSection()?.tableColumns?.action }}</th>
+                <th>{{ auditSection()?.tableColumns?.target }}</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-entry>
+              <tr>
+                <td class="text-muted">{{ entry.timestamp }}</td>
+                <td>{{ entry.actor }}</td>
+                <td>{{ entry.action }}</td>
+                <td>{{ entry.target }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          <!-- Paginator -->
+          <p-paginator
+            [rows]="10"
+            [totalRecords]="auditLog().length"
+            [rowsPerPageOptions]="[10, 20, 50]"
+            data-testid="audit-paginator"
+          />
+        </div>
+      </p-tabpanel>
+
+      <!-- ── Health Checks Tab ──────────────────────────────────────────────── -->
+      <p-tabpanel value="health">
+        <div class="tab-section-layout">
+          <!-- Toolbar -->
+          <div class="tab-section-toolbar">
+            <div class="search-bar">
+              <span class="search-icon pi pi-search"></span>
+              <input
+                pInputText
+                type="text"
+                class="search-input"
+                [ariaLabel]="healthSection()?.searchAriaLabel ?? ''"
+                [placeholder]="healthSection()?.searchPlaceholder ?? ''"
+                [value]="healthSearch()"
+                (input)="healthSearch.set($any($event.target).value)"
+                data-testid="input-search-health"
+              />
+            </div>
+            <p-button
+              icon="pi pi-filter"
+              severity="secondary"
+              [outlined]="true"
+              [rounded]="true"
+              [ariaLabel]="healthSection()?.filterToggleAriaLabel ?? ''"
+              (onClick)="healthFiltersVisible.update(v => !v)"
+              [styleClass]="healthFiltersVisible() ? 'factsheet-icon-action filter-icon-active' : 'factsheet-icon-action'"
+            />
+            <span class="toolbar-spacer"></span>
+            <p-toggleButton
+              [ngModel]="healthViewMode() === 'table'"
+              (ngModelChange)="healthViewMode.set($event ? 'table' : 'grid')"
+              [onLabel]="healthSection()?.viewMode?.tableLabel ?? ''"
+              [offLabel]="healthSection()?.viewMode?.gridLabel ?? ''"
+              onIcon="pi pi-list"
+              offIcon="pi pi-objects-column"
+              [ariaLabel]="healthSection()?.viewToggleAriaLabel ?? ''"
+              data-testid="health-view-toggle"
+            />
+          </div>
+
+          <!-- Cards Grid -->
+          <div class="cards-grid" data-testid="health-grid">
+            @for (check of healthChecks(); track check.id) {
+              <div class="health-card" [attr.data-testid]="'health-' + check.id">
+                <div class="health-card-header">
+                  <i [class]="check.icon" class="health-icon"></i>
+                  <span class="health-service">{{ check.service }}</span>
+                </div>
+                <div class="health-card-body">
+                  <p-tag [value]="check.status" [severity]="healthSeverity(check.status)" />
+                  <span class="health-checked text-muted">{{ check.lastChecked }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Paginator -->
+          <p-paginator
+            [rows]="10"
+            [totalRecords]="healthChecks().length"
+            [rowsPerPageOptions]="[10, 20, 50]"
+            data-testid="health-paginator"
+          />
+        </div>
+      </p-tabpanel>
+
+      <!-- ── License Tab ────────────────────────────────────────────────────── -->
+      <p-tabpanel value="license">
+        <div class="tab-section-layout">
+          <div class="tab-header">
+            <h2 class="tab-title">{{ licenseSection()?.title }}</h2>
+            <p class="text-muted">
+              {{ licenseSection()?.description }}
+            </p>
+          </div>
+
+          <section class="license-summary" data-testid="license-summary">
+            <div class="license-summary-header">
+              <div>
+                <h3 class="section-subtitle">{{ licenseSection()?.summaryTitle }}</h3>
+                <p class="text-muted">
+                  {{ licenseSection()?.validityPrefix }} {{ license().validFrom }} {{ licenseSection()?.validityConnector }} {{ license().validUntil }}
+                </p>
+              </div>
+              <p-tag
+                [value]="license().status"
+                [severity]="
+                  license().status === 'Active'
+                    ? 'success'
+                    : license().status === 'Expiring Soon'
+                      ? 'warn'
+                      : 'danger'
+                "
+              />
+            </div>
+
+            <div class="license-metrics">
+              <article class="license-metric" data-testid="license-metric-allocated">
+                <span class="license-metric-label">{{ licenseSection()?.metrics?.allocated }}</span>
+                <strong>{{ allocatedSeats() }}</strong>
+              </article>
+              <article class="license-metric" data-testid="license-metric-assigned">
+                <span class="license-metric-label">{{ licenseSection()?.metrics?.assigned }}</span>
+                <strong>{{ assignedSeats() }}</strong>
+              </article>
+              <article class="license-metric" data-testid="license-metric-available">
+                <span class="license-metric-label">{{ licenseSection()?.metrics?.available }}</span>
+                <strong>{{ availableSeats() }}</strong>
+              </article>
+            </div>
+          </section>
+
+          <p-table
+            [value]="[...license().allocations]"
+            [rowHover]="true"
+            [tableStyle]="{ 'min-width': '32rem' }"
+            styleClass="factsheet-table"
+            data-testid="license-table"
+          >
+            <ng-template #header>
+              <tr>
+                <th>{{ licenseSection()?.tableColumns?.licenseType }}</th>
+                <th>{{ licenseSection()?.tableColumns?.allocated }}</th>
+                <th>{{ licenseSection()?.tableColumns?.assigned }}</th>
+                <th>{{ licenseSection()?.tableColumns?.available }}</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-allocation>
+              <tr>
+                <td>{{ allocation.licenseType }}</td>
+                <td>{{ allocation.allocated }}</td>
+                <td>{{ allocation.assigned }}</td>
+                <td>{{ allocation.available }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+  </div>
+</div>
+</div>

@@ -1,0 +1,163 @@
+<aside class="ssg-panel ssg-panel-tree" data-inspect-id="design-hub-tree-pane">
+  <div class="ssg-panel-slot ssg-panel-slot--header">
+    <div class="ssg-side-menu-title-section">
+      <h1>{{ activeWorkspaceTitle() }}</h1>
+    </div>
+  </div>
+
+  <div class="ssg-panel-slot ssg-panel-slot--subheader">
+    <div class="ssg-side-menu-controls-section">
+      <div class="ssg-toolbar">
+        <p-togglebutton
+          styleClass="tree-toolbar-toggle"
+          [ngModel]="activeTreeExpanded()"
+          (ngModelChange)="setActiveTreeExpanded($event)"
+          onLabel="Expanded"
+          offLabel="Collapsed"
+          onIcon="pi pi-angle-double-down"
+          offIcon="pi pi-angle-double-right"
+          ariaLabel="Tree expansion state"
+        />
+        <div class="ssg-toolbar-search">
+          <input
+            type="search"
+            class="ssg-search-input"
+            [value]="registrySearchTerm()"
+            (input)="onRegistrySearch($event)"
+            [disabled]="activeWorkspace() !== 'components-registry'"
+            placeholder="Search"
+            aria-label="Search"
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ssg-panel-slot ssg-panel-slot--body">
+    <div class="ssg-side-menu-tree-section">
+      @if (activeWorkspace() === 'frontend' && state.loading()) {
+        <div class="ssg-empty">Loading graph…</div>
+      } @else if (activeWorkspace() === 'frontend' && state.error()) {
+        <div class="ssg-empty ssg-error">{{ state.error() }}</div>
+      } @else if (activeWorkspace() === 'components-registry' && registryLoading()) {
+        <div class="ssg-empty">Loading components…</div>
+      } @else if (activeWorkspace() === 'components-registry' && registryError()) {
+        <div class="ssg-empty ssg-error">{{ registryError() }}</div>
+      } @else {
+        <p-tree
+          class="ssg-tree"
+          [value]="activeTree()"
+          selectionMode="single"
+          [selection]="activeTreeSelection()"
+          (selectionChange)="onTreeSelection($event)"
+        >
+          <ng-template let-node pTemplate="default">
+            <div
+              class="ssg-tree-label"
+              [class.kind-root-row]="node.data.kind === 'navigation-root' || node.data.kind === 'registry-root'"
+              [class.kind-registry-row]="node.data.kind === 'registry-item'"
+              [class.kind-shell-row]="node.data.family === 'Shell'"
+              [class.kind-screen-row]="node.data.family === 'Screen'"
+              [class.kind-container-row]="node.data.family === 'Container' || node.data.family === 'Section'"
+              [class.kind-element-row]="node.data.family === 'Component'"
+              [class.has-violation]="hasInspectionViolation(node.data.objectId)"
+              [class.is-selected]="isSelected(node.data.objectId)"
+              [class.is-preview-hovered]="isPreviewHovered(node.data.objectId)"
+              (click)="onTreeNodeClick(node, $event)"
+              (mouseenter)="onTreeNodeEnter(node.data); updateTreeNodeTooltip($event)"
+              (mouseleave)="onTreeNodeLeave()"
+            >
+              <span
+                class="ssg-tree-icon"
+                [class.kind-application]="node.data.family === 'Application'"
+                [class.kind-shell]="node.data.family === 'Shell'"
+                [class.kind-screen]="node.data.family === 'Screen'"
+                [class.kind-container]="node.data.family === 'Container' || node.data.family === 'Section'"
+                [class.kind-element]="node.data.family === 'Component'"
+              >
+                @if (node.data.kind === 'navigation-root') {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3.5" y="4.5" width="17" height="15" rx="2"></rect>
+                    <path d="M7 9.5h10"></path>
+                    <path d="M7 13h10"></path>
+                    <path d="M7 16.5h6"></path>
+                  </svg>
+                } @else if (node.data.kind === 'registry-root') {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="4.5" y="5.5" width="15" height="13" rx="2"></rect>
+                    <path d="M8 9h8"></path>
+                    <path d="M8 12.5h8"></path>
+                    <path d="M8 16h5"></path>
+                  </svg>
+                } @else if (node.data.kind === 'registry-item') {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="5.5" y="5.5" width="13" height="13" rx="2"></rect>
+                    <path d="M9 5.5v13"></path>
+                    <path d="M5.5 9h13"></path>
+                  </svg>
+                } @else if (node.data.family === 'Application') {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3.5" y="4.5" width="17" height="15" rx="2"></rect>
+                    <path d="M7 9h10"></path>
+                    <path d="M7 13h10"></path>
+                    <path d="M7 17h6"></path>
+                    <path d="M12 4.5v15"></path>
+                  </svg>
+                } @else if (node.data.family === 'Shell') {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3.5" y="5.5" width="17" height="13" rx="2"></rect>
+                    <path d="M7 9.5h10"></path>
+                    <path d="M7 13.5h10"></path>
+                    <path d="M7 17.5h6"></path>
+                  </svg>
+                } @else if (node.data.family === 'Screen') {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3.5" y="4.5" width="17" height="15" rx="2"></rect>
+                    <path d="M3.5 8.5h17"></path>
+                    <path d="M6.5 6.5h.01"></path>
+                    <path d="M9.5 6.5h.01"></path>
+                    <path d="M6.5 12h11"></path>
+                    <path d="M6.5 16h7"></path>
+                  </svg>
+                } @else if (node.data.family === 'Container' || node.data.family === 'Section') {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="4.5" y="5.5" width="15" height="4" rx="1.2"></rect>
+                    <rect x="4.5" y="11.5" width="15" height="7" rx="1.2"></rect>
+                  </svg>
+                } @else if (node.data.family === 'Component') {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="8" y="8" width="8" height="8" rx="1.5"></rect>
+                    <path d="M12 4v3"></path>
+                    <path d="M12 17v3"></path>
+                    <path d="M4 12h3"></path>
+                    <path d="M17 12h3"></path>
+                    <path d="M6.5 6.5l2 2"></path>
+                    <path d="M15.5 15.5l2 2"></path>
+                    <path d="M17.5 6.5l-2 2"></path>
+                    <path d="M8.5 15.5l-2 2"></path>
+                  </svg>
+                } @else {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+                    <path d="M9 12h6"></path>
+                    <path d="M12 9v6"></path>
+                  </svg>
+                }
+              </span>
+              <span class="ssg-tree-text">{{ node.label }}</span>
+              @if (hasInspectionViolation(node.data.objectId)) {
+                <span
+                  class="ssg-violation-flag"
+                  [attr.title]="inspectionViolationTooltip(node.data.objectId)"
+                  [attr.aria-label]="inspectionViolationAriaLabel(node.data.objectId)"
+                >
+                  <span class="ssg-violation-count">{{ openIssueCount(node.data.objectId) }}</span>
+                </span>
+              }
+            </div>
+          </ng-template>
+        </p-tree>
+      }
+    </div>
+  </div>
+</aside>

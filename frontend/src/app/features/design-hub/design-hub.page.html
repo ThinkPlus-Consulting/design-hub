@@ -1,0 +1,312 @@
+<div class="design-hub-page-shell" data-inspect-id="design-hub-shell">
+  <div class="design-hub-page-shell__header-slot">
+    <app-design-hub-header
+      title="Design Hub"
+      [subtitle]="activeWorkspaceTitle()"
+      [activeWorkspace]="activeWorkspace()"
+      (workspaceChange)="activateWorkspace($event)"
+    ></app-design-hub-header>
+  </div>
+
+  <div class="design-hub-page-shell__breadcrumb-slot">
+    <app-design-hub-breadcrumb
+      [crumbs]="activeWorkspace() === 'frontend' ? inspectorBreadcrumb() : [{ objectId: null, label: activeWorkspaceTitle() }]"
+      (navigate)="onBreadcrumbClick($event)"
+    ></app-design-hub-breadcrumb>
+  </div>
+
+  <div class="design-hub-page-shell__main-slot">
+    <app-design-hub-main></app-design-hub-main>
+  </div>
+
+  <div class="design-hub-page-shell__footer-slot">
+    <app-design-hub-footer title="Design Hub" [subtitle]="activeWorkspaceTitle()"></app-design-hub-footer>
+  </div>
+</div>
+
+@if (viewedInspectorIssue(); as issue) {
+    <div class="ssg-issue-modal-backdrop" (click)="closeInspectorIssueModal()">
+      <div class="ssg-issue-modal" role="dialog" aria-modal="true" aria-label="Issue details" (click)="$event.stopPropagation()">
+        <div class="ssg-fact-sheet">
+              <header class="ssg-fact-header">
+                <div class="ssg-fact-logo-panel">
+                  <div class="ssg-fact-logo" aria-hidden="true">IX</div>
+                </div>
+                <div class="ssg-fact-header-content">
+                  <div class="ssg-fact-header-actions">
+                    <span class="ssg-status-chip" [class.is-closed]="issue.status === 'closed'">{{ issue.status }}</span>
+                    <button type="button" class="ssg-table-link" (click)="closeInspectorIssueModal()">Close</button>
+                  </div>
+                  <h3>{{ issue.name }}</h3>
+                  <p>{{ issue.message }}</p>
+                  <dl class="ssg-fact-meta-list">
+                    <div class="ssg-fact-meta-row">
+                      <dt>Issue #</dt>
+                      <dd>{{ issue.serialNumber }}</dd>
+                    </div>
+                    <div class="ssg-fact-meta-row">
+                      <dt>Object</dt>
+                      <dd>{{ issue.targetName }}</dd>
+                    </div>
+                    <div class="ssg-fact-meta-row">
+                      <dt>Object ID</dt>
+                      <dd>{{ issue.targetObjectId ?? 'Not recorded' }}</dd>
+                    </div>
+                    <div class="ssg-fact-meta-row">
+                      <dt>GUID</dt>
+                      <dd>{{ resolvedIssueGuid(issue) ?? 'Not recorded' }}</dd>
+                    </div>
+                    <div class="ssg-fact-meta-row">
+                      <dt>Category</dt>
+                      <dd>{{ issue.category }}</dd>
+                    </div>
+                    <div class="ssg-fact-meta-row">
+                      <dt>Rule</dt>
+                      <dd>{{ issue.rule }}</dd>
+                    </div>
+                    <div class="ssg-fact-meta-row">
+                      <dt>Status</dt>
+                      <dd><span class="ssg-status-chip" [class.is-closed]="issue.status === 'closed'">{{ issue.status }}</span></dd>
+                    </div>
+                  </dl>
+                </div>
+              </header>
+              <section class="ssg-overview-section">
+                <div class="ssg-overview-panel">
+                  <div class="ssg-overview-panel-header">
+                    <h4>Issue Details</h4>
+                    <p>X-Ray Agent finding for the selected design object.</p>
+                  </div>
+                  <dl class="ssg-fact-meta-list">
+                    <div class="ssg-fact-meta-row">
+                      <dt>Description</dt>
+                      <dd>{{ issue.description }}</dd>
+                    </div>
+                    <div class="ssg-fact-meta-row">
+                      <dt>Severity</dt>
+                      <dd>{{ issue.severity }}</dd>
+                    </div>
+                  </dl>
+                </div>
+              </section>
+              <section class="ssg-overview-section">
+                <div class="ssg-overview-panel">
+                  <div class="ssg-overview-panel-header">
+                    <h4>Agent Prompt</h4>
+                    <p>Editable guidance for what the issue is and how to fix it.</p>
+                  </div>
+                  <div class="ssg-issue-prompt-panel">
+                    <textarea
+                      class="ssg-issue-prompt-textarea"
+                      [value]="issuePromptDraft()"
+                      (input)="onIssuePromptDraftChange($event)"
+                      aria-label="Issue agent prompt"
+                    ></textarea>
+                    <div class="ssg-issue-prompt-actions">
+                      <button
+                        type="button"
+                        class="tree-toolbar-button"
+                        [disabled]="issuePromptSaving()"
+                        (click)="saveInspectorIssuePrompt(issue)"
+                      >
+                        {{ issuePromptSaving() ? 'Saving...' : 'Save Prompt' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="ssg-overview-section">
+                <div class="ssg-issue-modal-actions">
+                  <button type="button" class="tree-toolbar-button" (click)="focusInspectorIssue(issue)">Go To Object</button>
+                  <button
+                    type="button"
+                    class="tree-toolbar-button"
+                    [disabled]="issuePromptSaving()"
+                    (click)="saveInspectorIssuePrompt(issue)"
+                  >
+                    {{ issuePromptSaving() ? 'Saving...' : 'Save Prompt' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="tree-toolbar-button"
+                    [disabled]="issue.status === 'closed'"
+                    (click)="resolveInspectorIssue(issue)"
+                  >
+                    Resolve Issue
+                  </button>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (xrayModalOpen()) {
+        <div class="ssg-issue-modal-backdrop" (click)="closeXRaySummaryModal()">
+          <div class="ssg-issue-modal ssg-xray-summary-modal" role="dialog" aria-modal="true" aria-label="X-Ray summary" (click)="$event.stopPropagation()">
+            <div class="ssg-fact-sheet">
+              <header class="ssg-fact-header">
+                <div class="ssg-fact-logo-panel">
+                  <div class="ssg-fact-logo" aria-hidden="true">XR</div>
+                </div>
+                <div class="ssg-fact-header-content">
+                  <div class="ssg-fact-header-actions">
+                    <button type="button" class="ssg-table-link" [disabled]="xrayRunning()" (click)="closeXRaySummaryModal()">Close</button>
+                  </div>
+                  <h3>{{ xrayRunning() ? 'X-Ray Agent Running' : 'X-Ray Agent Completed' }}</h3>
+                  <p>{{ xrayRunning() ? xrayProgressMessage() : (xrayConclusion()?.conclusionText ?? 'The full design scan finished and the issue registry was refreshed.') }}</p>
+                </div>
+              </header>
+              <section class="ssg-overview-section">
+                <div class="ssg-insights-panel ssg-xray-progress-panel">
+                  <div class="ssg-insights-panel-header">
+                    <h4>{{ xrayRunning() ? 'Scan Progress' : 'Scan Conclusion' }}</h4>
+                    <p>{{ xrayProgressLabel() }}</p>
+                  </div>
+                  <div class="ssg-xray-progress-track" aria-hidden="true">
+                    <div class="ssg-xray-progress-bar" [style.width.%]="xrayProgressPercent()"></div>
+                  </div>
+                  <div class="ssg-xray-progress-caption">{{ xrayProgressPercent() }}%</div>
+                  <div class="ssg-xray-stage-list">
+                    @for (stage of xrayStageStates(); track stage.key) {
+                      <article class="ssg-xray-stage-row" [class.is-active]="stage.status === 'active'" [class.is-complete]="stage.status === 'completed'">
+                        <div class="ssg-xray-stage-mark" aria-hidden="true">
+                          @if (stage.status === 'completed') {
+                            <span>✓</span>
+                          } @else if (stage.status === 'active') {
+                            <span>•</span>
+                          } @else {
+                            <span>○</span>
+                          }
+                        </div>
+                        <div class="ssg-xray-stage-content">
+                          <h5>{{ stage.label }}</h5>
+                          <p>{{ stage.description }}</p>
+                        </div>
+                      </article>
+                    }
+                  </div>
+                </div>
+              </section>
+              @if (registryError()) {
+                <section class="ssg-overview-section">
+                  <div class="ssg-empty ssg-error">{{ registryError() }}</div>
+                </section>
+              }
+              @if (xrayConclusion(); as conclusion) {
+                <section class="ssg-overview-section">
+                  <div class="ssg-insights-panel">
+                    <div class="ssg-insights-panel-header">
+                      <h4>Scan Summary</h4>
+                    </div>
+                    <div class="ssg-insights-panel-body ssg-insights-grid">
+                      <article class="ssg-insight-stat-panel">
+                        <h4>Graph Objects</h4>
+                        <dl class="ssg-fact-meta-list"><div class="ssg-fact-meta-row"><dt>Value</dt><dd>{{ conclusion.totalObjectsScanned }}</dd></div></dl>
+                      </article>
+                      <article class="ssg-insight-stat-panel">
+                        <h4>Preview Artifacts</h4>
+                        <dl class="ssg-fact-meta-list"><div class="ssg-fact-meta-row"><dt>Value</dt><dd>{{ conclusion.totalPreviewArtifactsScanned }}</dd></div></dl>
+                      </article>
+                      <article class="ssg-insight-stat-panel">
+                        <h4>Total Issues</h4>
+                        <dl class="ssg-fact-meta-list"><div class="ssg-fact-meta-row"><dt>Value</dt><dd>{{ conclusion.summary?.totalIssues ?? 0 }}</dd></div></dl>
+                      </article>
+                      <article class="ssg-insight-stat-panel">
+                        <h4>New Issues</h4>
+                        <dl class="ssg-fact-meta-list"><div class="ssg-fact-meta-row"><dt>Value</dt><dd>{{ conclusion.summary?.newIssues ?? 0 }}</dd></div></dl>
+                      </article>
+                      <article class="ssg-insight-stat-panel">
+                        <h4>Existing Issues</h4>
+                        <dl class="ssg-fact-meta-list"><div class="ssg-fact-meta-row"><dt>Value</dt><dd>{{ conclusion.summary?.existingIssues ?? 0 }}</dd></div></dl>
+                      </article>
+                    </div>
+                  </div>
+                </section>
+                <section class="ssg-overview-section">
+                  <div class="ssg-overview-panel">
+                    <div class="ssg-overview-panel-header">
+                      <h4>Graph Inventory</h4>
+                      <p>Neo4j structural object counts for Shell, Screen, Container, Section, and Component.</p>
+                    </div>
+                    <dl class="ssg-fact-meta-list">
+                      @for (row of conclusion.graphObjectRows; track row.label) {
+                        <div class="ssg-fact-meta-row">
+                          <dt>{{ row.label }}</dt>
+                          <dd>{{ row.value }}</dd>
+                        </div>
+                      }
+                    </dl>
+                  </div>
+                  <div class="ssg-overview-panel">
+                    <div class="ssg-overview-panel-header">
+                      <h4>Preview Inventory</h4>
+                      <p>Rendered preview canvas artifact counts across native HTML and PrimeNG output.</p>
+                    </div>
+                    <dl class="ssg-fact-meta-list">
+                      @for (row of conclusion.previewSummaryRows; track row.label) {
+                        <div class="ssg-fact-meta-row">
+                          <dt>{{ row.label }}</dt>
+                          <dd>{{ row.value }}</dd>
+                        </div>
+                      }
+                    </dl>
+                  </div>
+                </section>
+                <section class="ssg-overview-section">
+                  <div class="ssg-overview-panel">
+                    <div class="ssg-overview-panel-header">
+                      <h4>Completeness Findings</h4>
+                      <p>Identity and binding gaps found during the scan.</p>
+                    </div>
+                    <dl class="ssg-fact-meta-list">
+                      <div class="ssg-fact-meta-row"><dt>Missing Object ID</dt><dd>{{ conclusion.missingObjectIdCount }}</dd></div>
+                      <div class="ssg-fact-meta-row"><dt>Missing Object GUID</dt><dd>{{ conclusion.missingObjectGuidCount }}</dd></div>
+                      <div class="ssg-fact-meta-row"><dt>Missing Preview source-object-id</dt><dd>{{ conclusion.missingPreviewObjectIdCount }}</dd></div>
+                      <div class="ssg-fact-meta-row"><dt>Missing Preview guid</dt><dd>{{ conclusion.missingPreviewGuidCount }}</dd></div>
+                      <div class="ssg-fact-meta-row"><dt>Unmodeled Preview Artifacts</dt><dd>{{ conclusion.unmodeledPreviewArtifactCount }}</dd></div>
+                      <div class="ssg-fact-meta-row"><dt>Unselectable Preview Artifacts</dt><dd>{{ conclusion.unselectablePreviewArtifactCount }}</dd></div>
+                    </dl>
+                  </div>
+                  <div class="ssg-overview-panel">
+                    <div class="ssg-overview-panel-header">
+                      <h4>Issue Categories</h4>
+                      <p>Detected issue totals grouped by X-Ray category.</p>
+                    </div>
+                    <dl class="ssg-fact-meta-list">
+                      @for (row of conclusion.issueCategoryRows; track row.label) {
+                        <div class="ssg-fact-meta-row">
+                          <dt>{{ row.label }}</dt>
+                          <dd>{{ row.value }}</dd>
+                        </div>
+                      }
+                    </dl>
+                  </div>
+                </section>
+                <section class="ssg-overview-section">
+                  <div class="ssg-overview-panel ssg-xray-tag-panel">
+                    <div class="ssg-overview-panel-header">
+                      <h4>Preview Tag Counts</h4>
+                      <p>All rendered preview tag totals found during the canvas scan.</p>
+                    </div>
+                    <div class="ssg-xray-tag-grid">
+                      @for (row of conclusion.previewTagRows; track row.label) {
+                        <div class="ssg-xray-tag-chip">
+                          <span>{{ row.label }}</span>
+                          <strong>{{ row.value }}</strong>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </section>
+                <section class="ssg-overview-section">
+                  <div class="ssg-issue-modal-actions">
+                    <button type="button" class="tree-toolbar-button" (click)="openIssuesTabFromSummary()">View Issues</button>
+                    <button type="button" class="tree-toolbar-button" (click)="closeXRaySummaryModal()">Close</button>
+                  </div>
+                </section>
+              }
+            </div>
+          </div>
+        </div>
+      }

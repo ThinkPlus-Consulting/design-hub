@@ -1,0 +1,30 @@
+<div
+  class="not-found-shell login-shell"
+  data-dom-ref="not-found-shell"
+  [attr.source-object-id]="sourceObjectId('screen')" [attr.guid]="guid('screen')"
+  data-inspect-id="not-found-shell"
+  [class.ssg-focused]="isFocused('screen')"
+  [style.--ssg-screen-background-color]="backgroundColorStyle()"
+  [style.--ssg-screen-background-pattern-opacity]="backgroundPatternOpacity()"
+>
+  <div class="shell-background-container">
+    <div class="shell-background shell-background-color"></div>
+    @if (showPattern()) {
+      <div class="shell-background shell-background-pattern"></div>
+    }
+  </div>
+  <div class="login-shell-inner not-found-layout">
+    <header class="welcome-container welcome-panel" data-dom-ref="not-found-shell-header-container" [attr.source-object-id]="sourceObjectId('welcome')" [attr.guid]="guid('welcome')" data-inspect-id="not-found-shell-header-container" [class.ssg-focused]="isFocused('welcome')">
+      <h1 data-dom-ref="not-found-shell-title" [attr.source-object-id]="sourceObjectId('welcomeTitle')" [attr.guid]="guid('welcomeTitle')" data-inspect-id="not-found-shell-title" [class.ssg-focused]="isFocused('welcomeTitle')">{{ welcomeTitle() }}</h1>
+      <h2 data-dom-ref="not-found-shell-subtitle" [attr.source-object-id]="sourceObjectId('welcomeSubtitle')" [attr.guid]="guid('welcomeSubtitle')" data-inspect-id="not-found-shell-subtitle" [class.ssg-focused]="isFocused('welcomeSubtitle')">{{ welcomeSubtitle() }}</h2>
+    </header>
+    <div class="logo-container logo-panel" data-dom-ref="not-found-logo-container" [attr.source-object-id]="sourceObjectId('logo')" [attr.guid]="guid('logo')" data-inspect-id="not-found-logo-container" [class.ssg-focused]="isFocused('logo')">
+      <div class="svg-logo-renderer" data-dom-ref="not-found-svg-logo-renderer" [attr.source-object-id]="sourceObjectId('logoWordmark')" [attr.guid]="guid('logoWordmark')" data-inspect-id="not-found-svg-logo-renderer" [class.ssg-focused]="isFocused('logoWordmark')">{{ logoWordmark() }}</div>
+    </div>
+    <div class="not-found-region" data-dom-ref="not-found-view" [attr.source-object-id]="sourceObjectId('notFound')" [attr.guid]="guid('notFound')" data-inspect-id="not-found-view" [class.ssg-focused]="isFocused('notFound')">
+      <h2 data-dom-ref="not-found-title" [attr.source-object-id]="sourceObjectId('notFoundTitle')" [attr.guid]="guid('notFoundTitle')" data-inspect-id="not-found-title" [class.ssg-focused]="isFocused('notFoundTitle')">{{ notFoundTitle() }}</h2>
+      <p data-dom-ref="not-found-text" [attr.source-object-id]="sourceObjectId('notFoundText')" [attr.guid]="guid('notFoundText')" data-inspect-id="not-found-text" [class.ssg-focused]="isFocused('notFoundText')">{{ notFoundText() }}</p>
+      <button type="button" class="auth-btn secondary" data-dom-ref="not-found-action" [attr.source-object-id]="sourceObjectId('notFoundAction')" [attr.guid]="guid('notFoundAction')" data-inspect-id="not-found-action" [class.ssg-focused]="isFocused('notFoundAction')">{{ notFoundActionLabel() }}</button>
+    </div>
+  </div>
+</div>

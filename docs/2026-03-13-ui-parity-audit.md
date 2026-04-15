@@ -8,12 +8,12 @@ This audit compares the current Angular Design Hub UI with the prototype playgro
 
 Compared sources:
 
-- Playground: `/Users/mksulty/Claude/Projects/Emsist-app/Documentation/prototypes/screen-flow-playground.html`
-- Angular page shell: `/Users/mksulty/Claude/Projects/design-hub/frontend/src/app/features/design-hub/design-hub.page.ts`
-- Angular sidebar: `/Users/mksulty/Claude/Projects/design-hub/frontend/src/app/features/design-hub/components/screen-sidebar/screen-sidebar.component.ts`
-- Angular canvas: `/Users/mksulty/Claude/Projects/design-hub/frontend/src/app/features/design-hub/components/flow-canvas/flow-canvas.component.ts`
-- Angular detail/tabs: `/Users/mksulty/Claude/Projects/design-hub/frontend/src/app/features/design-hub/components/detail-panel/detail-panel.component.ts`
-- Angular detail panels under `/Users/mksulty/Claude/Projects/design-hub/frontend/src/app/features/design-hub/components/detail-panel/panels/`
+- Playground: `<Emsist-app-root>/Documentation/prototypes/screen-flow-playground.html`
+- Angular page shell: `<repo-root>/frontend/src/app/features/design-hub/design-hub.page.ts`
+- Angular sidebar: `<repo-root>/frontend/src/app/features/design-hub/components/screen-sidebar/screen-sidebar.component.ts`
+- Angular canvas: `<repo-root>/frontend/src/app/features/design-hub/components/flow-canvas/flow-canvas.component.ts`
+- Angular detail/tabs: `<repo-root>/frontend/src/app/features/design-hub/components/detail-panel/detail-panel.component.ts`
+- Angular detail panels under `<repo-root>/frontend/src/app/features/design-hub/components/detail-panel/panels/`
 
 ## Summary
 

@@ -1,0 +1,40 @@
+              <div class="ssg-preview-shell">
+                <div class="ssg-preview-body">
+                  <div class="ssg-preview-stage" #previewStage>
+                    <div class="ssg-preview-viewport-toggle">
+                      <p-togglebutton
+                        styleClass="preview-toolbar-toggle"
+                        [ngModel]="isMobileViewportSelected()"
+                        (ngModelChange)="onViewportToggleChange($event)"
+                        onLabel=""
+                        offLabel=""
+                        onIcon="pi pi-mobile"
+                        offIcon="pi pi-desktop"
+                        ariaLabel="Preview viewport mode"
+                      />
+                    </div>
+                    <div
+                      class="ssg-preview-canvas-frame"
+                      [style.width.px]="previewCanvasWidth() * previewScale()"
+                      [style.height.px]="previewCanvasHeight() * previewScale()"
+                    >
+                      <div
+                        class="ssg-preview-canvas"
+                        #previewCanvasRoot
+                        [style.width.px]="previewCanvasWidth()"
+                        [style.height.px]="previewCanvasHeight()"
+                        [style.transform]="'scale(' + previewScale() + ')'"
+                        [style.--ssg-preview-selected-color]="activePreviewInteractionPalette().selected"
+                        [style.--ssg-preview-hover-color]="activePreviewInteractionPalette().hover"
+                      >
+                        <app-preview-canvas
+                          [selectedGuid]="displayedPreviewSelectedGuid()"
+                          [shellObjectId]="displayedPreviewShellObjectId()"
+                          [backgroundConfig]="displayedPreviewBackgroundConfig()"
+                          [activeScreenObjectId]="displayedPreviewScreenObjectId()"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>

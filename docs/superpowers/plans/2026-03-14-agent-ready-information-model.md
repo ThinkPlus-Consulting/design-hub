@@ -28,7 +28,7 @@
 ### Task 1: Update modeling-taxonomy.md with Agent-Ready Extensions
 
 **Files:**
-- Modify: `documentation/modeling-taxonomy.md`
+- Modify: `docs/reference/modeling-taxonomy.md`
 
 **Context:** This file defines the 3-tier taxonomy with 52 T1 / 9 T2 / 4 T3 = 65 elements. The agent-ready spec adds 2 new T1 nodes (CodeAsset, QualityConstraint) and 2 new T2 nodes (ImportSnapshot, CodingConvention), bringing totals to 54 T1 / 11 T2 / 4 T3 = 69 elements (full extension). Phase 1 adds CodeAsset (T1) + ImportSnapshot (T2) = 53 T1 / 10 T2 = 67. The spec is at `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md`.
 
@@ -106,14 +106,14 @@ This spine enables: "Given a UserStory, which code files need to change, and whi
 
 Search the file for any remaining references to "52 T1", "9 T2", "65 total", "61 benchmarkable" that should now read "54 T1", "11 T2", "69 total", "65 benchmarkable". Update all occurrences. Use grep:
 
-Run: `grep -n "52 T1\|9 T2\|65 total\|61 benchmarkable" documentation/modeling-taxonomy.md`
+Run: `grep -n "52 T1\|9 T2\|65 total\|61 benchmarkable" docs/reference/modeling-taxonomy.md`
 
 Update any matches to the new values. Add "(agent-ready full)" qualifier where context requires distinguishing from the base model.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add documentation/modeling-taxonomy.md
+git add docs/reference/modeling-taxonomy.md
 git commit -m "docs: propagate agent-ready extensions to modeling-taxonomy.md
 
 Add CodeAsset (T1), QualityConstraint (T1), ImportSnapshot (T2),
@@ -127,7 +127,7 @@ Add agent-ready traversal spine for code targeting."
 ### Task 2: Add CodeAsset Full Spec to graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md`
+- Modify: `docs/reference/graph-object-catalog.md`
 
 **Context:** This file contains the full per-object specifications for all 65 model elements. The agent-ready spec adds 4 new objects that each need a full spec section following the established format. The catalog also has a relationship registry that needs 11 new edges (8 Phase 1 + 3 Phase 2) and 7 deprecated edges removed. Current edge count: 79 (line 2222). Target: 90 (79 + 8 Phase 1 + 3 Phase 2). The spec is at `docs/superpowers/specs/2026-03-14-agent-ready-information-model.md`.
 
@@ -183,13 +183,13 @@ Example: `/home/repo` + `backend/` + `src/main/java/com/emsist/designhub/domain/
 
 Open the file in a Markdown viewer or run a quick check that the table formatting is correct:
 
-Run: `head -20 documentation/graph-object-catalog.md | grep -c '|'`
+Run: `head -20 docs/reference/graph-object-catalog.md | grep -c '|'`
 Expected: Non-zero (confirms table syntax exists in the file)
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add CodeAsset (T1) full spec to graph-object-catalog
 
 Engineering category. 10 attributes, 7 relationships.
@@ -201,7 +201,7 @@ Phase 1 of agent-ready information model extension."
 ### Task 3: Add ImportSnapshot Full Spec to graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md`
+- Modify: `docs/reference/graph-object-catalog.md`
 
 - [ ] **Step 1: Add ImportSnapshot (T2) specification section**
 
@@ -251,7 +251,7 @@ The `contentHash` field stores a hash of doc-authored fields at import time. Dri
 - [ ] **Step 2: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add ImportSnapshot (T2) full spec to graph-object-catalog
 
 Cross-cutting registry. 9 attributes, 1 relationship (IMPORTED_BY).
@@ -264,14 +264,14 @@ Phase 1 of agent-ready information model extension."
 ### Task 4: Add TestCase Enrichment to graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md`
+- Modify: `docs/reference/graph-object-catalog.md`
 
 **Context:** TestCase already has a spec section in the catalog (from Track D plan, Step D4). It currently has 8 attributes and 3 relationships. The agent-ready spec adds 7 new attributes and 1 new relationship (LOCATED_IN). If TestCase doesn't have a spec section yet (Track D not propagated), create one with the full set.
 
 - [ ] **Step 1: Find or create the TestCase section**
 
 Search for `### TestCase` in the file:
-Run: `grep -n "### TestCase" documentation/graph-object-catalog.md`
+Run: `grep -n "### TestCase" docs/reference/graph-object-catalog.md`
 
 If found: modify the existing section (Steps 2-3).
 If not found: create the full TestCase section in the Engineering category with all 15 attributes and 4 relationships from both the Track D plan and the agent-ready spec.
@@ -308,7 +308,7 @@ Add a note after the table:
 - [ ] **Step 4: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: enrich TestCase spec with execution metadata
 
 Add 7 new attributes (testFilePath, testClassName, testMethodName,
@@ -322,7 +322,7 @@ Phase 1 of agent-ready information model extension."
 ### Task 5: Add Phase 2 Object Specs to graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md`
+- Modify: `docs/reference/graph-object-catalog.md`
 
 - [ ] **Step 1: Add QualityConstraint (T1) specification section**
 
@@ -407,7 +407,7 @@ Convention applicability is determined exclusively by materialized GOVERNED_BY_C
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add QualityConstraint (T1) and CodingConvention (T2) specs
 
 QualityConstraint: 8 attributes, 2 relationships (HAS_QUALITY_CONSTRAINT,
@@ -422,7 +422,7 @@ Phase 2 of agent-ready information model extension."
 ### Task 6: Update Relationship Registry in graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md`
+- Modify: `docs/reference/graph-object-catalog.md`
 
 **Context:** The relationship registry is a master table of all edges. Current count: 79. The 7 deprecated edges (ON_SCREEN, IMPLEMENTS_STORY, DEPLOYS, DETECTED_BY_BENCHMARK, HAS_STEP(process), REQUIRES_API, HAS_CONVENTION) were deprecated in the meta-model revision and should NOT be counted in the 79 — they were replaced by their successors which ARE in the 79. If stale entries remain in the registry, remove them but do NOT subtract from 79. The agent-ready spec adds 8 Phase 1 edges + 3 Phase 2 edges = 11 new edges on top of the 79 base: 79 + 8 = 87 (Phase 1), 87 + 3 = 90 (Full).
 
@@ -430,7 +430,7 @@ Phase 2 of agent-ready information model extension."
 
 ```bash
 # Find the registry section and count its data rows (exclude header/separator rows)
-sed -n '/Relationship Registry/,/^##/p' documentation/graph-object-catalog.md | grep "^|" | grep -v "^| Relationship\|^|---\|^| Total" | wc -l
+sed -n '/Relationship Registry/,/^##/p' docs/reference/graph-object-catalog.md | grep "^|" | grep -v "^| Relationship\|^|---\|^| Total" | wc -l
 ```
 
 Confirm the count matches the expected 79 baseline. If the count includes deprecated stale entries, remove them first to establish the clean 79 baseline before adding new edges. If the file structure differs from this assumption, manually inspect the registry section and count edges.
@@ -470,7 +470,7 @@ Search for and remove these edges from the registry if they still appear:
 6. `DETECTED_BY_BENCHMARK` (Gap → computed) — replaced by `detectedBy` property
 7. `HAS_STEP` (BusinessProcess → ProcessActivity) — replaced by HAS_FLOW_NODE (Journey HAS_STEP unchanged)
 
-Run: `grep -n "ON_SCREEN\|IMPLEMENTS_STORY\|DETECTED_BY_BENCHMARK\|REQUIRES_API\|USES_SCREEN\|DEPLOYS\|HAS_STEP" documentation/graph-object-catalog.md`
+Run: `grep -n "ON_SCREEN\|IMPLEMENTS_STORY\|DETECTED_BY_BENCHMARK\|REQUIRES_API\|USES_SCREEN\|DEPLOYS\|HAS_STEP" docs/reference/graph-object-catalog.md`
 
 Review matches carefully:
 - Remove entries matching the 7 deprecated edges from the registry table
@@ -491,7 +491,7 @@ Add a note: `Phase 1: 87 (79 base + 8 new). Full: 90 (87 + 3 Phase 2). See agent
 - [ ] **Step 5: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: update relationship registry with agent-ready edges
 
 Add 8 Phase 1 edges (HAS_CODE_ASSET, LOCATED_IN, ASSET_FOR_*,
@@ -505,7 +505,7 @@ Remove 7 deprecated edges. Total: 79 → 90."
 ### Task 7: Add Agent-Ready Traversal Diagrams to graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md`
+- Modify: `docs/reference/graph-object-catalog.md`
 
 - [ ] **Step 1: Add code-targeting traversal diagram**
 
@@ -564,7 +564,7 @@ graph LR
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add agent-ready traversal diagrams to catalog
 
 Code-targeting spine: UserStory → DELIVERS → artifact → owning
@@ -580,7 +580,7 @@ drift detection."
 ### Task 8: Update vision-benchmark.md with Agent-Ready Dimensions
 
 **Files:**
-- Modify: `documentation/vision-benchmark.md`
+- Modify: `docs/reference/vision-benchmark.md`
 
 **Context:** This file scores the current state across 8 dimensions. The agent-ready spec adds new queryability tests and a new "agent-ready benchmarkable" metric (63 Phase 1 / 65 full, distinct from the base 61).
 
@@ -618,7 +618,7 @@ Add rows for the 4 new objects:
 - [ ] **Step 4: Commit**
 
 ```bash
-git add documentation/vision-benchmark.md
+git add docs/reference/vision-benchmark.md
 git commit -m "docs: add agent-ready queryability tests and coverage rows
 
 3 new queryability tests (code file resolution, test file location,
@@ -631,13 +631,13 @@ Agent-ready benchmarkable metric: 63 (Phase 1) / 65 (full)."
 ### Task 9: Update implementation-readiness-graph-model.md with Tightened MCR
 
 **Files:**
-- Modify: `documentation/implementation-readiness-graph-model.md`
+- Modify: `docs/reference/implementation-readiness-graph-model.md`
 
 **Context:** This file defines MCRs (Minimum Completeness Rules) and the completenessScore formula. The agent-ready spec tightens MCR-STORY-AGENT-READY-001 with 5 new checks for AGENT_FIRST stories.
 
 - [ ] **Step 1: Find the MCR-STORY-AGENT-READY-001 section**
 
-Run: `grep -n "MCR-STORY-AGENT-READY" documentation/implementation-readiness-graph-model.md`
+Run: `grep -n "MCR-STORY-AGENT-READY" docs/reference/implementation-readiness-graph-model.md`
 
 - [ ] **Step 2: Add tightened checks for AGENT_FIRST stories**
 
@@ -706,7 +706,7 @@ Find the completenessScore formula section. Add a note:
 - [ ] **Step 5: Commit**
 
 ```bash
-git add documentation/implementation-readiness-graph-model.md
+git add docs/reference/implementation-readiness-graph-model.md
 git commit -m "docs: tighten MCR-STORY-AGENT-READY-001 for AGENT_FIRST stories
 
 Add 5 BLOCKING checks + 1 ADVISORY: repo path, build command,
@@ -720,13 +720,13 @@ Add CodeAsset to applicability matrix."
 ### Task 10: Update product-vision.md with Agent-Ready References
 
 **Files:**
-- Modify: `documentation/product-vision.md`
+- Modify: `docs/reference/product-vision.md`
 
 - [ ] **Step 1: Update model count references**
 
 Search for "65 total" or "65 elements" or "79 edge" references:
 
-Run: `grep -n "65\|79 edge\|61 benchmarkable" documentation/product-vision.md`
+Run: `grep -n "65\|79 edge\|61 benchmarkable" docs/reference/product-vision.md`
 
 Update to reference the agent-ready extension:
 - Where it says "65 model elements": add "(69 with agent-ready extension)"
@@ -745,7 +745,7 @@ Find the north-star queries section. Add:
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/product-vision.md
+git add docs/reference/product-vision.md
 git commit -m "docs: reference agent-ready extensions in product-vision
 
 Update count references: 69 nodes (agent-ready), 90 edges,
@@ -757,9 +757,9 @@ Update count references: 69 nodes (agent-ready), 90 edges,
 ### Task 11: Update Supporting Documentation Files
 
 **Files:**
-- Modify: `documentation/feature-capability-map.md`
-- Modify: `documentation/architecture-blueprint.md`
-- Modify: `documentation/design-testing-strategy.md`
+- Modify: `docs/reference/feature-capability-map.md`
+- Modify: `docs/reference/architecture-blueprint.md`
+- Modify: `docs/reference/design-testing-strategy.md`
 
 - [ ] **Step 1: Update feature-capability-map.md**
 
@@ -820,7 +820,7 @@ Add to the anti-drift scenarios list:
 - [ ] **Step 4: Commit**
 
 ```bash
-git add documentation/feature-capability-map.md documentation/architecture-blueprint.md documentation/design-testing-strategy.md
+git add docs/reference/feature-capability-map.md docs/reference/architecture-blueprint.md docs/reference/design-testing-strategy.md
 git commit -m "docs: propagate agent-ready extensions to supporting docs
 
 feature-capability-map: add Code Targeting + Convention Compliance

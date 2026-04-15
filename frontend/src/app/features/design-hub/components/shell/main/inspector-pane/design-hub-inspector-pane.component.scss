@@ -1,0 +1,344 @@
+:host {
+  min-height: 0;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+.ssg-panel {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows:
+    var(--design-hub-pane-header-height)
+    var(--design-hub-pane-subheader-height)
+    minmax(0, 1fr);
+  border: 1px solid color-mix(in srgb, var(--tp-border) 40%, transparent);
+  border-radius: var(--nm-radius-lg);
+  background: var(--tp-surface-raised);
+  box-shadow: var(--nm-shadow-island, 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03));
+  overflow: hidden;
+}
+
+.ssg-panel-slot {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ssg-panel-slot--header {
+  min-height: var(--design-hub-pane-header-height);
+  max-height: var(--design-hub-pane-header-height);
+}
+
+.ssg-panel-slot--subheader {
+  min-height: var(--design-hub-pane-subheader-height);
+  max-height: var(--design-hub-pane-subheader-height);
+}
+
+.ssg-panel-slot--body {
+  min-height: 0;
+  height: 100%;
+}
+
+.ssg-panel-header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--design-hub-pane-header-height);
+  height: var(--design-hub-pane-header-height);
+  max-height: var(--design-hub-pane-header-height);
+  padding: var(--tp-space-4) var(--tp-space-5);
+  border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 36%, transparent);
+  background: var(--tp-surface-raised);
+}
+
+.ssg-panel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--tp-space-4);
+  flex-wrap: nowrap;
+  width: 100%;
+  min-width: 0;
+}
+
+.ssg-panel-header h2 {
+  margin: 0;
+  color: var(--tp-text-dark);
+  font-size: var(--tp-font-xl);
+  font-weight: 700;
+}
+
+.ssg-panel-subheader {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--design-hub-pane-subheader-height);
+  height: var(--design-hub-pane-subheader-height);
+  max-height: var(--design-hub-pane-subheader-height);
+  padding: var(--tp-space-4) var(--tp-space-5);
+  border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 36%, transparent);
+  background: var(--tp-surface-raised);
+}
+
+.ssg-panel-subheader-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--tp-space-4);
+  width: 100%;
+  min-width: 0;
+}
+
+.ssg-panel-subheader h3 {
+  margin: 0;
+  color: var(--tp-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ssg-agentic-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.ssg-inspector-tabs {
+  display: contents;
+}
+
+.ssg-inspector-empty-state {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: var(--tp-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+:host ::ng-deep .ssg-inspector-tabs .p-tablist {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--tp-space-4);
+  padding-block: var(--tp-space-3);
+  border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 36%, transparent);
+  background: var(--tp-surface-raised);
+}
+
+:host ::ng-deep .ssg-inspector-tabs .p-tab {
+  min-height: 40px;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+:host ::ng-deep .ssg-inspector-tabs .p-tabpanels {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  background: var(--tp-surface-raised);
+}
+
+:host ::ng-deep .ssg-inspector-tabs .p-tabpanel {
+  height: 100%;
+  overflow: hidden;
+  min-height: 0;
+  padding: 0;
+}
+
+.ssg-overview-tab {
+  min-height: 0;
+  height: 100%;
+  padding: var(--tp-space-4);
+  display: grid;
+  gap: var(--tp-space-5);
+  align-content: start;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.ssg-registry-tab-panel {
+  display: grid;
+  gap: var(--tp-space-4);
+}
+
+.ssg-registry-table-block {
+  display: grid;
+  gap: var(--tp-space-3);
+}
+
+.ssg-builder-grid,
+.ssg-builder-output-grid {
+  display: grid;
+  gap: var(--tp-space-4);
+}
+
+.ssg-builder-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: var(--tp-space-4);
+}
+
+.ssg-builder-grid-single {
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 0;
+}
+
+.ssg-builder-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 0;
+}
+
+.ssg-builder-section {
+  display: grid;
+  gap: var(--tp-space-3);
+  padding: var(--tp-space-4);
+  border: 1px solid color-mix(in srgb, var(--tp-border) 42%, transparent);
+  border-radius: var(--nm-radius);
+  background: var(--tp-surface-raised);
+}
+
+.ssg-builder-section h5,
+.ssg-builder-panel-card h6 {
+  margin: 0;
+  color: var(--tp-text-dark);
+  font-size: var(--tp-font-md);
+  font-weight: 700;
+}
+
+.ssg-builder-field,
+.ssg-builder-field-grid {
+  display: grid;
+  gap: var(--tp-space-2);
+}
+
+.ssg-builder-field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ssg-builder-field label {
+  color: var(--tp-text-secondary);
+  font-size: var(--tp-font-sm);
+  font-weight: 700;
+}
+
+.ssg-builder-input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--tp-border) 70%, transparent);
+  border-radius: var(--nm-radius-md);
+  background: var(--tp-surface-light);
+  color: var(--tp-text-dark);
+  font: inherit;
+  outline: none;
+}
+
+.ssg-builder-input:focus {
+  border-color: color-mix(in srgb, var(--tp-primary) 32%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tp-primary) 12%, transparent);
+}
+
+.ssg-builder-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.ssg-builder-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--tp-text);
+  font-size: var(--tp-font-sm);
+  font-weight: 600;
+}
+
+.ssg-builder-panel-list {
+  display: grid;
+  gap: var(--tp-space-3);
+}
+
+.ssg-builder-panel-card {
+  display: grid;
+  gap: var(--tp-space-3);
+  padding: var(--tp-space-3);
+  border: 1px solid color-mix(in srgb, var(--tp-border) 40%, transparent);
+  border-radius: var(--nm-radius-md);
+  background: var(--tp-surface);
+}
+
+.ssg-attributes-panel,
+.ssg-relationships-panel {
+  display: grid;
+  gap: var(--tp-space-4);
+}
+
+.ssg-attributes-panel-body,
+.ssg-relationships-panel-body {
+  display: grid;
+}
+
+.ssg-overview-table {
+  min-height: 16rem;
+  border: 1px solid var(--tp-border);
+  border-radius: var(--nm-radius);
+  overflow: hidden;
+  background: transparent;
+}
+
+:host ::ng-deep .ssg-overview-table .p-datatable {
+  background: transparent;
+}
+
+:host ::ng-deep .ssg-overview-table .p-datatable-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+:host ::ng-deep .ssg-overview-table .p-datatable-thead > tr > th {
+  background: var(--tp-surface);
+  color: var(--tp-text-dark);
+  font-weight: 600;
+  padding: var(--tp-space-3) var(--tp-space-4);
+  border-bottom: 1px solid var(--tp-border);
+  text-align: left;
+  font-size: var(--tp-font-sm);
+}
+
+:host ::ng-deep .ssg-overview-table .p-datatable-tbody > tr > td {
+  padding: var(--tp-space-3) var(--tp-space-4);
+  border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 50%, transparent);
+  font-size: var(--tp-font-md);
+  vertical-align: top;
+  background: transparent;
+}
+
+:host ::ng-deep .ssg-overview-table .p-datatable-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+@media (max-width: 820px) {
+  .ssg-builder-grid,
+  .ssg-builder-grid-2,
+  .ssg-builder-field-grid {
+    grid-template-columns: 1fr;
+  }
+}

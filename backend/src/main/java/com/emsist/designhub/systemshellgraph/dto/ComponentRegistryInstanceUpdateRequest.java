@@ -6,7 +6,7 @@ public record ComponentRegistryInstanceUpdateRequest(
         String name,
         String description,
         String status,
-        String targetObjectCode,
+        String targetObjectId,
         Map<String, Object> configuration
 ) {
 }

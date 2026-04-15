@@ -67,7 +67,7 @@ This startup proof also passed from a clean isolated temp copy on this machine w
 
 ## Runtime Defaults
 
-The backend reads Neo4j settings from [`backend/src/main/resources/application.yml`](/Users/mksulty/Claude/Projects/design-hub/backend/src/main/resources/application.yml):
+The backend reads Neo4j settings from [`backend/src/main/resources/application.yml`](backend/src/main/resources/application.yml):
 
 - `NEO4J_URI=bolt://localhost:27697`
 - `NEO4J_USER=neo4j`
@@ -87,7 +87,7 @@ External sync orchestration is also configured in `application.yml` under `desig
 - Verification View now exposes live source status, recent sync-job history, and a manual poll action using the current `application.yml` source config
 - upper-spine external normalization now reaches epic coverage, and the live external epic slice traverses to both the internal epic and feature it represents
 
-Use [`.env.external-sync.example`](/Users/mksulty/Claude/Projects/design-hub/.env.external-sync.example) as the starting point for live source rollout. The current known Jira scope is already wired there from the provided board URL:
+Use [`.env.external-sync.example`](.env.external-sync.example) as the starting point for live source rollout. The current known Jira scope is already wired there from the provided board URL:
 
 - `DESIGNHUB_EXTERNAL_SYNC_JIRA_BASE_URL=https://thinkplus.atlassian.net`
 - `DESIGNHUB_EXTERNAL_SYNC_JIRA_PROJECT_KEY=DPAA`
@@ -110,8 +110,8 @@ Azure DevOps is still different. The current Azure polling client still expects 
 
 ## Blocker Helpers
 
-- Branch protection is active on `main`; use [`scripts/configure-branch-protection.sh`](/Users/mksulty/Claude/Projects/design-hub/scripts/configure-branch-protection.sh) if the required checks or review policy need to change.
-- External-sync rollout can start from [`.env.external-sync.example`](/Users/mksulty/Claude/Projects/design-hub/.env.external-sync.example) and [`scripts/check-external-sync.sh`](/Users/mksulty/Claude/Projects/design-hub/scripts/check-external-sync.sh).
+- Branch protection is active on `main`; use [`scripts/configure-branch-protection.sh`](scripts/configure-branch-protection.sh) if the required checks or review policy need to change.
+- External-sync rollout can start from [`.env.external-sync.example`](.env.external-sync.example) and [`scripts/check-external-sync.sh`](scripts/check-external-sync.sh).
 - The current public GitHub repo is `https://github.com/ThinkPlus-Consulting/design-hub`.
 
 ## Verification
@@ -154,8 +154,8 @@ cd frontend
 
 Playwright expects the backend to already be running on `http://localhost:8091`.
 
-The repository now includes [`.github/workflows/verification.yml`](/Users/mksulty/Claude/Projects/design-hub/.github/workflows/verification.yml) for pull requests and pushes to `main`, plus [`.github/workflows/release-verification.yml`](/Users/mksulty/Claude/Projects/design-hub/.github/workflows/release-verification.yml) for tag- and manually-triggered release readiness checks with packaged artifacts.
-Both lanes now also enforce the repo benchmark gate through [`scripts/check-benchmark.mjs`](/Users/mksulty/Claude/Projects/design-hub/scripts/check-benchmark.mjs) and upload the live benchmark snapshot as a workflow artifact.
+The repository now includes [`.github/workflows/verification.yml`](.github/workflows/verification.yml) for pull requests and pushes to `main`, plus [`.github/workflows/release-verification.yml`](.github/workflows/release-verification.yml) for tag- and manually-triggered release readiness checks with packaged artifacts.
+Both lanes now also enforce the repo benchmark gate through [`scripts/check-benchmark.mjs`](scripts/check-benchmark.mjs) and upload the live benchmark snapshot as a workflow artifact.
 
 Backend wrapper:
 
@@ -168,8 +168,8 @@ The backend Maven wrapper is now checked in and verified.
 
 ## Frontend Toolchain Note
 
-The frontend is pinned to Node `25.8.1` via the repo [`.nvmrc`](/Users/mksulty/Claude/Projects/design-hub/.nvmrc), [frontend `.nvmrc`](/Users/mksulty/Claude/Projects/design-hub/frontend/.nvmrc), and `frontend/package.json`. Use [`frontend/npmw`](/Users/mksulty/Claude/Projects/design-hub/frontend/npmw) for install/build/test/start commands when your current shell has not switched to Node `25.8.1`; it prefers the matching Homebrew or `nvm` runtime and fails fast otherwise. The Angular workspace currently uses the Webpack-based `@angular-devkit/build-angular:browser` build target for both `ng build` and `ng serve`. Fresh `ng build`, `ng build --configuration development`, and `ng serve` run on this repo under Node `25.8.1`; if a transient PrimeUIX export error recurs, treat it as dependency/cache state rather than a separate production-vs-dev builder path and clear `node_modules/.cache` before restarting the dev server.
+The frontend is pinned to Node `25.8.1` via the repo [`.nvmrc`](.nvmrc), [frontend `.nvmrc`](frontend/.nvmrc), and `frontend/package.json`. Use [`frontend/npmw`](frontend/npmw) for install/build/test/start commands when your current shell has not switched to Node `25.8.1`; it prefers the matching Homebrew or `nvm` runtime and fails fast otherwise. The Angular workspace currently uses the Webpack-based `@angular-devkit/build-angular:browser` build target for both `ng build` and `ng serve`. Fresh `ng build`, `ng build --configuration development`, and `ng serve` run on this repo under Node `25.8.1`; if a transient PrimeUIX export error recurs, treat it as dependency/cache state rather than a separate production-vs-dev builder path and clear `node_modules/.cache` before restarting the dev server.
 
 ## Closeout Roadmap
 
-The next-stage closure plan for the remaining documented `PLANNED` items is tracked in [`documentation/closeout-roadmap.md`](/Users/mksulty/Claude/Projects/design-hub/documentation/closeout-roadmap.md).
+The next-stage closure plan for the remaining documented `PLANNED` items is tracked in [`docs/reference/closeout-roadmap.md`](docs/reference/closeout-roadmap.md).

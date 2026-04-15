@@ -158,7 +158,7 @@
 - [x] Commit:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add \
+cd <repo-root> && git add \
   backend/src/main/java/com/emsist/designhub/domain/BusinessDomain.java \
   backend/src/main/java/com/emsist/designhub/domain/BusinessProcess.java \
   backend/src/main/java/com/emsist/designhub/domain/ProcessActivity.java \
@@ -229,7 +229,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add \
 - [x] Commit:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add \
+cd <repo-root> && git add \
   backend/src/main/java/com/emsist/designhub/domain/ProcessGateway.java \
   backend/src/main/java/com/emsist/designhub/domain/ProcessEvent.java \
   backend/src/main/java/com/emsist/designhub/domain/UserStory.java \

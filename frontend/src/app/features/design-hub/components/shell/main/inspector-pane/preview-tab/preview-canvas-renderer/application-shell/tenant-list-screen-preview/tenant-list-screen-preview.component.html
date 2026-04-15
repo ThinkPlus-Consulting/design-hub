@@ -1,0 +1,439 @@
+<section
+  class="tenant-list"
+  data-testid="tenant-list"
+  data-dom-ref="tenant-list-screen"
+  [attr.source-object-id]="sourceObjectId('screen')" [attr.guid]="guid('screen')"
+  data-inspect-id="tenant-list-screen"
+  [class.ssg-focused]="isFocused('screen')"
+>
+  <div class="list-page-card">
+    <header
+      class="list-page-card-header"
+      data-dom-ref="tenant-list-header"
+      [attr.source-object-id]="sourceObjectId('header')" [attr.guid]="guid('header')"
+      data-inspect-id="tenant-list-header"
+      [class.ssg-focused]="isFocused('header')"
+    >
+      <h1
+        class="tenant-list-title"
+        data-dom-ref="tenant-list-title"
+        [attr.source-object-id]="sourceObjectId('headerTitle')" [attr.guid]="guid('headerTitle')"
+        data-inspect-id="tenant-list-title"
+        [class.ssg-focused]="isFocused('headerTitle')"
+      >
+        {{ title() }}
+      </h1>
+    </header>
+
+    <div
+      class="toolbar toolbar-panel"
+      data-testid="filter-bar"
+      data-dom-ref="tenant-list-toolbar"
+      [attr.source-object-id]="sourceObjectId('toolbar')" [attr.guid]="guid('toolbar')"
+      data-inspect-id="tenant-list-toolbar"
+      [class.ssg-focused]="isFocused('toolbar')"
+    >
+        <section
+          class="search-bar"
+          data-dom-ref="tenant-list-search-section"
+          [attr.source-object-id]="sourceObjectId('searchSection')" [attr.guid]="guid('searchSection')"
+          data-inspect-id="tenant-list-search-section"
+          [class.ssg-focused]="isFocused('searchSection')"
+        >
+          <span class="search-icon pi pi-search"></span>
+          <input
+            pInputText
+            type="text"
+            class="search-input"
+            [ariaLabel]="searchAriaLabel()"
+            [placeholder]="searchPlaceholder()"
+            [value]="searchText()"
+            (input)="onSearchChange($any($event.target).value)"
+            data-testid="input-search-tenants"
+            data-dom-ref="tenant-list-search-input"
+            [attr.source-object-id]="sourceObjectId('searchInput')" [attr.guid]="guid('searchInput')"
+            data-inspect-id="tenant-list-search-input"
+            [class.ssg-focused]="isFocused('searchInput')"
+          />
+        </section>
+        <section
+          data-dom-ref="tenant-list-filter-toggle-section"
+          [attr.source-object-id]="sourceObjectId('filterToggleSection')" [attr.guid]="guid('filterToggleSection')"
+          data-inspect-id="tenant-list-filter-toggle-section"
+          [class.ssg-focused]="isFocused('filterToggleSection')"
+        >
+          <p-button
+            icon="pi pi-filter"
+            severity="secondary"
+            [outlined]="true"
+            [rounded]="true"
+            [ariaLabel]="filterToggleAriaLabel()"
+            (onClick)="toggleFilters()"
+            [styleClass]="showFilters() ? 'filter-icon-active' : ''"
+            data-testid="btn-toggle-filters"
+            data-dom-ref="tenant-list-filter-toggle-action"
+            [attr.source-object-id]="sourceObjectId('filterToggleAction')" [attr.guid]="guid('filterToggleAction')"
+            data-inspect-id="tenant-list-filter-toggle-action"
+            [class.ssg-focused]="isFocused('filterToggleAction')"
+          />
+        </section>
+        <span class="toolbar-spacer"></span>
+        <section
+          data-dom-ref="tenant-list-view-mode-section"
+          [attr.source-object-id]="sourceObjectId('viewModeSection')" [attr.guid]="guid('viewModeSection')"
+          data-inspect-id="tenant-list-view-mode-section"
+          [class.ssg-focused]="isFocused('viewModeSection')"
+        >
+          <p-toggleButton
+            [ngModel]="effectiveViewMode() === 'table'"
+            (ngModelChange)="viewMode.set($event ? 'table' : 'grid')"
+            [onLabel]="tableLabel()"
+            [offLabel]="gridLabel()"
+            onIcon="pi pi-list"
+            offIcon="pi pi-objects-column"
+            [ariaLabel]="viewToggleAriaLabel()"
+            data-testid="view-toggle"
+            data-dom-ref="tenant-list-view-toggle"
+            [attr.source-object-id]="sourceObjectId('viewModeToggle')" [attr.guid]="guid('viewModeToggle')"
+            data-inspect-id="tenant-list-view-toggle"
+            [class.ssg-focused]="isFocused('viewModeToggle')"
+          />
+        </section>
+        <section
+          data-dom-ref="tenant-list-create-action-section"
+          [attr.source-object-id]="sourceObjectId('createActionSection')" [attr.guid]="guid('createActionSection')"
+          data-inspect-id="tenant-list-create-action-section"
+          [class.ssg-focused]="isFocused('createActionSection')"
+        >
+          <p-button
+            [label]="createLabel()"
+            icon="pi pi-plus"
+            data-testid="btn-create-tenant"
+            (onClick)="onCreateTenant()"
+            data-dom-ref="tenant-list-create-action"
+            [attr.source-object-id]="sourceObjectId('createAction')" [attr.guid]="guid('createAction')"
+            data-inspect-id="tenant-list-create-action"
+            [class.ssg-focused]="isFocused('createAction')"
+          />
+        </section>
+    </div>
+
+    @if (showFilters()) {
+      <div
+        class="filter-row"
+        data-testid="filter-row"
+        data-dom-ref="tenant-list-filter-row"
+        [attr.source-object-id]="sourceObjectId('filterRow')" [attr.guid]="guid('filterRow')"
+        data-inspect-id="tenant-list-filter-row"
+        [class.ssg-focused]="isFocused('filterRow')"
+      >
+        <p-select
+          [options]="[...typeOptions()]"
+          optionLabel="label"
+          optionValue="value"
+          ariaLabel="Filter by tenant type"
+          [ngModel]="activeTypeFilter()"
+          (ngModelChange)="onTypeFilterChange($event)"
+          [placeholder]="typePlaceholder()"
+          styleClass="filter-select"
+          data-testid="filter-type-select"
+          data-dom-ref="tenant-list-type-filter"
+          [attr.source-object-id]="sourceObjectId('typeFilter')" [attr.guid]="guid('typeFilter')"
+          data-inspect-id="tenant-list-type-filter"
+          [class.ssg-focused]="isFocused('typeFilter')"
+        />
+        <p-select
+          [options]="[...statusOptions()]"
+          optionLabel="label"
+          optionValue="value"
+          ariaLabel="Filter by tenant status"
+          [ngModel]="activeStatusFilter()"
+          (ngModelChange)="onStatusFilterChange($event)"
+          [placeholder]="statusPlaceholder()"
+          styleClass="filter-select"
+          data-testid="filter-status-select"
+          data-dom-ref="tenant-list-status-filter"
+          [attr.source-object-id]="sourceObjectId('statusFilter')" [attr.guid]="guid('statusFilter')"
+          data-inspect-id="tenant-list-status-filter"
+          [class.ssg-focused]="isFocused('statusFilter')"
+        />
+        @if (hasActiveFilters()) {
+          <p-button
+            [label]="clearLabel()"
+            icon="pi pi-filter-slash"
+            severity="secondary"
+            [text]="true"
+            size="small"
+            (onClick)="clearFilters()"
+            data-testid="btn-clear-filters"
+            data-dom-ref="tenant-list-clear-filters-action"
+            [attr.source-object-id]="sourceObjectId('clearFiltersAction')" [attr.guid]="guid('clearFiltersAction')"
+            data-inspect-id="tenant-list-clear-filters-action"
+            [class.ssg-focused]="isFocused('clearFiltersAction')"
+          />
+        }
+      </div>
+    }
+
+    @if (isEmpty()) {
+      <div
+        class="empty-state"
+        role="status"
+        data-testid="empty-state"
+        data-dom-ref="tenant-list-empty-state"
+        [attr.source-object-id]="sourceObjectId('emptyState')" [attr.guid]="guid('emptyState')"
+        data-inspect-id="tenant-list-empty-state"
+        [class.ssg-focused]="isFocused('emptyState')"
+      >
+        <i class="pi pi-inbox empty-state-icon"></i>
+        <h3
+          class="empty-state-title"
+          data-dom-ref="tenant-list-empty-state-title"
+          [attr.source-object-id]="sourceObjectId('emptyStateTitle')" [attr.guid]="guid('emptyStateTitle')"
+          data-inspect-id="tenant-list-empty-state-title"
+          [class.ssg-focused]="isFocused('emptyStateTitle')"
+        >
+          {{ emptyStateTitle() }}
+        </h3>
+        <p
+          class="empty-state-message"
+          data-dom-ref="tenant-list-empty-state-message"
+          [attr.source-object-id]="sourceObjectId('emptyStateMessage')" [attr.guid]="guid('emptyStateMessage')"
+          data-inspect-id="tenant-list-empty-state-message"
+          [class.ssg-focused]="isFocused('emptyStateMessage')"
+        >
+          {{ emptyStateMessage() }}
+        </p>
+        @if (hasActiveFilters() || searchText()) {
+          <p-button
+            [label]="emptyStateActionLabel()"
+            severity="secondary"
+            icon="pi pi-filter-slash"
+            (onClick)="clearFilters()"
+            data-testid="btn-empty-clear-filters"
+            data-dom-ref="tenant-list-empty-state-action"
+            [attr.source-object-id]="sourceObjectId('emptyStateAction')" [attr.guid]="guid('emptyStateAction')"
+            data-inspect-id="tenant-list-empty-state-action"
+            [class.ssg-focused]="isFocused('emptyStateAction')"
+          />
+        }
+      </div>
+    } @else {
+      <div
+        data-dom-ref="tenant-list-result-surface"
+        [attr.source-object-id]="sourceObjectId('resultsSurface')" [attr.guid]="guid('resultsSurface')"
+        data-inspect-id="tenant-list-result-surface"
+        [class.ssg-focused]="isFocused('resultsSurface')"
+      >
+        @if (effectiveViewMode() === 'grid') {
+          <section
+            class="tenant-grid"
+            data-testid="tenant-grid"
+            data-dom-ref="tenant-list-grid-view"
+            [attr.source-object-id]="sourceObjectId('gridView')" [attr.guid]="guid('gridView')"
+            data-inspect-id="tenant-list-grid-view"
+            [class.ssg-focused]="isFocused('gridView')"
+          >
+            @for (tenant of paginatedTenants(); track tenant.shortName; let first = $first) {
+              <article
+                class="tenant-card"
+                tabindex="0"
+                role="button"
+                [attr.aria-label]="'View tenant ' + tenant.name"
+                (click)="onCardClick(tenant)"
+                (keydown.enter)="onCardClick(tenant)"
+                (keydown.space)="onCardClick(tenant)"
+                [attr.data-testid]="'tenant-card-' + tenant.shortName"
+                [attr.data-dom-ref]="cardDomRef(tenant)"
+                [attr.source-object-id]="gridCardObjectId(tenant)"
+                [attr.guid]="gridCardGuid(tenant)"
+                [attr.data-inspect-id]="cardDomRef(tenant)"
+                [class.ssg-focused]="isGridCardFocused(tenant)"
+              >
+                <div class="tenant-card-header">
+                  <div
+                    class="tenant-avatar"
+                    [class]="getAvatarClass(tenant.type)"
+                    [attr.data-dom-ref]="first ? 'tenant-list-card-avatar' : null"
+                    [attr.source-object-id]="sourceObjectId(first ? 'gridAvatar' : null)" [attr.guid]="guid(first ? 'gridAvatar' : null)"
+                    [attr.data-inspect-id]="first ? 'tenant-list-card-avatar' : null"
+                    [class.ssg-focused]="first && isFocused('gridAvatar')"
+                  >
+                    {{ getInitials(tenant.name) }}
+                  </div>
+                  <div class="tenant-info">
+                    <span
+                      class="tenant-name"
+                      [attr.data-dom-ref]="first ? 'tenant-list-card-name' : null"
+                      [attr.source-object-id]="sourceObjectId(first ? 'gridName' : null)" [attr.guid]="guid(first ? 'gridName' : null)"
+                      [attr.data-inspect-id]="first ? 'tenant-list-card-name' : null"
+                      [class.ssg-focused]="first && isFocused('gridName')"
+                    >{{ tenant.name }}</span>
+                    <span
+                      class="tenant-short-name"
+                      [attr.data-dom-ref]="first ? 'tenant-list-card-short-name' : null"
+                      [attr.source-object-id]="sourceObjectId(first ? 'gridShortName' : null)" [attr.guid]="guid(first ? 'gridShortName' : null)"
+                      [attr.data-inspect-id]="first ? 'tenant-list-card-short-name' : null"
+                      [class.ssg-focused]="first && isFocused('gridShortName')"
+                    >{{ tenant.shortName }}</span>
+                  </div>
+                </div>
+
+                <div class="tenant-card-badges">
+                  <p-tag
+                    [value]="tenant.type"
+                    [severity]="getTypeSeverity(tenant.type)"
+                    [rounded]="true"
+                    [attr.data-dom-ref]="first ? 'tenant-list-card-type-badge' : null"
+                    [attr.source-object-id]="sourceObjectId(first ? 'gridTypeBadge' : null)" [attr.guid]="guid(first ? 'gridTypeBadge' : null)"
+                    [attr.data-inspect-id]="first ? 'tenant-list-card-type-badge' : null"
+                    [class.ssg-focused]="first && isFocused('gridTypeBadge')"
+                  />
+                  <span
+                    class="status-badge"
+                    [attr.data-dom-ref]="first ? 'tenant-list-card-status-badge' : null"
+                    [attr.source-object-id]="sourceObjectId(first ? 'gridStatusBadge' : null)" [attr.guid]="guid(first ? 'gridStatusBadge' : null)"
+                    [attr.data-inspect-id]="first ? 'tenant-list-card-status-badge' : null"
+                    [class.ssg-focused]="first && isFocused('gridStatusBadge')"
+                  >
+                    <span class="status-dot" [class]="getStatusDotClass(tenant.status)"></span>
+                    {{ getStatusLabel(tenant.status) }}
+                  </span>
+                  @if (tenant.health) {
+                    <span
+                      class="health-badge"
+                      [class]="getHealthClass(tenant.health)"
+                      [title]="getHealthLabel(tenant.health)"
+                      [attr.data-dom-ref]="first ? 'tenant-list-card-health-badge' : null"
+                      [attr.source-object-id]="sourceObjectId(first ? 'gridHealthBadge' : null)" [attr.guid]="guid(first ? 'gridHealthBadge' : null)"
+                      [attr.data-inspect-id]="first ? 'tenant-list-card-health-badge' : null"
+                      [class.ssg-focused]="first && isFocused('gridHealthBadge')"
+                    >
+                      <i [class]="getHealthIcon(tenant.health)"></i>
+                    </span>
+                  }
+                </div>
+
+                <div
+                  class="tenant-card-stats"
+                  [attr.data-dom-ref]="first ? 'tenant-list-card-stats-summary' : null"
+                  [attr.source-object-id]="sourceObjectId(first ? 'gridStatsSummary' : null)" [attr.guid]="guid(first ? 'gridStatsSummary' : null)"
+                  [attr.data-inspect-id]="first ? 'tenant-list-card-stats-summary' : null"
+                  [class.ssg-focused]="first && isFocused('gridStatsSummary')"
+                >
+                  <span class="stat">{{ tenant.stats.users }} {{ statsUsersLabel() }}</span>
+                  <span class="stat-separator"></span>
+                  <span class="stat">{{ tenant.stats.agents }} {{ statsAgentsLabel() }}</span>
+                  <span class="stat-separator"></span>
+                  <span class="stat">{{ tenant.stats.types }} {{ statsTypesLabel() }}</span>
+                </div>
+              </article>
+            }
+          </section>
+        }
+
+        @if (effectiveViewMode() === 'table') {
+          <section
+            data-dom-ref="tenant-list-table-view"
+            [attr.source-object-id]="sourceObjectId('tableView')" [attr.guid]="guid('tableView')"
+            data-inspect-id="tenant-list-table-view"
+            [class.ssg-focused]="isFocused('tableView')"
+          >
+            <p-table
+              [value]="[...paginatedTenants()]"
+              [rowHover]="true"
+              [tableStyle]="{ 'min-width': '50rem' }"
+              data-testid="tenant-table"
+              styleClass="tenant-data-table"
+              data-dom-ref="tenant-list-table"
+              [attr.source-object-id]="sourceObjectId('table')" [attr.guid]="guid('table')"
+              data-inspect-id="tenant-list-table"
+              [class.ssg-focused]="isFocused('table')"
+            >
+              <ng-template #header>
+                <tr>
+                  <th pSortableColumn="name">{{ tableTenantColumnLabel() }} <p-sortIcon field="name" /></th>
+                  <th pSortableColumn="type">{{ tableTypeColumnLabel() }} <p-sortIcon field="type" /></th>
+                  <th pSortableColumn="status">{{ tableStatusColumnLabel() }} <p-sortIcon field="status" /></th>
+                  <th>{{ tableHealthColumnLabel() }}</th>
+                  <th pSortableColumn="stats.users">{{ tableUsersColumnLabel() }} <p-sortIcon field="stats.users" /></th>
+                  <th pSortableColumn="stats.agents">{{ tableAgentsColumnLabel() }} <p-sortIcon field="stats.agents" /></th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-tenant let-rowIndex="rowIndex">
+                <tr
+                  class="clickable-row"
+                  (click)="onCardClick(tenant)"
+                  [attr.data-testid]="'tenant-row-' + tenant.shortName"
+                >
+                  <td>
+                    <div class="table-tenant-cell">
+                      <div class="tenant-avatar tenant-avatar-sm" [class]="getAvatarClass(tenant.type)">
+                        {{ getInitials(tenant.name) }}
+                      </div>
+                      <div class="table-tenant-info">
+                        <span class="tenant-name">{{ tenant.name }}</span>
+                        <span class="tenant-short-name">{{ tenant.shortName }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <p-tag
+                      [value]="tenant.type"
+                      [severity]="getTypeSeverity(tenant.type)"
+                      [rounded]="true"
+                      [attr.data-dom-ref]="rowIndex === 0 ? 'tenant-list-table-type-badge' : null"
+                      [attr.source-object-id]="sourceObjectId(rowIndex === 0 ? 'tableTypeBadge' : null)" [attr.guid]="guid(rowIndex === 0 ? 'tableTypeBadge' : null)"
+                      [attr.data-inspect-id]="rowIndex === 0 ? 'tenant-list-table-type-badge' : null"
+                      [class.ssg-focused]="rowIndex === 0 && isFocused('tableTypeBadge')"
+                    />
+                  </td>
+                  <td>
+                    <span class="status-badge">
+                      <span class="status-dot" [class]="getStatusDotClass(tenant.status)"></span>
+                      {{ getStatusLabel(tenant.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    @if (tenant.health) {
+                      <span class="health-badge-inline" [class]="getHealthClass(tenant.health)">
+                        <i [class]="getHealthIcon(tenant.health)"></i>
+                        {{ getHealthLabel(tenant.health) }}
+                      </span>
+                    } @else {
+                      <span class="text-muted">{{ healthUnknownLabel() }}</span>
+                    }
+                  </td>
+                  <td>{{ tenant.stats.users }}</td>
+                  <td>{{ tenant.stats.agents }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </section>
+        }
+
+        @if (totalRecords() > 0) {
+          <section
+            data-dom-ref="tenant-list-pagination"
+            [attr.source-object-id]="sourceObjectId('pagination')" [attr.guid]="guid('pagination')"
+            data-inspect-id="tenant-list-pagination"
+            [class.ssg-focused]="isFocused('pagination')"
+          >
+            <p-paginator
+              [rows]="pageSize()"
+              [totalRecords]="totalRecords()"
+              [rowsPerPageOptions]="[10, 20, 50, 100]"
+              [first]="currentPage() * pageSize()"
+              (onPageChange)="onPageChange($event)"
+              data-testid="tenant-paginator"
+              data-dom-ref="tenant-list-paginator"
+              [attr.source-object-id]="sourceObjectId('paginator')" [attr.guid]="guid('paginator')"
+              data-inspect-id="tenant-list-paginator"
+              [class.ssg-focused]="isFocused('paginator')"
+            />
+          </section>
+        }
+      </div>
+    }
+  </div>
+</section>

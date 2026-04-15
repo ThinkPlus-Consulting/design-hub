@@ -297,8 +297,8 @@ The Design Hub is a graph-based implementation-readiness system (Neo4j + Spring 
 - **CI enforcement**: CI as merge-control layer for build, drift, design, localization, contracts, and regression (defined in `ci-quality-gates.md`).
 
 **User-created documents already wired into the pack**:
-- `documentation/design-testing-strategy.md` — Playwright-based design verification and anti-drift testing model
-- `documentation/ci-quality-gates.md` — CI enforcement model for frontend and backend quality gates
+- `docs/reference/design-testing-strategy.md` — Playwright-based design verification and anti-drift testing model
+- `docs/reference/ci-quality-gates.md` — CI enforcement model for frontend and backend quality gates
 - Both referenced from `README.md`, `feature-capability-map.md` (capability 8), and `architecture-blueprint.md` (layers 6-7)
 
 **Four execution tracks**:
@@ -320,7 +320,7 @@ The Design Hub is a graph-based implementation-readiness system (Neo4j + Spring 
 
 ## Step A0: Modeling Taxonomy (Decision Framework)
 
-**File**: `documentation/modeling-taxonomy.md` (new)
+**File**: `docs/reference/modeling-taxonomy.md` (new)
 
 **Why this step exists**: Without explicit rules for what qualifies as a first-class node vs. a registry node vs. a value object, the artifact list keeps growing as we discover string-encoded relationships. A0 establishes the classification rules so A1 can produce a definitive artifact list.
 
@@ -477,7 +477,7 @@ graph TD
 
 ## Step A1: Expand `graph-object-catalog.md` (Foundation)
 
-**File**: `documentation/graph-object-catalog.md`
+**File**: `docs/reference/graph-object-catalog.md`
 
 **What to do**: Transform the flat 26-row table into a full specification covering all 65 model elements (52 T1 + 9 T2 + 4 T3) *(amended from 50)*, using the taxonomy from A0.
 
@@ -538,7 +538,7 @@ Implementation values: `[EDGE]`, `[STRING_REF]`, `[PLANNED]`
 
 ## Step A2: Create `vision-benchmark.md` (Holistic Validation)
 
-**File**: `documentation/vision-benchmark.md`
+**File**: `docs/reference/vision-benchmark.md`
 
 **What to do**: Score the current state across 8 dimensions in two baselines.
 
@@ -606,7 +606,7 @@ Each query scored GREEN (full edge walk) / AMBER (partial — some edges, some s
 
 ## Step A3: Refine `implementation-readiness-graph-model.md` (Governance)
 
-**File**: `documentation/implementation-readiness-graph-model.md`
+**File**: `docs/reference/implementation-readiness-graph-model.md`
 
 ### A3a. Severity-weighted `completenessScore`
 
@@ -679,7 +679,7 @@ RETURN scr.surfaceId,
 
 ## Step A4: Enhance `product-vision.md` (Alignment)
 
-**File**: `documentation/product-vision.md`
+**File**: `docs/reference/product-vision.md`
 
 - Update Vision section with the expanded vision statement
 - Add the traversal spine including Channel (T2), Permission (T2), ErrorCode (T2), ConfirmationDialog (T2)
@@ -832,7 +832,7 @@ Per-view specification format:
 
 ## Step C1: Playwright Harness and Initial Test Suites
 
-**Strategy doc**: `documentation/design-testing-strategy.md` (lines 133-154 define structure)
+**Strategy doc**: `docs/reference/design-testing-strategy.md` (lines 133-154 define structure)
 
 **What to do**: Install Playwright, create the test directory structure, and implement initial test suites covering the 6 test layers defined in the strategy.
 
@@ -899,7 +899,7 @@ The 8 critical anti-drift scenarios from the strategy must all have correspondin
 
 ## Step C2: CI Configuration
 
-**Strategy doc**: `documentation/ci-quality-gates.md` (lines 1-361 define the full gate model)
+**Strategy doc**: `docs/reference/ci-quality-gates.md` (lines 1-361 define the full gate model)
 
 **What to do**: Create CI workflow configuration implementing the gates defined in the strategy document.
 
@@ -1037,15 +1037,15 @@ graph TD
 
 | File | Action | Priority |
 |------|--------|----------|
-| `documentation/modeling-taxonomy.md` | **Create new** (tiers, mapping, string-to-edge, edge direction) | P0 |
-| `documentation/graph-object-catalog.md` | Major expand (26 flat rows -> 50 tiered specs + relationship registry) | P0 |
-| `documentation/vision-benchmark.md` | **Create new** (2 baselines, 8 dimensions, queryability suite) | P1 |
-| `documentation/implementation-readiness-graph-model.md` | Enhance (weighted completenessScore, edge-aware checklists, Cypher) | P1 |
-| `documentation/design-system-contract.md` | **Create new** (token adoption spec) | P1 |
-| `documentation/product-vision.md` | Enhance (expanded spine, 61 benchmarkable nodes) | P2 |
-| `documentation/feature-capability-map.md` | Enhance (capability-to-artifact mapping) | P2 |
-| `documentation/architecture-blueprint.md` | Enhance (i18n section, migration map, evidence mapping) | P2 |
-| `documentation/azure-jira-benchmark.md` | Enhance (Mermaid, delivery interoperability scoring) | P3 |
+| `docs/reference/modeling-taxonomy.md` | **Create new** (tiers, mapping, string-to-edge, edge direction) | P0 |
+| `docs/reference/graph-object-catalog.md` | Major expand (26 flat rows -> 50 tiered specs + relationship registry) | P0 |
+| `docs/reference/vision-benchmark.md` | **Create new** (2 baselines, 8 dimensions, queryability suite) | P1 |
+| `docs/reference/implementation-readiness-graph-model.md` | Enhance (weighted completenessScore, edge-aware checklists, Cypher) | P1 |
+| `docs/reference/design-system-contract.md` | **Create new** (token adoption spec) | P1 |
+| `docs/reference/product-vision.md` | Enhance (expanded spine, 61 benchmarkable nodes) | P2 |
+| `docs/reference/feature-capability-map.md` | Enhance (capability-to-artifact mapping) | P2 |
+| `docs/reference/architecture-blueprint.md` | Enhance (i18n section, migration map, evidence mapping) | P2 |
+| `docs/reference/azure-jira-benchmark.md` | Enhance (Mermaid, delivery interoperability scoring) | P3 |
 
 ### Track A (Read-only code references)
 
@@ -1103,8 +1103,8 @@ graph TD
 
 | File | Key Reference |
 |------|-------------|
-| `documentation/design-testing-strategy.md` | 6 test layers (lines 37-98), 8 anti-drift scenarios (lines 196-208), strict rules (lines 100-131), directory structure (lines 133-154) |
-| `documentation/ci-quality-gates.md` | Frontend gates (lines 44-140), backend gates (lines 142-250), cross-cutting gates (lines 252-310), CI stage diagram (lines 326-345) |
+| `docs/reference/design-testing-strategy.md` | 6 test layers (lines 37-98), 8 anti-drift scenarios (lines 196-208), strict rules (lines 100-131), directory structure (lines 133-154) |
+| `docs/reference/ci-quality-gates.md` | Frontend gates (lines 44-140), backend gates (lines 142-250), cross-cutting gates (lines 252-310), CI stage diagram (lines 326-345) |
 
 ---
 

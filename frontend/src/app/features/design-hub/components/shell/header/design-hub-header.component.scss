@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+
+.design-hub-page-shell__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tp-space-4);
+  height: var(--design-hub-shell-chrome-height);
+  min-height: var(--design-hub-shell-chrome-height);
+  max-height: var(--design-hub-shell-chrome-height);
+  padding: var(--tp-space-4) var(--tp-space-5);
+  box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--tp-border) 40%, transparent);
+  border-radius: var(--nm-radius-lg);
+  background: var(--tp-surface-raised);
+  box-shadow: var(--nm-shadow-island, 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03));
+  overflow: hidden;
+}
+
+.design-hub-page-shell__header-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.design-hub-page-shell__header-copy h1 {
+  margin: 0;
+  color: var(--tp-text-dark);
+  font-size: var(--tp-font-xl);
+  font-weight: 700;
+}
+
+.design-hub-page-shell__header-copy p {
+  margin: 0;
+  color: var(--tp-text-secondary);
+  font-size: var(--tp-font-sm);
+  line-height: 1.5;
+}
+
+.design-hub-page-shell__header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.design-hub-workspace-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tp-primary) 8%, var(--tp-surface-raised));
+  border: 1px solid color-mix(in srgb, var(--tp-border) 45%, transparent);
+}
+
+.design-hub-workspace-tab {
+  min-height: 2.4rem;
+  padding: 0.45rem 0.9rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tp-text-secondary);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.design-hub-workspace-tab:hover {
+  background: color-mix(in srgb, var(--tp-primary) 10%, var(--tp-surface-raised));
+  color: var(--tp-primary-dark);
+}
+
+.design-hub-workspace-tab.is-active {
+  background: var(--tp-primary);
+  color: var(--tp-bg);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tp-primary-dark) 18%, transparent);
+}

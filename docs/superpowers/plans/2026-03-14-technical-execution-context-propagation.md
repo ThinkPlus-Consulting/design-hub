@@ -21,7 +21,7 @@ These two files define the canonical model. All other files reference them.
 ### Task 1: Update Application spec in graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md:1434-1456`
+- Modify: `docs/reference/graph-object-catalog.md:1434-1456`
 
 - [ ] **Step 1: Add 5 new attributes to Application attribute table**
 
@@ -44,7 +44,7 @@ Read lines 1434-1455 and confirm all 13 attributes are present (8 original + 5 n
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add execution metadata to Application spec (repoPath, repoUrl, workspaceType, defaultBuildCommand, defaultTestCommand)"
 ```
 
@@ -53,7 +53,7 @@ git commit -m "docs: add execution metadata to Application spec (repoPath, repoU
 ### Task 2: Update ApplicationComponent spec in graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md:1466-1486`
+- Modify: `docs/reference/graph-object-catalog.md:1466-1486`
 
 - [ ] **Step 1: Expand componentType enum**
 
@@ -110,7 +110,7 @@ Read the ApplicationComponent section and confirm:
 - [ ] **Step 6: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add execution metadata to ApplicationComponent spec (+11 attrs, -1, +3 edges: DEPENDS_ON_COMPONENT, OWNS_DATA_ENTITY, ENFORCES_RULE)"
 ```
 
@@ -119,7 +119,7 @@ git commit -m "docs: add execution metadata to ApplicationComponent spec (+11 at
 ### Task 3: Update UserStory spec in graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md:548-575`
+- Modify: `docs/reference/graph-object-catalog.md:548-575`
 
 - [ ] **Step 1: Add executionMode attribute**
 
@@ -136,7 +136,7 @@ Read lines 548-576 and confirm `executionMode` is present.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add executionMode attribute to UserStory spec"
 ```
 
@@ -145,7 +145,7 @@ git commit -m "docs: add executionMode attribute to UserStory spec"
 ### Task 4: Update Task IMPLEMENTS targets in graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md:607`
+- Modify: `docs/reference/graph-object-catalog.md:607`
 
 - [ ] **Step 1: Expand IMPLEMENTS target set**
 
@@ -165,7 +165,7 @@ Read line 607 and confirm `ApplicationComponent` is in the target list.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: extend Task IMPLEMENTS targets to include ApplicationComponent"
 ```
 
@@ -174,7 +174,7 @@ git commit -m "docs: extend Task IMPLEMENTS targets to include ApplicationCompon
 ### Task 5: Add 3 new edges to relationship registry in graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md:1995-2002`
+- Modify: `docs/reference/graph-object-catalog.md:1995-2002`
 
 - [ ] **Step 1: Add DEPENDS_ON_COMPONENT, OWNS_DATA_ENTITY, ENFORCES_RULE to section 6.3**
 
@@ -204,7 +204,7 @@ Grep for `DEPENDS_ON_COMPONENT`, `OWNS_DATA_ENTITY`, `ENFORCES_RULE` in graph-ob
 - [ ] **Step 4: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add 3 new edges to relationship registry (DEPENDS_ON_COMPONENT, OWNS_DATA_ENTITY, ENFORCES_RULE) — edge count 76→79"
 ```
 
@@ -213,7 +213,7 @@ git commit -m "docs: add 3 new edges to relationship registry (DEPENDS_ON_COMPON
 ### Task 6: Add Implementation Pack Cypher query to graph-object-catalog.md
 
 **Files:**
-- Modify: `documentation/graph-object-catalog.md` (after the relationship registry, before spine diagrams — around line 2011)
+- Modify: `docs/reference/graph-object-catalog.md` (after the relationship registry, before spine diagrams — around line 2011)
 
 - [ ] **Step 1: Add Implementation Pack traversal section**
 
@@ -258,7 +258,7 @@ Read the new section and confirm it references the spec, includes the MCR Cypher
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/graph-object-catalog.md
+git add docs/reference/graph-object-catalog.md
 git commit -m "docs: add Implementation Pack traversal section with MCR Cypher query and COALESCE precedence"
 ```
 
@@ -267,7 +267,7 @@ git commit -m "docs: add Implementation Pack traversal section with MCR Cypher q
 ### Task 7: Update modeling-taxonomy.md edge count and taxonomy
 
 **Files:**
-- Modify: `documentation/modeling-taxonomy.md:371-377`
+- Modify: `docs/reference/modeling-taxonomy.md:371-377`
 
 - [ ] **Step 1: Update the four-verb edge table IMPLEMENTS row**
 
@@ -306,7 +306,7 @@ Read the updated sections. Confirm IMPLEMENTS targets expanded and 3 new edges a
 - [ ] **Step 5: Commit**
 
 ```bash
-git add documentation/modeling-taxonomy.md
+git add docs/reference/modeling-taxonomy.md
 git commit -m "docs: update modeling-taxonomy edge count 76→79, add technical execution context edges"
 ```
 
@@ -319,7 +319,7 @@ git commit -m "docs: update modeling-taxonomy edge count 76→79, add technical 
 ### Task 8: Add Implementation Pack section to product-vision.md
 
 **Files:**
-- Modify: `documentation/product-vision.md:41, 186-188, 318`
+- Modify: `docs/reference/product-vision.md:41, 186-188, 318`
 
 - [ ] **Step 1: Update edge count on line 41**
 
@@ -381,7 +381,7 @@ Read lines 186-210 and 41 to confirm section 8.7 is present, query 11 added, and
 - [ ] **Step 6: Commit**
 
 ```bash
-git add documentation/product-vision.md
+git add docs/reference/product-vision.md
 git commit -m "docs: add Implementation Pack resolution to product vision, update edge count 76→79"
 ```
 
@@ -390,7 +390,7 @@ git commit -m "docs: add Implementation Pack resolution to product vision, updat
 ### Task 9: Add agent-readiness dimension to vision-benchmark.md
 
 **Files:**
-- Modify: `documentation/vision-benchmark.md:127-146, 150-176`
+- Modify: `docs/reference/vision-benchmark.md:127-146, 150-176`
 
 - [ ] **Step 1: Update edge count references**
 
@@ -434,7 +434,7 @@ Read updated sections. Confirm agent-readiness subsection present and edge count
 - [ ] **Step 5: Commit**
 
 ```bash
-git add documentation/vision-benchmark.md
+git add docs/reference/vision-benchmark.md
 git commit -m "docs: add agent-readiness benchmark dimension, Implementation Pack queryability test, update edge count 76→79"
 ```
 
@@ -447,7 +447,7 @@ git commit -m "docs: add agent-readiness benchmark dimension, Implementation Pac
 ### Task 10: Add MCR-STORY-AGENT-READY-001 and update edge inventory
 
 **Files:**
-- Modify: `documentation/implementation-readiness-graph-model.md:407-435`
+- Modify: `docs/reference/implementation-readiness-graph-model.md:407-435`
 
 - [ ] **Step 1: Add MCR-STORY-AGENT-READY-001 to section 7.10**
 
@@ -493,7 +493,7 @@ Read lines 407-440. Confirm MCR added, story gate updated, edge count updated to
 - [ ] **Step 5: Commit**
 
 ```bash
-git add documentation/implementation-readiness-graph-model.md
+git add docs/reference/implementation-readiness-graph-model.md
 git commit -m "docs: add MCR-STORY-AGENT-READY-001, extend story gate with agent-readiness concern, update edge inventory 76→79"
 ```
 
@@ -502,7 +502,7 @@ git commit -m "docs: add MCR-STORY-AGENT-READY-001, extend story gate with agent
 ### Task 11: Add Implementation Pack Cypher reference to implementation-readiness-graph-model.md
 
 **Files:**
-- Modify: `documentation/implementation-readiness-graph-model.md` (after the four-concern story gate section, around line 435)
+- Modify: `docs/reference/implementation-readiness-graph-model.md` (after the four-concern story gate section, around line 435)
 
 - [ ] **Step 1: Add Implementation Pack resolution reference after the edge inventory note**
 
@@ -530,7 +530,7 @@ Read lines 435-455. Confirm section 7.12 is present with resolution chain and CO
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/implementation-readiness-graph-model.md
+git add docs/reference/implementation-readiness-graph-model.md
 git commit -m "docs: add Implementation Pack resolution section to readiness model"
 ```
 
@@ -543,7 +543,7 @@ git commit -m "docs: add Implementation Pack resolution section to readiness mod
 ### Task 12: Update edge count references in feature-capability-map.md
 
 **Files:**
-- Modify: `documentation/feature-capability-map.md`
+- Modify: `docs/reference/feature-capability-map.md`
 
 - [ ] **Step 1: Search and update edge count references**
 
@@ -556,7 +556,7 @@ Grep for "76" in the file — should have 0 hits for edge count contexts (may st
 - [ ] **Step 3: Commit**
 
 ```bash
-git add documentation/feature-capability-map.md
+git add docs/reference/feature-capability-map.md
 git commit -m "docs: update edge count references 76→79 in feature-capability-map"
 ```
 
@@ -565,7 +565,7 @@ git commit -m "docs: update edge count references 76→79 in feature-capability-
 ### Task 13: Add Implementation Pack test to design-testing-strategy.md
 
 **Files:**
-- Modify: `documentation/design-testing-strategy.md:200-219`
+- Modify: `docs/reference/design-testing-strategy.md:200-219`
 
 - [ ] **Step 1: Add anti-drift scenario 10**
 
@@ -590,7 +590,7 @@ Read lines 200-225. Confirm scenario 10 and agent readiness drift gate are prese
 - [ ] **Step 4: Commit**
 
 ```bash
-git add documentation/design-testing-strategy.md
+git add docs/reference/design-testing-strategy.md
 git commit -m "docs: add Implementation Pack anti-drift scenario and agent readiness drift gate"
 ```
 
@@ -599,7 +599,7 @@ git commit -m "docs: add Implementation Pack anti-drift scenario and agent readi
 ### Task 14: Update canonical plan file
 
 **Files:**
-- Modify: `/Users/mksulty/.claude/plans/smooth-floating-wadler.md`
+- Modify: `~/.claude/plans/smooth-floating-wadler.md`
 
 - [ ] **Step 1: Update Task IMPLEMENTS target set in the plan**
 
@@ -644,67 +644,67 @@ The plan file is outside the repo, so no git commit needed. Just verify the edit
 
 - [ ] **Step 1: Verify edge count consistency**
 
-Run: `grep -n "79 edge" documentation/*.md`
+Run: `grep -n "79 edge" docs/reference/*.md`
 
 Expected: All edge count references in product-vision.md, implementation-readiness-graph-model.md show "79". No file still says "76 edge types" in an active context.
 
 - [ ] **Step 2: Verify no stale "76 edge" references remain**
 
-Run: `grep -n "76 edge" documentation/*.md`
+Run: `grep -n "76 edge" docs/reference/*.md`
 
 Expected: 0 matches in active contexts. (Allowed in deprecated/historical sections only.)
 
 - [ ] **Step 3: Verify new edges in registries**
 
-Run: `grep -n "DEPENDS_ON_COMPONENT\|OWNS_DATA_ENTITY\|ENFORCES_RULE" documentation/graph-object-catalog.md`
+Run: `grep -n "DEPENDS_ON_COMPONENT\|OWNS_DATA_ENTITY\|ENFORCES_RULE" docs/reference/graph-object-catalog.md`
 
 Expected: Each appears in both the per-object spec (ApplicationComponent section) AND the relationship registry (section 6.3).
 
 - [ ] **Step 4: Verify UserStory executionMode**
 
-Run: `grep -n "executionMode" documentation/graph-object-catalog.md`
+Run: `grep -n "executionMode" docs/reference/graph-object-catalog.md`
 
 Expected: At least 1 match in the UserStory attribute table.
 
 - [ ] **Step 5: Verify Task IMPLEMENTS includes ApplicationComponent**
 
-Run: `grep -n "IMPLEMENTS.*ApplicationComponent" documentation/graph-object-catalog.md documentation/modeling-taxonomy.md`
+Run: `grep -n "IMPLEMENTS.*ApplicationComponent" docs/reference/graph-object-catalog.md docs/reference/modeling-taxonomy.md`
 
 Expected: Matches in both files.
 
 - [ ] **Step 6: Verify MCR-STORY-AGENT-READY-001**
 
-Run: `grep -n "MCR-STORY-AGENT-READY" documentation/implementation-readiness-graph-model.md`
+Run: `grep -n "MCR-STORY-AGENT-READY" docs/reference/implementation-readiness-graph-model.md`
 
 Expected: At least 1 match.
 
 - [ ] **Step 7: Verify Implementation Pack is described as computed traversal (never stored node)**
 
-Run: `grep -n "Implementation Pack" documentation/product-vision.md documentation/vision-benchmark.md documentation/design-testing-strategy.md`
+Run: `grep -n "Implementation Pack" docs/reference/product-vision.md docs/reference/vision-benchmark.md docs/reference/design-testing-strategy.md`
 
 Expected: Each mention describes it as "computed traversal" or "computed projection", never as a "stored node" or "first-class node".
 
 - [ ] **Step 8: Verify Application default commands projected**
 
-Run: `grep -n "defaultBuildCommand\|defaultTestCommand" documentation/graph-object-catalog.md`
+Run: `grep -n "defaultBuildCommand\|defaultTestCommand" docs/reference/graph-object-catalog.md`
 
 Expected: Both appear in the Application attribute table.
 
 - [ ] **Step 9: Verify GOVERNED_BY_RULE edge name is normalized**
 
-Run: `grep -n "GOVERNED_BY_RULE" documentation/graph-object-catalog.md`
+Run: `grep -n "GOVERNED_BY_RULE" docs/reference/graph-object-catalog.md`
 
 Expected: Appears in UserStory relationships (line ~570) and in the relationship registry (section 6.3). No alternative names (HAS_RULE, CONSTRAINED_BY) should appear for the same concept.
 
 - [ ] **Step 10: Verify COALESCE precedence is documented**
 
-Run: `grep -n "COALESCE\|component override\|Application default" documentation/graph-object-catalog.md documentation/implementation-readiness-graph-model.md`
+Run: `grep -n "COALESCE\|component override\|Application default" docs/reference/graph-object-catalog.md docs/reference/implementation-readiness-graph-model.md`
 
 Expected: COALESCE precedence pattern documented in graph-object-catalog.md (section 6.5) and implementation-readiness-graph-model.md (section 7.12).
 
 - [ ] **Step 11: Verify no stale 76 references with broader pattern**
 
-Run: `grep -n "76.relat\|76.edge\|76 edge" documentation/*.md`
+Run: `grep -n "76.relat\|76.edge\|76 edge" docs/reference/*.md`
 
 Expected: 0 matches in active contexts. Also check for "76-relationship" variants.
 

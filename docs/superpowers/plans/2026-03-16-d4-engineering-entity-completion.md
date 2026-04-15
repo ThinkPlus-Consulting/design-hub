@@ -148,7 +148,7 @@
 - [x] Commit:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add \
+cd <repo-root> && git add \
   backend/src/main/java/com/emsist/designhub/domain/AcceptanceCriterion.java \
   backend/src/main/java/com/emsist/designhub/domain/DataField.java \
   backend/src/main/java/com/emsist/designhub/domain/Message.java \
@@ -219,7 +219,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add \
 - [x] Commit:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add \
+cd <repo-root> && git add \
   backend/src/main/java/com/emsist/designhub/domain/ValidationRule.java \
   backend/src/main/java/com/emsist/designhub/domain/RequestSchema.java \
   backend/src/main/java/com/emsist/designhub/domain/ResponseSchema.java \
@@ -277,7 +277,7 @@ cd /Users/mksulty/Claude/Projects/design-hub && git add \
 - [x] Commit final chunk:
 
 ```bash
-cd /Users/mksulty/Claude/Projects/design-hub && git add \
+cd <repo-root> && git add \
   backend/src/main/java/com/emsist/designhub/domain/TestCase.java \
   backend/src/main/java/com/emsist/designhub/domain/UserStory.java \
   backend/src/main/java/com/emsist/designhub/service/RegistryGraphMigrationService.java \
