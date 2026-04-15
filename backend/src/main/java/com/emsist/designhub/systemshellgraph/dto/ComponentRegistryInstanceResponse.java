@@ -3,7 +3,6 @@ package com.emsist.designhub.systemshellgraph.dto;
 import java.util.Map;
 
 public record ComponentRegistryInstanceResponse(
-        String code,
         String objectType,
         String assetType,
         String assetName,
@@ -11,9 +10,13 @@ public record ComponentRegistryInstanceResponse(
         String description,
         String id,
         String status,
-        String definitionCode,
-        String implementationSourcePath,
-        String targetObjectCode,
+        String definitionId,
+        String packageName,
+        String packageExport,
+        String packageVersion,
+        String iconPackage,
+        String themePackage,
+        String targetObjectId,
         String targetObjectName,
         String targetObjectType,
         Map<String, Object> configuration

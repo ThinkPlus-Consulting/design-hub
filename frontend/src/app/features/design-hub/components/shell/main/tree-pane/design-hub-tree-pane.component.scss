@@ -1,0 +1,422 @@
+:host {
+  min-height: 0;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+.ssg-panel {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows:
+    var(--design-hub-pane-header-height)
+    var(--design-hub-pane-subheader-height)
+    minmax(0, 1fr);
+  border: 1px solid color-mix(in srgb, var(--tp-border) 40%, transparent);
+  border-radius: var(--nm-radius-lg);
+  background: var(--tp-surface-raised);
+  box-shadow: var(--nm-shadow-island, 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03));
+  overflow: hidden;
+}
+
+.ssg-panel-slot {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ssg-panel-slot--header {
+  min-height: var(--design-hub-pane-header-height);
+  max-height: var(--design-hub-pane-header-height);
+}
+
+.ssg-panel-slot--subheader {
+  min-height: var(--design-hub-pane-subheader-height);
+  max-height: var(--design-hub-pane-subheader-height);
+}
+
+.ssg-panel-slot--body {
+  min-height: 0;
+  height: 100%;
+}
+
+.ssg-side-menu-title-section {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--design-hub-pane-header-height);
+  height: var(--design-hub-pane-header-height);
+  max-height: var(--design-hub-pane-header-height);
+  padding: var(--tp-space-4) var(--tp-space-5);
+  border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 36%, transparent);
+  background: var(--tp-surface-raised);
+}
+
+.ssg-side-menu-controls-section {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--design-hub-pane-subheader-height);
+  height: var(--design-hub-pane-subheader-height);
+  max-height: var(--design-hub-pane-subheader-height);
+  padding: var(--tp-space-4) var(--tp-space-5);
+  border-bottom: 1px solid color-mix(in srgb, var(--tp-border) 36%, transparent);
+  background: var(--tp-surface-raised);
+}
+
+.ssg-side-menu-tree-section {
+  min-height: 0;
+  height: 100%;
+  display: block;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.ssg-side-menu-title-section h1 {
+  margin: 0;
+  color: var(--tp-text-dark);
+  font-size: var(--tp-font-xl);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.ssg-search-input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid color-mix(in srgb, var(--tp-border) 72%, transparent);
+  border-radius: var(--nm-radius-pill);
+  background: var(--tp-surface-light);
+  color: var(--tp-text-dark);
+  padding: 0.7rem 1rem;
+  font: inherit;
+  font-size: 0.84rem;
+  outline: none;
+}
+
+.ssg-search-input::placeholder {
+  color: var(--tp-text-muted);
+}
+
+.ssg-search-input:focus {
+  border-color: color-mix(in srgb, var(--tp-primary) 32%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tp-primary) 12%, transparent);
+}
+
+.ssg-toolbar {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  width: 100%;
+}
+
+.ssg-toolbar-search {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tree-toolbar-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 38px;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--nm-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--tp-border) 78%, transparent);
+  background: var(--tp-surface-raised);
+  color: var(--tp-text-dark);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.tree-toolbar-button:hover {
+  border-color: color-mix(in srgb, var(--tp-primary) 30%, transparent);
+  color: var(--tp-primary-dark);
+  background: color-mix(in srgb, var(--tp-primary) 5%, var(--tp-surface-raised));
+}
+
+.tree-toolbar-button.is-active {
+  border-color: color-mix(in srgb, var(--tp-warning) 34%, transparent);
+  color: var(--tp-warning-dark, color-mix(in srgb, var(--tp-warning) 72%, var(--tp-text-dark)));
+  background: color-mix(in srgb, var(--tp-warning) 14%, var(--tp-surface-raised));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tp-warning) 14%, transparent);
+}
+
+.tree-toolbar-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+:host ::ng-deep .tree-toolbar-toggle.p-togglebutton {
+  min-height: 38px;
+  border-radius: var(--nm-radius-pill);
+  border: 1px solid color-mix(in srgb, var(--tp-border) 78%, transparent);
+  background: var(--tp-surface-raised);
+  color: var(--tp-text-dark);
+  box-shadow: none;
+  transition: 0.15s ease;
+}
+
+:host ::ng-deep .tree-toolbar-toggle.p-togglebutton .p-togglebutton-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+:host ::ng-deep .tree-toolbar-toggle.p-togglebutton .p-togglebutton-icon {
+  font-size: 0.9rem;
+}
+
+:host ::ng-deep .tree-toolbar-toggle.p-togglebutton:not(.p-disabled):hover {
+  border-color: color-mix(in srgb, var(--tp-primary) 30%, transparent);
+  color: var(--tp-primary-dark);
+  background: color-mix(in srgb, var(--tp-primary) 5%, var(--tp-surface-raised));
+}
+
+:host ::ng-deep .tree-toolbar-toggle.p-togglebutton.p-togglebutton-checked {
+  border-color: color-mix(in srgb, var(--tp-primary) 34%, transparent);
+  color: var(--tp-primary-dark);
+  background: color-mix(in srgb, var(--tp-primary) 14%, var(--tp-surface-raised));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tp-primary) 14%, transparent);
+}
+
+:host ::ng-deep .tree-toolbar-toggle.p-togglebutton.p-disabled {
+  opacity: 0.5;
+}
+
+.tree-toolbar-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.ssg-tree {
+  min-height: 0;
+  overflow: visible;
+  padding: var(--tp-space-4);
+}
+
+:host ::ng-deep .ssg-tree .p-tree {
+  width: 100%;
+  min-height: 0;
+  border: 1px solid color-mix(in srgb, var(--tp-border) 70%, transparent);
+  border-radius: var(--nm-radius-md);
+  background: color-mix(in srgb, var(--tp-surface) 55%, var(--tp-surface-light));
+  padding: var(--tp-space-4);
+}
+
+:host ::ng-deep .ssg-tree .p-treenode-content,
+:host ::ng-deep .ssg-tree .p-tree-node-content {
+  border-radius: 999px;
+  padding: 0.15rem 0;
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+:host ::ng-deep .ssg-tree .p-tree-root,
+:host ::ng-deep .ssg-tree .p-tree-root-children,
+:host ::ng-deep .ssg-tree .p-treenode-children,
+:host ::ng-deep .ssg-tree .p-tree-node-children {
+  display: grid;
+  gap: 0.45rem;
+}
+
+:host ::ng-deep .ssg-tree .p-treenode-children,
+:host ::ng-deep .ssg-tree .p-tree-node-children {
+  margin: 0.35rem 0 0 0.9rem;
+  padding-left: 0.85rem;
+  border-inline-start: 1px solid color-mix(in srgb, var(--tp-border) 72%, transparent);
+}
+
+:host ::ng-deep .ssg-tree .p-treenode-children .p-treenode,
+:host ::ng-deep .ssg-tree .p-tree-node-children .p-tree-node {
+  position: relative;
+}
+
+:host ::ng-deep .ssg-tree .p-treenode-children .p-treenode::before,
+:host ::ng-deep .ssg-tree .p-tree-node-children .p-tree-node::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -0.85rem;
+  top: 1rem;
+  width: 0.62rem;
+  border-top: 1px solid color-mix(in srgb, var(--tp-border) 72%, transparent);
+}
+
+:host ::ng-deep .ssg-tree .p-highlight .p-treenode-content,
+:host ::ng-deep .ssg-tree .p-tree-node-content.p-tree-node-selected,
+:host ::ng-deep .ssg-tree .p-treenode-content:has(.ssg-tree-label:hover),
+:host ::ng-deep .ssg-tree .p-tree-node-content:has(.ssg-tree-label:hover) {
+  background: transparent;
+  border-color: transparent;
+}
+
+:host ::ng-deep .ssg-tree .p-tree-toggler,
+:host ::ng-deep .ssg-tree .p-tree-node-toggle-button {
+  width: 1.55rem;
+  height: 1.55rem;
+  margin-right: 0.35rem;
+  margin-top: 0.15rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--tp-border) 80%, transparent);
+  background: var(--tp-surface-raised);
+  color: var(--tp-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+:host ::ng-deep .ssg-tree .p-tree-node-toggle-icon {
+  width: 1rem;
+  height: 1rem;
+  color: currentColor;
+}
+
+.ssg-tree-label {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tp-space-2);
+  width: 100%;
+  min-height: 30px;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--tp-surface-raised);
+  border: 1px solid color-mix(in srgb, var(--tp-border) 80%, transparent);
+  color: var(--tp-text-dark);
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.35;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  cursor: pointer;
+}
+
+.ssg-tree-label.has-violation {
+  border-color: color-mix(in srgb, var(--tp-warning) 34%, transparent);
+  background: color-mix(in srgb, var(--tp-warning) 10%, var(--tp-surface-raised));
+}
+
+.ssg-tree-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--tp-text-secondary);
+}
+
+.ssg-tree-icon svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+}
+
+.ssg-tree-icon.kind-shell {
+  color: color-mix(in srgb, var(--tp-primary-dark) 90%, transparent);
+}
+
+.ssg-tree-icon.kind-shell svg {
+  stroke-width: 1.45;
+}
+
+.ssg-tree-icon.kind-container {
+  color: color-mix(in srgb, var(--tp-primary-dark) 76%, transparent);
+}
+
+.ssg-tree-icon.kind-element {
+  color: color-mix(in srgb, var(--tp-text-secondary) 92%, transparent);
+}
+
+.ssg-tree-text {
+  min-width: 0;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--tp-text-dark);
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
+.ssg-violation-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--tp-warning-dark, color-mix(in srgb, var(--tp-warning) 72%, var(--tp-text-dark)));
+  font-size: 0.75rem;
+}
+
+.ssg-tree-label.kind-shell-row {
+  background: color-mix(in srgb, var(--tp-primary-dark) 10%, var(--tp-surface-raised));
+  border-color: color-mix(in srgb, var(--tp-primary-dark) 24%, transparent);
+  color: var(--tp-primary-dark);
+  font-weight: 700;
+}
+
+.ssg-tree-label.kind-screen-row {
+  background: color-mix(in srgb, var(--tp-primary) 10%, var(--tp-surface-raised));
+  border-color: color-mix(in srgb, var(--tp-primary) 24%, transparent);
+  color: var(--tp-primary-dark);
+}
+
+.ssg-tree-label.kind-root-row {
+  background: color-mix(in srgb, var(--tp-primary-dark) 6%, var(--tp-surface-raised));
+  border-color: color-mix(in srgb, var(--tp-primary-dark) 16%, transparent);
+  color: var(--tp-text-dark);
+  font-weight: 700;
+}
+
+.ssg-tree-label.kind-registry-row {
+  background: color-mix(in srgb, var(--tp-surface) 70%, var(--tp-surface-light));
+  border-color: color-mix(in srgb, var(--tp-border) 75%, transparent);
+  color: var(--tp-text-dark);
+}
+
+.ssg-tree-label.is-selected,
+.ssg-tree-label.is-preview-hovered,
+:host ::ng-deep .ssg-tree .p-highlight .ssg-tree-label,
+:host ::ng-deep .ssg-tree .p-tree-node-content.p-tree-node-selected .ssg-tree-label {
+  background: color-mix(in srgb, var(--tp-primary) 16%, var(--tp-surface-raised));
+  border-color: color-mix(in srgb, var(--tp-primary) 36%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tp-primary) 18%, transparent);
+  color: var(--tp-primary-dark);
+}
+
+:host ::ng-deep .ssg-tree .p-treenode-content:has(.ssg-tree-label:hover) .ssg-tree-label,
+:host ::ng-deep .ssg-tree .p-tree-node-content:has(.ssg-tree-label:hover) .ssg-tree-label {
+  border-color: color-mix(in srgb, var(--tp-primary) 28%, transparent);
+  color: var(--tp-primary-dark);
+  background: color-mix(in srgb, var(--tp-primary) 6%, var(--tp-surface-raised));
+}
+
+.ssg-empty {
+  padding: var(--tp-space-6);
+  color: var(--tp-text-secondary);
+}
+
+.ssg-error {
+  color: var(--tp-danger);
+}

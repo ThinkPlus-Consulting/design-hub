@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./features/system-shell-graph/system-shell-graph.page').then((m) => m.SystemShellGraphPage),
+      import('./features/design-hub/design-hub.page').then((m) => m.DesignHubPage),
   },
   {
     path: 'system-shell',

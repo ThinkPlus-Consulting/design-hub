@@ -1,0 +1,73 @@
+:host {
+  display: block;
+}
+
+.design-hub-page-shell__breadcrumb {
+  display: flex;
+  align-items: center;
+  height: var(--design-hub-shell-chrome-height);
+  min-height: var(--design-hub-shell-chrome-height);
+  max-height: var(--design-hub-shell-chrome-height);
+  padding: var(--tp-space-3) var(--tp-space-5);
+  box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--tp-border) 40%, transparent);
+  border-radius: var(--nm-radius-lg);
+  background: var(--tp-surface-raised);
+  box-shadow: var(--nm-shadow-island, 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03));
+  overflow: hidden;
+}
+
+.ssg-breadcrumb {
+  width: 100%;
+}
+
+:host ::ng-deep .ssg-breadcrumb .p-breadcrumb {
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+:host ::ng-deep .ssg-breadcrumb .p-breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  min-height: 1.75rem;
+}
+
+:host ::ng-deep .ssg-breadcrumb .p-breadcrumb-item-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  border-radius: var(--nm-radius-pill);
+  padding: 0.1rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--tp-border) 48%, transparent);
+  background: color-mix(in srgb, var(--tp-surface-light) 74%, transparent);
+  color: var(--tp-primary-dark);
+  font-family: inherit;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  font-weight: 600;
+  transition: 0.18s ease;
+  text-decoration: none;
+}
+
+:host ::ng-deep .ssg-breadcrumb .p-breadcrumb-item-link:hover {
+  border-color: color-mix(in srgb, var(--tp-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--tp-primary) 8%, var(--tp-surface-light));
+  color: var(--tp-primary-dark);
+}
+
+:host ::ng-deep .ssg-breadcrumb .p-breadcrumb-item-active .p-breadcrumb-item-link {
+  border: 1px solid color-mix(in srgb, var(--tp-primary) 20%, transparent);
+  background: color-mix(in srgb, var(--tp-primary) 11%, var(--tp-surface-light));
+  color: var(--tp-text-dark);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+:host ::ng-deep .ssg-breadcrumb .p-breadcrumb-separator {
+  color: color-mix(in srgb, var(--tp-text-secondary) 84%, transparent);
+  font-weight: 700;
+}

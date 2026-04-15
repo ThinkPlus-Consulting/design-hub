@@ -1,0 +1,152 @@
+              <div class="ssg-overview-tab">
+                <section class="ssg-overview-section">
+                  <div class="ssg-insights-panel">
+                    <div class="ssg-insights-panel-header">
+                      <h3>Issue Summary</h3>
+                    </div>
+                    <div class="ssg-insights-panel-body ssg-insights-grid">
+                      @for (item of selectedInspectorIssueSummary(); track item.label) {
+                        <article class="ssg-insight-stat-panel">
+                          <h4>{{ item.label }}</h4>
+                          <dl class="ssg-fact-meta-list">
+                            <div class="ssg-fact-meta-row">
+                              <dt>Value</dt>
+                              <dd>{{ item.value }}</dd>
+                            </div>
+                          </dl>
+                        </article>
+                      }
+                    </div>
+                  </div>
+                </section>
+
+                <section class="ssg-overview-section">
+                  <div class="ssg-relationships-panel">
+                    <div class="ssg-relationships-panel-header">
+                      <h3>Design Issues</h3>
+                    </div>
+                    <div class="ssg-relationships-panel-body">
+                      @if (selectedInspectorIssues().length) {
+                        <div class="ssg-issue-toolbar">
+                          <div class="ssg-issue-toolbar-copy">
+                            <label class="ssg-issue-filter-field">
+                              <span>Status</span>
+                              <select
+                                class="ssg-issue-filter-select"
+                                [value]="inspectorIssueStatusFilter()"
+                                (change)="onInspectorIssueStatusFilterChange($event)"
+                              >
+                                @for (option of inspectorIssueStatusOptions; track option.value) {
+                                  <option [value]="option.value">{{ option.label }}</option>
+                                }
+                              </select>
+                            </label>
+                            <label class="ssg-issue-filter-field">
+                              <span>Category</span>
+                              <select
+                                class="ssg-issue-filter-select"
+                                [value]="inspectorIssueCategoryFilter()"
+                                (change)="onInspectorIssueCategoryFilterChange($event)"
+                              >
+                                @for (option of inspectorIssueCategoryOptions(); track option.value) {
+                                  <option [value]="option.value">{{ option.label }}</option>
+                                }
+                              </select>
+                            </label>
+                            <span class="ssg-issue-selection-count">
+                              {{ selectedInspectorIssueSelection().length }} selected
+                            </span>
+                          </div>
+                          <div class="ssg-issue-toolbar-actions">
+                            <button type="button" class="tree-toolbar-button" (click)="selectAllInspectorIssues()">
+                              Select All
+                            </button>
+                            <button
+                              type="button"
+                              class="tree-toolbar-button"
+                              [disabled]="selectedInspectorIssueSelection().length === 0"
+                              (click)="clearInspectorIssueSelection()"
+                            >
+                              Clear
+                            </button>
+                            <button
+                              type="button"
+                              class="tree-toolbar-button"
+                              [disabled]="selectedOpenInspectorIssueCount() === 0"
+                              (click)="resolveSelectedInspectorIssues()"
+                            >
+                              Resolve Selected
+                            </button>
+                          </div>
+                        </div>
+                        <div class="ssg-overview-table">
+                          <p-table
+                            [value]="filteredSelectedInspectorIssues()"
+                            [first]="issuesTabInspectorIssuesFirst()"
+                            dataKey="id"
+                            selectionMode="multiple"
+                            [selection]="selectedInspectorIssueSelection()"
+                            (selectionChange)="onInspectorIssueSelectionChange($event)"
+                            [paginator]="true"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[10, 20, 50]"
+                            (onPage)="onIssuesTabInspectorIssuesPage($event)"
+                            sortField="serialNumber"
+                            [sortOrder]="1"
+                            styleClass="p-datatable-sm"
+                          >
+                            <ng-template pTemplate="header">
+                              <tr>
+                                <th style="width: 5%">
+                                  <p-tableHeaderCheckbox />
+                                </th>
+                                <th style="width: 9%" pSortableColumn="serialNumber">Issue # <p-sortIcon field="serialNumber" /></th>
+                                <th style="width: 28%" pSortableColumn="targetName">Object <p-sortIcon field="targetName" /></th>
+                                <th style="width: 19%" pSortableColumn="category">Category <p-sortIcon field="category" /></th>
+                                <th style="width: 10%" pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                                <th style="width: 29%">Actions</th>
+                              </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-issue>
+                              <tr>
+                                <td class="ssg-property-value">
+                                  <p-tableCheckbox [value]="issue" />
+                                </td>
+                                <td class="ssg-property-value">{{ issue.serialNumber }}</td>
+                                <td class="ssg-property-value">{{ issue.targetName }}</td>
+                                <td class="ssg-property-value">{{ issue.category }}</td>
+                                <td class="ssg-property-value">
+                                  <span class="ssg-status-chip" [class.is-closed]="issue.status === 'closed'">{{ issue.status }}</span>
+                                </td>
+                                <td class="ssg-property-value">
+                                  <div class="ssg-issue-actions">
+                                    <button type="button" class="ssg-table-link" (click)="focusInspectorIssue(issue)">Focus</button>
+                                    <button type="button" class="ssg-table-link" (click)="viewInspectorIssue(issue)">View</button>
+                                    <button
+                                      type="button"
+                                      class="ssg-table-link"
+                                      [disabled]="issue.status === 'closed'"
+                                      (click)="resolveInspectorIssue(issue)"
+                                    >
+                                      Resolve
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                              <tr>
+                                <td class="ssg-property-value" colspan="6">{{ inspectorIssueEmptyMessage() }}</td>
+                              </tr>
+                            </ng-template>
+                          </p-table>
+                        </div>
+                      } @else {
+                        <div class="ssg-overview-table">
+                          <div class="ssg-properties-empty">{{ inspectorIssueEmptyMessage() }}</div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </section>
+              </div>

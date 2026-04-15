@@ -30,15 +30,15 @@ public class SystemShellGraphIssueRegistryService {
     @Transactional
     public SystemShellGraphIssueScanSummaryResponse synchronizeIssueScan(SystemShellGraphIssueScanRequest request) {
         List<NormalizedIssue> normalizedIssues = normalize(request == null ? List.of() : request.issues());
-        Set<String> incomingCodes = normalizedIssues.stream()
-                .map(NormalizedIssue::code)
+        Set<String> incomingIssueIds = normalizedIssues.stream()
+                .map(NormalizedIssue::id)
                 .collect(LinkedHashSet::new, Set::add, Set::addAll);
-        Set<String> existingCodes = fetchExistingIssueCodes(incomingCodes);
+        Set<String> existingIssueIds = fetchExistingIssueIds(incomingIssueIds);
 
         int newIssues = 0;
         int existingIssues = 0;
         for (NormalizedIssue issue : normalizedIssues) {
-            if (existingCodes.contains(issue.code())) {
+            if (existingIssueIds.contains(issue.id())) {
                 existingIssues += 1;
             } else {
                 newIssues += 1;
@@ -46,7 +46,7 @@ public class SystemShellGraphIssueRegistryService {
             upsertIssue(issue);
         }
 
-        int resolvedByRetest = closeOpenIssuesMissingFromScan(incomingCodes);
+        int resolvedByRetest = closeOpenIssuesMissingFromScan(incomingIssueIds);
         return new SystemShellGraphIssueScanSummaryResponse(
                 normalizedIssues.size(),
                 newIssues,
@@ -56,34 +56,34 @@ public class SystemShellGraphIssueRegistryService {
     }
 
     @Transactional
-    public void updateIssueStatuses(List<String> issueCodes, String status) {
-        List<String> normalizedCodes = issueCodes == null ? List.of() : issueCodes.stream()
-                .filter(code -> code != null && !code.isBlank())
+    public void updateIssueStatuses(List<String> issueIds, String status) {
+        List<String> normalizedIssueIds = issueIds == null ? List.of() : issueIds.stream()
+                .filter(issueId -> issueId != null && !issueId.isBlank())
                 .distinct()
                 .toList();
-        if (normalizedCodes.isEmpty()) {
+        if (normalizedIssueIds.isEmpty()) {
             return;
         }
 
         String normalizedStatus = normalizeStatus(status);
         neo4jClient.query("""
                         MATCH (issue:SystemShellGraphNode {graphScope: $graphScope, family: $family})
-                        WHERE issue.code IN $issueCodes
+                        WHERE issue.id IN $issueIds
                         SET issue.status = $status,
                             issue.updatedAt = $updatedAt
                         """)
                 .bind(SystemShellGraphQueryService.GRAPH_SCOPE).to("graphScope")
                 .bind(ISSUE_FAMILY).to("family")
-                .bind(normalizedCodes).to("issueCodes")
+                .bind(normalizedIssueIds).to("issueIds")
                 .bind(normalizedStatus).to("status")
                 .bind(OffsetDateTime.now().toString()).to("updatedAt")
                 .run();
     }
 
     @Transactional
-    public void updateIssuePrompt(String issueCode, String issuePrompt) {
-        String normalizedCode = sanitize(issueCode);
-        if (normalizedCode == null) {
+    public void updateIssuePrompt(String issueId, String issuePrompt) {
+        String normalizedIssueId = sanitize(issueId);
+        if (normalizedIssueId == null) {
             return;
         }
 
@@ -91,14 +91,14 @@ public class SystemShellGraphIssueRegistryService {
                         MATCH (issue:SystemShellGraphNode {
                           graphScope: $graphScope,
                           family: $family,
-                          code: $issueCode
+                          id: $issueId
                         })
                         SET issue.issuePrompt = $issuePrompt,
                             issue.updatedAt = $updatedAt
                         """)
                 .bind(SystemShellGraphQueryService.GRAPH_SCOPE).to("graphScope")
                 .bind(ISSUE_FAMILY).to("family")
-                .bind(normalizedCode).to("issueCode")
+                .bind(normalizedIssueId).to("issueId")
                 .bind(sanitize(issuePrompt)).to("issuePrompt")
                 .bind(OffsetDateTime.now().toString()).to("updatedAt")
                 .run();
@@ -125,10 +125,10 @@ public class SystemShellGraphIssueRegistryService {
             String category = defaulted(rawIssue.category(), "Structure");
             String rule = defaulted(rawIssue.rule(), "Design Rule");
             String severity = defaulted(rawIssue.severity(), "error");
-            String issueCode = buildIssueCode(targetObjectId, category, rule, message);
+            String issueId = buildIssueId(targetObjectId, category, rule, message);
             String issuePrompt = buildIssuePrompt(targetObjectId, category, rule, message);
-            deduped.put(issueCode, new NormalizedIssue(
-                    issueCode,
+            deduped.put(issueId, new NormalizedIssue(
+                    issueId,
                     issueName(category),
                     targetObjectId,
                     source,
@@ -143,23 +143,23 @@ public class SystemShellGraphIssueRegistryService {
         return List.copyOf(deduped.values());
     }
 
-    private Set<String> fetchExistingIssueCodes(Set<String> issueCodes) {
-        if (issueCodes.isEmpty()) {
+    private Set<String> fetchExistingIssueIds(Set<String> issueIds) {
+        if (issueIds.isEmpty()) {
             return Set.of();
         }
 
         return neo4jClient.query("""
                         MATCH (issue:SystemShellGraphNode {graphScope: $graphScope, family: $family})
-                        WHERE issue.code IN $issueCodes
-                        RETURN issue.code AS code
+                        WHERE issue.id IN $issueIds
+                        RETURN issue.id AS issueId
                         """)
                 .bind(SystemShellGraphQueryService.GRAPH_SCOPE).to("graphScope")
                 .bind(ISSUE_FAMILY).to("family")
-                .bind(List.copyOf(issueCodes)).to("issueCodes")
+                .bind(List.copyOf(issueIds)).to("issueIds")
                 .fetch()
                 .all()
                 .stream()
-                .map(row -> row.get("code"))
+                .map(row -> row.get("issueId"))
                 .filter(String.class::isInstance)
                 .map(String.class::cast)
                 .collect(LinkedHashSet::new, Set::add, Set::addAll);
@@ -169,14 +169,12 @@ public class SystemShellGraphIssueRegistryService {
         neo4jClient.query("""
                         MATCH (target:SystemShellGraphNode {graphScope: $graphScope})
                         WHERE target.id = $targetObjectId
-                        MERGE (issue:SystemShellGraphNode {graphScope: $graphScope, code: $issueCode})
+                        MERGE (issue:SystemShellGraphNode {graphScope: $graphScope, id: $issueId})
                         ON CREATE SET
                           issue.family = $family,
                           issue.objectType = $objectType,
                           issue.domain = 'frontend',
                           issue.layer = 'instance',
-                          issue.id = $issueCode,
-                          issue.hierarchyCode = $issueCode,
                           issue.createdAt = $updatedAt
                         SET
                           issue.name = $name,
@@ -192,7 +190,7 @@ public class SystemShellGraphIssueRegistryService {
                         """)
                 .bind(SystemShellGraphQueryService.GRAPH_SCOPE).to("graphScope")
                 .bind(issue.targetObjectId()).to("targetObjectId")
-                .bind(issue.code()).to("issueCode")
+                .bind(issue.id()).to("issueId")
                 .bind(ISSUE_FAMILY).to("family")
                 .bind(ISSUE_OBJECT_TYPE).to("objectType")
                 .bind(issue.name()).to("name")
@@ -206,18 +204,18 @@ public class SystemShellGraphIssueRegistryService {
                 .run();
     }
 
-    private int closeOpenIssuesMissingFromScan(Set<String> incomingCodes) {
+    private int closeOpenIssuesMissingFromScan(Set<String> incomingIssueIds) {
         Object rawCount = neo4jClient.query("""
                         MATCH (issue:SystemShellGraphNode {graphScope: $graphScope, family: $family})
                         WHERE issue.status = 'open'
-                          AND (size($incomingCodes) = 0 OR NOT issue.code IN $incomingCodes)
+                          AND (size($incomingIssueIds) = 0 OR NOT issue.id IN $incomingIssueIds)
                         SET issue.status = 'closed',
                             issue.updatedAt = $updatedAt
                         RETURN count(issue) AS resolvedCount
                         """)
                 .bind(SystemShellGraphQueryService.GRAPH_SCOPE).to("graphScope")
                 .bind(ISSUE_FAMILY).to("family")
-                .bind(List.copyOf(incomingCodes)).to("incomingCodes")
+                .bind(List.copyOf(incomingIssueIds)).to("incomingIssueIds")
                 .bind(OffsetDateTime.now().toString()).to("updatedAt")
                 .fetch()
                 .one()
@@ -227,7 +225,7 @@ public class SystemShellGraphIssueRegistryService {
         return rawCount instanceof Number number ? number.intValue() : 0;
     }
 
-    private String buildIssueCode(
+    private String buildIssueId(
             String targetObjectId,
             String category,
             String rule,
@@ -243,7 +241,7 @@ public class SystemShellGraphIssueRegistryService {
             }
             return builder.toString();
         } catch (NoSuchAlgorithmException exception) {
-            throw new IllegalStateException("Unable to create issue code hash.", exception);
+            throw new IllegalStateException("Unable to create issue id hash.", exception);
         }
     }
 
@@ -316,7 +314,7 @@ public class SystemShellGraphIssueRegistryService {
     }
 
     private record NormalizedIssue(
-            String code,
+            String id,
             String name,
             String targetObjectId,
             String source,

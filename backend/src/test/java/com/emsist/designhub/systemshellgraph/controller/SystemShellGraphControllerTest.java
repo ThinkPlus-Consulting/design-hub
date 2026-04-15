@@ -51,6 +51,7 @@ class SystemShellGraphControllerTest {
                 "SYSTEM_FRONTEND_GRAPH_V1",
                 "Frontend System Graph",
                 List.of(),
+                List.of(),
                 List.of()
         );
         when(queryService.getGraph()).thenReturn(response);
@@ -85,14 +86,17 @@ class SystemShellGraphControllerTest {
     void getComponentRegistryDelegatesToRegistryService() {
         List<ComponentRegistryDefinitionResponse> definitions = List.of(
                 new ComponentRegistryDefinitionResponse(
-                        "CMP01",
                         "Component",
+                        "component",
                         "button",
-                        "Primary Button",
                         "Primary action component",
                         "cmp-01",
                         "draft",
-                        "frontend/component.ts",
+                        "primeng",
+                        "primeng/button",
+                        "21.1.1",
+                        "primeicons",
+                        "@primeuix/themes",
                         "CMP01.INSTANCE"
                 )
         );

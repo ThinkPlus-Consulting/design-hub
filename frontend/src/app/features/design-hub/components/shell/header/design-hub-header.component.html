@@ -1,0 +1,31 @@
+<header class="design-hub-page-shell__header" data-inspect-id="design-hub-shell-header">
+  <div class="design-hub-page-shell__header-copy">
+    <h1>{{ title() }}</h1>
+    <p>{{ subtitle() }}</p>
+  </div>
+
+  <div class="design-hub-page-shell__header-actions">
+    <div class="design-hub-workspace-tabs" role="tablist" aria-label="Design Hub workspace">
+      <button
+        type="button"
+        role="tab"
+        class="design-hub-workspace-tab"
+        [class.is-active]="activeWorkspace() === 'frontend'"
+        [attr.aria-selected]="activeWorkspace() === 'frontend'"
+        (click)="setWorkspace('frontend')"
+      >
+        Frontend
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="design-hub-workspace-tab"
+        [class.is-active]="activeWorkspace() === 'components-registry'"
+        [attr.aria-selected]="activeWorkspace() === 'components-registry'"
+        (click)="setWorkspace('components-registry')"
+      >
+        Components Registry
+      </button>
+    </div>
+  </div>
+</header>

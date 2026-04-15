@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.design-hub-page-shell__footer {
+  display: flex;
+  align-items: center;
+  height: var(--design-hub-shell-chrome-height);
+  min-height: var(--design-hub-shell-chrome-height);
+  max-height: var(--design-hub-shell-chrome-height);
+  padding: var(--tp-space-4) var(--tp-space-5);
+  box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--tp-border) 40%, transparent);
+  border-radius: var(--nm-radius-lg);
+  background: var(--tp-surface-raised);
+  box-shadow: var(--nm-shadow-island, 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03));
+  overflow: hidden;
+}
+
+.design-hub-page-shell__footer-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.design-hub-page-shell__footer-copy strong {
+  margin: 0;
+  color: var(--tp-text-dark);
+  font-size: var(--tp-font-md);
+  font-weight: 700;
+}
+
+.design-hub-page-shell__footer-copy span {
+  margin: 0;
+  color: var(--tp-text-secondary);
+  font-size: var(--tp-font-sm);
+  line-height: 1.5;
+}

@@ -7,6 +7,7 @@ public record SystemShellGraphResponse(
         String scenarioCode,
         String scenarioName,
         List<SystemShellGraphNodeResponse> nodes,
-        List<SystemShellGraphEdgeResponse> relationships
+        List<SystemShellGraphEdgeResponse> relationships,
+        List<SystemShellTreeNodeResponse> navigationTree
 ) {
 }

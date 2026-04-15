@@ -1,0 +1,27 @@
+<div
+  class="login-shell-preview-frame"
+  [attr.source-object-id]="sourceObjectId('shell')"
+  [attr.guid]="guid('shell')"
+  data-inspect-id="login-shell-frame"
+  [class.ssg-focused]="isFocused('shell')"
+>
+  @if (activeScreenRenderer() === 'login') {
+    <app-login-screen-preview
+      [selectedGuid]="selectedGuid()"
+      [backgroundConfig]="backgroundConfig()"
+      [screenObjectId]="activeScreenObjectId()"
+    />
+  } @else if (activeScreenRenderer() === 'mfa') {
+    <app-mfa-screen-preview
+      [selectedGuid]="selectedGuid()"
+      [backgroundConfig]="backgroundConfig()"
+      [screenObjectId]="activeScreenObjectId()"
+    />
+  } @else if (activeScreenRenderer() === 'tenant-not-found') {
+    <app-tenant-not-found-screen-preview
+      [selectedGuid]="selectedGuid()"
+      [backgroundConfig]="backgroundConfig()"
+      [screenObjectId]="activeScreenObjectId()"
+    />
+  }
+</div>

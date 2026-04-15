@@ -2,3 +2,18 @@ backend/target/
 .worktrees/
 .env.external-sync.local
 .env.external-sync.*.local
+
+# Local browser/debug artifacts
+.playwright-mcp/
+frontend/playwright-report/
+frontend/test-results/
+
+# Root-level investigation snapshots
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.webp
+/tmp-*.md
+/design-hub-snapshot*.md
+/design-hub-preview-snapshot.md

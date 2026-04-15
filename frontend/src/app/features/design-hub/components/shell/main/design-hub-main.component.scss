@@ -1,0 +1,14 @@
+:host {
+  min-height: 0;
+  display: block;
+}
+
+.design-hub-page-shell__main {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(22rem, 29rem) minmax(0, 1fr);
+  gap: var(--design-hub-shell-gap);
+  align-items: stretch;
+  overflow: hidden;
+}

@@ -78,17 +78,17 @@ public class SystemShellGraphController {
     public ResponseEntity<Void> updateIssueStatuses(
             @RequestBody SystemShellGraphIssueStatusUpdateRequest request
     ) {
-        issueRegistryService.updateIssueStatuses(request.issueCodes(), request.status());
+        issueRegistryService.updateIssueStatuses(request.issueIds(), request.status());
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/issues/{issueCode}")
+    @PutMapping("/issues/{issueId}")
     @Operation(summary = "Update a persisted design issue")
     public ResponseEntity<Void> updateIssue(
-            @PathVariable String issueCode,
+            @PathVariable String issueId,
             @RequestBody SystemShellGraphIssueUpdateRequest request
     ) {
-        issueRegistryService.updateIssuePrompt(issueCode, request.issuePrompt());
+        issueRegistryService.updateIssuePrompt(issueId, request.issuePrompt());
         return ResponseEntity.noContent().build();
     }
 
@@ -104,12 +104,12 @@ public class SystemShellGraphController {
         return ResponseEntity.ok(componentRegistryService.getDefaultInstance(assetType));
     }
 
-    @PutMapping("/components/instances/{instanceCode}")
+    @PutMapping("/components/instances/{instanceId}")
     @Operation(summary = "Update and persist a component instance")
     public ResponseEntity<ComponentRegistryInstanceResponse> updateComponentInstance(
-            @PathVariable String instanceCode,
+            @PathVariable String instanceId,
             @RequestBody ComponentRegistryInstanceUpdateRequest request
     ) {
-        return ResponseEntity.ok(componentRegistryService.saveInstance(instanceCode, request));
+        return ResponseEntity.ok(componentRegistryService.saveInstance(instanceId, request));
     }
 }
