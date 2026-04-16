@@ -1,0 +1,334 @@
+<div
+  class="tenant-factsheet-screen"
+  data-dom-ref="tenant-factsheet-screen"
+  [attr.source-object-id]="sourceObjectId('screen')" [attr.guid]="guid('screen')"
+  data-inspect-id="tenant-factsheet-screen"
+  [class.ssg-focused]="isFocused('screen')"
+>
+  <!-- ─── Banner Hero ───────────────────────────────────────────────────────── -->
+
+  <header
+    class="banner"
+    data-dom-ref="tenant-factsheet-header"
+    [attr.source-object-id]="sourceObjectId('tenantHeader')" [attr.guid]="guid('tenantHeader')"
+    data-inspect-id="tenant-factsheet-header"
+    [class.ssg-focused]="isFocused('tenantHeader')"
+    data-testid="factsheet-header"
+  >
+    <div class="banner-panel">
+      <section
+        class="tenant-header-logo-section"
+        data-dom-ref="tenant-factsheet-logo-section"
+        [attr.source-object-id]="sourceObjectId('logoSection')" [attr.guid]="guid('logoSection')"
+        data-inspect-id="tenant-factsheet-logo-section"
+        [class.ssg-focused]="isFocused('logoSection')"
+      >
+        <div
+          class="banner-logo"
+          data-dom-ref="tenant-factsheet-logo"
+          [attr.source-object-id]="sourceObjectId('logo')" [attr.guid]="guid('logo')"
+          data-inspect-id="tenant-factsheet-logo"
+          [class.ssg-focused]="isFocused('logo')"
+          data-testid="factsheet-logo"
+        >
+          <p-image
+            [src]="logoSrc()"
+            [alt]="tenant().name + ' logo'"
+            [preview]="false"
+            imageClass="banner-logo-img"
+          />
+        </div>
+      </section>
+
+      <section
+        class="banner-left tenant-header-general"
+        data-dom-ref="tenant-factsheet-general-section"
+        [attr.source-object-id]="sourceObjectId('generalSection')" [attr.guid]="guid('generalSection')"
+        data-inspect-id="tenant-factsheet-general-section"
+        [class.ssg-focused]="isFocused('generalSection')"
+      >
+      <div
+        class="banner-title-row"
+        data-dom-ref="tenant-factsheet-name-row"
+        [attr.source-object-id]="sourceObjectId('nameRowSection')" [attr.guid]="guid('nameRowSection')"
+        data-inspect-id="tenant-factsheet-name-row"
+        [class.ssg-focused]="isFocused('nameRowSection')"
+      >
+        <h1
+          class="banner-name"
+          data-dom-ref="tenant-factsheet-name"
+          [attr.source-object-id]="sourceObjectId('name')" [attr.guid]="guid('name')"
+          data-inspect-id="tenant-factsheet-name"
+          [class.ssg-focused]="isFocused('name')"
+          data-testid="factsheet-name"
+        >
+          {{ tenant().name }}
+        </h1>
+      </div>
+
+      <div
+        class="tenant-badge-row"
+        data-dom-ref="tenant-factsheet-badge-row"
+        [attr.source-object-id]="sourceObjectId('badgeRowSection')" [attr.guid]="guid('badgeRowSection')"
+        data-inspect-id="tenant-factsheet-badge-row"
+        [class.ssg-focused]="isFocused('badgeRowSection')"
+        data-testid="factsheet-badge-row"
+      >
+        <div class="banner-badges">
+          <span
+            data-dom-ref="tenant-factsheet-type-badge"
+            [attr.source-object-id]="sourceObjectId('typeBadge')" [attr.guid]="guid('typeBadge')"
+            data-inspect-id="tenant-factsheet-type-badge"
+            [class.ssg-focused]="isFocused('typeBadge')"
+          >
+            <p-tag
+              [value]="tenant().type"
+              [severity]="typeSeverity(tenant().type)"
+              data-testid="factsheet-type-badge"
+            />
+          </span>
+
+          <span
+            class="status-badge"
+            data-dom-ref="tenant-factsheet-status-badge"
+            [attr.source-object-id]="sourceObjectId('statusBadge')" [attr.guid]="guid('statusBadge')"
+            data-inspect-id="tenant-factsheet-status-badge"
+            [class.ssg-focused]="isFocused('statusBadge')"
+            data-testid="factsheet-status-badge"
+          >
+            <span class="status-dot" [style.background]="statusColor(tenant().status)"></span>
+            {{ tenant().status }}
+          </span>
+
+          <span
+            data-dom-ref="tenant-factsheet-health-badge"
+            [attr.source-object-id]="sourceObjectId('healthBadge')" [attr.guid]="guid('healthBadge')"
+            data-inspect-id="tenant-factsheet-health-badge"
+            [class.ssg-focused]="isFocused('healthBadge')"
+          >
+            <p-tag
+              [value]="tenant().health"
+              [severity]="healthSeverity(tenant().health)"
+              [icon]="'pi pi-heart-fill'"
+              data-testid="factsheet-health-badge"
+            />
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="tenant-id-row"
+        data-dom-ref="tenant-factsheet-id-row"
+        [attr.source-object-id]="sourceObjectId('idRowSection')" [attr.guid]="guid('idRowSection')"
+        data-inspect-id="tenant-factsheet-id-row"
+        [class.ssg-focused]="isFocused('idRowSection')"
+      >
+        <span class="tenant-id-label">ID</span>
+        <code
+          class="tenant-id-value"
+          data-dom-ref="tenant-factsheet-id"
+          [attr.source-object-id]="sourceObjectId('tenantId')" [attr.guid]="guid('tenantId')"
+          data-inspect-id="tenant-factsheet-id"
+          [class.ssg-focused]="isFocused('tenantId')"
+          data-testid="factsheet-tenant-id"
+        >
+          {{ tenant().id }}
+        </code>
+      </div>
+
+      <!-- KPI Chips -->
+      <div
+        class="banner-kpis"
+        data-testid="factsheet-kpis"
+        data-dom-ref="tenant-factsheet-kpi-row"
+        [attr.source-object-id]="sourceObjectId('kpiRowSection')" [attr.guid]="guid('kpiRowSection')"
+        data-inspect-id="tenant-factsheet-kpi-row"
+        [class.ssg-focused]="isFocused('kpiRowSection')"
+      >
+        @for (kpi of tenant().kpis; track kpi.label; let index = $index) {
+          <p-chip
+            class="kpi-chip"
+            [label]="kpi.value + ' ' + kpi.label"
+            [icon]="kpi.icon"
+            data-testid="factsheet-kpi"
+            [attr.data-dom-ref]="'tenant-factsheet-kpi-' + index"
+            [attr.source-object-id]="sourceObjectId(kpiSlot(index))" [attr.guid]="guid(kpiSlot(index))"
+            [attr.data-inspect-id]="'tenant-factsheet-kpi-' + index"
+            [class.ssg-focused]="isFocused(kpiSlot(index))"
+          />
+        }
+      </div>
+    </section>
+
+  <!-- Actions -->
+      <section
+        class="banner-actions"
+        data-dom-ref="tenant-factsheet-actions-section"
+        [attr.source-object-id]="sourceObjectId('actionsSection')" [attr.guid]="guid('actionsSection')"
+        data-inspect-id="tenant-factsheet-actions-section"
+        [class.ssg-focused]="isFocused('actionsSection')"
+        data-testid="factsheet-actions"
+      >
+      <div
+        data-dom-ref="tenant-factsheet-edit-action"
+        [attr.source-object-id]="sourceObjectId('editAction')" [attr.guid]="guid('editAction')"
+        data-inspect-id="tenant-factsheet-edit-action"
+        [class.ssg-focused]="isFocused('editAction')"
+      >
+        <p-button
+          [label]="editLabel()"
+          icon="pi pi-pencil"
+          severity="secondary"
+          data-testid="factsheet-edit-btn"
+        />
+      </div>
+    @if (lifecycleActionDef(); as lca) {
+      <div
+        data-dom-ref="tenant-factsheet-lifecycle-action"
+        [attr.source-object-id]="sourceObjectId('lifecycleActionNode')" [attr.guid]="guid('lifecycleActionNode')"
+        data-inspect-id="tenant-factsheet-lifecycle-action"
+        [class.ssg-focused]="isFocused('lifecycleActionNode')"
+      >
+        <p-button
+          [label]="lca.label"
+          [icon]="lca.icon"
+          [severity]="lca.severity"
+          styleClass="factsheet-lifecycle-action"
+          (onClick)="onLifecycleAction()"
+          data-testid="factsheet-lifecycle-btn"
+        />
+      </div>
+    }
+      </section>
+    </div>
+  </header>
+
+  <!-- ─── Tab Bar + Content ────────────────────────────────────────────────── -->
+
+  <div
+    class="details-card"
+    data-dom-ref="tenant-factsheet-details-container"
+    [attr.source-object-id]="sourceObjectId('detailsContainer')" [attr.guid]="guid('detailsContainer')"
+    data-inspect-id="tenant-factsheet-details-container"
+    [class.ssg-focused]="isFocused('detailsContainer')"
+    data-testid="factsheet-details-container"
+  >
+  <div class="tabs-card-panel">
+  <p-tabs [value]="activeTab()" (valueChange)="onTabChange($any($event))">
+    <p-tablist
+      data-dom-ref="tenant-factsheet-tabs-row"
+      [attr.source-object-id]="sourceObjectId('tabsRowSection')" [attr.guid]="guid('tabsRowSection')"
+      data-inspect-id="tenant-factsheet-tabs-row"
+      [class.ssg-focused]="isFocused('tabsRowSection')"
+      data-testid="factsheet-tabs-row"
+    >
+      @for (tab of tabs(); track tab.value) {
+        <p-tab [value]="tab.value" [attr.data-testid]="'tab-' + tab.value">
+          <span class="tab-trigger">
+            <span class="tab-label">{{ tab.label }}</span>
+            @if (tab.count !== null) {
+              <span class="tab-count">{{ tab.count }}</span>
+            }
+          </span>
+        </p-tab>
+      }
+    </p-tablist>
+
+    <p-tabpanels
+      data-dom-ref="tenant-factsheet-tab-contents-row"
+      [attr.source-object-id]="sourceObjectId('tabContentsRowSection')" [attr.guid]="guid('tabContentsRowSection')"
+      data-inspect-id="tenant-factsheet-tab-contents-row"
+      [class.ssg-focused]="isFocused('tabContentsRowSection')"
+      data-testid="factsheet-tab-contents-row"
+    >
+      <p-tabpanel value="users">
+        <app-tenant-factsheet-users-tab
+          [bindings]="usersTabBindings()"
+          [section]="usersSection()"
+          [loading]="usersLoading()"
+          [users]="users()"
+          [searchValue]="usersSearch()"
+          [filtersVisible]="usersFiltersVisible()"
+          (searchChange)="usersSearch.set($event)"
+          (toggleFilters)="usersFiltersVisible.set(!usersFiltersVisible())"
+          (openUserFactsheet)="onOpenUserFactsheet($event)"
+        />
+      </p-tabpanel>
+
+      <p-tabpanel value="branding">
+        <app-tenant-factsheet-branding-tab [section]="brandingSection()" />
+      </p-tabpanel>
+
+      <p-tabpanel value="integrations">
+        <app-tenant-factsheet-integrations-tab
+          [section]="integrationsSection()"
+          [items]="integrations()"
+          [searchValue]="integrationsSearch()"
+          [filtersVisible]="integrationsFiltersVisible()"
+          [viewMode]="integrationsViewMode()"
+          (searchChange)="integrationsSearch.set($event)"
+          (toggleFilters)="integrationsFiltersVisible.set(!integrationsFiltersVisible())"
+          (viewModeChange)="integrationsViewMode.set($event)"
+        />
+      </p-tabpanel>
+
+      <p-tabpanel value="dictionary">
+        <app-tenant-factsheet-dictionary-tab
+          [section]="dictionarySection()"
+          [items]="dictionary()"
+          [searchValue]="dictionarySearch()"
+          [filtersVisible]="dictionaryFiltersVisible()"
+          [viewMode]="dictionaryViewMode()"
+          (searchChange)="dictionarySearch.set($event)"
+          (toggleFilters)="dictionaryFiltersVisible.set(!dictionaryFiltersVisible())"
+          (viewModeChange)="dictionaryViewMode.set($event)"
+        />
+      </p-tabpanel>
+
+      <p-tabpanel value="agents">
+        <app-tenant-factsheet-agents-tab [section]="agentsSection()" [items]="agents()" />
+      </p-tabpanel>
+
+      <p-tabpanel value="studio">
+        <app-tenant-factsheet-studio-tab [section]="studioSection()" />
+      </p-tabpanel>
+
+      <p-tabpanel value="audit">
+        <app-tenant-factsheet-audit-tab
+          [section]="auditSection()"
+          [items]="auditLog()"
+          [searchValue]="auditSearch()"
+          [filtersVisible]="auditFiltersVisible()"
+          [viewMode]="auditViewMode()"
+          (searchChange)="auditSearch.set($event)"
+          (toggleFilters)="auditFiltersVisible.set(!auditFiltersVisible())"
+          (viewModeChange)="auditViewMode.set($event)"
+        />
+      </p-tabpanel>
+
+      <p-tabpanel value="health">
+        <app-tenant-factsheet-health-tab
+          [section]="healthSection()"
+          [items]="healthChecks()"
+          [searchValue]="healthSearch()"
+          [filtersVisible]="healthFiltersVisible()"
+          [viewMode]="healthViewMode()"
+          (searchChange)="healthSearch.set($event)"
+          (toggleFilters)="healthFiltersVisible.set(!healthFiltersVisible())"
+          (viewModeChange)="healthViewMode.set($event)"
+        />
+      </p-tabpanel>
+
+      <p-tabpanel value="license">
+        <app-tenant-factsheet-license-tab
+          [section]="licenseSection()"
+          [license]="license()"
+          [allocatedSeats]="allocatedSeats()"
+          [assignedSeats]="assignedSeats()"
+          [availableSeats]="availableSeats()"
+        />
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</div>
+</div>

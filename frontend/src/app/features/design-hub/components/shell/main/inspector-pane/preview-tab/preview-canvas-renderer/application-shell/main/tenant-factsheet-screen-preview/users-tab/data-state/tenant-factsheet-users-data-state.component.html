@@ -1,0 +1,56 @@
+<section
+  class="users-data-state"
+  data-dom-ref="tenant-factsheet-users-data-state"
+  [attr.source-object-id]="bindings().usersDataStateSectionSourceObjectId || null"
+  [attr.guid]="bindings().usersDataStateSectionGuid || null"
+  data-inspect-id="tenant-factsheet-users-data-state"
+  [class.ssg-focused]="bindings().usersDataStateSectionFocused"
+>
+  <div
+    data-dom-ref="tenant-factsheet-users-table"
+    [attr.source-object-id]="bindings().usersTableSourceObjectId || null"
+    [attr.guid]="bindings().usersTableGuid || null"
+    data-inspect-id="tenant-factsheet-users-table"
+    [class.ssg-focused]="bindings().usersTableFocused"
+  >
+    <p-table
+      [value]="[...users()]"
+      [rowHover]="true"
+      styleClass="factsheet-table factsheet-table--wide"
+      data-testid="users-table"
+    >
+      <ng-template #header>
+        <tr>
+          <th>{{ columns()?.name }}</th>
+          <th>{{ columns()?.email }}</th>
+          <th>{{ columns()?.role }}</th>
+          <th>{{ columns()?.status }}</th>
+          <th>{{ columns()?.lastActive }}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-user let-rowIndex="rowIndex">
+        <tr
+          class="users-table-row"
+          (click)="onOpenUserFactsheet($event, user)"
+          [attr.data-testid]="'users-table-row-' + rowIndex"
+        >
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <p-tag
+              [value]="user.status"
+              [severity]="userStatusSeverity(user.status)"
+              [attr.data-dom-ref]="rowIndex === 0 ? 'tenant-factsheet-user-status-badge' : null"
+              [attr.source-object-id]="rowIndex === 0 ? bindings().userStatusBadgeSourceObjectId : null"
+              [attr.guid]="rowIndex === 0 ? bindings().userStatusBadgeGuid : null"
+              [attr.data-inspect-id]="rowIndex === 0 ? 'tenant-factsheet-user-status-badge' : null"
+              [class.ssg-focused]="rowIndex === 0 && bindings().userStatusBadgeFocused"
+            />
+          </td>
+          <td class="text-muted">{{ user.lastActive }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</section>

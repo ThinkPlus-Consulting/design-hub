@@ -5,7 +5,6 @@ import java.util.List;
 public record SystemShellTreeNodeResponse(
         String key,
         String label,
-        Boolean expanded,
         Boolean selectable,
         SystemShellTreeNodeDataResponse data,
         List<SystemShellTreeNodeResponse> children

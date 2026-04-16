@@ -190,6 +190,15 @@ export interface UsersSectionContentConfig {
   readonly searchAriaLabel: string;
   readonly searchPlaceholder: string;
   readonly filterToggleAriaLabel: string;
+  readonly emptyState: {
+    readonly title: string;
+    readonly noResultsMessage: string;
+    readonly noUsersMessage: string;
+  };
+  readonly previewState?: {
+    readonly loading: boolean;
+    readonly skeletonRowCount: number;
+  };
   readonly tableColumns: {
     readonly name: string;
     readonly email: string;
@@ -279,7 +288,6 @@ export interface TenantFactsheetScreenContentConfig {
   readonly actions: {
     readonly backLabel: string;
     readonly editLabel: string;
-    readonly inviteUserLabel: string;
   };
   readonly usersSection: UsersSectionContentConfig;
   readonly brandingSection: BrandingSectionContentConfig;
@@ -300,6 +308,108 @@ export interface TenantFactsheetScreenContentConfig {
   readonly auditLog: readonly AuditEntry[];
   readonly healthChecks: readonly HealthCheck[];
   readonly license: TenantLicenseSummary;
+}
+
+export type UserFactsheetTab = 'overview' | 'organization' | 'authProviders' | 'rolesAccess';
+
+export type UserFactsheetStatus = 'Active' | 'Invited' | 'Disabled' | 'Locked';
+
+export interface UserFactsheetTabDefinition {
+  readonly value: UserFactsheetTab;
+  readonly label: string;
+  readonly icon: string;
+  readonly count: number | null;
+}
+
+export interface UserFactsheetSummary {
+  readonly id: string;
+  readonly displayName: string;
+  readonly email: string;
+  readonly username: string;
+  readonly status: UserFactsheetStatus;
+  readonly avatarUrl: string | null;
+  readonly primaryAuthProvider: string;
+  readonly linkedProviders: readonly string[];
+  readonly lastLogin: string;
+  readonly activeSessions: number;
+  readonly licensedType: string;
+}
+
+export type UserSessionState = 'loading' | 'empty' | 'error' | 'data';
+
+export interface UserFactsheetSessionRecord {
+  readonly id: string;
+  readonly status: string;
+  readonly deviceName: string;
+  readonly ipAddress: string;
+  readonly loginTime: string;
+  readonly lastActivity: string;
+  readonly expires: string;
+  readonly isCurrent: boolean;
+  readonly isRemembered: boolean;
+  readonly mfaVerified: boolean;
+}
+
+export interface UserFactsheetLinkedProvider {
+  readonly name: string;
+  readonly status: string;
+  readonly identityReference: string;
+}
+
+export interface UserFactsheetScreenContentConfig {
+  readonly title: string;
+  readonly user: UserFactsheetSummary;
+  readonly tabs: readonly UserFactsheetTabDefinition[];
+  readonly actions: {
+    readonly refreshLabel: string;
+    readonly revokeAllSessionsLabel: string;
+  };
+  readonly overview: {
+    readonly profileSummary: {
+      readonly title: string;
+      readonly summary: string;
+    };
+    readonly sessions: {
+      readonly state: UserSessionState;
+      readonly skeletonRowCount: number;
+      readonly errorMessage: string;
+      readonly emptyTitle: string;
+      readonly emptyMessage: string;
+      readonly tableColumns: {
+        readonly status: string;
+        readonly deviceIp: string;
+        readonly loginTime: string;
+        readonly lastActivity: string;
+        readonly expires: string;
+        readonly flags: string;
+      };
+      readonly items: readonly UserFactsheetSessionRecord[];
+    };
+  };
+  readonly organization: {
+    readonly organizationName: string;
+    readonly businessUnit: string;
+    readonly manager: string;
+    readonly reportingLine: string;
+    readonly teamRelationships: string;
+  };
+  readonly authProviders: {
+    readonly primaryProvider: {
+      readonly name: string;
+      readonly status: string;
+      readonly identityReference: string;
+    };
+    readonly linkedProviders: readonly UserFactsheetLinkedProvider[];
+    readonly references: readonly string[];
+  };
+  readonly rolesAccess: {
+    readonly licensedType: string;
+    readonly assignedRoles: readonly string[];
+    readonly assignedGroups: readonly string[];
+    readonly allowList: readonly string[];
+    readonly blockList: readonly string[];
+    readonly effectiveAccessSummary: string;
+  };
 }
 
 export interface ApplicationShellContentConfig {
@@ -325,6 +435,7 @@ export interface ApplicationShellContentConfig {
   readonly pageTitles: {
     readonly tenantList: string;
     readonly tenantFactsheet: string;
+    readonly userFactsheet?: string;
   };
 }
 

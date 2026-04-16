@@ -1,0 +1,246 @@
+@use "breakpoints" as bp;
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.application-shell-header-slot-frame {
+  width: min(100%, var(--ssg-shell-frame-width));
+  max-width: var(--ssg-shell-frame-width);
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  padding-inline-start: var(--ssg-shell-frame-padding-inline-start);
+  padding-inline-end: var(--ssg-shell-frame-padding-inline-end);
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.header-inner {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--tp-space-3);
+}
+
+.header-island {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tp-space-3);
+  background: var(--tp-surface-raised);
+  border: 1px solid var(--tp-border);
+  border-radius: var(--nm-radius-lg);
+  padding: var(--tp-space-2);
+}
+
+.header-island-left {
+  gap: 0.75rem;
+}
+
+.header-island-right {
+  max-width: min(100%, 680px);
+}
+
+.notif-bell-wrapper {
+  position: relative;
+}
+
+:host ::ng-deep {
+  .island-btn.p-button,
+  .notif-bell-btn.p-button,
+  .switcher-btn.p-button,
+  .avatar-trigger-button.p-button,
+  .island-logo-button.p-button,
+  .page-indicator-button.p-button {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    color: var(--tp-text-muted);
+    transition:
+      color var(--tp-transition-normal) var(--tp-ease-default),
+      background-color var(--tp-transition-normal) var(--tp-ease-default),
+      opacity var(--tp-transition-normal) var(--tp-ease-default);
+  }
+
+  .island-btn.p-button,
+  .notif-bell-btn.p-button,
+  .avatar-trigger-button.p-button {
+    width: var(--tp-touch-target);
+    height: var(--tp-touch-target);
+    border-radius: var(--nm-radius-pill);
+    padding: 0;
+  }
+
+  .switcher-btn.p-button {
+    height: var(--tp-touch-target);
+    border-radius: var(--nm-radius-pill);
+    padding: 0 var(--tp-space-2);
+    gap: var(--tp-space-1);
+  }
+
+  .page-indicator-button.p-button {
+    padding-block: 0;
+    padding-inline: 0.2rem 0.5rem;
+    gap: 0.45rem;
+    color: var(--tp-text);
+    opacity: 1;
+  }
+
+  .page-indicator-button.p-button:disabled {
+    color: var(--tp-text);
+    opacity: 1;
+    cursor: default;
+  }
+
+  .island-logo-button.p-button {
+    padding: 0 0.4rem;
+  }
+
+  .island-btn.p-button:focus-visible,
+  .notif-bell-btn.p-button:focus-visible,
+  .switcher-btn.p-button:focus-visible,
+  .avatar-trigger-button.p-button:focus-visible,
+  .island-logo-button.p-button:focus-visible {
+    outline: 3px solid var(--tp-primary-dark);
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .island-btn.p-button:not(:disabled):hover,
+    .notif-bell-btn.p-button:not(:disabled):hover,
+    .switcher-btn.p-button:not(:disabled):hover,
+    .avatar-trigger-button.p-button:not(:disabled):hover {
+      color: var(--tp-primary);
+      background: color-mix(in srgb, var(--tp-primary) 8%, transparent);
+    }
+  }
+
+  .island-btn.p-button:not(:disabled):active,
+  .notif-bell-btn.p-button:not(:disabled):active,
+  .switcher-btn.p-button:not(:disabled):active {
+    color: var(--tp-primary-dark);
+    background: color-mix(in srgb, var(--tp-primary) 14%, transparent);
+  }
+
+  .avatar-trigger-button.p-button:not(:disabled):active {
+    opacity: 0.9;
+  }
+
+  .island-btn.p-button .p-button-icon,
+  .notif-bell-btn.p-button .p-button-icon,
+  .switcher-btn.p-button .p-button-icon,
+  .page-indicator-button.p-button .p-button-icon {
+    margin: 0;
+    line-height: 0;
+  }
+
+  .switcher-btn.p-button .p-button-label {
+    font-weight: 700;
+    font-size: var(--tp-font-xs);
+    letter-spacing: 0.5px;
+    color: inherit;
+  }
+
+  .page-indicator-button.p-button .p-button-label {
+    line-height: 1;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--tp-text);
+  }
+
+  .header-icon-image,
+  .page-indicator-icon,
+  .flag-icon {
+    display: block;
+  }
+
+  .header-icon-host,
+  .page-indicator-icon-host,
+  .flag-icon-host {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-icon-image {
+    width: var(--icon-size-sm, 1rem);
+    height: var(--icon-size-sm, 1rem);
+  }
+
+  .page-indicator-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.72;
+  }
+
+  .flag-icon {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 999px;
+  }
+
+  .logo-image {
+    height: 27px;
+    width: auto;
+    display: block;
+  }
+
+  .logo-image-host {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 27px;
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .island-divider-component.p-divider-vertical {
+    margin: 0 -6px;
+    min-height: 24px;
+  }
+
+  .notif-badge.p-badge {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    z-index: 4;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    pointer-events: none;
+  }
+
+  .avatar-circle-component.p-avatar {
+    width: 36px;
+    height: 36px;
+    background: var(--tp-primary);
+    color: var(--tp-surface-light);
+    font-size: var(--tp-font-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+}
+
+@container (max-width: #{bp.$bp-md}) {
+  .header-inner {
+    gap: var(--tp-space-2);
+  }
+}
+
+@container (max-width: 767px) {
+  .header-island-right {
+    display: none;
+  }
+}

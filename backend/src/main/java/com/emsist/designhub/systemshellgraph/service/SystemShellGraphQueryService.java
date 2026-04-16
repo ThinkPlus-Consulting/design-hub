@@ -130,7 +130,6 @@ public class SystemShellGraphQueryService {
                           n.ruleSetType AS ruleSetType,
                           n.ruleSetScope AS ruleSetScope,
                           n.actionType AS actionType,
-                          n.actionValue AS actionValue,
                           n.priority AS priority,
                           n.stopProcessing AS stopProcessing
                         ORDER BY n.layer, coalesce(n.sortOrder, 2147483647), n.family, n.name, n.id
@@ -226,7 +225,6 @@ public class SystemShellGraphQueryService {
         return new SystemShellTreeNodeResponse(
                 defaulted(node.id(), objectId),
                 label,
-                false,
                 true,
                 new SystemShellTreeNodeDataResponse(
                         "graph",
@@ -399,7 +397,6 @@ public class SystemShellGraphQueryService {
                 stringValue(row.get("ruleSetType")),
                 stringValue(row.get("ruleSetScope")),
                 stringValue(row.get("actionType")),
-                stringValue(row.get("actionValue")),
                 integerValue(row.get("priority")),
                 booleanValue(row.get("stopProcessing"))
         );

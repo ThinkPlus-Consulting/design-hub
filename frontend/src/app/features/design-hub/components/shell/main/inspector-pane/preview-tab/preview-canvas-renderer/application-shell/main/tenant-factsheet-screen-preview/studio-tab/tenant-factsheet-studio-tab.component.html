@@ -1,0 +1,23 @@
+<div class="tab-section-layout">
+  <div class="tab-section-toolbar">
+    <div class="search-bar">
+      <span class="search-icon pi pi-search"></span>
+      <input
+        pInputText
+        type="text"
+        class="search-input"
+        [ariaLabel]="section()?.searchAriaLabel ?? ''"
+        [placeholder]="section()?.searchPlaceholder ?? ''"
+        data-testid="input-search-studio"
+      />
+    </div>
+    <span class="toolbar-spacer"></span>
+    <p-button [label]="section()?.openStudioLabel ?? ''" icon="pi pi-external-link" severity="secondary" data-testid="open-studio-btn" />
+  </div>
+
+  <div class="studio-placeholder" data-testid="studio-placeholder">
+    <i class="pi pi-sitemap studio-placeholder-icon"></i>
+    <p>{{ section()?.configuredProcessesText }}</p>
+    <p class="text-muted">{{ section()?.helperText }}</p>
+  </div>
+</div>

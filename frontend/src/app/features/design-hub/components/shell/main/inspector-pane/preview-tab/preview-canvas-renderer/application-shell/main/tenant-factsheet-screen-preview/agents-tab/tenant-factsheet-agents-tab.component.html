@@ -1,0 +1,18 @@
+<div class="tab-header">
+  <h2 class="tab-title">{{ section()?.title }}</h2>
+  <p class="tab-description">{{ section()?.description }}</p>
+</div>
+<div class="cards-grid" data-testid="agents-grid">
+  @for (agent of items(); track agent.id) {
+    <div class="agent-card" [attr.data-testid]="'agent-' + agent.id">
+      <div class="agent-header">
+        <i class="pi pi-android agent-icon"></i>
+        <span class="agent-name">{{ agent.name }}</span>
+      </div>
+      <div class="agent-meta">
+        <p-tag [value]="agent.status" [severity]="agent.status === 'Deployed' ? 'success' : 'secondary'" />
+        <span class="agent-skills">{{ agent.skillCount }} {{ section()?.skillsSuffix }}</span>
+      </div>
+    </div>
+  }
+</div>

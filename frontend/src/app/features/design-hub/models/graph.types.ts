@@ -83,7 +83,6 @@ export interface SystemShellGraphNode {
   ruleSetType: string | null;
   ruleSetScope: string | null;
   actionType: string | null;
-  actionValue: string | null;
   priority: number | null;
   stopProcessing: boolean | null;
 }
@@ -128,7 +127,6 @@ export interface SystemShellTreeNodeData {
 export interface SystemShellGraphTreeNode {
   key: string;
   label: string;
-  expanded: boolean;
   selectable: boolean;
   data: SystemShellTreeNodeData;
   children: SystemShellGraphTreeNode[];

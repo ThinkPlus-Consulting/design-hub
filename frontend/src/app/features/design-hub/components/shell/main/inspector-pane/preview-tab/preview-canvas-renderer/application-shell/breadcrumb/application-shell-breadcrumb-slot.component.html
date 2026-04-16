@@ -1,0 +1,13 @@
+<div class="application-shell-breadcrumb-slot-frame">
+  <div
+    class="application-shell-breadcrumb-content"
+    [attr.source-object-id]="slot().trailSourceObjectId || null"
+    [attr.guid]="slot().trailGuid || null"
+    data-inspect-id="shell-breadcrumb"
+    [class.ssg-focused]="slot().trailFocused"
+  >
+    @if (slot().showContent) {
+      <p-breadcrumb [model]="slot().items" [home]="slot().home" />
+    }
+  </div>
+</div>

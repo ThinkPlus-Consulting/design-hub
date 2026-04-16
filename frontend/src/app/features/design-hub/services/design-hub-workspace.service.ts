@@ -187,7 +187,6 @@ const REMAINING_ATTRIBUTE_DEFINITIONS: readonly AttributeDefinition[] = [
   { label: 'Rule Set Type', attributeKey: 'ruleSetType', valueType: 'string', readonly: true },
   { label: 'Rule Set Scope', attributeKey: 'ruleSetScope', valueType: 'string', readonly: true },
   { label: 'Action Type', attributeKey: 'actionType', valueType: 'string', readonly: true },
-  { label: 'Action Value', attributeKey: 'actionValue', valueType: 'string', readonly: true },
   { label: 'Priority', attributeKey: 'priority', valueType: 'number', readonly: true },
   { label: 'Stop Processing', attributeKey: 'stopProcessing', valueType: 'boolean', readonly: true },
 ];
@@ -1213,7 +1212,7 @@ export class DesignHubWorkspaceService {
     const selectedNode = Array.isArray(node) ? node[0] ?? null : node ?? null;
     this.registryEditMode.set(false);
     if (this.activeWorkspace() === 'frontend') {
-      this.state.selectNode(selectedNode?.data?.kind === 'graph' ? selectedNode : null);
+      this.state.selectObjectId(selectedNode?.data?.kind === 'graph' ? selectedNode.data.objectId : null);
       return;
     }
 
@@ -1229,7 +1228,7 @@ export class DesignHubWorkspaceService {
     event.stopPropagation();
     this.registryEditMode.set(false);
     if (this.activeWorkspace() === 'frontend') {
-      this.state.selectNode(node.data?.kind === 'graph' ? node : null);
+      this.state.selectObjectId(node.data?.kind === 'graph' ? node.data.objectId : null);
       return;
     }
 
@@ -3774,7 +3773,6 @@ export class DesignHubWorkspaceService {
         return [
           { label: 'Condition Expression', attributeKey: 'conditionExpression', valueType: 'string' },
           { label: 'Action Type', attributeKey: 'actionType', valueType: 'string' },
-          { label: 'Action Value', attributeKey: 'actionValue', valueType: 'string' },
           { label: 'Priority', attributeKey: 'priority', valueType: 'number' },
           { label: 'Stop Processing', attributeKey: 'stopProcessing', valueType: 'boolean' },
         ];

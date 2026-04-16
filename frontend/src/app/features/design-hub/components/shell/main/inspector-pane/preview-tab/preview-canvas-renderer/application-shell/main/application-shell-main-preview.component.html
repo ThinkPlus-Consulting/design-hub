@@ -1,0 +1,20 @@
+<div class="application-shell-main-frame">
+  <div class="application-shell-main-scroll">
+    @if (activeScreenRenderer() === 'tenant-list') {
+      <app-tenant-list-screen-preview
+        [selectedGuid]="selectedGuid()"
+        [screenObjectId]="activeScreenObjectId()"
+      />
+    } @else if (activeScreenRenderer() === 'tenant-factsheet') {
+      <app-tenant-factsheet-screen-preview
+        [selectedGuid]="selectedGuid()"
+        [screenObjectId]="activeScreenObjectId()"
+      />
+    } @else if (activeScreenRenderer() === 'user-factsheet') {
+      <app-user-factsheet-screen-preview
+        [selectedGuid]="selectedGuid()"
+        [screenObjectId]="activeScreenObjectId()"
+      />
+    }
+  </div>
+</div>

@@ -1,0 +1,113 @@
+<div
+  class="tab-section-layout"
+  data-dom-ref="tenant-factsheet-users-tab"
+  [attr.source-object-id]="bindings().usersTabSourceObjectId || null"
+  [attr.guid]="bindings().usersTabGuid || null"
+  data-inspect-id="tenant-factsheet-users-tab"
+  [class.ssg-focused]="bindings().usersTabFocused"
+>
+  <section
+    class="tab-section-toolbar"
+    data-dom-ref="tenant-factsheet-users-toolbar"
+    [attr.source-object-id]="bindings().usersControlsRowSourceObjectId || null"
+    [attr.guid]="bindings().usersControlsRowGuid || null"
+    data-inspect-id="tenant-factsheet-users-toolbar"
+    [class.ssg-focused]="bindings().usersControlsRowFocused"
+  >
+    <div class="tab-section-toolbar-panel">
+      <div
+        class="search-bar"
+        data-dom-ref="tenant-factsheet-users-search-input"
+        [attr.source-object-id]="bindings().usersSearchInputSourceObjectId || null"
+        [attr.guid]="bindings().usersSearchInputGuid || null"
+        data-inspect-id="tenant-factsheet-users-search-input"
+        [class.ssg-focused]="bindings().usersSearchInputFocused"
+      >
+        <span class="search-icon pi pi-search"></span>
+        <input
+          pInputText
+          type="text"
+          class="search-input"
+          [ariaLabel]="section()?.searchAriaLabel ?? ''"
+          [placeholder]="section()?.searchPlaceholder ?? ''"
+          [value]="searchValue()"
+          (input)="onSearchInput($any($event.target).value)"
+          data-testid="input-search-users"
+        />
+      </div>
+      <div
+        data-dom-ref="tenant-factsheet-users-filter-toggle"
+        [attr.source-object-id]="bindings().usersFilterToggleSourceObjectId || null"
+        [attr.guid]="bindings().usersFilterToggleGuid || null"
+        data-inspect-id="tenant-factsheet-users-filter-toggle"
+        [class.ssg-focused]="bindings().usersFilterToggleFocused"
+      >
+        <p-button
+          icon="pi pi-filter"
+          severity="secondary"
+          [outlined]="true"
+          [rounded]="true"
+          [ariaLabel]="section()?.filterToggleAriaLabel ?? ''"
+          (onClick)="onToggleFilters()"
+          [styleClass]="filtersVisible() ? 'factsheet-icon-action filter-icon-active' : 'factsheet-icon-action'"
+          data-testid="btn-toggle-user-filters"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="tab-section-table-row"
+    data-dom-ref="tenant-factsheet-users-table-row"
+    [attr.source-object-id]="bindings().usersTableRowSourceObjectId || null"
+    [attr.guid]="bindings().usersTableRowGuid || null"
+    data-inspect-id="tenant-factsheet-users-table-row"
+    [class.ssg-focused]="bindings().usersTableRowFocused"
+  >
+    @if (showLoadingState()) {
+      <app-tenant-factsheet-users-loading-state
+        [bindings]="bindings()"
+        [rowCount]="loadingSkeletonRowCount()"
+      />
+    } @else if (showEmptyState()) {
+      <app-tenant-factsheet-users-empty-state
+        [bindings]="bindings()"
+        [title]="emptyStateTitle()"
+        [message]="emptyStateMessage()"
+      />
+    } @else if (showDataState()) {
+      <app-tenant-factsheet-users-data-state
+        [bindings]="bindings()"
+        [columns]="section()?.tableColumns ?? null"
+        [users]="filteredUsers()"
+        (openUserFactsheet)="onOpenUserFactsheet($event)"
+      />
+    }
+  </section>
+
+  @if (showPagination()) {
+    <section
+      class="tab-section-pagination-row"
+      data-dom-ref="tenant-factsheet-users-pagination-row"
+      [attr.source-object-id]="bindings().usersPaginationRowSourceObjectId || null"
+      [attr.guid]="bindings().usersPaginationRowGuid || null"
+      data-inspect-id="tenant-factsheet-users-pagination-row"
+      [class.ssg-focused]="bindings().usersPaginationRowFocused"
+    >
+      <div
+        data-dom-ref="tenant-factsheet-users-paginator"
+        [attr.source-object-id]="bindings().usersPaginatorSourceObjectId || null"
+        [attr.guid]="bindings().usersPaginatorGuid || null"
+        data-inspect-id="tenant-factsheet-users-paginator"
+        [class.ssg-focused]="bindings().usersPaginatorFocused"
+      >
+        <p-paginator
+          [rows]="10"
+          [totalRecords]="filteredUsers().length"
+          [rowsPerPageOptions]="[10, 20, 50]"
+          data-testid="users-paginator"
+        />
+      </div>
+    </section>
+  }
+</div>

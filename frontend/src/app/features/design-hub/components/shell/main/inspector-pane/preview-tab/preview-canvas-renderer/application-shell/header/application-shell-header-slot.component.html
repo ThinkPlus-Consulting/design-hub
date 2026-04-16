@@ -1,0 +1,197 @@
+@if (slot().hasContent) {
+  <section class="application-shell-header-slot-frame">
+    <section class="header-inner">
+      <section
+        class="header-island header-island-left"
+        [attr.source-object-id]="slot().headerLeftSourceObjectId || null"
+        [attr.guid]="slot().headerLeftGuid || null"
+        data-inspect-id="shell-header-left-island"
+        [class.ssg-focused]="slot().headerLeftFocused"
+      >
+        <p-button
+          styleClass="island-btn"
+          [text]="true"
+          [rounded]="true"
+          [ariaLabel]="slot().menuToggleAriaLabel"
+          [attr.source-object-id]="slot().headerMenuToggleSourceObjectId || null"
+          [attr.guid]="slot().headerMenuToggleGuid || null"
+          data-inspect-id="shell-header-menu-toggle"
+          [class.ssg-focused]="slot().headerMenuToggleFocused"
+        >
+          <ng-template #icon>
+            <p-image
+              [src]="slot().menuIconSrc"
+              alt=""
+              styleClass="header-icon-host"
+              imageClass="header-icon-image"
+              [imageStyle]="{ width: '16px', height: '16px' }"
+            />
+          </ng-template>
+        </p-button>
+
+        <p-button
+          styleClass="island-logo-button"
+          [text]="true"
+          [rounded]="true"
+          [ariaLabel]="slot().logoAriaLabel"
+          [attr.source-object-id]="slot().headerLogoLinkSourceObjectId || null"
+          [attr.guid]="slot().headerLogoLinkGuid || null"
+          data-inspect-id="shell-header-logo-link"
+          [class.ssg-focused]="slot().headerLogoLinkFocused"
+        >
+          <ng-template #content>
+            <p-image
+              [src]="slot().logoSrc"
+              [alt]="slot().logoAlt"
+              styleClass="logo-image-host"
+              imageClass="logo-image"
+              [imageStyle]="{ height: '27px', width: 'auto' }"
+            />
+          </ng-template>
+        </p-button>
+
+        <p-divider
+          layout="vertical"
+          styleClass="island-divider-component"
+          [attr.source-object-id]="slot().headerLeftDividerSourceObjectId || null"
+          [attr.guid]="slot().headerLeftDividerGuid || null"
+          data-inspect-id="shell-header-left-divider"
+          [class.ssg-focused]="slot().headerLeftDividerFocused"
+        />
+
+        <p-button
+          styleClass="page-indicator-button"
+          [text]="true"
+          [label]="slot().pageTitle"
+          [disabled]="true"
+          [ariaLabel]="slot().pageTitle"
+          [attr.source-object-id]="slot().headerPageIndicatorSourceObjectId || null"
+          [attr.guid]="slot().headerPageIndicatorGuid || null"
+          data-inspect-id="shell-header-page-indicator"
+          [class.ssg-focused]="slot().headerPageIndicatorFocused"
+        >
+          <ng-template #icon>
+            <p-image
+              [src]="slot().pageIndicatorIconSrc"
+              alt=""
+              styleClass="page-indicator-icon-host"
+              imageClass="page-indicator-icon"
+              [imageStyle]="{ width: '16px', height: '16px' }"
+            />
+          </ng-template>
+        </p-button>
+      </section>
+
+      <section
+        class="header-island header-island-right"
+        [attr.source-object-id]="slot().headerRightSourceObjectId || null"
+        [attr.guid]="slot().headerRightGuid || null"
+        data-inspect-id="shell-header-right-island"
+        [class.ssg-focused]="slot().headerRightFocused"
+      >
+        <section class="notif-bell-wrapper">
+          <p-button
+            styleClass="notif-bell-btn"
+            [text]="true"
+            [rounded]="true"
+            [ariaLabel]="slot().notificationAriaLabel"
+            [attr.source-object-id]="slot().headerNotificationTriggerSourceObjectId || null"
+            [attr.guid]="slot().headerNotificationTriggerGuid || null"
+            data-inspect-id="shell-header-notification-trigger"
+            [class.ssg-focused]="slot().headerNotificationTriggerFocused"
+          >
+            <ng-template #icon>
+              <p-image
+                [src]="slot().notificationIconSrc"
+                alt=""
+                styleClass="header-icon-host"
+                imageClass="header-icon-image"
+                [imageStyle]="{ width: '16px', height: '16px' }"
+              />
+            </ng-template>
+          </p-button>
+
+          <p-badge
+            [value]="slot().notificationCount"
+            severity="danger"
+            styleClass="notif-badge"
+            [attr.source-object-id]="slot().headerNotificationBadgeSourceObjectId || null"
+            [attr.guid]="slot().headerNotificationBadgeGuid || null"
+            data-inspect-id="shell-header-notification-badge"
+            [class.ssg-focused]="slot().headerNotificationBadgeFocused"
+          />
+        </section>
+
+        <p-button
+          styleClass="island-btn"
+          [text]="true"
+          [rounded]="true"
+          [ariaLabel]="slot().helpAriaLabel"
+          [attr.source-object-id]="slot().headerHelpActionSourceObjectId || null"
+          [attr.guid]="slot().headerHelpActionGuid || null"
+          data-inspect-id="shell-header-help-action"
+          [class.ssg-focused]="slot().headerHelpActionFocused"
+        >
+          <ng-template #icon>
+            <p-image
+              [src]="slot().helpIconSrc"
+              alt=""
+              styleClass="header-icon-host"
+              imageClass="header-icon-image"
+              [imageStyle]="{ width: '16px', height: '16px' }"
+            />
+          </ng-template>
+        </p-button>
+
+        <p-button
+          styleClass="switcher-btn"
+          [text]="true"
+          [label]="slot().languageLabel"
+          [ariaLabel]="slot().languageAriaLabel"
+          [attr.source-object-id]="slot().headerLanguageSwitcherSourceObjectId || null"
+          [attr.guid]="slot().headerLanguageSwitcherGuid || null"
+          data-inspect-id="shell-header-language-switcher"
+          [class.ssg-focused]="slot().headerLanguageSwitcherFocused"
+        >
+          <ng-template #icon>
+            <p-image
+              [src]="slot().languageFlagSrc"
+              alt=""
+              styleClass="flag-icon-host"
+              imageClass="flag-icon"
+              [imageStyle]="{ width: '16px', height: '16px' }"
+            />
+          </ng-template>
+        </p-button>
+
+        <p-divider
+          layout="vertical"
+          styleClass="island-divider-component"
+          [attr.source-object-id]="slot().headerRightDividerSourceObjectId || null"
+          [attr.guid]="slot().headerRightDividerGuid || null"
+          data-inspect-id="shell-header-right-divider"
+          [class.ssg-focused]="slot().headerRightDividerFocused"
+        />
+
+        <p-button
+          styleClass="avatar-trigger-button"
+          [text]="true"
+          [rounded]="true"
+          [ariaLabel]="slot().userMenuAriaLabel"
+          [attr.source-object-id]="slot().headerUserAvatarSourceObjectId || null"
+          [attr.guid]="slot().headerUserAvatarGuid || null"
+          data-inspect-id="shell-header-user-avatar"
+          [class.ssg-focused]="slot().headerUserAvatarFocused"
+        >
+          <ng-template #content>
+            <p-avatar
+              [label]="slot().userAvatarLabel"
+              shape="circle"
+              styleClass="avatar-circle-component"
+            />
+          </ng-template>
+        </p-button>
+      </section>
+    </section>
+  </section>
+}

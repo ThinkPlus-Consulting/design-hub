@@ -2,6 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { firstValueFrom } from 'rxjs';
 import { DesignHubApiService } from './design-hub-api.service';
+import { TenantUser } from '../models/preview-content.types';
 import {
   SystemShellGraphNode,
   SystemShellGraphRelationship,
@@ -22,6 +23,7 @@ export class DesignHubStateService {
   readonly tree = signal<TreeNode<SystemShellTreeNodeData>[]>([]);
   readonly selectedTreeNode = signal<TreeNode<SystemShellTreeNodeData> | null>(null);
   readonly selectedObjectId = signal<string | null>(null);
+  readonly previewUserFactsheetUser = signal<TenantUser | null>(null);
   readonly selectedGraphNode = computed<SystemShellGraphNode | null>(() => {
     const objectId = this.selectedObjectId();
     if (!objectId) {
@@ -120,7 +122,7 @@ export class DesignHubStateService {
     return nodes.map((node) => ({
       key: node.key,
       label: node.label,
-      expanded: !!node.expanded,
+      expanded: false,
       selectable: node.selectable,
       data: {
         kind: node.data.kind,
@@ -148,6 +150,10 @@ export class DesignHubStateService {
     this.tree.set(expandedTree);
     this.selectedTreeNode.set(treeNode);
     this.selectedObjectId.set(treeNode?.data?.objectId ?? objectId);
+  }
+
+  setPreviewUserFactsheetUser(user: TenantUser | null): void {
+    this.previewUserFactsheetUser.set(user ? { ...user } : null);
   }
 
   selectGuid(guid: string | null): void {
