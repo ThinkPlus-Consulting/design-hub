@@ -1,14 +1,13 @@
 # Neo4j Snapshot
 
-This folder contains the `system-shell-graph` Neo4j dataset exported from the reduced repository state.
+The canonical `system-shell-graph` seed data now lives in:
 
-- `system-shell-graph-export.json`: structured JSON snapshot of all `SystemShellGraphNode` nodes and relationships.
-- `system-shell-graph-restore.cypher`: restorable Cypher script for loading the same dataset into Neo4j.
+- `backend/src/main/resources/system-shell-graph-restore.cypher`
 
-Restore into the local Docker Neo4j container:
+The backend reseed flow loads that resource directly into Neo4j.
+
+To restore it manually into the local Docker Neo4j container:
 
 ```bash
-cat database/neo4j/system-shell-graph-restore.cypher | docker exec -i design-hub-neo4j cypher-shell -u neo4j -p password
+cat backend/src/main/resources/system-shell-graph-restore.cypher | docker exec -i design-hub-neo4j cypher-shell -u neo4j -p password
 ```
-
-The snapshot was generated after reseeding the backend graph so it matches the current `system-shell-graph` app surface.

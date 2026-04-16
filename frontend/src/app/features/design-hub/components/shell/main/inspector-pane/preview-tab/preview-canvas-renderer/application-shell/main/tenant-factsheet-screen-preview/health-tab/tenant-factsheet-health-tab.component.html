@@ -1,0 +1,54 @@
+<div class="tab-section-layout">
+  <div class="tab-section-toolbar">
+    <div class="search-bar">
+      <span class="search-icon pi pi-search"></span>
+      <input
+        pInputText
+        type="text"
+        class="search-input"
+        [ariaLabel]="section()?.searchAriaLabel ?? ''"
+        [placeholder]="section()?.searchPlaceholder ?? ''"
+        [value]="searchValue()"
+        (input)="onSearchInput($any($event.target).value)"
+        data-testid="input-search-health"
+      />
+    </div>
+    <p-button
+      icon="pi pi-filter"
+      severity="secondary"
+      [outlined]="true"
+      [rounded]="true"
+      [ariaLabel]="section()?.filterToggleAriaLabel ?? ''"
+      (onClick)="onToggleFilters()"
+      [styleClass]="filtersVisible() ? 'factsheet-icon-action filter-icon-active' : 'factsheet-icon-action'"
+    />
+    <span class="toolbar-spacer"></span>
+    <p-toggleButton
+      [ngModel]="viewMode() === 'table'"
+      (ngModelChange)="onViewModeChange($event)"
+      [onLabel]="section()?.viewMode?.tableLabel ?? ''"
+      [offLabel]="section()?.viewMode?.gridLabel ?? ''"
+      onIcon="pi pi-list"
+      offIcon="pi pi-objects-column"
+      [ariaLabel]="section()?.viewToggleAriaLabel ?? ''"
+      data-testid="health-view-toggle"
+    />
+  </div>
+
+  <div class="cards-grid" data-testid="health-grid">
+    @for (check of items(); track check.id) {
+      <div class="health-card" [attr.data-testid]="'health-' + check.id">
+        <div class="health-card-header">
+          <i [class]="check.icon" class="health-icon"></i>
+          <span class="health-service">{{ check.service }}</span>
+        </div>
+        <div class="health-card-body">
+          <p-tag [value]="check.status" [severity]="healthSeverity(check.status)" />
+          <span class="health-checked text-muted">{{ check.lastChecked }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <p-paginator [rows]="10" [totalRecords]="items().length" [rowsPerPageOptions]="[10, 20, 50]" data-testid="health-paginator" />
+</div>

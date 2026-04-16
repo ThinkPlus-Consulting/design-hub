@@ -1,0 +1,31 @@
+@use '../tenant-factsheet-tab.shared';
+
+:host {
+  display: block;
+}
+
+.tab-section-toolbar-panel {
+  inline-size: 100%;
+  padding-block: var(--tenant-factsheet-tight-gap);
+  padding-inline: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+.tab-section-toolbar {
+  inline-size: 100%;
+}
+
+.tab-section-toolbar,
+.tab-section-table-row,
+.tab-section-pagination-row {
+  display: block;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--tenant-factsheet-card-padding);
+}
+
+.tab-section-pagination-row {
+  padding-block-start: var(--tenant-factsheet-tight-gap);
+}

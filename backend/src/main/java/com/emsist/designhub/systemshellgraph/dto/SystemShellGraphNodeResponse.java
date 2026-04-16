@@ -87,7 +87,6 @@ public record SystemShellGraphNodeResponse(
         String ruleSetType,
         String ruleSetScope,
         String actionType,
-        String actionValue,
         Integer priority,
         Boolean stopProcessing
 ) {

@@ -1,0 +1,61 @@
+<div class="tab-section-layout">
+  <div class="tab-section-toolbar">
+    <div class="search-bar">
+      <span class="search-icon pi pi-search"></span>
+      <input
+        pInputText
+        type="text"
+        class="search-input"
+        [ariaLabel]="section()?.searchAriaLabel ?? ''"
+        [placeholder]="section()?.searchPlaceholder ?? ''"
+        [value]="searchValue()"
+        (input)="onSearchInput($any($event.target).value)"
+        data-testid="input-search-dictionary"
+      />
+    </div>
+    <p-button
+      icon="pi pi-filter"
+      severity="secondary"
+      [outlined]="true"
+      [rounded]="true"
+      [ariaLabel]="section()?.filterToggleAriaLabel ?? ''"
+      (onClick)="onToggleFilters()"
+      [styleClass]="filtersVisible() ? 'factsheet-icon-action filter-icon-active' : 'factsheet-icon-action'"
+    />
+    <span class="toolbar-spacer"></span>
+    <p-toggleButton
+      [ngModel]="viewMode() === 'table'"
+      (ngModelChange)="onViewModeChange($event)"
+      [onLabel]="section()?.viewMode?.tableLabel ?? ''"
+      [offLabel]="section()?.viewMode?.gridLabel ?? ''"
+      onIcon="pi pi-list"
+      offIcon="pi pi-objects-column"
+      [ariaLabel]="section()?.viewToggleAriaLabel ?? ''"
+      data-testid="dictionary-view-toggle"
+    />
+  </div>
+
+  <p-table
+    [value]="[...items()]"
+    [rowHover]="true"
+    styleClass="factsheet-table factsheet-table--compact"
+    data-testid="dictionary-table"
+  >
+    <ng-template #header>
+      <tr>
+        <th>{{ section()?.tableColumns?.objectType }}</th>
+        <th>{{ section()?.tableColumns?.attributeCount }}</th>
+        <th>{{ section()?.tableColumns?.origin }}</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-entry>
+      <tr>
+        <td>{{ entry.objectType }}</td>
+        <td>{{ entry.attributeCount }}</td>
+        <td><p-tag [value]="entry.origin" [severity]="entry.origin === 'Seeded' ? 'info' : 'warn'" /></td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-paginator [rows]="10" [totalRecords]="items().length" [rowsPerPageOptions]="[10, 20, 50]" data-testid="dictionary-paginator" />
+</div>

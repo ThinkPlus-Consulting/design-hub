@@ -1,0 +1,60 @@
+<div class="tab-section-layout">
+  <div class="tab-header">
+    <h2 class="tab-title">{{ section()?.title }}</h2>
+    <p class="text-muted">{{ section()?.description }}</p>
+  </div>
+
+  <section class="license-summary" data-testid="license-summary">
+    <div class="license-summary-header">
+      <div>
+        <h3 class="section-subtitle">{{ section()?.summaryTitle }}</h3>
+        <p class="text-muted">
+          {{ section()?.validityPrefix }} {{ license().validFrom }} {{ section()?.validityConnector }} {{ license().validUntil }}
+        </p>
+      </div>
+      <p-tag
+        [value]="license().status"
+        [severity]="license().status === 'Active' ? 'success' : license().status === 'Expiring Soon' ? 'warn' : 'danger'"
+      />
+    </div>
+
+    <div class="license-metrics">
+      <article class="license-metric" data-testid="license-metric-allocated">
+        <span class="license-metric-label">{{ section()?.metrics?.allocated }}</span>
+        <strong>{{ allocatedSeats() }}</strong>
+      </article>
+      <article class="license-metric" data-testid="license-metric-assigned">
+        <span class="license-metric-label">{{ section()?.metrics?.assigned }}</span>
+        <strong>{{ assignedSeats() }}</strong>
+      </article>
+      <article class="license-metric" data-testid="license-metric-available">
+        <span class="license-metric-label">{{ section()?.metrics?.available }}</span>
+        <strong>{{ availableSeats() }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <p-table
+    [value]="[...license().allocations]"
+    [rowHover]="true"
+    styleClass="factsheet-table factsheet-table--medium"
+    data-testid="license-table"
+  >
+    <ng-template #header>
+      <tr>
+        <th>{{ section()?.tableColumns?.licenseType }}</th>
+        <th>{{ section()?.tableColumns?.allocated }}</th>
+        <th>{{ section()?.tableColumns?.assigned }}</th>
+        <th>{{ section()?.tableColumns?.available }}</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-allocation>
+      <tr>
+        <td>{{ allocation.licenseType }}</td>
+        <td>{{ allocation.allocated }}</td>
+        <td>{{ allocation.assigned }}</td>
+        <td>{{ allocation.available }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

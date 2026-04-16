@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.application-shell-footer-slot-frame {
+  width: min(100%, var(--ssg-shell-frame-width));
+  max-width: var(--ssg-shell-frame-width);
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  padding-inline-start: var(--ssg-shell-frame-padding-inline-start);
+  padding-inline-end: var(--ssg-shell-frame-padding-inline-end);
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}

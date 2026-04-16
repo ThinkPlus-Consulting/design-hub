@@ -5,36 +5,30 @@ import {
   input,
 } from "@angular/core";
 import { MenuItem } from "primeng/api";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
-import { BreadcrumbModule } from "primeng/breadcrumb";
-import { ButtonModule } from "primeng/button";
-import { DividerModule } from "primeng/divider";
-import { ImageModule } from "primeng/image";
 import {
   ApplicationShellContentConfig,
   TenantFactsheetScreenContentConfig,
   TenantListScreenContentConfig,
+  UserFactsheetScreenContentConfig,
 } from "../../../../../../../models/preview-content.types";
 import { ShellBackgroundConfig, SystemShellGraphNode } from "../../../../../../../models/graph.types";
 import { PreviewIdentityBound } from '../../../../../../../utils/preview-identity-bound';
 import { childAt, childByName, componentAt } from '../../../../../../../utils/preview-structure';
 import { parseNodeConfiguration } from '../../../../../../../utils/node-configuration';
-import { TenantFactsheetScreenPreviewComponent } from "./tenant-factsheet-screen-preview/tenant-factsheet-screen-preview.component";
-import { TenantListScreenPreviewComponent } from "./tenant-list-screen-preview/tenant-list-screen-preview.component";
+import { ApplicationShellBreadcrumbSlotComponent } from "./breadcrumb/application-shell-breadcrumb-slot.component";
+import { ApplicationShellFooterSlotComponent } from "./footer/application-shell-footer-slot.component";
+import { ApplicationShellHeaderSlotComponent } from "./header/application-shell-header-slot.component";
+import { ApplicationShellMainPreviewComponent } from "./main/application-shell-main-preview.component";
+import { ApplicationShellBreadcrumbSlotData, ApplicationShellHeaderSlotData } from "./application-shell-slot.types";
 
 @Component({
   selector: "app-application-shell-preview",
   standalone: true,
   imports: [
-    AvatarModule,
-    BadgeModule,
-    BreadcrumbModule,
-    ButtonModule,
-    DividerModule,
-    ImageModule,
-    TenantFactsheetScreenPreviewComponent,
-    TenantListScreenPreviewComponent,
+    ApplicationShellHeaderSlotComponent,
+    ApplicationShellBreadcrumbSlotComponent,
+    ApplicationShellFooterSlotComponent,
+    ApplicationShellMainPreviewComponent,
   ],
   templateUrl: "./application-shell-preview.component.html",
   styleUrl: "./application-shell-preview.component.scss",
@@ -56,12 +50,16 @@ export class ApplicationShellPreviewComponent extends PreviewIdentityBound {
   private readonly tenantFactsheetContent = computed(
     () => parseNodeConfiguration<TenantFactsheetScreenContentConfig>(this.screenNode()),
   );
+  private readonly userFactsheetContent = computed(
+    () => parseNodeConfiguration<UserFactsheetScreenContentConfig>(this.screenNode()),
+  );
+  private readonly previewUserFactsheetUser = computed(() => this.state.previewUserFactsheetUser());
   private readonly shellSlots = computed(() => {
     const shell = this.shellNode();
     const header = childByName(this.state, shell?.id, 'Header Container', 'Container');
     const main = childByName(this.state, shell?.id, 'Main Container', 'Container');
     const footer = childByName(this.state, shell?.id, 'Footer Container', 'Container');
-    const breadcrumb = childByName(this.state, shell?.id, 'Breadcrumb Container', 'Container');
+    const breadcrumb = childByName(this.state, shell?.id, 'Breadcrumb Container');
     const headerLeft = childAt(this.state, header?.id, 0);
     const headerRight = childAt(this.state, header?.id, 1);
 
@@ -98,6 +96,8 @@ export class ApplicationShellPreviewComponent extends PreviewIdentityBound {
         return 'tenant-list';
       case 'tenant fact sheet':
         return 'tenant-factsheet';
+      case 'view user fact sheet':
+        return 'user-factsheet';
       default:
         return 'unknown';
     }
@@ -129,18 +129,95 @@ export class ApplicationShellPreviewComponent extends PreviewIdentityBound {
           },
           { label: this.tenantFactsheetContent()?.tenant?.name ?? '', disabled: true },
         ].filter((item) => !!item.label);
+      case "user-factsheet":
+        return [
+          {
+            label: tenantRegistryLabel,
+            command: () => this.selectObject(this.activeShellScreens()[0]?.id ?? null),
+          },
+          {
+            label: this.previewUserFactsheetUser()?.name
+              ?? this.userFactsheetContent()?.user?.displayName
+              ?? '',
+            disabled: true,
+          },
+        ].filter((item) => !!item.label);
       default:
         return [];
     }
   });
+  readonly headerSlotData = computed<ApplicationShellHeaderSlotData>(() => ({
+    hasContent: this.hasShellHeaderContent(),
+    headerLeftSourceObjectId: this.sourceObjectId('headerLeft'),
+    headerLeftGuid: this.guid('headerLeft'),
+    headerLeftFocused: this.isFocused('headerLeft'),
+    headerMenuToggleSourceObjectId: this.sourceObjectId('headerMenuToggle'),
+    headerMenuToggleGuid: this.guid('headerMenuToggle'),
+    headerMenuToggleFocused: this.isFocused('headerMenuToggle'),
+    headerLogoLinkSourceObjectId: this.sourceObjectId('headerLogoLink'),
+    headerLogoLinkGuid: this.guid('headerLogoLink'),
+    headerLogoLinkFocused: this.isFocused('headerLogoLink'),
+    headerLeftDividerSourceObjectId: this.sourceObjectId('headerLeftDivider'),
+    headerLeftDividerGuid: this.guid('headerLeftDivider'),
+    headerLeftDividerFocused: this.isFocused('headerLeftDivider'),
+    headerPageIndicatorSourceObjectId: this.sourceObjectId('headerPageIndicator'),
+    headerPageIndicatorGuid: this.guid('headerPageIndicator'),
+    headerPageIndicatorFocused: this.isFocused('headerPageIndicator'),
+    headerRightSourceObjectId: this.sourceObjectId('headerRight'),
+    headerRightGuid: this.guid('headerRight'),
+    headerRightFocused: this.isFocused('headerRight'),
+    headerNotificationTriggerSourceObjectId: this.sourceObjectId('headerNotificationTrigger'),
+    headerNotificationTriggerGuid: this.guid('headerNotificationTrigger'),
+    headerNotificationTriggerFocused: this.isFocused('headerNotificationTrigger'),
+    headerNotificationBadgeSourceObjectId: this.sourceObjectId('headerNotificationBadge'),
+    headerNotificationBadgeGuid: this.guid('headerNotificationBadge'),
+    headerNotificationBadgeFocused: this.isFocused('headerNotificationBadge'),
+    headerHelpActionSourceObjectId: this.sourceObjectId('headerHelpAction'),
+    headerHelpActionGuid: this.guid('headerHelpAction'),
+    headerHelpActionFocused: this.isFocused('headerHelpAction'),
+    headerLanguageSwitcherSourceObjectId: this.sourceObjectId('headerLanguageSwitcher'),
+    headerLanguageSwitcherGuid: this.guid('headerLanguageSwitcher'),
+    headerLanguageSwitcherFocused: this.isFocused('headerLanguageSwitcher'),
+    headerRightDividerSourceObjectId: this.sourceObjectId('headerRightDivider'),
+    headerRightDividerGuid: this.guid('headerRightDivider'),
+    headerRightDividerFocused: this.isFocused('headerRightDivider'),
+    headerUserAvatarSourceObjectId: this.sourceObjectId('headerUserAvatar'),
+    headerUserAvatarGuid: this.guid('headerUserAvatar'),
+    headerUserAvatarFocused: this.isFocused('headerUserAvatar'),
+    menuToggleAriaLabel: this.menuToggleAriaLabel(),
+    menuIconSrc: this.menuIconSrc(),
+    logoAriaLabel: this.logoAriaLabel(),
+    logoSrc: this.logoSrc(),
+    logoAlt: this.logoAlt(),
+    pageTitle: this.pageTitle(),
+    pageIndicatorIconSrc: this.pageIndicatorIconSrc(),
+    notificationAriaLabel: this.notificationAriaLabel(),
+    notificationIconSrc: this.notificationIconSrc(),
+    notificationCount: this.notificationCount(),
+    helpAriaLabel: this.helpAriaLabel(),
+    helpIconSrc: this.helpIconSrc(),
+    languageLabel: this.languageLabel(),
+    languageAriaLabel: this.languageAriaLabel(),
+    languageFlagSrc: this.languageFlagSrc(),
+    userMenuAriaLabel: this.userMenuAriaLabel(),
+    userAvatarLabel: this.userAvatarLabel(),
+  }));
+  readonly breadcrumbSlotData = computed<ApplicationShellBreadcrumbSlotData>(() => ({
+    trailSourceObjectId: this.sourceObjectId('breadcrumbTrail'),
+    trailGuid: this.guid('breadcrumbTrail'),
+    trailFocused: this.isFocused('breadcrumbTrail'),
+    showContent: this.showShellBreadcrumbContent(),
+    items: this.shellBreadcrumbItems(),
+    home: this.shellBreadcrumbHome(),
+  }));
   readonly shellFrameWidth = computed(() => this.cssLength(this.shellNode()?.width, '1200px'));
-  readonly shellRowGap = computed(() => this.cssLength(this.shellNode()?.rowGap ?? this.shellNode()?.gap, '16px'));
+  readonly shellRowGap = computed(() => this.cssLength(this.shellNode()?.rowGap ?? this.shellNode()?.gap, '12px'));
   readonly shellColumnGap = computed(() => this.cssLength(this.shellNode()?.columnGap, '0px'));
-  readonly shellPaddingLeft = computed(() => this.cssLength(this.shellNode()?.paddingLeft, '24px'));
+  readonly shellPaddingLeft = computed(() => this.cssLength(this.shellNode()?.paddingLeft, '16px'));
   readonly shellPaddingRight = computed(() => this.cssLength(this.shellNode()?.paddingRight, this.shellPaddingLeft()));
-  readonly headerHeight = computed(() => this.slotHeight(this.shellSlots().header, '0px'));
-  readonly breadcrumbHeight = computed(() => this.slotHeight(this.shellSlots().breadcrumb, '0px'));
-  readonly footerHeight = computed(() => this.slotHeight(this.shellSlots().footer, '0px'));
+  readonly headerHeight = computed(() => this.slotHeight(this.shellSlots().header, '72px'));
+  readonly breadcrumbHeight = computed(() => this.slotHeight(this.shellSlots().breadcrumb, '36px'));
+  readonly footerHeight = computed(() => this.slotHeight(this.shellSlots().footer, '72px'));
   readonly mainHeight = computed(() =>
     this.slotCssValue(
       this.shellSlots().main,
@@ -190,6 +267,11 @@ export class ApplicationShellPreviewComponent extends PreviewIdentityBound {
       case "tenant-factsheet":
         return this.shellContent()?.pageTitles?.tenantFactsheet
           ?? this.tenantFactsheetContent()?.title
+          ?? this.screenNode()?.name?.trim()
+          ?? "Application";
+      case "user-factsheet":
+        return this.shellContent()?.pageTitles?.userFactsheet
+          ?? this.userFactsheetContent()?.title
           ?? this.screenNode()?.name?.trim()
           ?? "Application";
       default:

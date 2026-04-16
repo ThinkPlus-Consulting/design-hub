@@ -1,0 +1,27 @@
+<div class="tab-header">
+  <h2 class="tab-title">{{ section()?.title }}</h2>
+  <p class="tab-description">{{ section()?.description }}</p>
+</div>
+<div class="branding-content">
+  <div class="branding-section">
+    <h3 class="section-subtitle">{{ section()?.swatchTitle }}</h3>
+    <div class="color-swatches" data-testid="branding-swatches">
+      <div class="swatch swatch--primary"><span class="swatch-label">{{ section()?.swatchLabels?.[0] }}</span></div>
+      <div class="swatch swatch--primary-dark"><span class="swatch-label">{{ section()?.swatchLabels?.[1] }}</span></div>
+      <div class="swatch swatch--success"><span class="swatch-label">{{ section()?.swatchLabels?.[2] }}</span></div>
+      <div class="swatch swatch--warning"><span class="swatch-label">{{ section()?.swatchLabels?.[3] }}</span></div>
+      <div class="swatch swatch--danger"><span class="swatch-label">{{ section()?.swatchLabels?.[4] }}</span></div>
+    </div>
+  </div>
+  <div class="branding-section">
+    <h3 class="section-subtitle">{{ section()?.logoUploadTitle }}</h3>
+    <div class="logo-upload-placeholder" data-testid="branding-logo-upload">
+      <i class="pi pi-cloud-upload"></i>
+      <span>{{ section()?.logoUploadPlaceholder }}</span>
+    </div>
+  </div>
+  <div class="branding-actions">
+    <p-button [label]="section()?.previewLabel ?? ''" icon="pi pi-eye" severity="secondary" data-testid="branding-preview-btn" />
+    <p-button [label]="section()?.publishLabel ?? ''" icon="pi pi-check" data-testid="branding-publish-btn" />
+  </div>
+</div>

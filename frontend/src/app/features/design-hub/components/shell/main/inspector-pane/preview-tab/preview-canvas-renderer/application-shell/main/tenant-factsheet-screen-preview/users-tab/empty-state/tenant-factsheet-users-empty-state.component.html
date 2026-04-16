@@ -1,0 +1,30 @@
+<section
+  class="users-empty-state"
+  data-dom-ref="tenant-factsheet-users-empty-state"
+  [attr.source-object-id]="bindings().usersEmptyStateSectionSourceObjectId || null"
+  [attr.guid]="bindings().usersEmptyStateSectionGuid || null"
+  data-inspect-id="tenant-factsheet-users-empty-state"
+  [class.ssg-focused]="bindings().usersEmptyStateSectionFocused"
+>
+  <h3
+    class="users-empty-title"
+    data-dom-ref="tenant-factsheet-users-empty-title"
+    [attr.source-object-id]="bindings().usersEmptyStateTitleSourceObjectId || null"
+    [attr.guid]="bindings().usersEmptyStateTitleGuid || null"
+    data-inspect-id="tenant-factsheet-users-empty-title"
+    [class.ssg-focused]="bindings().usersEmptyStateTitleFocused"
+  >
+    {{ title() }}
+  </h3>
+
+  <p
+    class="users-empty-message"
+    data-dom-ref="tenant-factsheet-users-empty-message"
+    [attr.source-object-id]="bindings().usersEmptyStateMessageSourceObjectId || null"
+    [attr.guid]="bindings().usersEmptyStateMessageGuid || null"
+    data-inspect-id="tenant-factsheet-users-empty-message"
+    [class.ssg-focused]="bindings().usersEmptyStateMessageFocused"
+  >
+    {{ message() }}
+  </p>
+</section>

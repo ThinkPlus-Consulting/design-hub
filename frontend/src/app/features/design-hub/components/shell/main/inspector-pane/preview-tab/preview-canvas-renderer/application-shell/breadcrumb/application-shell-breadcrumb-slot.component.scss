@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.application-shell-breadcrumb-slot-frame {
+  width: min(100%, var(--ssg-shell-frame-width));
+  max-width: var(--ssg-shell-frame-width);
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  padding-inline-start: var(--ssg-shell-frame-padding-inline-start);
+  padding-inline-end: var(--ssg-shell-frame-padding-inline-end);
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.application-shell-breadcrumb-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-breadcrumb {
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+:host ::ng-deep .p-breadcrumb-item-link {
+  color: var(--tp-text-dark);
+}
+
+:host ::ng-deep .p-breadcrumb-home .p-menuitem-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:host ::ng-deep .p-breadcrumb-separator {
+  color: color-mix(in srgb, var(--tp-text-secondary) 80%, transparent);
+}

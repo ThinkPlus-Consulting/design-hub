@@ -1,0 +1,326 @@
+.text-muted {
+  color: var(--tp-text-dark);
+  font-size: var(--tp-font-sm);
+}
+
+.tab-header {
+  display: grid;
+  gap: var(--tenant-factsheet-inline-gap);
+}
+
+.tab-title {
+  font-size: var(--tp-font-lg);
+  font-weight: 700;
+  color: var(--tp-text-dark);
+  margin: 0;
+}
+
+.tab-description {
+  font-size: var(--tp-font-sm);
+  color: var(--tp-text-dark);
+  margin: 0;
+}
+
+.section-subtitle {
+  font-size: var(--tp-font-md);
+  font-weight: 600;
+  color: var(--tp-text-dark);
+  margin-block-end: var(--tenant-factsheet-cluster-gap);
+}
+
+.tab-section-layout {
+  display: grid;
+  gap: var(--tenant-factsheet-layout-gap);
+}
+
+.tab-section-toolbar {
+  display: block;
+}
+
+.tab-section-toolbar-panel,
+.tab-section-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--tenant-factsheet-cluster-gap);
+  flex-wrap: wrap;
+}
+
+.tab-section-toolbar-panel {
+  padding-block: var(--tenant-factsheet-toolbar-padding-block);
+  padding-inline: var(--tenant-factsheet-toolbar-padding-inline);
+  border: 1px solid var(--tp-border);
+  border-radius: var(--nm-radius);
+  background: transparent;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-inline-size: 320px;
+}
+
+.search-icon {
+  position: absolute;
+  inset-inline-start: var(--tp-space-4);
+  color: var(--tp-grey);
+  font-size: var(--tp-font-md);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  inline-size: 100%;
+  padding-inline-start: var(--tp-space-10);
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(4 * var(--tp-space-16)), 1fr));
+  gap: var(--tenant-factsheet-layout-gap);
+}
+
+.integration-card,
+.agent-card,
+.health-card {
+  display: grid;
+  gap: var(--tenant-factsheet-cluster-gap);
+  padding: var(--tenant-factsheet-card-padding);
+  background: var(--tp-surface-raised);
+  border: 1px solid var(--tp-border);
+  border-radius: var(--nm-radius);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.integration-card:hover,
+.agent-card:hover,
+.health-card:hover {
+  border-color: var(--tp-primary);
+}
+
+.integration-header,
+.agent-header,
+.health-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--tenant-factsheet-inline-gap);
+}
+
+.integration-icon,
+.agent-icon,
+.health-icon {
+  font-size: var(--tp-font-lg);
+}
+
+.integration-icon,
+.agent-icon {
+  color: var(--tp-primary);
+}
+
+.health-icon {
+  color: var(--tp-text-muted);
+}
+
+.integration-name,
+.agent-name,
+.health-service {
+  font-weight: 600;
+  font-size: var(--tp-font-md);
+  color: var(--tp-text-dark);
+}
+
+.integration-meta,
+.agent-meta,
+.health-card-body {
+  display: flex;
+  align-items: center;
+  gap: var(--tenant-factsheet-inline-gap);
+}
+
+.agent-skills,
+.health-checked {
+  font-size: var(--tp-font-sm);
+  color: var(--tp-text-muted);
+}
+
+.branding-content {
+  display: grid;
+  gap: calc(var(--tenant-factsheet-hero-gap) + var(--tenant-factsheet-tight-gap));
+}
+
+.branding-section {
+  display: grid;
+  gap: var(--tenant-factsheet-inline-gap);
+}
+
+.color-swatches {
+  display: flex;
+  gap: var(--tenant-factsheet-cluster-gap);
+  flex-wrap: wrap;
+}
+
+.swatch {
+  inline-size: var(--tp-space-16);
+  block-size: var(--tp-space-16);
+  border-radius: var(--nm-radius-sm);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-block-end: var(--tenant-factsheet-tight-gap);
+}
+
+.swatch--primary {
+  background: var(--tp-primary);
+}
+
+.swatch--primary-dark {
+  background: var(--tp-primary-dark);
+}
+
+.swatch--success {
+  background: var(--tp-success);
+}
+
+.swatch--warning {
+  background: var(--tp-warning);
+}
+
+.swatch--danger {
+  background: var(--tp-danger);
+}
+
+.swatch-label {
+  font-size: var(--tp-font-xs);
+  color: var(--tp-surface-light);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.logo-upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tenant-factsheet-inline-gap);
+  padding: var(--tenant-factsheet-roomy-padding);
+  border: 2px dashed var(--tp-border);
+  border-radius: var(--nm-radius);
+  color: var(--tp-text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.logo-upload-placeholder:hover {
+  border-color: var(--tp-primary);
+  background: color-mix(in srgb, var(--tp-primary) 4%, transparent);
+}
+
+.logo-upload-placeholder i {
+  font-size: var(--icon-size-lg);
+}
+
+.logo-upload-placeholder span {
+  font-size: var(--tp-font-sm);
+  font-weight: 500;
+}
+
+.branding-actions {
+  display: flex;
+  gap: var(--tenant-factsheet-inline-gap);
+}
+
+.license-summary {
+  display: grid;
+  gap: var(--tenant-factsheet-layout-gap);
+  padding: var(--tenant-factsheet-card-padding);
+  border: 1px solid var(--tp-border);
+  border-radius: var(--nm-radius);
+  background: var(--tp-surface-raised);
+}
+
+.license-summary-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--tenant-factsheet-cluster-gap);
+}
+
+.license-summary-header p {
+  margin: 0;
+}
+
+.license-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--tenant-factsheet-cluster-gap);
+}
+
+.license-metric {
+  display: grid;
+  gap: var(--tenant-factsheet-tight-gap);
+  padding: var(--tenant-factsheet-cluster-gap);
+  border: 1px solid var(--tp-border);
+  border-radius: var(--nm-radius-sm);
+  background: color-mix(in srgb, var(--tp-primary) 4%, var(--tp-surface-raised));
+}
+
+.license-metric strong {
+  font-size: var(--tp-font-xl);
+  color: var(--tp-text-dark);
+}
+
+.license-metric-label {
+  font-size: var(--tp-font-sm);
+  color: var(--tp-text-muted);
+}
+
+:host ::ng-deep .factsheet-table--compact .p-datatable-table {
+  min-inline-size: var(--tenant-factsheet-table-min-inline-compact);
+}
+
+:host ::ng-deep .factsheet-table--medium .p-datatable-table {
+  min-inline-size: var(--tenant-factsheet-table-min-inline-medium);
+}
+
+:host ::ng-deep .factsheet-table--wide .p-datatable-table {
+  min-inline-size: var(--tenant-factsheet-table-min-inline-wide);
+}
+
+.studio-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tenant-factsheet-cluster-gap);
+  padding: calc(var(--tenant-factsheet-roomy-padding) + var(--tenant-factsheet-layout-gap));
+  text-align: center;
+  color: var(--tp-text);
+}
+
+.studio-placeholder p {
+  margin: 0;
+  font-size: var(--tp-font-md);
+}
+
+.studio-placeholder-icon {
+  font-size: var(--icon-size-lg);
+  color: var(--tp-primary);
+}
+
+@container (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .color-swatches {
+    justify-content: center;
+  }
+}

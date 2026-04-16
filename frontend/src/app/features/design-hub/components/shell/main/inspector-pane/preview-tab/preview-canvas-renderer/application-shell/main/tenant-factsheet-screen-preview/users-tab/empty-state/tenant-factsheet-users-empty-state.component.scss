@@ -1,0 +1,29 @@
+@use '../../tenant-factsheet-tab.shared';
+
+:host {
+  display: block;
+}
+
+.users-empty-state {
+  display: grid;
+  gap: var(--tenant-factsheet-inline-gap);
+  justify-items: start;
+  padding: var(--tenant-factsheet-roomy-padding);
+  border: 1px dashed var(--tp-border);
+  border-radius: var(--nm-radius);
+  background: var(--tp-surface);
+}
+
+.users-empty-title {
+  margin: 0;
+  font-size: var(--tp-font-lg);
+  font-weight: 700;
+  color: var(--tp-text-dark);
+}
+
+.users-empty-message {
+  margin: 0;
+  font-size: var(--tp-font-sm);
+  color: var(--tp-text-muted);
+  max-inline-size: 42ch;
+}

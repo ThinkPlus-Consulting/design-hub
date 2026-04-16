@@ -45,7 +45,6 @@ App theme preset override:
 - `frontend/src/app/core/theme/default-preset.ts`
 
 Registry metadata source:
-- `backend/src/main/resources/system-shell-graph-component-registry.json`
 
 Current exact registry contract:
 - package-based metadata, not `node_modules/fesm2022` file paths

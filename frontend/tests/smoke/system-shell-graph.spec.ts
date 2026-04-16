@@ -22,7 +22,7 @@ test('system shell graph workspace renders live seeded data', async ({ page, req
   await expect(page.getByRole('heading', { name: 'ObjectsLogic' })).toBeVisible();
 });
 
-test('tenant list grid view section exposes tenant card instances in the graph', async ({ request }) => {
+test('tenant list grid view section exposes the current representative grid components in the graph', async ({ request }) => {
   const graphResponse = await request.get(`${backendBaseUrl}/api/v1/system-shell-graph/graph`);
   expect(graphResponse.ok()).toBeTruthy();
 
@@ -32,7 +32,7 @@ test('tenant list grid view section exposes tenant card instances in the graph',
   };
 
   const gridSection = (graph.nodes ?? []).find(
-    (node) => node.family === 'Section' && node.name === 'Grid View Section',
+    (node) => node.family === 'Container' && node.name === 'Grid View Section',
   );
   expect(gridSection?.id).toBeTruthy();
 
@@ -53,28 +53,9 @@ test('tenant list grid view section exposes tenant card instances in the graph',
 
   expect(gridChildNames).toEqual(
     new Set([
-      'Tenant Card - Acme Corp',
-      'Tenant Avatar',
-      'Tenant Name',
-      'Tenant Short Name',
       'Tenant Status Badge',
       'Tenant Type Badge',
-      'Tenant Health Badge',
-      'Tenant Stats Summary',
-      'Tenant Card - Northwind Trading',
-      'Tenant Card - Meridian Health',
-      'Tenant Card - Pinnacle Labs',
-      'Tenant Card - Vanguard Group',
-      'Tenant Card - Cascade Solutions',
-      'Tenant Card - Blue Horizon',
-      'Tenant Card - Summit Financial',
-      'Tenant Card - RedBridge Consulting',
-      'Tenant Card - GreenField Energy',
-      'Tenant Card - Atlas Logistics',
-      'Tenant Card - Nova Healthcare',
-      'Tenant Card - Stellar Dynamics',
-      'Tenant Card - Ironclad Security',
-      'Tenant Card - Pacific Ventures',
+      'Tenant Card Result',
     ]),
   );
 });
@@ -140,6 +121,36 @@ test('tenant list preview screen exposes graph identity for the mounted branch',
   await expect(emptyState).toBeVisible();
   await expect(emptyState).toHaveAttribute('source-object-id', /.+/);
   await expect(emptyState).toHaveAttribute('guid', /.+/);
+});
+
+test('tenant users table click-through opens the user factsheet preview', async ({ page }) => {
+  await page.goto('/');
+  await disableDevServerOverlay(page);
+
+  await expandActiveTree(page);
+
+  const tenantFactsheetScreenObjectId = await objectIdForNode(page, 'Screen', 'Tenant Fact Sheet');
+  const userFactsheetScreenObjectId = await objectIdForNode(page, 'Screen', 'View User Fact Sheet');
+  expect(tenantFactsheetScreenObjectId).toBeTruthy();
+  expect(userFactsheetScreenObjectId).toBeTruthy();
+
+  await selectGraphObjectId(page, tenantFactsheetScreenObjectId!);
+  await page.getByRole('tab', { name: 'Preview' }).click();
+  await expect.poll(() => displayedScreenObjectId(page)).toBe(tenantFactsheetScreenObjectId);
+
+  await page.getByTestId('tab-users').click();
+  const firstUserRow = page.getByTestId('users-table-row-0');
+  await expect(firstUserRow).toBeVisible();
+
+  const firstUserName = ((await firstUserRow.locator('td').nth(0).textContent()) ?? '').trim();
+  const firstUserEmail = ((await firstUserRow.locator('td').nth(1).textContent()) ?? '').trim();
+
+  await firstUserRow.click();
+
+  await expect.poll(() => displayedScreenObjectId(page)).toBe(userFactsheetScreenObjectId);
+  await expect(page.getByTestId('user-factsheet-screen')).toBeVisible();
+  await expect(page.getByTestId('user-factsheet-screen')).toContainText(firstUserName);
+  await expect(page.getByTestId('user-factsheet-screen')).toContainText(firstUserEmail);
 });
 
 test('design hub shell and pane geometry stays fixed while workspace content scrolls and inspector tabs switch', async ({ page }) => {
@@ -497,7 +508,7 @@ test('application shell frame selection keeps a stable preview context', async (
   const headerObjectId = await childObjectId(page, shellObjectId!, 'Container', 'Header Container');
   const mainObjectId = await childObjectId(page, shellObjectId!, 'Container', 'Main Container');
   const footerObjectId = await childObjectId(page, shellObjectId!, 'Container', 'Footer Container');
-  const breadcrumbObjectId = await childObjectId(page, shellObjectId!, 'Container', 'Breadcrumb Container');
+  const breadcrumbObjectId = await childObjectId(page, shellObjectId!, 'Section', 'Breadcrumb Container');
   expect(headerObjectId).toBeTruthy();
   expect(mainObjectId).toBeTruthy();
   expect(footerObjectId).toBeTruthy();

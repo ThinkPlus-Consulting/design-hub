@@ -1,0 +1,13 @@
+@use '../../tenant-factsheet-tab.shared';
+
+:host {
+  display: block;
+}
+
+.users-data-state {
+  display: block;
+}
+
+:host ::ng-deep .users-table-row {
+  cursor: pointer;
+}

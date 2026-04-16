@@ -1,0 +1,35 @@
+<section
+  class="users-loading-state"
+  data-dom-ref="tenant-factsheet-users-loading-state"
+  [attr.source-object-id]="bindings().usersLoadingStateSectionSourceObjectId || null"
+  [attr.guid]="bindings().usersLoadingStateSectionGuid || null"
+  data-inspect-id="tenant-factsheet-users-loading-state"
+  [class.ssg-focused]="bindings().usersLoadingStateSectionFocused"
+>
+  <div
+    class="users-loading-skeleton"
+    data-dom-ref="tenant-factsheet-users-table-skeleton"
+    [attr.source-object-id]="bindings().usersTableSkeletonSourceObjectId || null"
+    [attr.guid]="bindings().usersTableSkeletonGuid || null"
+    data-inspect-id="tenant-factsheet-users-table-skeleton"
+    [class.ssg-focused]="bindings().usersTableSkeletonFocused"
+  >
+    <div class="users-loading-header">
+      <p-skeleton height="1rem" width="22%" />
+      <p-skeleton height="1rem" width="26%" />
+      <p-skeleton height="1rem" width="16%" />
+      <p-skeleton height="1rem" width="14%" />
+      <p-skeleton height="1rem" width="16%" />
+    </div>
+
+    @for (index of rowIndices(); track index) {
+      <div class="users-loading-row">
+        <p-skeleton height="1rem" width="18%" />
+        <p-skeleton height="1rem" width="24%" />
+        <p-skeleton height="1rem" width="14%" />
+        <p-skeleton height="1.5rem" width="10%" borderRadius="999px" />
+        <p-skeleton height="1rem" width="14%" />
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,30 @@
+@use '../../tenant-factsheet-tab.shared';
+
+:host {
+  display: block;
+}
+
+.users-loading-state {
+  display: block;
+}
+
+.users-loading-skeleton {
+  display: grid;
+  gap: var(--tenant-factsheet-cluster-gap);
+  padding: var(--tenant-factsheet-card-padding);
+  border: 1px solid var(--tp-border);
+  border-radius: var(--nm-radius);
+  background: var(--tp-surface-raised);
+}
+
+.users-loading-header,
+.users-loading-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 0.8fr);
+  gap: var(--tenant-factsheet-cluster-gap);
+  align-items: center;
+}
+
+.users-loading-header {
+  padding-block-end: var(--tenant-factsheet-tight-gap);
+}

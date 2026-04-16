@@ -1,27 +1,71 @@
 <div
-  class="login-shell-preview-frame"
+  class="login-shell-shell"
   [attr.source-object-id]="sourceObjectId('shell')"
   [attr.guid]="guid('shell')"
-  data-inspect-id="login-shell-frame"
+  data-inspect-id="login-shell"
   [class.ssg-focused]="isFocused('shell')"
+  [style.--ssg-login-shell-background]="backgroundColorStyle()"
+  [style.--ssg-login-shell-pattern-opacity]="backgroundPatternOpacity()"
+  [style.--ssg-login-shell-pattern-image]="backgroundPatternImage()"
+  [style.--ssg-login-shell-frame-width]="shellFrameWidth()"
+  [style.--ssg-login-shell-row-gap]="shellRowGap()"
+  [style.--ssg-login-shell-frame-padding-inline-start]="shellPaddingLeft()"
+  [style.--ssg-login-shell-frame-padding-inline-end]="shellPaddingRight()"
+  [style.--ssg-login-shell-header-height]="headerHeight()"
+  [style.--ssg-login-shell-breadcrumb-height]="breadcrumbHeight()"
+  [style.--ssg-login-shell-main-height]="mainHeight()"
+  [style.--ssg-login-shell-footer-height]="footerHeight()"
 >
-  @if (activeScreenRenderer() === 'login') {
-    <app-login-screen-preview
-      [selectedGuid]="selectedGuid()"
-      [backgroundConfig]="backgroundConfig()"
-      [screenObjectId]="activeScreenObjectId()"
-    />
-  } @else if (activeScreenRenderer() === 'mfa') {
-    <app-mfa-screen-preview
-      [selectedGuid]="selectedGuid()"
-      [backgroundConfig]="backgroundConfig()"
-      [screenObjectId]="activeScreenObjectId()"
-    />
-  } @else if (activeScreenRenderer() === 'tenant-not-found') {
-    <app-tenant-not-found-screen-preview
-      [selectedGuid]="selectedGuid()"
-      [backgroundConfig]="backgroundConfig()"
-      [screenObjectId]="activeScreenObjectId()"
-    />
-  }
+  <header
+    class="login-shell-header"
+    [attr.source-object-id]="sourceObjectId('header')"
+    [attr.guid]="guid('header')"
+    data-inspect-id="login-shell-header-container"
+    [class.ssg-focused]="isFocused('header')"
+  >
+    <div class="shell-frame-inner">
+      <app-login-shell-header-slot />
+    </div>
+  </header>
+
+  <nav
+    class="login-shell-breadcrumb"
+    [attr.source-object-id]="sourceObjectId('breadcrumb')"
+    [attr.guid]="guid('breadcrumb')"
+    data-inspect-id="login-shell-breadcrumb-container"
+    [class.ssg-focused]="isFocused('breadcrumb')"
+  >
+    <div class="shell-frame-inner">
+      <app-login-shell-breadcrumb-slot />
+    </div>
+  </nav>
+
+  <main
+    class="login-shell-main"
+    [attr.source-object-id]="sourceObjectId('main')"
+    [attr.guid]="guid('main')"
+    data-inspect-id="login-shell-main-container"
+    [class.ssg-focused]="isFocused('main')"
+  >
+    <div class="shell-frame-inner login-shell-main-frame">
+      <div class="login-shell-main-scroll">
+        <app-login-shell-main-preview
+          [selectedGuid]="selectedGuid()"
+          [activeScreenObjectId]="activeScreenObjectId()"
+        />
+      </div>
+    </div>
+  </main>
+
+  <footer
+    class="login-shell-footer"
+    [attr.source-object-id]="sourceObjectId('footer')"
+    [attr.guid]="guid('footer')"
+    data-inspect-id="login-shell-footer-container"
+    [class.ssg-focused]="isFocused('footer')"
+  >
+    <div class="shell-frame-inner">
+      <app-login-shell-footer-slot />
+    </div>
+  </footer>
 </div>

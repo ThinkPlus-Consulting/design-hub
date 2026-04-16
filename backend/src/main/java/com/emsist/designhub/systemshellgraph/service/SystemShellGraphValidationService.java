@@ -119,13 +119,13 @@ public class SystemShellGraphValidationService {
                     }
                 }
                 case "Container" -> {
-                    if (parents.size() != 1 || !Set.of("Shell", "Screen").contains(parents.get(0).family())) {
-                        addIssue(issues, objectId, "Container must have exactly one Shell or Screen parent.");
+                    if (parents.size() != 1 || !Set.of("Shell", "Screen", "Container", "Section").contains(parents.get(0).family())) {
+                        addIssue(issues, objectId, "Container must have exactly one Shell, Screen, Container, or Section parent.");
                     }
                 }
                 case "Section" -> {
-                    if (parents.size() != 1 || !"Container".equals(parents.get(0).family())) {
-                        addIssue(issues, objectId, "Section must have exactly one Container parent.");
+                    if (parents.size() != 1 || !Set.of("Shell", "Container", "Screen", "Section").contains(parents.get(0).family())) {
+                        addIssue(issues, objectId, "Section must have exactly one Shell, Container, Screen, or Section parent.");
                     }
                 }
                 case "Component" -> {

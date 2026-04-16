@@ -22,230 +22,24 @@
 
   <header
     class="app-header"
-    [class.app-header-empty]="!hasShellHeaderContent()"
+    [class.app-header-empty]="!headerSlotData().hasContent"
     [attr.source-object-id]="sourceObjectId('header')"
     [attr.guid]="guid('header')"
     data-inspect-id="shell-header-container"
     [class.ssg-focused]="isFocused('header')"
   >
-    @if (hasShellHeaderContent()) {
-      <section class="header-inner shell-frame-inner">
-        <section
-          class="header-island header-island-left"
-          [attr.source-object-id]="sourceObjectId('headerLeft')"
-          [attr.guid]="guid('headerLeft')"
-          data-inspect-id="shell-header-left-island"
-          [class.ssg-focused]="isFocused('headerLeft')"
-        >
-          <p-button
-            styleClass="island-btn"
-            [text]="true"
-            [rounded]="true"
-            [ariaLabel]="menuToggleAriaLabel()"
-            [attr.source-object-id]="sourceObjectId('headerMenuToggle')"
-            [attr.guid]="guid('headerMenuToggle')"
-            data-inspect-id="shell-header-menu-toggle"
-            [class.ssg-focused]="isFocused('headerMenuToggle')"
-          >
-            <ng-template #icon>
-              <p-image
-                [src]="menuIconSrc()"
-                alt=""
-                styleClass="header-icon-host"
-                imageClass="header-icon-image"
-                [imageStyle]="{ width: '16px', height: '16px' }"
-              />
-            </ng-template>
-          </p-button>
-
-          <p-button
-            styleClass="island-logo-button"
-            [text]="true"
-            [rounded]="true"
-            [ariaLabel]="logoAriaLabel()"
-            [attr.source-object-id]="sourceObjectId('headerLogoLink')"
-            [attr.guid]="guid('headerLogoLink')"
-            data-inspect-id="shell-header-logo-link"
-            [class.ssg-focused]="isFocused('headerLogoLink')"
-          >
-            <ng-template #content>
-              <p-image
-                [src]="logoSrc()"
-                [alt]="logoAlt()"
-                styleClass="logo-image-host"
-                imageClass="logo-image"
-                [imageStyle]="{ height: '27px', width: 'auto' }"
-              />
-            </ng-template>
-          </p-button>
-
-          <p-divider
-            layout="vertical"
-            styleClass="island-divider-component"
-            [attr.source-object-id]="sourceObjectId('headerLeftDivider')"
-            [attr.guid]="guid('headerLeftDivider')"
-            data-inspect-id="shell-header-left-divider"
-            [class.ssg-focused]="isFocused('headerLeftDivider')"
-          />
-
-          <p-button
-            styleClass="page-indicator-button"
-            [text]="true"
-            [label]="pageTitle()"
-            [disabled]="true"
-            [ariaLabel]="pageTitle()"
-            [attr.source-object-id]="sourceObjectId('headerPageIndicator')"
-            [attr.guid]="guid('headerPageIndicator')"
-            data-inspect-id="shell-header-page-indicator"
-            [class.ssg-focused]="isFocused('headerPageIndicator')"
-          >
-            <ng-template #icon>
-              <p-image
-                [src]="pageIndicatorIconSrc()"
-                alt=""
-                styleClass="page-indicator-icon-host"
-                imageClass="page-indicator-icon"
-                [imageStyle]="{ width: '16px', height: '16px' }"
-              />
-            </ng-template>
-          </p-button>
-        </section>
-
-        <section
-          class="header-island header-island-right"
-          [attr.source-object-id]="sourceObjectId('headerRight')"
-          [attr.guid]="guid('headerRight')"
-          data-inspect-id="shell-header-right-island"
-          [class.ssg-focused]="isFocused('headerRight')"
-        >
-          <section class="notif-bell-wrapper">
-            <p-button
-              styleClass="notif-bell-btn"
-              [text]="true"
-              [rounded]="true"
-              [ariaLabel]="notificationAriaLabel()"
-              [attr.source-object-id]="sourceObjectId('headerNotificationTrigger')"
-              [attr.guid]="guid('headerNotificationTrigger')"
-              data-inspect-id="shell-header-notification-trigger"
-              [class.ssg-focused]="isFocused('headerNotificationTrigger')"
-            >
-              <ng-template #icon>
-                <p-image
-                  [src]="notificationIconSrc()"
-                  alt=""
-                  styleClass="header-icon-host"
-                  imageClass="header-icon-image"
-                  [imageStyle]="{ width: '16px', height: '16px' }"
-                />
-              </ng-template>
-            </p-button>
-
-            <p-badge
-              [value]="notificationCount()"
-              severity="danger"
-              styleClass="notif-badge"
-              [attr.source-object-id]="sourceObjectId('headerNotificationBadge')"
-              [attr.guid]="guid('headerNotificationBadge')"
-              data-inspect-id="shell-header-notification-badge"
-              [class.ssg-focused]="isFocused('headerNotificationBadge')"
-            />
-          </section>
-
-          <p-button
-            styleClass="island-btn"
-            [text]="true"
-            [rounded]="true"
-            [ariaLabel]="helpAriaLabel()"
-            [attr.source-object-id]="sourceObjectId('headerHelpAction')"
-            [attr.guid]="guid('headerHelpAction')"
-            data-inspect-id="shell-header-help-action"
-            [class.ssg-focused]="isFocused('headerHelpAction')"
-          >
-            <ng-template #icon>
-              <p-image
-                [src]="helpIconSrc()"
-                alt=""
-                styleClass="header-icon-host"
-                imageClass="header-icon-image"
-                [imageStyle]="{ width: '16px', height: '16px' }"
-              />
-            </ng-template>
-          </p-button>
-
-          <p-button
-            styleClass="switcher-btn"
-            [text]="true"
-            [label]="languageLabel()"
-            [ariaLabel]="languageAriaLabel()"
-            [attr.source-object-id]="sourceObjectId('headerLanguageSwitcher')"
-            [attr.guid]="guid('headerLanguageSwitcher')"
-            data-inspect-id="shell-header-language-switcher"
-            [class.ssg-focused]="isFocused('headerLanguageSwitcher')"
-          >
-            <ng-template #icon>
-              <p-image
-                [src]="languageFlagSrc()"
-                alt=""
-                styleClass="flag-icon-host"
-                imageClass="flag-icon"
-                [imageStyle]="{ width: '16px', height: '16px' }"
-              />
-            </ng-template>
-          </p-button>
-
-          <p-divider
-            layout="vertical"
-            styleClass="island-divider-component"
-            [attr.source-object-id]="sourceObjectId('headerRightDivider')"
-            [attr.guid]="guid('headerRightDivider')"
-            data-inspect-id="shell-header-right-divider"
-            [class.ssg-focused]="isFocused('headerRightDivider')"
-          />
-
-          <p-button
-            styleClass="avatar-trigger-button"
-            [text]="true"
-            [rounded]="true"
-            [ariaLabel]="userMenuAriaLabel()"
-            [attr.source-object-id]="sourceObjectId('headerUserAvatar')"
-            [attr.guid]="guid('headerUserAvatar')"
-            data-inspect-id="shell-header-user-avatar"
-            [class.ssg-focused]="isFocused('headerUserAvatar')"
-          >
-            <ng-template #content>
-              <p-avatar
-                [label]="userAvatarLabel()"
-                shape="circle"
-                styleClass="avatar-circle-component"
-              />
-            </ng-template>
-          </p-button>
-        </section>
-      </section>
-    }
+    <app-application-shell-header-slot [slot]="headerSlotData()" />
   </header>
 
   @if (showShellBreadcrumb()) {
     <nav
-      class="shell-breadcrumb-strip shell-breadcrumb-frame"
+      class="shell-breadcrumb-strip"
       [attr.source-object-id]="sourceObjectId('breadcrumb')"
       [attr.guid]="guid('breadcrumb')"
       data-inspect-id="shell-breadcrumb-container"
       [class.ssg-focused]="isFocused('breadcrumb')"
     >
-      <div class="shell-frame-inner shell-breadcrumb-frame-inner">
-        <div
-          class="shell-breadcrumb-component"
-          [attr.source-object-id]="sourceObjectId('breadcrumbTrail')"
-          [attr.guid]="guid('breadcrumbTrail')"
-          data-inspect-id="shell-breadcrumb"
-          [class.ssg-focused]="isFocused('breadcrumbTrail')"
-        >
-          @if (showShellBreadcrumbContent()) {
-            <p-breadcrumb [model]="shellBreadcrumbItems()" [home]="shellBreadcrumbHome()" />
-          }
-        </div>
-      </div>
+      <app-application-shell-breadcrumb-slot [slot]="breadcrumbSlotData()" />
     </nav>
   }
 
@@ -258,16 +52,10 @@
     data-inspect-id="shell-main-container"
     [class.ssg-focused]="isFocused('main')"
   >
-    <div class="content-inner shell-frame-inner">
-      @if (activeScreenRenderer() === "tenant-list") {
-        <app-tenant-list-screen-preview [selectedGuid]="selectedGuid()" [screenObjectId]="activeScreenObjectId()" />
-      } @else if (activeScreenRenderer() === "tenant-factsheet") {
-        <app-tenant-factsheet-screen-preview
-          [selectedGuid]="selectedGuid()"
-          [screenObjectId]="activeScreenObjectId()"
-        />
-      }
-    </div>
+    <app-application-shell-main-preview
+      [selectedGuid]="selectedGuid()"
+      [activeScreenObjectId]="activeScreenObjectId()"
+    />
   </main>
 
   <footer
@@ -277,6 +65,6 @@
     data-inspect-id="shell-footer-container"
     [class.ssg-focused]="isFocused('footer')"
   >
-    <section class="footer-inner shell-frame-inner"></section>
+    <app-application-shell-footer-slot />
   </footer>
 </div>

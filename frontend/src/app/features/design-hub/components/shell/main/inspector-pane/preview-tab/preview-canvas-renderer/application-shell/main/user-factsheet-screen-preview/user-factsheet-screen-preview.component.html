@@ -1,0 +1,831 @@
+<div
+  class="user-factsheet-screen"
+  data-dom-ref="user-factsheet-screen"
+  [attr.source-object-id]="sourceObjectId('screen')"
+  [attr.guid]="guid('screen')"
+  data-inspect-id="user-factsheet-screen"
+  [class.ssg-focused]="isFocused('screen')"
+  data-testid="user-factsheet-screen"
+>
+  <header
+    class="user-header"
+    data-dom-ref="user-factsheet-header"
+    [attr.source-object-id]="sourceObjectId('userHeader')"
+    [attr.guid]="guid('userHeader')"
+    data-inspect-id="user-factsheet-header"
+    [class.ssg-focused]="isFocused('userHeader')"
+    data-testid="user-factsheet-header"
+  >
+    <div class="user-header-panel">
+      <section
+        class="user-avatar-section"
+        data-dom-ref="user-factsheet-avatar-section"
+        [attr.source-object-id]="sourceObjectId('userAvatarSection')"
+        [attr.guid]="guid('userAvatarSection')"
+        data-inspect-id="user-factsheet-avatar-section"
+        [class.ssg-focused]="isFocused('userAvatarSection')"
+      >
+        <div
+          class="user-avatar-frame"
+          data-dom-ref="user-factsheet-avatar"
+          [attr.source-object-id]="sourceObjectId('userAvatar')"
+          [attr.guid]="guid('userAvatar')"
+          data-inspect-id="user-factsheet-avatar"
+          [class.ssg-focused]="isFocused('userAvatar')"
+        >
+          <p-image
+            [src]="avatarSrc()"
+            [alt]="user().displayName + ' avatar'"
+            [preview]="false"
+            imageClass="user-avatar-image"
+          />
+        </div>
+      </section>
+
+      <section
+        class="user-identity-section"
+        data-dom-ref="user-factsheet-identity-section"
+        [attr.source-object-id]="sourceObjectId('userIdentitySection')"
+        [attr.guid]="guid('userIdentitySection')"
+        data-inspect-id="user-factsheet-identity-section"
+        [class.ssg-focused]="isFocused('userIdentitySection')"
+      >
+        <div
+          class="identity-row identity-row-name"
+          data-dom-ref="user-factsheet-name-row"
+          [attr.source-object-id]="sourceObjectId('userNameRowSection')"
+          [attr.guid]="guid('userNameRowSection')"
+          data-inspect-id="user-factsheet-name-row"
+          [class.ssg-focused]="isFocused('userNameRowSection')"
+        >
+          <h1
+            class="user-display-name"
+            data-dom-ref="user-factsheet-display-name"
+            [attr.source-object-id]="sourceObjectId('userDisplayName')"
+            [attr.guid]="guid('userDisplayName')"
+            data-inspect-id="user-factsheet-display-name"
+            [class.ssg-focused]="isFocused('userDisplayName')"
+          >
+            {{ user().displayName }}
+          </h1>
+        </div>
+
+        <div
+          class="identity-row identity-row-profile"
+          data-dom-ref="user-factsheet-profile-row"
+          [attr.source-object-id]="sourceObjectId('userProfileRowSection')"
+          [attr.guid]="guid('userProfileRowSection')"
+          data-inspect-id="user-factsheet-profile-row"
+          [class.ssg-focused]="isFocused('userProfileRowSection')"
+        >
+          <a
+            class="identity-link"
+            href="mailto:{{ user().email }}"
+            data-dom-ref="user-factsheet-email"
+            [attr.source-object-id]="sourceObjectId('userEmail')"
+            [attr.guid]="guid('userEmail')"
+            data-inspect-id="user-factsheet-email"
+            [class.ssg-focused]="isFocused('userEmail')"
+          >
+            {{ user().email }}
+          </a>
+          <code
+            class="identity-code"
+            data-dom-ref="user-factsheet-username"
+            [attr.source-object-id]="sourceObjectId('userUsername')"
+            [attr.guid]="guid('userUsername')"
+            data-inspect-id="user-factsheet-username"
+            [class.ssg-focused]="isFocused('userUsername')"
+          >
+            {{ user().username }}
+          </code>
+          <span
+            data-dom-ref="user-factsheet-status-badge"
+            [attr.source-object-id]="sourceObjectId('userStatusBadge')"
+            [attr.guid]="guid('userStatusBadge')"
+            data-inspect-id="user-factsheet-status-badge"
+            [class.ssg-focused]="isFocused('userStatusBadge')"
+          >
+            <p-tag [value]="user().status" [severity]="userStatusSeverity(user().status)" />
+          </span>
+        </div>
+
+        <div
+          class="identity-row identity-row-auth"
+          data-dom-ref="user-factsheet-auth-row"
+          [attr.source-object-id]="sourceObjectId('userAuthProvenanceRowSection')"
+          [attr.guid]="guid('userAuthProvenanceRowSection')"
+          data-inspect-id="user-factsheet-auth-row"
+          [class.ssg-focused]="isFocused('userAuthProvenanceRowSection')"
+        >
+          <span
+            data-dom-ref="user-factsheet-primary-auth-provider"
+            [attr.source-object-id]="sourceObjectId('primaryAuthProviderTag')"
+            [attr.guid]="guid('primaryAuthProviderTag')"
+            data-inspect-id="user-factsheet-primary-auth-provider"
+            [class.ssg-focused]="isFocused('primaryAuthProviderTag')"
+          >
+            <p-tag [value]="user().primaryAuthProvider" severity="info" icon="pi pi-shield" />
+          </span>
+          <span
+            class="identity-inline-text"
+            data-dom-ref="user-factsheet-linked-providers-summary"
+            [attr.source-object-id]="sourceObjectId('linkedProvidersSummary')"
+            [attr.guid]="guid('linkedProvidersSummary')"
+            data-inspect-id="user-factsheet-linked-providers-summary"
+            [class.ssg-focused]="isFocused('linkedProvidersSummary')"
+          >
+            {{ linkedProvidersLabel() }}
+          </span>
+        </div>
+
+        <div
+          class="identity-row identity-row-summary"
+          data-dom-ref="user-factsheet-summary-row"
+          [attr.source-object-id]="sourceObjectId('userSummaryRowSection')"
+          [attr.guid]="guid('userSummaryRowSection')"
+          data-inspect-id="user-factsheet-summary-row"
+          [class.ssg-focused]="isFocused('userSummaryRowSection')"
+        >
+          <div
+            class="summary-pill"
+            data-dom-ref="user-factsheet-last-login"
+            [attr.source-object-id]="sourceObjectId('lastLoginFact')"
+            [attr.guid]="guid('lastLoginFact')"
+            data-inspect-id="user-factsheet-last-login"
+            [class.ssg-focused]="isFocused('lastLoginFact')"
+          >
+            <span class="summary-label">Last Login</span>
+            <span class="summary-value">{{ user().lastLogin }}</span>
+          </div>
+          <div
+            class="summary-pill"
+            data-dom-ref="user-factsheet-active-sessions"
+            [attr.source-object-id]="sourceObjectId('activeSessionsFact')"
+            [attr.guid]="guid('activeSessionsFact')"
+            data-inspect-id="user-factsheet-active-sessions"
+            [class.ssg-focused]="isFocused('activeSessionsFact')"
+          >
+            <span class="summary-label">Active Sessions</span>
+            <span class="summary-value">{{ user().activeSessions }}</span>
+          </div>
+          <span
+            data-dom-ref="user-factsheet-licensed-type"
+            [attr.source-object-id]="sourceObjectId('licensedTypeBadge')"
+            [attr.guid]="guid('licensedTypeBadge')"
+            data-inspect-id="user-factsheet-licensed-type"
+            [class.ssg-focused]="isFocused('licensedTypeBadge')"
+          >
+            <p-tag [value]="user().licensedType" severity="secondary" />
+          </span>
+        </div>
+      </section>
+
+      <section
+        class="user-actions-section"
+        data-dom-ref="user-factsheet-actions-section"
+        [attr.source-object-id]="sourceObjectId('userActionsSection')"
+        [attr.guid]="guid('userActionsSection')"
+        data-inspect-id="user-factsheet-actions-section"
+        [class.ssg-focused]="isFocused('userActionsSection')"
+      >
+        <div
+          data-dom-ref="user-factsheet-refresh-action"
+          [attr.source-object-id]="sourceObjectId('refreshUser')"
+          [attr.guid]="guid('refreshUser')"
+          data-inspect-id="user-factsheet-refresh-action"
+          [class.ssg-focused]="isFocused('refreshUser')"
+        >
+          <p-button [label]="content()?.actions?.refreshLabel ?? 'Refresh User'" icon="pi pi-refresh" severity="secondary" />
+        </div>
+        <div
+          data-dom-ref="user-factsheet-revoke-sessions-action"
+          [attr.source-object-id]="sourceObjectId('revokeAllSessions')"
+          [attr.guid]="guid('revokeAllSessions')"
+          data-inspect-id="user-factsheet-revoke-sessions-action"
+          [class.ssg-focused]="isFocused('revokeAllSessions')"
+        >
+          <p-button
+            [label]="content()?.actions?.revokeAllSessionsLabel ?? 'Revoke All Sessions'"
+            icon="pi pi-ban"
+            severity="warn"
+          />
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <div
+    class="user-details-card"
+    data-dom-ref="user-factsheet-details-container"
+    [attr.source-object-id]="sourceObjectId('detailsContainer')"
+    [attr.guid]="guid('detailsContainer')"
+    data-inspect-id="user-factsheet-details-container"
+    [class.ssg-focused]="isFocused('detailsContainer')"
+  >
+    <div class="user-tabs-card">
+      <p-tabs [value]="activeTab()" (valueChange)="onTabChange($any($event))">
+        <p-tablist
+          data-dom-ref="user-factsheet-tabs-row"
+          [attr.source-object-id]="sourceObjectId('factsheetTabsRowSection')"
+          [attr.guid]="guid('factsheetTabsRowSection')"
+          data-inspect-id="user-factsheet-tabs-row"
+          [class.ssg-focused]="isFocused('factsheetTabsRowSection')"
+        >
+          @for (tab of tabs(); track tab.value) {
+            <p-tab
+              [value]="tab.value"
+              [attr.data-dom-ref]="'user-factsheet-tab-' + tab.value"
+              [attr.source-object-id]="sourceObjectId(tab.value + 'Tab')"
+              [attr.guid]="guid(tab.value + 'Tab')"
+              [attr.data-inspect-id]="'user-factsheet-tab-' + tab.value"
+              [class.ssg-focused]="isFocused(tab.value + 'Tab')"
+            >
+              <span class="tab-trigger">
+                <span class="tab-label">{{ tab.label }}</span>
+                @if (tab.count !== null) {
+                  <span class="tab-count">{{ tab.count }}</span>
+                }
+              </span>
+            </p-tab>
+          }
+        </p-tablist>
+
+        <p-tabpanels
+          data-dom-ref="user-factsheet-tab-contents-row"
+          [attr.source-object-id]="sourceObjectId('factsheetTabContentsRowSection')"
+          [attr.guid]="guid('factsheetTabContentsRowSection')"
+          data-inspect-id="user-factsheet-tab-contents-row"
+          [class.ssg-focused]="isFocused('factsheetTabContentsRowSection')"
+        >
+          <p-tabpanel value="overview">
+            <section
+              class="tab-layout tab-layout-overview"
+              data-dom-ref="user-factsheet-overview-tab-section"
+              [attr.source-object-id]="sourceObjectId('overviewTabSection')"
+              [attr.guid]="guid('overviewTabSection')"
+              data-inspect-id="user-factsheet-overview-tab-section"
+              [class.ssg-focused]="isFocused('overviewTabSection')"
+            >
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-profile-summary-section"
+                [attr.source-object-id]="sourceObjectId('profileSummarySection')"
+                [attr.guid]="guid('profileSummarySection')"
+                data-inspect-id="user-factsheet-profile-summary-section"
+                [class.ssg-focused]="isFocused('profileSummarySection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-profile-summary-card"
+                  [attr.source-object-id]="sourceObjectId('profileSummaryCard')"
+                  [attr.guid]="guid('profileSummaryCard')"
+                  data-inspect-id="user-factsheet-profile-summary-card"
+                  [class.ssg-focused]="isFocused('profileSummaryCard')"
+                >
+                  <p-card [header]="content()?.overview?.profileSummary?.title ?? 'Profile Summary'">
+                    <p>{{ content()?.overview?.profileSummary?.summary }}</p>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-sessions-panel-section"
+                [attr.source-object-id]="sourceObjectId('sessionsPanelSection')"
+                [attr.guid]="guid('sessionsPanelSection')"
+                data-inspect-id="user-factsheet-sessions-panel-section"
+                [class.ssg-focused]="isFocused('sessionsPanelSection')"
+              >
+                @if (showSessionsLoading()) {
+                  <div
+                    class="fact-card-host uf-card"
+                    data-dom-ref="user-factsheet-sessions-loading-state"
+                    [attr.source-object-id]="sourceObjectId('sessionsLoadingStateSection')"
+                    [attr.guid]="guid('sessionsLoadingStateSection')"
+                    data-inspect-id="user-factsheet-sessions-loading-state"
+                    [class.ssg-focused]="isFocused('sessionsLoadingStateSection')"
+                  >
+                    <div
+                      class="sessions-loading-card"
+                      data-dom-ref="user-factsheet-sessions-skeleton"
+                      [attr.source-object-id]="sourceObjectId('sessionsSkeleton')"
+                      [attr.guid]="guid('sessionsSkeleton')"
+                      data-inspect-id="user-factsheet-sessions-skeleton"
+                      [class.ssg-focused]="isFocused('sessionsSkeleton')"
+                    >
+                      @for (row of sessionRowIndices(); track row) {
+                        <div class="session-skeleton-row">
+                          <p-skeleton width="16%" height="1rem" />
+                          <p-skeleton width="24%" height="1rem" />
+                          <p-skeleton width="16%" height="1rem" />
+                          <p-skeleton width="16%" height="1rem" />
+                          <p-skeleton width="16%" height="1rem" />
+                          <p-skeleton width="12%" height="1rem" />
+                        </div>
+                      }
+                    </div>
+                  </div>
+                } @else if (showSessionsEmpty()) {
+                  <div
+                    class="fact-card-host uf-card"
+                    data-dom-ref="user-factsheet-sessions-empty-state"
+                    [attr.source-object-id]="sourceObjectId('sessionsEmptyStateSection')"
+                    [attr.guid]="guid('sessionsEmptyStateSection')"
+                    data-inspect-id="user-factsheet-sessions-empty-state"
+                    [class.ssg-focused]="isFocused('sessionsEmptyStateSection')"
+                  >
+                    <p-card>
+                      <h3
+                        class="empty-state-title"
+                        data-dom-ref="user-factsheet-sessions-empty-title"
+                        [attr.source-object-id]="sourceObjectId('sessionsEmptyTitle')"
+                        [attr.guid]="guid('sessionsEmptyTitle')"
+                        data-inspect-id="user-factsheet-sessions-empty-title"
+                        [class.ssg-focused]="isFocused('sessionsEmptyTitle')"
+                      >
+                        {{ content()?.overview?.sessions?.emptyTitle }}
+                      </h3>
+                      <p
+                        class="empty-state-message"
+                        data-dom-ref="user-factsheet-sessions-empty-message"
+                        [attr.source-object-id]="sourceObjectId('sessionsEmptyMessage')"
+                        [attr.guid]="guid('sessionsEmptyMessage')"
+                        data-inspect-id="user-factsheet-sessions-empty-message"
+                        [class.ssg-focused]="isFocused('sessionsEmptyMessage')"
+                      >
+                        {{ content()?.overview?.sessions?.emptyMessage }}
+                      </p>
+                    </p-card>
+                  </div>
+                } @else if (showSessionsError()) {
+                  <div
+                    class="fact-card-host uf-card"
+                    data-dom-ref="user-factsheet-sessions-error-state"
+                    [attr.source-object-id]="sourceObjectId('sessionsErrorStateSection')"
+                    [attr.guid]="guid('sessionsErrorStateSection')"
+                    data-inspect-id="user-factsheet-sessions-error-state"
+                    [class.ssg-focused]="isFocused('sessionsErrorStateSection')"
+                  >
+                    <div class="sessions-error-card">
+                      <div
+                        data-dom-ref="user-factsheet-sessions-error-banner"
+                        [attr.source-object-id]="sourceObjectId('sessionsErrorBanner')"
+                        [attr.guid]="guid('sessionsErrorBanner')"
+                        data-inspect-id="user-factsheet-sessions-error-banner"
+                        [class.ssg-focused]="isFocused('sessionsErrorBanner')"
+                      >
+                        <p-message severity="error" [text]="content()?.overview?.sessions?.errorMessage ?? ''" />
+                      </div>
+                      <div
+                        data-dom-ref="user-factsheet-sessions-retry-action"
+                        [attr.source-object-id]="sourceObjectId('sessionsRetryAction')"
+                        [attr.guid]="guid('sessionsRetryAction')"
+                        data-inspect-id="user-factsheet-sessions-retry-action"
+                        [class.ssg-focused]="isFocused('sessionsRetryAction')"
+                      >
+                        <p-button label="Retry" icon="pi pi-refresh" severity="secondary" (onClick)="retrySessions()" />
+                      </div>
+                    </div>
+                  </div>
+                } @else if (showSessionsData()) {
+                  <div
+                    class="fact-card-host uf-card"
+                    data-dom-ref="user-factsheet-sessions-data-state"
+                    [attr.source-object-id]="sourceObjectId('sessionsDataStateSection')"
+                    [attr.guid]="guid('sessionsDataStateSection')"
+                    data-inspect-id="user-factsheet-sessions-data-state"
+                    [class.ssg-focused]="isFocused('sessionsDataStateSection')"
+                  >
+                    <div
+                      data-dom-ref="user-factsheet-sessions-table"
+                      [attr.source-object-id]="sourceObjectId('sessionsTable')"
+                      [attr.guid]="guid('sessionsTable')"
+                      data-inspect-id="user-factsheet-sessions-table"
+                      [class.ssg-focused]="isFocused('sessionsTable')"
+                    >
+                      <p-table [value]="sessionTableRows()" [tableStyle]="{ 'min-width': '56rem' }">
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th>{{ content()?.overview?.sessions?.tableColumns?.status }}</th>
+                            <th>{{ content()?.overview?.sessions?.tableColumns?.deviceIp }}</th>
+                            <th>{{ content()?.overview?.sessions?.tableColumns?.loginTime }}</th>
+                            <th>{{ content()?.overview?.sessions?.tableColumns?.lastActivity }}</th>
+                            <th>{{ content()?.overview?.sessions?.tableColumns?.expires }}</th>
+                            <th>{{ content()?.overview?.sessions?.tableColumns?.flags }}</th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-session>
+                          <tr>
+                            <td>
+                              <p-tag [value]="session.status" [severity]="sessionStatusSeverity(session.status)" />
+                            </td>
+                            <td>
+                              <div class="session-device">{{ session.deviceName }}</div>
+                              <div class="session-ip">{{ session.ipAddress }}</div>
+                            </td>
+                            <td>{{ session.loginTime }}</td>
+                            <td>{{ session.lastActivity }}</td>
+                            <td>{{ session.expires }}</td>
+                            <td>
+                              <div class="session-flags">
+                                @if (session.isCurrent) {
+                                  <span
+                                    data-dom-ref="user-factsheet-current-session-badge"
+                                    [attr.source-object-id]="sourceObjectId('currentSessionBadge')"
+                                    [attr.guid]="guid('currentSessionBadge')"
+                                    data-inspect-id="user-factsheet-current-session-badge"
+                                    [class.ssg-focused]="isFocused('currentSessionBadge')"
+                                  >
+                                    <p-tag value="Current" severity="success" />
+                                  </span>
+                                }
+                                @if (session.isRemembered) {
+                                  <span
+                                    data-dom-ref="user-factsheet-remember-me-badge"
+                                    [attr.source-object-id]="sourceObjectId('rememberMeBadge')"
+                                    [attr.guid]="guid('rememberMeBadge')"
+                                    data-inspect-id="user-factsheet-remember-me-badge"
+                                    [class.ssg-focused]="isFocused('rememberMeBadge')"
+                                  >
+                                    <p-tag value="Remembered" severity="info" />
+                                  </span>
+                                }
+                                @if (session.mfaVerified) {
+                                  <span
+                                    data-dom-ref="user-factsheet-mfa-badge"
+                                    [attr.source-object-id]="sourceObjectId('mfaBadge')"
+                                    [attr.guid]="guid('mfaBadge')"
+                                    data-inspect-id="user-factsheet-mfa-badge"
+                                    [class.ssg-focused]="isFocused('mfaBadge')"
+                                  >
+                                    <p-tag value="MFA" severity="warn" />
+                                  </span>
+                                }
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  </div>
+                }
+              </section>
+            </section>
+          </p-tabpanel>
+
+          <p-tabpanel value="organization">
+            <section
+              class="tab-layout tab-layout-grid"
+              data-dom-ref="user-factsheet-organization-tab-section"
+              [attr.source-object-id]="sourceObjectId('organizationTabSection')"
+              [attr.guid]="guid('organizationTabSection')"
+              data-inspect-id="user-factsheet-organization-tab-section"
+              [class.ssg-focused]="isFocused('organizationTabSection')"
+            >
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-organization-summary-section"
+                [attr.source-object-id]="sourceObjectId('organizationSummarySection')"
+                [attr.guid]="guid('organizationSummarySection')"
+                data-inspect-id="user-factsheet-organization-summary-section"
+                [class.ssg-focused]="isFocused('organizationSummarySection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-organization-context-card"
+                  [attr.source-object-id]="sourceObjectId('organizationContextCard')"
+                  [attr.guid]="guid('organizationContextCard')"
+                  data-inspect-id="user-factsheet-organization-context-card"
+                  [class.ssg-focused]="isFocused('organizationContextCard')"
+                >
+                  <p-card header="Organization Summary">
+                    <dl class="fact-grid">
+                      <div>
+                        <dt>Organization</dt>
+                        <dd>{{ content()?.organization?.organizationName }}</dd>
+                      </div>
+                      <div>
+                        <dt>Business Unit</dt>
+                        <dd>{{ content()?.organization?.businessUnit }}</dd>
+                      </div>
+                      <div>
+                        <dt>Manager</dt>
+                        <dd>{{ content()?.organization?.manager }}</dd>
+                      </div>
+                    </dl>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-reporting-line-section"
+                [attr.source-object-id]="sourceObjectId('reportingLineSection')"
+                [attr.guid]="guid('reportingLineSection')"
+                data-inspect-id="user-factsheet-reporting-line-section"
+                [class.ssg-focused]="isFocused('reportingLineSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-reporting-line-fact"
+                  [attr.source-object-id]="sourceObjectId('reportingLineFact')"
+                  [attr.guid]="guid('reportingLineFact')"
+                  data-inspect-id="user-factsheet-reporting-line-fact"
+                  [class.ssg-focused]="isFocused('reportingLineFact')"
+                >
+                  <p-card header="Reporting Line">
+                    <p>{{ content()?.organization?.reportingLine }}</p>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-team-relationships-section"
+                [attr.source-object-id]="sourceObjectId('teamRelationshipsSection')"
+                [attr.guid]="guid('teamRelationshipsSection')"
+                data-inspect-id="user-factsheet-team-relationships-section"
+                [class.ssg-focused]="isFocused('teamRelationshipsSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-team-relationships-fact"
+                  [attr.source-object-id]="sourceObjectId('teamRelationshipsFact')"
+                  [attr.guid]="guid('teamRelationshipsFact')"
+                  data-inspect-id="user-factsheet-team-relationships-fact"
+                  [class.ssg-focused]="isFocused('teamRelationshipsFact')"
+                >
+                  <p-card header="Team Relationships">
+                    <p>{{ content()?.organization?.teamRelationships }}</p>
+                  </p-card>
+                </div>
+              </section>
+            </section>
+          </p-tabpanel>
+
+          <p-tabpanel value="authProviders">
+            <section
+              class="tab-layout tab-layout-grid"
+              data-dom-ref="user-factsheet-auth-providers-tab-section"
+              [attr.source-object-id]="sourceObjectId('authProvidersTabSection')"
+              [attr.guid]="guid('authProvidersTabSection')"
+              data-inspect-id="user-factsheet-auth-providers-tab-section"
+              [class.ssg-focused]="isFocused('authProvidersTabSection')"
+            >
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-primary-provider-section"
+                [attr.source-object-id]="sourceObjectId('primaryProviderSection')"
+                [attr.guid]="guid('primaryProviderSection')"
+                data-inspect-id="user-factsheet-primary-provider-section"
+                [class.ssg-focused]="isFocused('primaryProviderSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-primary-provider-detail"
+                  [attr.source-object-id]="sourceObjectId('primaryProviderDetail')"
+                  [attr.guid]="guid('primaryProviderDetail')"
+                  data-inspect-id="user-factsheet-primary-provider-detail"
+                  [class.ssg-focused]="isFocused('primaryProviderDetail')"
+                >
+                  <p-card header="Primary Provider">
+                    <dl class="fact-grid">
+                      <div>
+                        <dt>Name</dt>
+                        <dd>{{ content()?.authProviders?.primaryProvider?.name }}</dd>
+                      </div>
+                      <div>
+                        <dt>Status</dt>
+                        <dd>{{ content()?.authProviders?.primaryProvider?.status }}</dd>
+                      </div>
+                      <div>
+                        <dt>Identity Reference</dt>
+                        <dd>{{ content()?.authProviders?.primaryProvider?.identityReference }}</dd>
+                      </div>
+                    </dl>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-linked-providers-section"
+                [attr.source-object-id]="sourceObjectId('linkedProvidersSection')"
+                [attr.guid]="guid('linkedProvidersSection')"
+                data-inspect-id="user-factsheet-linked-providers-section"
+                [class.ssg-focused]="isFocused('linkedProvidersSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-linked-providers-list"
+                  [attr.source-object-id]="sourceObjectId('linkedProvidersList')"
+                  [attr.guid]="guid('linkedProvidersList')"
+                  data-inspect-id="user-factsheet-linked-providers-list"
+                  [class.ssg-focused]="isFocused('linkedProvidersList')"
+                >
+                  <p-card header="Linked Providers">
+                    <ul class="fact-list">
+                      @for (provider of linkedProviders(); track provider.identityReference) {
+                        <li>
+                          <strong>{{ provider.name }}</strong>
+                          <span>{{ provider.status }}</span>
+                          <code>{{ provider.identityReference }}</code>
+                        </li>
+                      }
+                    </ul>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-provider-identity-references-section"
+                [attr.source-object-id]="sourceObjectId('providerIdentityReferencesSection')"
+                [attr.guid]="guid('providerIdentityReferencesSection')"
+                data-inspect-id="user-factsheet-provider-identity-references-section"
+                [class.ssg-focused]="isFocused('providerIdentityReferencesSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-provider-identity-references-list"
+                  [attr.source-object-id]="sourceObjectId('providerIdentityReferencesList')"
+                  [attr.guid]="guid('providerIdentityReferencesList')"
+                  data-inspect-id="user-factsheet-provider-identity-references-list"
+                  [class.ssg-focused]="isFocused('providerIdentityReferencesList')"
+                >
+                  <p-card header="Provider Identity References">
+                    <ul class="fact-list fact-list-plain">
+                      @for (reference of authProviderReferences(); track reference) {
+                        <li><code>{{ reference }}</code></li>
+                      }
+                    </ul>
+                  </p-card>
+                </div>
+              </section>
+            </section>
+          </p-tabpanel>
+
+          <p-tabpanel value="rolesAccess">
+            <section
+              class="tab-layout tab-layout-grid"
+              data-dom-ref="user-factsheet-roles-access-tab-section"
+              [attr.source-object-id]="sourceObjectId('rolesAndAccessTabSection')"
+              [attr.guid]="guid('rolesAndAccessTabSection')"
+              data-inspect-id="user-factsheet-roles-access-tab-section"
+              [class.ssg-focused]="isFocused('rolesAndAccessTabSection')"
+            >
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-licensed-type-section"
+                [attr.source-object-id]="sourceObjectId('licensedTypeSection')"
+                [attr.guid]="guid('licensedTypeSection')"
+                data-inspect-id="user-factsheet-licensed-type-section"
+                [class.ssg-focused]="isFocused('licensedTypeSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-licensed-type-detail-badge"
+                  [attr.source-object-id]="sourceObjectId('licensedTypeDetailBadge')"
+                  [attr.guid]="guid('licensedTypeDetailBadge')"
+                  data-inspect-id="user-factsheet-licensed-type-detail-badge"
+                  [class.ssg-focused]="isFocused('licensedTypeDetailBadge')"
+                >
+                  <p-card header="Licensed Type">
+                    <p-tag [value]="content()?.rolesAccess?.licensedType ?? ''" severity="secondary" />
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-assigned-roles-section"
+                [attr.source-object-id]="sourceObjectId('assignedRolesSection')"
+                [attr.guid]="guid('assignedRolesSection')"
+                data-inspect-id="user-factsheet-assigned-roles-section"
+                [class.ssg-focused]="isFocused('assignedRolesSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-assigned-roles-list"
+                  [attr.source-object-id]="sourceObjectId('assignedRolesList')"
+                  [attr.guid]="guid('assignedRolesList')"
+                  data-inspect-id="user-factsheet-assigned-roles-list"
+                  [class.ssg-focused]="isFocused('assignedRolesList')"
+                >
+                  <p-card header="Assigned Roles">
+                    <ul class="fact-list">
+                      @for (role of assignedRoles(); track role) {
+                        <li>{{ role }}</li>
+                      }
+                    </ul>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-assigned-groups-section"
+                [attr.source-object-id]="sourceObjectId('assignedGroupsSection')"
+                [attr.guid]="guid('assignedGroupsSection')"
+                data-inspect-id="user-factsheet-assigned-groups-section"
+                [class.ssg-focused]="isFocused('assignedGroupsSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-assigned-groups-list"
+                  [attr.source-object-id]="sourceObjectId('assignedGroupsList')"
+                  [attr.guid]="guid('assignedGroupsList')"
+                  data-inspect-id="user-factsheet-assigned-groups-list"
+                  [class.ssg-focused]="isFocused('assignedGroupsList')"
+                >
+                  <p-card header="Assigned Groups">
+                    <ul class="fact-list">
+                      @for (group of assignedGroups(); track group) {
+                        <li>{{ group }}</li>
+                      }
+                    </ul>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-allow-list-section"
+                [attr.source-object-id]="sourceObjectId('allowListSection')"
+                [attr.guid]="guid('allowListSection')"
+                data-inspect-id="user-factsheet-allow-list-section"
+                [class.ssg-focused]="isFocused('allowListSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-allow-list-summary"
+                  [attr.source-object-id]="sourceObjectId('allowListSummary')"
+                  [attr.guid]="guid('allowListSummary')"
+                  data-inspect-id="user-factsheet-allow-list-summary"
+                  [class.ssg-focused]="isFocused('allowListSummary')"
+                >
+                  <p-card header="Allow List">
+                    <ul class="fact-list">
+                      @for (entry of allowList(); track entry) {
+                        <li>{{ entry }}</li>
+                      }
+                    </ul>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-block-list-section"
+                [attr.source-object-id]="sourceObjectId('blockListSection')"
+                [attr.guid]="guid('blockListSection')"
+                data-inspect-id="user-factsheet-block-list-section"
+                [class.ssg-focused]="isFocused('blockListSection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-block-list-summary"
+                  [attr.source-object-id]="sourceObjectId('blockListSummary')"
+                  [attr.guid]="guid('blockListSummary')"
+                  data-inspect-id="user-factsheet-block-list-summary"
+                  [class.ssg-focused]="isFocused('blockListSummary')"
+                >
+                  <p-card header="Block List">
+                    <ul class="fact-list">
+                      @for (entry of blockList(); track entry) {
+                        <li>{{ entry }}</li>
+                      }
+                    </ul>
+                  </p-card>
+                </div>
+              </section>
+
+              <section
+                class="card-section"
+                data-dom-ref="user-factsheet-effective-access-summary-section"
+                [attr.source-object-id]="sourceObjectId('effectiveAccessSummarySection')"
+                [attr.guid]="guid('effectiveAccessSummarySection')"
+                data-inspect-id="user-factsheet-effective-access-summary-section"
+                [class.ssg-focused]="isFocused('effectiveAccessSummarySection')"
+              >
+                <div
+                  class="fact-card-host uf-card"
+                  data-dom-ref="user-factsheet-effective-access-summary-card"
+                  [attr.source-object-id]="sourceObjectId('effectiveAccessSummaryCard')"
+                  [attr.guid]="guid('effectiveAccessSummaryCard')"
+                  data-inspect-id="user-factsheet-effective-access-summary-card"
+                  [class.ssg-focused]="isFocused('effectiveAccessSummaryCard')"
+                >
+                  <p-card header="Effective Access Summary">
+                    <p>{{ content()?.rolesAccess?.effectiveAccessSummary }}</p>
+                  </p-card>
+                </div>
+              </section>
+            </section>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </div>
+  </div>
+</div>

@@ -5,8 +5,103 @@
   min-height: 100%;
 }
 
-.login-shell-preview-frame {
+.login-shell-shell {
+  --ssg-login-shell-frame-width: var(--ssg-shell-stack-width, 520px);
+  --ssg-login-shell-row-gap: 20px;
+  --ssg-login-shell-frame-padding-inline-start: 24px;
+  --ssg-login-shell-frame-padding-inline-end: 24px;
+  --ssg-login-shell-header-height: 0px;
+  --ssg-login-shell-breadcrumb-height: 0px;
+  --ssg-login-shell-main-height: 1fr;
+  --ssg-login-shell-footer-height: 0px;
   width: 100%;
   height: 100%;
   min-height: 100%;
+  display: grid;
+  grid-template-rows:
+    var(--ssg-login-shell-header-height)
+    var(--ssg-login-shell-breadcrumb-height)
+    minmax(0, var(--ssg-login-shell-main-height))
+    var(--ssg-login-shell-footer-height);
+  row-gap: var(--ssg-login-shell-row-gap);
+  color: var(--ssg-shell-accent-text);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  container-type: inline-size;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--ssg-login-shell-background, var(--tp-primary));
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: var(--ssg-login-shell-pattern-opacity, 0.13);
+    background-image: var(--ssg-login-shell-pattern-image, none);
+    background-size: 120px 120px;
+    background-repeat: repeat;
+  }
+}
+
+.shell-frame-inner {
+  width: min(100%, var(--ssg-login-shell-frame-width));
+  max-width: var(--ssg-login-shell-frame-width);
+  margin: 0 auto;
+  padding-inline-start: var(--ssg-login-shell-frame-padding-inline-start);
+  padding-inline-end: var(--ssg-login-shell-frame-padding-inline-end);
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+}
+
+.login-shell-header,
+.login-shell-breadcrumb,
+.login-shell-footer {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.login-shell-header {
+  grid-row: 1;
+}
+
+.login-shell-breadcrumb {
+  grid-row: 2;
+}
+
+.login-shell-main {
+  grid-row: 3;
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.login-shell-main-frame {
+  min-height: 0;
+}
+
+.login-shell-main-scroll {
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.login-shell-footer {
+  grid-row: 4;
 }
